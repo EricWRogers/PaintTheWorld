@@ -1,5 +1,6 @@
 using SuperPupSystems.StateMachine;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 [System.Serializable]
@@ -19,10 +20,11 @@ public class MeleeAttack : SimpleState
     public override void OnStart()
     {
         m_enemy = enemyObj.GetComponent<Enemy>();
+        
     }
     public override void UpdateState(float dt)
     {
-
+        enemyObj.GetComponent<NavMeshAgent>().SetDestination(enemyObj.transform.position);
         Vector3 dir = target.position - enemyObj.transform.position;
         float angle = Vector3.Angle(enemyObj.transform.forward, dir);
         if (angle > 45f && !m_isRotating)
@@ -58,7 +60,7 @@ public class MeleeAttack : SimpleState
     public override void OnExit()
     {
         base.OnExit();
-
+        enemyObj.GetComponent<NavMeshAgent>().SetDestination(m_enemy.player.transform.position);
 
     }
 }

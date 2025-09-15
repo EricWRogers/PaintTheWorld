@@ -18,6 +18,7 @@ public class MoveToPlayer : SimpleState
     public override void UpdateState(float dt)
     {
         agent.SetDestination(target.position);
+        Debug.Log(Vector3.Distance(enemy.transform.position, target.position));
         if (Vector3.Distance(enemy.transform.position, target.position) <= attackRange)
         {
             sm.ChangeState(nameof(MeleeAttack));

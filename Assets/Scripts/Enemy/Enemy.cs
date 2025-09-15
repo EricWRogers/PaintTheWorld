@@ -27,14 +27,16 @@ public class Enemy : MonoBehaviour
 
     private BoxCollider m_hitbox;
     private bool m_hitPlayer;
-    private NavMeshAgent m_agent;
+    protected NavMeshAgent p_agent;
+    protected Rigidbody p_rb;
     void Awake()
     {
         GetComponent<Health>().maxHealth = health;
-        m_agent = GetComponent<NavMeshAgent>();
+        p_agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player");
         m_hitbox = hitboxObj.GetComponent<BoxCollider>();
-        m_agent.speed = speed;
+        p_rb = GetComponent<Rigidbody>();
+        p_agent.speed = speed;
     }
     void Start()
     {
@@ -45,9 +47,8 @@ public class Enemy : MonoBehaviour
     {
         if (hitboxActive)
         {
-            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2, transform.forward, out RaycastHit hitInfo, transform.rotation, m_hitbox.size.z, layerMask))
+            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2, transform.forward, out RaycastHit hitInfo, transform.rotation, m_hitbox.center.z, layerMask))
             {
-                Debug.Log(hitInfo.transform.gameObject.name);
                 if (!m_hitPlayer)
                 {
                     DamagePlayer();
@@ -89,5 +90,5 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
+    
 }
