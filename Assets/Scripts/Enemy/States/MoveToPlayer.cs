@@ -5,6 +5,7 @@ using UnityEngine.AI;
 [System.Serializable]
 public class MoveToPlayer : SimpleState
 {
+    [Header("State Machine Gets These")]
     public NavMeshAgent agent;
     public GameObject enemy;
     public float attackRange;

@@ -2,6 +2,8 @@ using SuperPupSystems.Helper;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
@@ -10,21 +12,29 @@ public class Enemy : MonoBehaviour
     [Header("Stats")]
     public int damage = 20;
     public int health = 100;
+    public float speed = 4;
+    public float rotationSpeed = 10;
     public float attackRange;
 
     [Header("Animation")]
     public Animator anim;
+    public bool inAttackAnim = false;
 
-    [Header("Attack Zones")]
-    public Vector3 hitboxOffset;
-    public Vector3 hitboxSize;
+    [Header("Attack Details")]
+    public GameObject hitboxObj;
     public LayerMask layerMask;
     public bool hitboxActive = false;
 
+    private BoxCollider m_hitbox;
     private bool m_hitPlayer;
+    private NavMeshAgent m_agent;
     void Awake()
     {
         GetComponent<Health>().maxHealth = health;
+        m_agent = GetComponent<NavMeshAgent>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        m_hitbox = hitboxObj.GetComponent<BoxCollider>();
+        m_agent.speed = speed;
     }
     void Start()
     {
@@ -35,8 +45,9 @@ public class Enemy : MonoBehaviour
     {
         if (hitboxActive)
         {
-            if (Physics.BoxCast(transform.position + hitboxOffset, hitboxSize, transform.forward, out RaycastHit hitInfo, transform.rotation, layerMask))
+            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2, transform.forward, out RaycastHit hitInfo, transform.rotation, m_hitbox.size.z, layerMask))
             {
+                Debug.Log(hitInfo.transform.gameObject.name);
                 if (!m_hitPlayer)
                 {
                     DamagePlayer();
@@ -51,10 +62,8 @@ public class Enemy : MonoBehaviour
         player.GetComponent<Health>().Damage(damage);
         m_hitPlayer = true;
     }
-
     public void TurnOnHitBox()
     {
-        Debug.Log("hitbox active is " + hitboxActive);
         if (!hitboxActive)
         {
             hitboxActive = true;
@@ -62,17 +71,23 @@ public class Enemy : MonoBehaviour
     }
     public void ResetHitBox()
     {
-        Debug.Log("hitbox active is " + hitboxActive);
         if (hitboxActive)
         {
             hitboxActive = false;
             m_hitPlayer = false;
         }
     }
-
-    void OnDrawGizmos()
+    public void ToggleIsInAnim()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(transform.position + hitboxOffset, hitboxSize);
+        if (inAttackAnim)
+        {
+            inAttackAnim = false;
+        }
+        else
+        {
+            inAttackAnim = true;
+        }
     }
+
+
 }
