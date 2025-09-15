@@ -344,7 +344,7 @@ Transform:
   m_GameObject: {fileID: 471859297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.84, y: 1.36, z: 1.37}
+  m_LocalPosition: {x: 2.83, y: 1.36, z: 1.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 592651912}
   - component: {fileID: 592651916}
   - component: {fileID: 592651917}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyBean
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -653,9 +653,14 @@ MonoBehaviour:
   trapDamage: 10
   targetTag: Enemy
   attackPart: {fileID: 1909299712}
-  attackAngle: -45
+  attackAngle: 45
   attackSpeed: 5
   weaponDamage: 15
+  rayLength: 2
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 64
+  comboResetTime: 2
 --- !u!1 &1429716417
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,13 +855,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497286094}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.958, z: -5.268}
+  m_LocalRotation: {x: 0.00083166844, y: 0.95128924, z: -0.3082882, w: -0.0025662926}
+  m_LocalPosition: {x: 2.98, y: 3.992, z: 3.091}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 35.912, y: 180.382, z: 0.224}
 --- !u!114 &1497286098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1003,8 +1008,8 @@ Transform:
   m_GameObject: {fileID: 1909299708}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.44050026, y: 0.40100002, z: -0.84575653}
-  m_LocalScale: {x: 0.19905572, y: 0.2617, z: 1.5753669}
+  m_LocalPosition: {x: -0.44050026, y: 0.40100002, z: -0.69}
+  m_LocalScale: {x: 0.19905572, y: 0.2617, z: 0.9039928}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1105377860}
