@@ -1,7 +1,7 @@
 using UnityEngine;
 using SuperPupSystems.StateMachine;
 using UnityEngine.AI;
-public class UnarmedESM : SimpleStateMachine
+public class BaseEnemySM : SimpleStateMachine
 {
     private GameObject m_enemy;
 
@@ -28,7 +28,7 @@ public class UnarmedESM : SimpleStateMachine
 
         //sets meleeAttack varibles
         meleeAttack.anim = m_enemy.GetComponent<Enemy>().anim;
-        meleeAttack.enemy = m_enemy;
+        meleeAttack.enemyObj = m_enemy;
         meleeAttack.target = m_enemy.GetComponent<Enemy>().player.transform;
         meleeAttack.attackRange = m_enemy.GetComponent<Enemy>().attackRange;
         meleeAttack.sm = this;
