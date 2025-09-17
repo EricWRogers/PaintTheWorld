@@ -26,6 +26,7 @@ public class MousePainter : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, 100.0f))
             {
+                Debug.Log(hit.transform.gameObject.name);
                 Debug.DrawRay(ray.origin, hit.point - ray.origin, Color.red);
                 transform.position = hit.point;
                 Paintable p = hit.collider.GetComponent<Paintable>();

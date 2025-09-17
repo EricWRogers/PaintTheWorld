@@ -17,7 +17,12 @@ public class BaseEnemySM : SimpleStateMachine
             s.stateMachine = this;
 
 
-        //sets moveplayer varibles
+       
+    }
+
+    void Start()
+    {
+         //sets moveplayer varibles
         moveToPlayer.enemy = gameObject;
         moveToPlayer.agent = gameObject.GetComponent<NavMeshAgent>();
         moveToPlayer.target = gameObject.GetComponent<Enemy>().player.transform;
@@ -30,10 +35,6 @@ public class BaseEnemySM : SimpleStateMachine
         meleeAttack.target = gameObject.GetComponent<Enemy>().player.transform;
         meleeAttack.attackRange = gameObject.GetComponent<Enemy>().attackRange;
         meleeAttack.sm = this;
-    }
-
-    void Start()
-    {
         ChangeState(nameof(MoveToPlayer));
 
     }
