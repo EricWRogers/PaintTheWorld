@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour
     private bool m_hitPlayer;
     protected NavMeshAgent p_agent;
     protected Rigidbody p_rb;
-    void Awake()
+    public void Awake()
     {
         GetComponent<Health>().maxHealth = health;
         p_agent = GetComponent<NavMeshAgent>();
@@ -38,17 +38,18 @@ public class Enemy : MonoBehaviour
         p_rb = GetComponent<Rigidbody>();
         p_agent.speed = speed;
     }
-    void Start()
+    public void Start()
     {
 
     }
 
-    void Update()
+    public void Update()
     {
         if (hitboxActive)
         {
-            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2, transform.forward, out RaycastHit hitInfo, transform.rotation, m_hitbox.center.z, layerMask))
+            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2.0f, transform.forward, out RaycastHit hitInfo, transform.rotation, Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center), layerMask))
             {
+                Debug.Log(Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center));
                 if (!m_hitPlayer)
                 {
                     DamagePlayer();

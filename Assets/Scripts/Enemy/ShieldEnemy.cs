@@ -4,11 +4,23 @@ public class ShieldEnemy : Enemy
 {
     public float bashSpeed;
     public float bashDuration;
-    private bool m_isDashing;
+    public bool m_isDashing;
     private float m_curDuration = 0;
+    private Vector3 m_dashDirection;
 
-    void Update()
+    new void Awake()
     {
+        base.Awake();
+    }
+
+    new void Start()
+    {
+        base.Start();
+    }
+
+    new void Update()
+    {
+        base.Update();
         m_curDuration -= Time.deltaTime;
         if (m_isDashing)
         {
@@ -17,16 +29,20 @@ public class ShieldEnemy : Enemy
                 p_rb.linearVelocity = Vector3.zero;
                 m_isDashing = false;
             }
+            else
+            {
+                p_rb.linearVelocity = m_dashDirection * bashSpeed;
+            }
         }
-        
+
     }
     public void ShieldBash()
     {
         m_isDashing = true;
         m_curDuration = bashDuration;
-        Vector3 dir = (player.transform.position - transform.position).normalized;
-        transform.LookAt(dir);
-        p_rb.linearVelocity = dir * bashSpeed;
+        m_dashDirection = (player.transform.position - transform.position).normalized;
+        transform.LookAt(m_dashDirection);
+        
 
 
     }
