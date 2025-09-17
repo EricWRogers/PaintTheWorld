@@ -21,6 +21,7 @@ public class MeleeAttack : SimpleState
     {
         m_enemy = enemyObj.GetComponent<Enemy>();
         
+        
     }
     public override void UpdateState(float dt)
     {

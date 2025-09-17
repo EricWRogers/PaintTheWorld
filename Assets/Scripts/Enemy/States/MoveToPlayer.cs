@@ -14,6 +14,7 @@ public class MoveToPlayer : SimpleState
     public override void OnStart()
     {
         agent.SetDestination(target.position);
+        agent.isStopped = false;
     }
     public override void UpdateState(float dt)
     {
@@ -26,7 +27,7 @@ public class MoveToPlayer : SimpleState
     public override void OnExit()
     {
         base.OnExit();
-
+        agent.isStopped = true;
 
     }
 
