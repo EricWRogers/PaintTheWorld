@@ -2193,6 +2193,7 @@ MonoBehaviour:
   maxBeamDistance: 100
   beamWidth: 0.2
   damagePerSecond: 5
+  isLasering: 0
   telegraphGradient:
     serializedVersion: 2
     key0: {r: 0.4339623, g: 0.10476369, b: 0, a: 1}
@@ -2264,10 +2265,11 @@ MonoBehaviour:
   slamSpeed: 400
   slamDamage: 0
   canSlam: 0
-  slamCooldown: 0
+  slamCooldown: 6
   spawnAreaSize: {x: 100, y: 1, z: 100}
   totalSpawned: 0
   poolSize: 40
+  slamIsDone: 0
 --- !u!33 &9100519406672974056
 MeshFilter:
   m_ObjectHideFlags: 0
