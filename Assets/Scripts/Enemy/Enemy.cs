@@ -49,7 +49,7 @@ public class Enemy : MonoBehaviour
         {
             if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2.0f, transform.forward, out RaycastHit hitInfo, transform.rotation, Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center), layerMask))
             {
-                Debug.Log(Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center));
+                
                 if (!m_hitPlayer)
                 {
                     DamagePlayer();

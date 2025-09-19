@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using UnityEngine.WSA;
 
 public class Boss : MonoBehaviour
 {
@@ -32,10 +33,6 @@ public class Boss : MonoBehaviour
     public GameObject laserFirePoint;
     public float laserRotationSpeed = 360f;
     public bool yawOnly = true;
-    [Header("laser Timers")]
-    public float windupTime = 1.2f;
-    public float fireTime = 2.0f;
-    public float laserCooldown;
     public bool canLaser;
 
     [Header("laser stats")]
@@ -53,7 +50,9 @@ public class Boss : MonoBehaviour
     [Header("Swing stats")]
     public int swingDamage;
     public bool canSwing;
-    public float swingCooldown;
+
+    public float swingDashSpeed;
+    public float swingDashDistance;
 
     [Header("Slam stats")]
     public GameObject objectToSpawn;
@@ -62,20 +61,32 @@ public class Boss : MonoBehaviour
     public float slamSpeed;
     public int slamDamage;
     public bool canSlam;
-    public float slamCooldown;
+
     public Vector3 spawnAreaSize = new Vector3(50f, 20f, 50f);
     public int totalSpawned = 0;
     public int poolSize = 20;
     public bool slamIsDone;
-    private float m_swingCur = 0;
-    private float m_slamcur = 0;
 
-    private enum LaserPhase { Idle, Windup, Firing, Cooldown }
+    [Header("Timers")]
+    public float laserWindupTime = 1.2f;
+    public float laserFireTime = 2.0f;
+    public float laserCooldown;
+    public float swingCooldown;
+    public float slamCooldown;
+    public float walkTime;
+    public float m_swingCur = 0;
+    public float m_slamcur = 0;
+    public float m_laserCur = 0;
+
+    private enum LaserPhase { Idle, Windup, Firing }
     private LaserPhase laserPhase = LaserPhase.Idle;
     private float laserTimer = 0f;
     private float damageAccumulator = 0f;
-    private bool m_goingUp;
-    private bool m_goingDown;
+
+
+    private bool isDashing = false;
+    private Vector3 dashTarget;
+    private Vector3 dashDirection;
 
     void Awake()
     {
@@ -91,8 +102,6 @@ public class Boss : MonoBehaviour
         lr.useWorldSpace = true;
         lr.widthCurve = AnimationCurve.Constant(0, 1, beamWidth);
         lr.enabled = false;
-        m_goingUp = true;
-        m_goingDown = false;
 
     }
     void OnValidate()
@@ -104,8 +113,15 @@ public class Boss : MonoBehaviour
     }
     void Start()
     {
+
+
+    }
+
+    void Update()
+    {
         m_slamcur -= Time.deltaTime;
         m_swingCur -= Time.deltaTime;
+        m_laserCur -= Time.deltaTime;
 
         if (m_slamcur <= 0)
         {
@@ -118,13 +134,44 @@ public class Boss : MonoBehaviour
         }
         else canSwing = false;
 
-    }
+        if (m_laserCur <= 0)
+        {
+            canLaser = true;
+        }
+        else canLaser = false;
 
-    void Update()
+        if (hitboxActive)
+        {
+            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2.0f, transform.forward, out RaycastHit hitInfo, hitboxObj.transform.rotation, Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center), layerMask))
+            {
+
+                if (!m_hitPlayer)
+                {
+                    DamagePlayer(swingDamage);
+                }
+            }
+        }
+
+        if (isDashing)
+        {
+            TurnOnHitBox();
+            transform.position = Vector3.MoveTowards(transform.position, dashTarget, swingDashSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, dashTarget) <= 0.1f)
+            {
+                isDashing = false;
+            }
+        }
+        else ResetHitBox();
+
+
+    }
+    public void DamagePlayer(int _damage)
     {
-
+        Debug.Log("HitPlayer");
+        player.GetComponent<Health>().Damage(_damage);
+        m_hitPlayer = true;
     }
-
 
     public void TurnOnHitBox()
     {
@@ -180,36 +227,16 @@ public class Boss : MonoBehaviour
             totalSpawned++;
         }
     }
-
     public void SlamAttack()
     {
         slamIsDone = false;
-        m_slamcur = slamCooldown;
-        if (transform.position.y >= 200f)
-        {
-            m_goingUp = false;
-            m_goingDown = true;
-        }
-        if (m_goingUp)
-        {
-            transform.position += transform.up * jumpSpeed * Time.fixedDeltaTime;
-        }
-        else if (m_goingDown)
-        {
-            m_goingUp = false;
-            transform.position = new Vector3(centerPoint.position.x, transform.position.y, centerPoint.position.z);
-            transform.position += -transform.up * slamSpeed * Time.fixedDeltaTime;
-        }
-        if (Physics.Raycast(transform.position, -transform.up, out RaycastHit hit, 7f) && !m_goingUp)
-        {
-            m_goingDown = false;
-            SpawnAllObjects();
-            canSlam = false;
-            m_goingUp = true;
-            m_goingDown = false;
-            slamIsDone = true;
-        }
+        transform.position = centerPoint.position;
+        SpawnAllObjects();
+        canSlam = false;
+        slamIsDone = true;
+
     }
+
     public void LaserBeam()
     {
 
@@ -219,7 +246,7 @@ public class Boss : MonoBehaviour
             case LaserPhase.Idle:
                 lr.enabled = true;
                 lr.widthCurve = AnimationCurve.Constant(0, 1, telegraphWidth);
-                laserTimer = windupTime;
+                laserTimer = laserWindupTime;
                 laserPhase = LaserPhase.Windup;
                 break;
 
@@ -238,7 +265,7 @@ public class Boss : MonoBehaviour
 
                 if (laserTimer <= 0f)
                 {
-                    laserTimer = fireTime;
+                    laserTimer = laserFireTime;
                     lr.widthCurve = AnimationCurve.Constant(0, 1, beamWidth);
                     SetLineRendererGradient(firingGradient);
                     laserPhase = LaserPhase.Firing;
@@ -279,18 +306,11 @@ public class Boss : MonoBehaviour
                 {
                     lr.enabled = false;
                     isLasering = false;
-                    laserTimer = laserCooldown;
-                    laserPhase = LaserPhase.Cooldown;
-                }
-                break;
-
-            case LaserPhase.Cooldown:
-                laserTimer -= delta;
-                if (laserTimer <= 0f)
-                {
+                    m_laserCur = laserCooldown;
+                    canLaser = false;
                     laserPhase = LaserPhase.Idle;
                 }
-                break;
+                return;
         }
     }
 
@@ -331,8 +351,25 @@ public class Boss : MonoBehaviour
         lr.colorGradient = g;
     }
 
-    public void SwingAttack()
+
+    public void StartSwingCombo()
     {
-        
+        dashDirection = (player.transform.position - transform.position).normalized;
+        DoNextSwing();
+    }
+
+    private void DoNextSwing()
+    {
+        dashTarget = transform.position + dashDirection * swingDashDistance;
+        isDashing = true;
+    }
+
+    public void StartSwingCooldown()
+    {
+        m_swingCur = swingCooldown;
+    }
+    public void StopSwinging()
+    {
+        anim.SetBool("Swing", false);
     }
 }

@@ -15,11 +15,12 @@ public class GroundSlam : SimpleState
     public NavMeshAgent agent;
 
     private Boss m_boss;
-    
+
     public override void OnStart()
     {
         m_boss = boss.GetComponent<Boss>();
         agent.enabled = false;
+        Debug.Log("GroundSlam");
 
     }
     public override void UpdateState(float dt)

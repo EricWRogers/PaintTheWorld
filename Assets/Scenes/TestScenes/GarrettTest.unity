@@ -841,7 +841,7 @@ Transform:
   m_GameObject: {fileID: 974815436}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.1, y: 0.34, z: -9.38}
+  m_LocalPosition: {x: -29.1, y: 0.34, z: -24.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -970,7 +970,7 @@ Transform:
   m_GameObject: {fileID: 1423865980}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.93, z: 0}
+  m_LocalPosition: {x: 0, y: 2.026666, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1403,7 +1403,6 @@ GameObject:
   - component: {fileID: 7154694614984031637}
   - component: {fileID: 9001066821191996451}
   - component: {fileID: 8212398070768646897}
-  - component: {fileID: 3109514712017399691}
   - component: {fileID: 9001066821191996452}
   m_Layer: 6
   m_Name: Boss1
@@ -1412,33 +1411,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!54 &3109514712017399691
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2836609309254944134}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!1 &3156555076094986671
 GameObject:
   m_ObjectHideFlags: 0
@@ -1543,7 +1515,7 @@ Transform:
   m_GameObject: {fileID: 2836609309254944134}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 10.7, y: 2.89, z: 20.2}
+  m_LocalPosition: {x: 10.7, y: 2.6, z: 20.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1977,7 +1949,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2836609309254944134}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 492f467296245714ca31798f96335f0f, type: 2}
   m_CullingMode: 0
@@ -2176,7 +2148,7 @@ MonoBehaviour:
   speed: 4
   rotationSpeed: 10
   attackRange: 0
-  anim: {fileID: 0}
+  anim: {fileID: 9001066821191996451}
   inAttackAnim: 0
   hitboxObj: {fileID: 6117252069300141681}
   layerMask:
@@ -2186,9 +2158,6 @@ MonoBehaviour:
   laserFirePoint: {fileID: 1371632986}
   laserRotationSpeed: 30
   yawOnly: 0
-  windupTime: 3
-  fireTime: 5
-  laserCooldown: 5
   canLaser: 0
   maxBeamDistance: 100
   beamWidth: 0.2
@@ -2256,20 +2225,29 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   telegraphWidth: 0.1
   lr: {fileID: 9001066821191996452}
-  swingDamage: 0
+  swingDamage: 5
   canSwing: 0
-  swingCooldown: 0
+  swingDashSpeed: 40
+  swingDashDistance: 5
   objectToSpawn: {fileID: 8303697972521116450, guid: deabde31b52c6ed4199d05f5cd3fdea4, type: 3}
   centerPoint: {fileID: 1423865981}
   jumpSpeed: 200
   slamSpeed: 400
   slamDamage: 0
   canSlam: 0
-  slamCooldown: 6
   spawnAreaSize: {x: 100, y: 1, z: 100}
   totalSpawned: 0
   poolSize: 40
   slamIsDone: 0
+  laserWindupTime: 3
+  laserFireTime: 4
+  laserCooldown: 6
+  swingCooldown: 5
+  slamCooldown: 5
+  walkTime: 5
+  m_swingCur: 0
+  m_slamcur: 0
+  m_laserCur: 0
 --- !u!33 &9100519406672974056
 MeshFilter:
   m_ObjectHideFlags: 0
