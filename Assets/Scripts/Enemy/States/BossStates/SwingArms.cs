@@ -23,7 +23,7 @@ public class SwingArms : SimpleState
 
         if (m_boss.canSwing)
         {
-            //do swing
+            
         }
     }
     public override void OnExit()

@@ -15,21 +15,29 @@ public class GroundSlam : SimpleState
     public NavMeshAgent agent;
 
     private Boss m_boss;
+    
     public override void OnStart()
     {
         m_boss = boss.GetComponent<Boss>();
+        agent.enabled = false;
+
     }
     public override void UpdateState(float dt)
     {
-
         if (m_boss.canSlam)
         {
-            //do slam
+            m_boss.SlamAttack();
         }
+        if (m_boss.slamIsDone)
+        {
+            sm.ChangeState(nameof(WalkToPlayer));
+        }
+        
     }
     public override void OnExit()
     {
         base.OnExit();
-
+        agent.enabled = true;
     }
+    
 }
