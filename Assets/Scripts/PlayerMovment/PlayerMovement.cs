@@ -22,6 +22,8 @@ namespace KinematicCharacterControler
 
         private Vector3 m_velocity;
 
+        public bool lockCursor = true;
+
 
         [Header("Jump Settings")]
         public float jumpVelocity = 5.0f;
@@ -46,6 +48,17 @@ namespace KinematicCharacterControler
         // Update is called once per frame
         void Update()
         {
+            if (lockCursor)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = false;
+            }
+
             if (Input.GetKey(KeyCode.Space))
                 m_jumpInputPressed = true;
             else
