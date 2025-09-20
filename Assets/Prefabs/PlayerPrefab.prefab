@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7155542711451808926}
   - component: {fileID: 6106752441516561942}
   - component: {fileID: 1755110976777577267}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,10 +120,10 @@ GameObject:
   - component: {fileID: 7585641173297084344}
   - component: {fileID: 1356811417395496506}
   - component: {fileID: 7236730804248690065}
-  - component: {fileID: 3052464275112978226}
-  - component: {fileID: 8328641168879967954}
   - component: {fileID: 7259321759212538560}
-  m_Layer: 0
+  - component: {fileID: 9104941373587113884}
+  - component: {fileID: 3795677865678502492}
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ Transform:
   m_GameObject: {fileID: 987569071003229930}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.63, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -222,50 +222,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!143 &3052464275112978226
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8328641168879967954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b77c63440992e13cd9593c3d2339beae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 3052464275112978226}
-  player: {fileID: 987569071003229930}
-  cam: {fileID: 2558197743922652643}
-  speed: 6
-  rotationSpeed: 5
-  gravity: 5.81
-  jumpHeight: 2
 --- !u!114 &7259321759212538560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,6 +252,46 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &9104941373587113884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb459d0ef24860c4da7994f076d118df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  rotationSpeed: 5
+  player: {fileID: 987569071003229930}
+  cam: {fileID: 2558197743922652643}
+  engine: {fileID: 3795677865678502492}
+--- !u!114 &3795677865678502492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aea8857a5f9ad22688209937fc22572, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capsule: {fileID: 7236730804248690065}
+  skinWidth: 0.015
+  defaultGroundCheck: 0.25
+  defaultGroundedDistance: 0.05
+  previousPosition: {x: 0, y: 0, z: 0}
+  maxBounces: 5
+  maxSlopeAngle: 55
+  gravity: {x: 0, y: -0.05, z: 0}
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 503
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,7 +307,7 @@ GameObject:
   - component: {fileID: 7859060934268139430}
   - component: {fileID: 7960772257735884871}
   - component: {fileID: 3038237335418171558}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FreeLook Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -326,8 +322,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14183576, y: -0.0055560134, z: 0.00079610304, w: 0.9898743}
-  m_LocalPosition: {x: 0, y: 2, z: -6}
+  m_LocalRotation: {x: 0.16018224, y: -0.000000029127815, z: 0.000000004726793, w: 0.9870875}
+  m_LocalPosition: {x: 0, y: 3.63, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -407,7 +403,7 @@ MonoBehaviour:
     Bottom:
       Radius: 5
       Height: -1
-    SplineCurvature: 0.303
+    SplineCurvature: 0.345
   RecenteringTarget: 2
   HorizontalAxis:
     Value: 0
@@ -452,7 +448,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Composition:
-    ScreenPosition: {x: 0.006770909, y: 0.039814353}
+    ScreenPosition: {x: 0, y: 0}
     DeadZone:
       Enabled: 0
       Size: {x: 0.33854163, y: 0.6518521}
@@ -480,7 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a076c17fe76165e4f8ed21498b877bf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Easing: 0
+  Easing: 0.055
   Modifiers: []
   references:
     version: 2
@@ -591,7 +587,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 284528712846059961}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cinimachine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +624,7 @@ GameObject:
   - component: {fileID: 8846941385050823895}
   - component: {fileID: 6000781052268759248}
   - component: {fileID: 2045769769988579643}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -643,8 +639,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14183575, y: -0.0055560134, z: 0.0007961025, w: 0.9898743}
-  m_LocalPosition: {x: 0, y: 2, z: -6}
+  m_LocalRotation: {x: 0.16018225, y: -0.000000029127815, z: 0.0000000047267936, w: 0.9870875}
+  m_LocalPosition: {x: 0, y: 3.63, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -794,7 +790,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6931988930237852031}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PlayerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
