@@ -14,16 +14,23 @@ public class SwingArms : SimpleState
     public NavMeshAgent agent;
 
     private Boss m_boss;
+    private bool hasSwung;
     public override void OnStart()
     {
         m_boss = boss.GetComponent<Boss>();
-    }
-    public override void UpdateState(float dt)
-    {
+        Debug.Log("SwingArms");
+        hasSwung = false;
 
         if (m_boss.canSwing)
         {
-            //do swing
+            anim.SetBool("Swing", true);
+        }
+    }
+    public override void UpdateState(float dt)
+    {
+        if (!anim.GetBool("Swing"))
+        {
+            sm.ChangeState(nameof(GroundSlam));
         }
     }
     public override void OnExit()

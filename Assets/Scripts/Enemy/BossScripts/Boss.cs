@@ -1,9 +1,9 @@
 using SuperPupSystems.Helper;
-using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using UnityEngine.WSA;
 
 public class Boss : MonoBehaviour
 {
@@ -16,8 +16,8 @@ public class Boss : MonoBehaviour
     public float attackRange;
 
     [Header("Animation")]
-    //public Animator anim;
-    //public bool inAttackAnim = false;
+    public Animator anim;
+    public bool inAttackAnim = false;
 
     [Header("Attack Details")]
     public GameObject hitboxObj;
@@ -33,16 +33,13 @@ public class Boss : MonoBehaviour
     public GameObject laserFirePoint;
     public float laserRotationSpeed = 360f;
     public bool yawOnly = true;
-    [Header("laser Timers")]
-    public float windupTime = 1.2f;
-    public float fireTime = 2.0f;
-    public float laserCooldown;
     public bool canLaser;
 
     [Header("laser stats")]
     public float maxBeamDistance = 50f;
     public float beamWidth = 0.12f;
     public int damagePerSecond = 30;
+    public bool isLasering;
     [Header("laser Visuals")]
     public Gradient telegraphGradient;
     public Gradient firingGradient;
@@ -53,16 +50,43 @@ public class Boss : MonoBehaviour
     [Header("Swing stats")]
     public int swingDamage;
     public bool canSwing;
-    public float swingCooldown;
+
+    public float swingDashSpeed;
+    public float swingDashDistance;
 
     [Header("Slam stats")]
+    public GameObject objectToSpawn;
+    public Transform centerPoint;
+    public float jumpSpeed;
+    public float slamSpeed;
     public int slamDamage;
     public bool canSlam;
-    public float slamCooldown;
 
-    private float m_speacialCur = 0;
-    private float m_swingCur = 0;
-    private float m_slamcur = 0;
+    public Vector3 spawnAreaSize = new Vector3(50f, 20f, 50f);
+    public int totalSpawned = 0;
+    public int poolSize = 20;
+    public bool slamIsDone;
+
+    [Header("Timers")]
+    public float laserWindupTime = 1.2f;
+    public float laserFireTime = 2.0f;
+    public float laserCooldown;
+    public float swingCooldown;
+    public float slamCooldown;
+    public float walkTime;
+    public float m_swingCur = 0;
+    public float m_slamcur = 0;
+    public float m_laserCur = 0;
+
+    private enum LaserPhase { Idle, Windup, Firing }
+    private LaserPhase laserPhase = LaserPhase.Idle;
+    private float laserTimer = 0f;
+    private float damageAccumulator = 0f;
+
+
+    private bool isDashing = false;
+    private Vector3 dashTarget;
+    private Vector3 dashDirection;
 
     void Awake()
     {
@@ -89,21 +113,20 @@ public class Boss : MonoBehaviour
     }
     void Start()
     {
-        m_slamcur = -Time.deltaTime;
-        m_speacialCur = -Time.deltaTime;
-        m_swingCur = -Time.deltaTime;
+
+
+    }
+
+    void Update()
+    {
+        m_slamcur -= Time.deltaTime;
+        m_swingCur -= Time.deltaTime;
+        m_laserCur -= Time.deltaTime;
 
         if (m_slamcur <= 0)
         {
             canSlam = true;
         }
-        else canSlam = false;
-
-        if (m_speacialCur <= 0)
-        {
-            canLaser = true;
-        }
-        else canLaser = false;
 
         if (m_swingCur <= 0)
         {
@@ -111,14 +134,45 @@ public class Boss : MonoBehaviour
         }
         else canSwing = false;
 
-    }
+        if (m_laserCur <= 0)
+        {
+            canLaser = true;
+        }
+        else canLaser = false;
 
-    void Update()
+        if (hitboxActive)
+        {
+            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2.0f, transform.forward, out RaycastHit hitInfo, hitboxObj.transform.rotation, Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center), layerMask))
+            {
+
+                if (!m_hitPlayer)
+                {
+                    DamagePlayer(swingDamage);
+                }
+            }
+        }
+
+        if (isDashing)
+        {
+            TurnOnHitBox();
+            transform.position = Vector3.MoveTowards(transform.position, dashTarget, swingDashSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, dashTarget) <= 0.1f)
+            {
+                isDashing = false;
+            }
+        }
+        else ResetHitBox();
+
+
+    }
+    public void DamagePlayer(int _damage)
     {
-
+        Debug.Log("HitPlayer");
+        player.GetComponent<Health>().Damage(_damage);
+        m_hitPlayer = true;
     }
-    
-    
+
     public void TurnOnHitBox()
     {
         if (!hitboxActive)
@@ -136,14 +190,186 @@ public class Boss : MonoBehaviour
     }
     public void ToggleIsInAnim()
     {
-        /*if (inAttackAnim)
+        if (inAttackAnim)
         {
             inAttackAnim = false;
         }
         else
         {
             inAttackAnim = true;
-        }*/
+        }
     }
-    
+    public void GoToCenter()
+    {
+        transform.position = new Vector3(centerPoint.position.x, transform.position.y, centerPoint.position.z);
+    }
+    void SpawnObject()
+    {
+        Vector3 spawnPosition = new Vector3(
+            Random.Range(-spawnAreaSize.x / 2, spawnAreaSize.x / 2),
+            Random.Range(-spawnAreaSize.y / 2, spawnAreaSize.y / 2),
+            Random.Range(-spawnAreaSize.z / 2, spawnAreaSize.z / 2)
+        ) + centerPoint.position;
+
+        GameObject.Instantiate(objectToSpawn, spawnPosition, transform.rotation);
+    }
+    void OnDrawGizmos()
+    {
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(centerPoint.position, spawnAreaSize);
+    }
+    public void SpawnAllObjects()
+    {
+        for (int i = 0; i < poolSize; i++)
+        {
+            SpawnObject();
+            totalSpawned++;
+        }
+    }
+    public void SlamAttack()
+    {
+        slamIsDone = false;
+        transform.position = centerPoint.position;
+        SpawnAllObjects();
+        canSlam = false;
+        slamIsDone = true;
+
+    }
+
+    public void LaserBeam()
+    {
+
+        float delta = Time.deltaTime;
+        switch (laserPhase)
+        {
+            case LaserPhase.Idle:
+                lr.enabled = true;
+                lr.widthCurve = AnimationCurve.Constant(0, 1, telegraphWidth);
+                laserTimer = laserWindupTime;
+                laserPhase = LaserPhase.Windup;
+                break;
+
+            case LaserPhase.Windup:
+                isLasering = true;
+                laserTimer -= delta;
+                RotateTowardsTarget(delta);
+
+                float alpha = Mathf.PingPong(Time.time * 2f, 1f);
+                SetLineRendererForTelegraph(alpha);
+
+                Vector3 startW = laserFirePoint.transform.position;
+                Vector3 dirW = GetAimDirection();
+                lr.SetPosition(0, startW);
+                lr.SetPosition(1, startW + dirW * maxBeamDistance);
+
+                if (laserTimer <= 0f)
+                {
+                    laserTimer = laserFireTime;
+                    lr.widthCurve = AnimationCurve.Constant(0, 1, beamWidth);
+                    SetLineRendererGradient(firingGradient);
+                    laserPhase = LaserPhase.Firing;
+                }
+                break;
+
+            case LaserPhase.Firing:
+                laserTimer -= delta;
+                RotateTowardsTarget(delta);
+
+                Vector3 startF = laserFirePoint.transform.position;
+                Vector3 dirF = GetAimDirection();
+
+                if (Physics.Raycast(startF, dirF, out RaycastHit hit, maxBeamDistance, layerMask))
+                {
+
+                    lr.SetPosition(0, startF);
+                    lr.SetPosition(1, hit.point);
+
+                    if (hit.collider.CompareTag("Player"))
+                    {
+                        damageAccumulator += damagePerSecond * Time.deltaTime;
+                        if (damageAccumulator >= 1f)
+                        {
+                            int applyDamage = Mathf.FloorToInt(damageAccumulator);
+                            hit.collider.GetComponent<Health>().Damage(applyDamage);
+                            damageAccumulator -= applyDamage;
+                        }
+                    }
+                }
+                else
+                {
+                    lr.SetPosition(0, startF);
+                    lr.SetPosition(1, startF + dirF * maxBeamDistance);
+                }
+
+                if (laserTimer <= 0f)
+                {
+                    lr.enabled = false;
+                    isLasering = false;
+                    m_laserCur = laserCooldown;
+                    canLaser = false;
+                    laserPhase = LaserPhase.Idle;
+                }
+                return;
+        }
+    }
+
+    private Vector3 GetAimDirection()
+    {
+        return laserFirePoint.transform.forward;
+    }
+
+    private void RotateTowardsTarget(float delta)
+    {
+        if (player == null) return;
+        Vector3 toTarget = player.transform.position - laserFirePoint.transform.position;
+        if (yawOnly) toTarget.y = 0;
+        if (toTarget.sqrMagnitude < 0.0001f) return;
+
+        Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
+        laserFirePoint.transform.rotation = Quaternion.RotateTowards(laserFirePoint.transform.rotation, targetRot, laserRotationSpeed * delta);
+    }
+
+    void SetLineRendererForTelegraph(float alpha)
+    {
+        Gradient g = new Gradient();
+        GradientColorKey[] colorKeys = telegraphGradient.colorKeys;
+        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[colorKeys.Length];
+        for (int i = 0; i < colorKeys.Length; i++)
+        {
+            alphaKeys[i].alpha = telegraphGradient.Evaluate(colorKeys[i].time).a * alpha;
+            alphaKeys[i].time = colorKeys[i].time;
+        }
+        g.SetKeys(colorKeys, alphaKeys);
+        lr.colorGradient = g;
+    }
+
+    void SetLineRendererGradient(Gradient source)
+    {
+        Gradient g = new Gradient();
+        g.SetKeys(source.colorKeys, source.alphaKeys);
+        lr.colorGradient = g;
+    }
+
+
+    public void StartSwingCombo()
+    {
+        dashDirection = (player.transform.position - transform.position).normalized;
+        DoNextSwing();
+    }
+
+    private void DoNextSwing()
+    {
+        dashTarget = transform.position + dashDirection * swingDashDistance;
+        isDashing = true;
+    }
+
+    public void StartSwingCooldown()
+    {
+        m_swingCur = swingCooldown;
+    }
+    public void StopSwinging()
+    {
+        anim.SetBool("Swing", false);
+    }
 }

@@ -34,16 +34,16 @@ public class BossSM : SimpleStateMachine
         swingArms.target = gameObject.GetComponent<Boss>().player.transform;
         swingArms.boss = gameObject;
         swingArms.agent = gameObject.GetComponent<NavMeshAgent>();
-        //swingArms.anim = gameObject.GetComponent<Boss>().anim;
+        swingArms.anim = gameObject.GetComponent<Boss>().anim;
 
         //ground slam varibles
         groundSlam.sm = this;
         groundSlam.target = gameObject.GetComponent<Boss>().player.transform;
         groundSlam.boss = gameObject;
         groundSlam.agent = gameObject.GetComponent<NavMeshAgent>();
-        //groundSlam.anim = gameObject.GetComponent<Boss>().anim;
+        groundSlam.anim = gameObject.GetComponent<Boss>().anim;
 
 
-        ChangeState(nameof(WalkToPlayer));
+        ChangeState(nameof(GroundSlam));
     }
 }
