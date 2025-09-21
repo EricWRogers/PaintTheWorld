@@ -2,6 +2,8 @@ using System.Security.Cryptography.X509Certificates;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
+using System.Collections.Generic;
 
 
 namespace KinematicCharacterControler
@@ -122,7 +124,7 @@ namespace KinematicCharacterControler
                 bounces++;
             }
 
-            // We're done, player was moved as part of loop
+             
             return position;
         }
 
@@ -211,32 +213,46 @@ namespace KinematicCharacterControler
             }
          }
 
-        public bool CastSelf(Vector3 _position, Quaternion _rot, Vector3 _direction, float _distance, out RaycastHit _hit)
+
+
+        public bool CastSelf(Vector3 pos, Quaternion rot, Vector3 dir, float dist, out RaycastHit hit)
         {
-            // Use capsule collider’s true world position and radius
-            Vector3 center =  capsule.transform.position + capsule.center;
-            float halfHeight = (capsule.height / 2f) - capsule.radius;
+           
+            Vector3 center = rot * capsule.center + pos;
+            float radius = capsule.radius;
+            float height = capsule.height;
 
-            Vector3 top =  center +  Vector3.up * halfHeight;
-            Vector3 bottom =  center + Vector3.down * halfHeight;
-            
+            // Get top and bottom points of collider
+            Vector3 bottom = center + rot * Vector3.down * (height / 2 - radius);
+            Vector3 top = center + rot * Vector3.up * (height / 2 - radius);
 
-            return Physics.CapsuleCast(top, bottom, capsule.radius - skinWidth, _direction, out _hit, _distance, collisionLayers);
+            // Check what objects this collider will hit when cast with this configuration excluding itself
+            IEnumerable<RaycastHit> hits = Physics.CapsuleCastAll( top, bottom, radius, dir, dist, collisionLayers, QueryTriggerInteraction.Ignore);
+            bool didHit = hits.Count() > 0;
+
+            // Find the closest objects hit
+            float closestDist = didHit ? Enumerable.Min(hits.Select(hit => hit.distance)) : 0;
+            IEnumerable<RaycastHit> closestHit = hits.Where(hit => hit.distance == closestDist);
+
+            // Get the first hit object out of the things the player collides with
+            hit = closestHit.FirstOrDefault();
+
+            // Return if any objects were hit
+            return didHit;
         }
 
         public void SnapPlayerDown()
         {
-             bool closeToGround = CastSelf(
-                transform.position,
-                transform.rotation,
-                Vector3.down,
-                snapDownDistance,
-                out RaycastHit groundHit);
+            bool closeToGround = CastSelf(
+               transform.position,
+               transform.rotation,
+               Vector3.down,
+               snapDownDistance,
+               out RaycastHit groundHit);
 
             // If within the threshold distance of the ground
             if (closeToGround && groundHit.distance > 0)
             {
-                print("snapping down ");
                 // Snap the player down the distance they are from the ground
                 transform.position += Vector3.down * (groundHit.distance - 0.001f);
             }

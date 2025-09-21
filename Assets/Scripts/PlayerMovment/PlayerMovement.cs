@@ -77,7 +77,7 @@ namespace KinematicCharacterControler
                 player.transform.forward = Vector3.Slerp(player.transform.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
             }
 
-             bool onGround= engine.CheckIfGrounded(out RaycastHit groundHit);
+            bool onGround = engine.CheckIfGrounded(out RaycastHit groundHit);
 
 
             bool falling = !(onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal));
@@ -101,7 +101,7 @@ namespace KinematicCharacterControler
             }
 
             // Player can jump if they are (1) on the ground, (2) within the ground jump angle, (3), after the jump cooldown
-            bool canJump = onGround  && engine.groundedState.angle <= maxJumpAngle && m_timeSinceLastJump >= jumpCooldown;
+            bool canJump = onGround && engine.groundedState.angle <= maxJumpAngle && m_timeSinceLastJump >= jumpCooldown;
             bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
             // Have player jump if they can jump and are attempting to jump
@@ -110,19 +110,19 @@ namespace KinematicCharacterControler
                 m_velocity = Vector3.up * jumpVelocity;
                 m_timeSinceLastJump = 0.0f;
                 jumpInputElapsed = Mathf.Infinity;
-                engine.shouldSnapDown = false;
 
             }
             else
             {
                 m_timeSinceLastJump += Time.deltaTime;
                 jumpInputElapsed += Time.deltaTime;
-                engine.shouldSnapDown = true;
             }
 
             transform.position = engine.MovePlayer(inputDir * speed * Time.deltaTime);
             transform.position = engine.MovePlayer(m_velocity * Time.deltaTime);
-   
+
+            if(onGround && !attemptingJump)
+                engine.SnapPlayerDown();
 
         }
     }
