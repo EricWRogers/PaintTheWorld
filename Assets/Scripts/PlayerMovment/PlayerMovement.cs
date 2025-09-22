@@ -121,7 +121,7 @@ namespace KinematicCharacterControler
                 player.transform.forward = Vector3.Slerp(player.transform.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
             }
 
-            bool onGround = engine.CheckIfGrounded(out RaycastHit groundHit);
+            bool onGround = engine.CheckIfGrounded(out RaycastHit groundHit) && m_velocity.y <= 0.0f;
             bool falling = !(onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal));
 
             // Handle gravity and falling
@@ -130,7 +130,7 @@ namespace KinematicCharacterControler
                 m_velocity += gravity * Time.deltaTime;
                 m_elapsedFalling += Time.deltaTime;
             }
-            else if(jumpInputElapsed == Mathf.Infinity)
+            else if(onGround)
             {
                 m_velocity = Vector3.zero;
                 m_elapsedFalling = 0;
@@ -318,7 +318,7 @@ namespace KinematicCharacterControler
             float railLength = currentRail.GetRailLength();
             if (railLength > 0)
             {
-                float progressDelta = actualDistance / railLength;
+                float progressDelta = (actualDistance / railLength) * m_railDir;
                 railProgress += progressDelta;
             }
             
@@ -350,7 +350,7 @@ namespace KinematicCharacterControler
             // Give player exit velocity
             if (currentRail != null)
             {
-                Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress);
+                Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
                 m_velocity = railDirection * grindSpeed;
                 
                 m_velocity.y = grindExitForce;

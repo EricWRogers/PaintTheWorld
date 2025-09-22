@@ -59,5 +59,24 @@ namespace KinematicCharacterControler
             }
             return length;
         }
+
+        void OnDrawGizmos()
+        {
+            if (railPoints == null || railPoints.Length < 2) return;
+
+            Gizmos.color = Color.cyan;
+            for (int i = 0; i < railPoints.Length - 1; i++)
+            {
+                if (railPoints[i] != null && railPoints[i + 1] != null)
+                {
+                    Gizmos.DrawLine(railPoints[i].position, railPoints[i + 1].position);
+                    Gizmos.DrawWireSphere(railPoints[i].position, railWidth * 0.5f);
+                }
+            }
+
+            if (railPoints[railPoints.Length - 1] != null)
+                Gizmos.DrawWireSphere(railPoints[railPoints.Length - 1].position, railWidth * 0.5f);
+        }
+
     }
 }
