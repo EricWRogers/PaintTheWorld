@@ -40,7 +40,7 @@ public class Inventory : MonoBehaviour
 
         if (def.stackable)
         {
-            var stack = items.Find(s => s.item == def);
+            var stack = items.Find(s => s.item == def);  ///new stacking method
             if (stack == null)
             {
                 items.Add(new ItemStack { item = def, count = Mathf.Min(amount, def.maxStack) });
