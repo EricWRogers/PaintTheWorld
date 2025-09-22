@@ -104,7 +104,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -266,9 +266,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   rotationSpeed: 5
+  maxWalkAngle: 60
   player: {fileID: 987569071003229930}
   cam: {fileID: 2558197743922652643}
   engine: {fileID: 3795677865678502492}
+  gravity: {x: 0, y: -9, z: 0}
+  lockCursor: 1
+  jumpVelocity: 5
+  maxJumpAngle: 80
+  jumpCooldown: 0.25
+  jumpInputElapsed: Infinity
+  m_jumpInputPressed: 0
+  railLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  railDetectionRadius: 1.5
+  railSnapDistance: 2
+  minGrindSpeed: 3
+  grindBalanceForce: 5
+  grindExitForce: 8
+  grindKey: 306
+  currentRail: {fileID: 0}
+  railProgress: 0
+  grindSpeed: 0
+  grindVelocity: {x: 0, y: 0, z: 0}
+  grindInputHeld: 0
 --- !u!114 &3795677865678502492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,16 +304,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   capsule: {fileID: 7236730804248690065}
-  skinWidth: 0.015
-  defaultGroundCheck: 0.25
-  defaultGroundedDistance: 0.05
-  previousPosition: {x: 0, y: 0, z: 0}
-  maxBounces: 5
-  maxSlopeAngle: 55
-  gravity: {x: 0, y: -0.05, z: 0}
   collisionLayers:
     serializedVersion: 2
     m_Bits: 503
+  skinWidth: 0.015
+  maxBounces: 5
+  maxSlopeAngle: 55
+  defaultGroundCheck: 0.1
+  defaultGroundedDistance: 0.05
+  snapDownDistance: 0.45
+  shouldSnapDown: 1
+  gravity: {x: 0, y: -0.05, z: 0}
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0

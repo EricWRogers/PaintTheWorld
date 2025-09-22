@@ -109,8 +109,8 @@ namespace KinematicCharacterControler
                 // Rotate the remaining movement to be projected along the plane of the hit surface
                 Vector3 projected = Vector3.ProjectOnPlane(remaining, planeNormal).normalized * remaining.magnitude;
 
-                // If projected remaining movement is less than original remaining movement (so if the projection broke
-                // due to float operations), then change this to just project along the vertical.
+                // If projected remaining movement is less than original remaining movement (broke from floating point),
+                // then change this to just project along the vertical.
                 if (projected.magnitude + 0.001f < remaining.magnitude)
                 {
                     remaining = Vector3.ProjectOnPlane(remaining, Vector3.up).normalized * remaining.magnitude;
