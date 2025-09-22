@@ -226,7 +226,6 @@ namespace KinematicCharacterControler
             Vector3 bottom = center + rot * Vector3.down * (height / 2 - radius);
             Vector3 top = center + rot * Vector3.up * (height / 2 - radius);
 
-            // Check what objects this collider will hit when cast with this configuration excluding itself
             IEnumerable<RaycastHit> hits = Physics.CapsuleCastAll( top, bottom, radius, dir, dist, collisionLayers, QueryTriggerInteraction.Ignore);
             bool didHit = hits.Count() > 0;
 
@@ -234,7 +233,6 @@ namespace KinematicCharacterControler
             float closestDist = didHit ? Enumerable.Min(hits.Select(hit => hit.distance)) : 0;
             IEnumerable<RaycastHit> closestHit = hits.Where(hit => hit.distance == closestDist);
 
-            // Get the first hit object out of the things the player collides with
             hit = closestHit.FirstOrDefault();
 
             // Return if any objects were hit

@@ -23,7 +23,7 @@ namespace KinematicCharacterControler
         public bool lockCursor = true;
 
         [Header("Jump Settings")]
-        public float jumpVelocity = 5.0f;
+        public float jumpForce = 5.0f;
         public float maxJumpAngle = 80f;
         public float jumpCooldown = 0.25f;
         public float jumpInputElapsed = Mathf.Infinity;
@@ -48,6 +48,7 @@ namespace KinematicCharacterControler
         public float grindSpeed;
         public Vector3 grindVelocity;
         public bool grindInputHeld;
+        public float m_railDir = 1f;
 
         void Start()
         {
@@ -68,7 +69,7 @@ namespace KinematicCharacterControler
             }
             else
             {
-                HandleGrindMovement();
+                ContinueGrinding();
             }
         }
 
@@ -129,7 +130,7 @@ namespace KinematicCharacterControler
                 m_velocity += gravity * Time.deltaTime;
                 m_elapsedFalling += Time.deltaTime;
             }
-            else
+            else if(jumpInputElapsed == Mathf.Infinity)
             {
                 m_velocity = Vector3.zero;
                 m_elapsedFalling = 0;
@@ -141,7 +142,7 @@ namespace KinematicCharacterControler
 
             if (canJump && attemptingJump)
             {
-                m_velocity = Vector3.up * jumpVelocity;
+                m_velocity = Vector3.up * jumpForce;
                 m_timeSinceLastJump = 0.0f;
                 jumpInputElapsed = Mathf.Infinity;
             }
@@ -158,10 +159,6 @@ namespace KinematicCharacterControler
                 engine.SnapPlayerDown();
         }
 
-        void HandleGrindMovement()
-        {
-            ContinueGrinding();
-        }
 
         // RAIL GRINDING SYSTEM
         void TryStartGrinding()
@@ -251,8 +248,30 @@ namespace KinematicCharacterControler
             currentRail = rail;
             railProgress = progress;
 
-            Vector3 railDirection = rail.GetDirectionOnRail(progress);
+            ;
             grindSpeed = speed;
+
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            Vector3 inputDir = m_orientation.forward * vertical + m_orientation.right * horizontal;
+            
+            // Get rail direction at this point
+            Vector3 railDir = rail.GetDirectionOnRail(progress);
+            
+            // Determine which direction along the rail matches player's movement better
+            float forwardDot = Vector3.Dot(inputDir.normalized, railDir);
+            float backwardDot = Vector3.Dot(inputDir.normalized, -railDir);
+            
+            // Set initial rail direction (1 = forward along rail, -1 = backward)
+            if (inputDir.magnitude > 0.1f) // If player has input
+            {
+                m_railDir = forwardDot > backwardDot ? 1f : -1f;
+            }
+            else
+            {
+                m_railDir = 1f; // Default to forward
+            }
+            
             
             Vector3 railPosition = rail.GetPointOnRail(progress);
             transform.position = railPosition;
@@ -267,33 +286,27 @@ namespace KinematicCharacterControler
                 ExitGrinding();
                 return;
             }
-            
-            
-            // Exit if at end of rail
-            if (railProgress >= 1f)
+
+            if (m_jumpInputPressed)
             {
                 ExitGrinding();
                 return;
             }
             
+            // Exit if at end of rail
+                if (railProgress >= 1f || railProgress <= 0f)
+                {
+                    ExitGrinding();
+                    return;
+                }
+            
             // Calculate movement along rail
-            Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress);
+            Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
             
-            // Apply gravity influence (makes grinding faster downhill, slower uphill)
-            float gravityEffect = Vector3.Dot(gravity.normalized, railDirection) * currentRail.gravityInfluence;
-            grindSpeed += gravityEffect * Time.deltaTime;
             
-            // Apply speed curve
-            float speedMultiplier = currentRail.speedCurve.Evaluate(railProgress);
-            float effectiveSpeed = grindSpeed * speedMultiplier;
+            Vector3 railMovement = railDirection * grindSpeed * Time.deltaTime;
             
-            // Clamp minimum speed
-            effectiveSpeed = Mathf.Max(minGrindSpeed, effectiveSpeed);
-            
-            // Calculate desired movement along rail
-            Vector3 railMovement = railDirection * effectiveSpeed * Time.deltaTime;
-            
-            // Use your movement engine for the rail movement
+
             Vector3 currentPos = transform.position;
             Vector3 newPosition = engine.MovePlayer(railMovement);
             transform.position = newPosition;
@@ -307,25 +320,10 @@ namespace KinematicCharacterControler
             {
                 float progressDelta = actualDistance / railLength;
                 railProgress += progressDelta;
-                
-                // Clamp progress to ensure it doesn't go beyond the rail
-                railProgress = Mathf.Clamp01(railProgress);
             }
             
-            // Additional check: if we're very close to the end, snap to end
-            if (railProgress > 0.95f)
-            {
-                Vector3 railEnd = currentRail.GetPointOnRail(1f);
-                float distanceToEnd = Vector3.Distance(transform.position, railEnd);
-                
-                // If very close to end, consider it reached
-                if (distanceToEnd < 1f)
-                {
-                    railProgress = 1f;
-                }
-            }
             
-            // Keep player aligned to rail (prevent drift)
+
             Vector3 idealRailPosition = currentRail.GetPointOnRail(railProgress);
             Vector3 currentRailPosition = transform.position;
             
@@ -340,7 +338,7 @@ namespace KinematicCharacterControler
             }
             
             // Store grind velocity for potential exit
-            grindVelocity = railDirection * effectiveSpeed;
+            grindVelocity = railDirection * grindSpeed;
         }
         
         void ExitGrinding()
@@ -355,7 +353,6 @@ namespace KinematicCharacterControler
                 Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress);
                 m_velocity = railDirection * grindSpeed;
                 
-                // Add slight upward velocity for smooth transition
                 m_velocity.y = grindExitForce;
             }
             
@@ -377,12 +374,6 @@ namespace KinematicCharacterControler
                 Gizmos.DrawRay(railPos, railDir * 2f);
             }
             
-            // Show detection radius when not grinding
-            if (!isGrinding)
-            {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawWireSphere(transform.position, railDetectionRadius);
-            }
         }
     }
 }

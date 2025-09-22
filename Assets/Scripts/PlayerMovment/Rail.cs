@@ -16,25 +16,7 @@ namespace KinematicCharacterControler
         [Header("Grinding Physics")]
         public float baseGrindSpeed = 8f;
         public float gravityInfluence = 0.00f; // How much gravity affects grinding
-        public AnimationCurve speedCurve = AnimationCurve.Linear(0, 1, 1, 1); // Speed variation along rail
 
-        void OnDrawGizmos()
-        {
-            if (railPoints == null || railPoints.Length < 2) return;
-
-            Gizmos.color = Color.cyan;
-            for (int i = 0; i < railPoints.Length - 1; i++)
-            {
-                if (railPoints[i] != null && railPoints[i + 1] != null)
-                {
-                    Gizmos.DrawLine(railPoints[i].position, railPoints[i + 1].position);
-                    Gizmos.DrawWireSphere(railPoints[i].position, railWidth * 0.5f);
-                }
-            }
-
-            if (railPoints[railPoints.Length - 1] != null)
-                Gizmos.DrawWireSphere(railPoints[railPoints.Length - 1].position, railWidth * 0.5f);
-        }
 
         public Vector3 GetPointOnRail(float t)
         {
