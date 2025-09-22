@@ -1,4 +1,5 @@
 using System.ComponentModel.Design.Serialization;
+using System.Net.Mail;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -370,7 +371,7 @@ namespace KinematicCharacterControler
                 Vector3 railPos = currentRail.GetPointOnRail(railProgress);
                 Gizmos.DrawWireSphere(railPos, 0.5f);
                 
-                Vector3 railDir = currentRail.GetDirectionOnRail(railProgress);
+                Vector3 railDir = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
                 Gizmos.DrawRay(railPos, railDir * 2f);
             }
             
