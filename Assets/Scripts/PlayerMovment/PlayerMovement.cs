@@ -166,7 +166,7 @@ namespace KinematicCharacterControler
         // RAIL GRINDING SYSTEM
         void TryStartGrinding()
         {
-            // Only try to grind if input is held and player has some velocity
+
             if (!grindInputHeld) return;
             
             // Check for nearby rails
