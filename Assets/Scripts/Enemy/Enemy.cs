@@ -8,6 +8,7 @@ using UnityEngine.Events;
 public class Enemy : MonoBehaviour
 {
     public GameObject player;
+    public EnemyManager EM;
 
     [Header("Stats")]
     public int damage = 20;
@@ -93,6 +94,6 @@ public class Enemy : MonoBehaviour
 
     public void OnDestroy()
     {
-        
+        EM.RemoveEnemy();
     }
 }

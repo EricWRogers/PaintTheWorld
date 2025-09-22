@@ -17,7 +17,7 @@ public class ObjectSpawner : MonoBehaviour
         }
     }
 
-    public void SpawnObject()
+    public GameObject SpawnObject()
     {
         int ranInt = Random.Range(0, objectsToSpawn.Count);
         Vector3 spawnPosition = new Vector3(
@@ -26,7 +26,7 @@ public class ObjectSpawner : MonoBehaviour
             Random.Range(-spawnAreaSize.z / 2, spawnAreaSize.z / 2)
         ) + transform.position;
 
-        GameObject.Instantiate(objectsToSpawn[ranInt], spawnPosition, transform.rotation);
+        return GameObject.Instantiate(objectsToSpawn[ranInt], spawnPosition, transform.rotation);
     }
 
     public void SpawnMax()
