@@ -167,7 +167,7 @@ namespace KinematicCharacterControler
         void TryStartGrinding()
         {
             // Only try to grind if input is held and player has some velocity
-            if (!grindInputHeld || m_velocity.magnitude < minGrindSpeed) return;
+            if (!grindInputHeld) return;
             
             // Check for nearby rails
             Collider[] railColliders = Physics.OverlapSphere(transform.position, railDetectionRadius, railLayer);
