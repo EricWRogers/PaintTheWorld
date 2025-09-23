@@ -133,13 +133,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   comboResetTime: 2
-  specialSwingAngle: 90
-  specialLiftAngle: 315
-  specialSwingSpeed: 4
+  brushgunDuration: 1.5
   attackVFX: {fileID: 9081548361384818351}
+  attackVFXRadius: 0.5
   animator: {fileID: 2044424571974789160}
   holdAttackBool: HoldAttack
-  specialTrigger: Special
+  brushgunBool: BrushGun
 --- !u!95 &2044424571974789160
 Animator:
   serializedVersion: 7

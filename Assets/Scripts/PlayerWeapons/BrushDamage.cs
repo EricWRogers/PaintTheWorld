@@ -16,20 +16,18 @@ public class BushDamage : MonoBehaviour
     public float rayLength = 2f;       // Attack reach
     public LayerMask hitMask;          // Who can be hit
     public float comboResetTime = 1f;  // Time allowed between combo clicks (unused)
-
-    [Header("Special Attack Swing")]
-    public float specialSwingAngle = 45.0f;
-    public float specialLiftAngle = 20.0f;
-    public float specialSwingSpeed = 4.0f; // For right-click special swing
+    public float brushgunDuration = 1.5f; // How long the brushgun attack stays active on click
 
     [Header("VFX")]
     [Tooltip("The particle system to play during an attack.")]
     public ParticleSystem attackVFX;
+    [Tooltip("Radius for the particle system shape (editable at runtime).")]
+    public float attackVFXRadius = 2.0f;
 
     [Header("Animator (for attacks)")]
-    public Animator animator;                 // assign in inspector
-    public string holdAttackBool = "HoldAttack"; // boolean parameter in Animator that plays the attack animation while true
-    public string specialTrigger = "Special"; // optional trigger for right-click special
+    public Animator animator;                 
+    public string holdAttackBool = "HoldAttack"; 
+    public string brushgunBool = "BrushGun";
 
     private bool isAttacking = false;
     private Quaternion originalRotation;
@@ -48,8 +46,12 @@ public class BushDamage : MonoBehaviour
 
         if (attackVFX != null)
         {
-            attackVFX.playOnAwake = false; // ensure it doesn't play at startup
+            var main = attackVFX.main;
+            main.playOnAwake = false; // ensure it doesn't play at startup
             attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            // Apply configured radius to the Shape module so the particle spread matches the inspector/runtime value
+            var shape = attackVFX.shape;
+            shape.radius = attackVFXRadius;
         }
 
         // Ensure animator default state is Idle (set in Animator window)
@@ -86,20 +88,7 @@ public class BushDamage : MonoBehaviour
         // Right-click special (uses existing coroutine or animator trigger)
         if (Input.GetButtonDown("Fire2") && !isAttacking)
         {
-            // prefer animator trigger if your special animation is in the Animator
-            if (animator != null && !string.IsNullOrEmpty(specialTrigger))
-            {
-                isAttacking = true;
-                hitTargets.Clear();
-                if (attackVFX != null) attackVFX.Play();
-                animator.SetTrigger(specialTrigger);
-                // End of special should be signaled by an animation event to EndAttackEvent()
-            }
-            else
-            {
-                // fallback to the coroutine if you still want code-driven special
-                StartCoroutine(AnimateSpecialSwing());
-            }
+            StartCoroutine(BrushGun());
         }
     }
 
@@ -132,8 +121,6 @@ public class BushDamage : MonoBehaviour
         if (attackVFX != null)
             attackVFX.Stop();
 
-        // End attack state. If your animation has a recovery that must finish before allowing other attacks,
-        // use an Animation Event to call EndAttackEvent() instead of immediately clearing isAttacking.
         isAttacking = false;
         yield break;
     }
@@ -141,8 +128,6 @@ public class BushDamage : MonoBehaviour
     // Called from Animation Event at the exact hit frame(s)
     public void AnimationHitEvent()
     {
-        // Optionally clear hitTargets at start of each animation hit window via a separate event:
-        // Call ClearHitTargets() in animation at the start of the swing if you want to allow fresh hits.
         DoRaycast();
     }
 
@@ -163,47 +148,52 @@ public class BushDamage : MonoBehaviour
     // ---------------------------
     // Existing code-driven special (kept as fallback)
     // ---------------------------
-    IEnumerator AnimateSpecialSwing()
+    IEnumerator BrushGun()
     {
         isAttacking = true;
-        hitTargets.Clear(); // Clear list of enemies already hit
+        hitTargets.Clear();
 
         if (attackVFX != null)
         {
+            attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             attackVFX.Play();
         }
 
-        // Define the target rotation for the special swing
-        Quaternion targetRotation = originalRotation * Quaternion.Euler(-specialLiftAngle, -specialSwingAngle, 0);
+        if (animator != null && !string.IsNullOrEmpty(brushgunBool))
+            animator.SetBool(brushgunBool, true);
 
-        // --- Animate the swing outwards ---
-        float t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * specialSwingSpeed;
-            transform.localRotation = Quaternion.Slerp(originalRotation, targetRotation, t);
+        // Click-based attack: play animation/VFX for a short configurable duration.
+        // Animation should call AnimationHitEvent() at the correct frame(s). After duration, return to idle.
+        yield return new WaitForSeconds(brushgunDuration);
 
-            DoRaycast(); // Check for hits during the swing
-            yield return null;
-        }
+        // End the brushgun state
+        if (animator != null && !string.IsNullOrEmpty(brushgunBool))
+            animator.SetBool(brushgunBool, false);
 
-        // --- Animate the swing back ---
-        t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * specialSwingSpeed;
-            transform.localRotation = Quaternion.Slerp(targetRotation, originalRotation, t);
-            if (attackVFX != null)
-            {
-                attackVFX.Stop();
-            }
-            DoRaycast(); // Check for hits during the return
-            yield return null;
-        }
+        if (attackVFX != null)
+            attackVFX.Stop();
 
-        // Ensure the weapon is perfectly reset
-        transform.localRotation = originalRotation;
         isAttacking = false;
+        yield break;
+    }
+
+    public void ParticleStart()
+    {
+        if (attackVFX != null)
+        {
+            // Ensure radius is applied in case it was changed at runtime
+            var shape = attackVFX.shape;
+            shape.radius = attackVFXRadius;
+
+            attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            attackVFX.Play();
+        }
+    }
+
+    public void ParticleStop()
+    {
+        if (attackVFX != null)
+            attackVFX.Stop();
     }
 
     // ---------------------------
