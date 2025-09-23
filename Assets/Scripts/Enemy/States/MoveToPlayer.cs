@@ -13,6 +13,7 @@ public class MoveToPlayer : SimpleState
     public SimpleStateMachine sm;
     public override void OnStart()
     {
+        Debug.Log("Walking");
         agent.SetDestination(target.position);
         agent.isStopped = false;
     }

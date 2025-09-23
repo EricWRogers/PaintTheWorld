@@ -31,8 +31,7 @@ public class EnemyManager : MonoBehaviour
         {
             if (m_numberOfEnemies < maxNumberOfEnemies)
             {
-                GameObject enemy = spawners[m_ranSpawner].SpawnObject();
-                enemy.GetComponent<Enemy>().EM = this;
+                spawners[m_ranSpawner].SpawnObject();
                 m_numberOfEnemies++;
             }
 

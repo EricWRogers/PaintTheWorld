@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     public float speed = 4;
     public float rotationSpeed = 10;
     public float attackRange;
+    public bool canSeePlayer;
 
     [Header("Animation")]
     public Animator anim;
@@ -34,29 +35,39 @@ public class Enemy : MonoBehaviour
     {
         GetComponent<Health>().maxHealth = health;
         p_agent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player");
+        
         m_hitbox = hitboxObj.GetComponent<BoxCollider>();
         p_rb = GetComponent<Rigidbody>();
         p_agent.speed = speed;
     }
     public void Start()
     {
-
+        player = GameObject.FindGameObjectWithTag("Player");
+        EM = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
     }
 
     public void Update()
     {
-        if (hitboxActive)
+        Vector3 dir = (player.transform.position - transform.position).normalized;
+        if (Physics.Raycast(transform.position, dir, out RaycastHit hit))
         {
-            if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2.0f, transform.forward, out RaycastHit hitInfo, transform.rotation, Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center), layerMask))
+            if (hit.transform.gameObject.tag == "Player")
             {
-                
-                if (!m_hitPlayer)
+                canSeePlayer = true;
+            }
+            else canSeePlayer = false;
+        }
+        if (hitboxActive)
+            {
+                if (Physics.BoxCast(hitboxObj.transform.position, m_hitbox.size / 2.0f, transform.forward, out RaycastHit hitInfo, transform.rotation, Vector3.Distance(hitboxObj.transform.localPosition, m_hitbox.center), layerMask))
                 {
-                    DamagePlayer();
+
+                    if (!m_hitPlayer)
+                    {
+                        DamagePlayer();
+                    }
                 }
             }
-        }
     }
 
     public void DamagePlayer()
@@ -90,6 +101,10 @@ public class Enemy : MonoBehaviour
         {
             inAttackAnim = true;
         }
+    }
+    public void Dead()
+    {
+        Destroy(gameObject);
     }
 
     public void OnDestroy()

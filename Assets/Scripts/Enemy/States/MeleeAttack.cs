@@ -20,7 +20,7 @@ public class MeleeAttack : SimpleState
     public override void OnStart()
     {
         m_enemy = enemyObj.GetComponent<Enemy>();
-        
+        Debug.Log("attacking");
         
     }
     public override void UpdateState(float dt)
