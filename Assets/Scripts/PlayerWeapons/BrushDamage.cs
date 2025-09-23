@@ -5,34 +5,36 @@ using System.Collections.Generic;
 
 public class BushDamage : MonoBehaviour
 {
-    [Header("Trap Damage (On Touch)")]
+ [Header("Trap Damage (On Touch)")]
     public string targetTag = "Enemy";
 
     [Header("Weapon Attack Settings")]
     public Transform attackPart;       // The handle/child cube
-    public float attackAngle = 45f;    // Swing angle
-    public float attackSpeed = 6f;     // Swing speed
+    public float attackAngle = 45f;    // Swing angle (unused for hardcoded animation)
+    public float attackSpeed = 6f;     // Swing speed (unused for hardcoded animation)
     public int weaponDamage = 15;      // Damage dealt per hit
     public float rayLength = 2f;       // Attack reach
     public LayerMask hitMask;          // Who can be hit
-    public float comboResetTime = 2f;  // Time allowed between combo clicks
-    
-    [Header("Special Attack Swing")]
-    public float specialSwingAngle = 45.0f;
-    public float specialLiftAngle = 20.0f;
-    public float specialSwingSpeed = 4.0f; // <-- For your right-click attack
+    public float comboResetTime = 1f;  // Time allowed between combo clicks (unused)
+    public float brushgunDuration = 1.5f; // How long the brushgun attack stays active on click
 
     [Header("VFX")]
     [Tooltip("The particle system to play during an attack.")]
     public ParticleSystem attackVFX;
+    [Tooltip("Radius for the particle system shape (editable at runtime).")]
+    public float attackVFXRadius = 2.0f;
+
+    [Header("Animator (for attacks)")]
+    public Animator animator;                 
+    public string holdAttackBool = "HoldAttack"; 
+    public string brushgunBool = "BrushGun";
 
     private bool isAttacking = false;
-    private int comboStep = 0;         // 0 = first attack
-    private float lastClickTime = 0f;
     private Quaternion originalRotation;
     private Vector3 originalPosition;
 
-     private List<GameObject> hitTargets = new List<GameObject>();
+    // Prevent multiple damages in a single hit/frame; cleared by animation at start of each hit window
+    private List<GameObject> hitTargets = new List<GameObject>();
 
     void Start()
     {
@@ -41,7 +43,25 @@ public class BushDamage : MonoBehaviour
 
         originalRotation = attackPart.localRotation;
         originalPosition = attackPart.localPosition;
+
+        if (attackVFX != null)
+        {
+            var main = attackVFX.main;
+            main.playOnAwake = false; // ensure it doesn't play at startup
+            attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            // Apply configured radius to the Shape module so the particle spread matches the inspector/runtime value
+            var shape = attackVFX.shape;
+            shape.radius = attackVFXRadius;
+        }
+
+        // Ensure animator default state is Idle (set in Animator window)
+        if (animator == null)
+        {
+            // Try to get an Animator on this GameObject if not assigned
+            animator = GetComponent<Animator>();
+        }
     }
+
     void OnTriggerEnter(Collider other)
     {
         if (!isAttacking) return; // Only damage during attack
@@ -56,193 +76,144 @@ public class BushDamage : MonoBehaviour
             }
         }
     }
-    // ---------------------------
-    // Handle LMB combo system
-    // ---------------------------
+
     void Update()
     {
+        // Hold-to-attack: start when Fire1 pressed, stop when released
         if (Input.GetButtonDown("Fire1") && !isAttacking)
         {
-            float timeSinceLastClick = Time.time - lastClickTime;
-
-            if (timeSinceLastClick > comboResetTime)
-            {
-                comboStep = 0; // reset combo if too slow
-            }
-
-            if (comboStep == 0)
-                StartCoroutine(SlashAttack(-attackAngle, -attackAngle));   // Left Diagonal
-            else if (comboStep == 1)
-                StartCoroutine(SlashAttack(-attackAngle, attackAngle));   // Right Diagonal
-            else if (comboStep == 2)
-                StartCoroutine(PokeAttack());                             // Poke
-
-            comboStep = (comboStep + 1) % 3; // cycle back to first after third attack
-            lastClickTime = Time.time;
+            StartCoroutine(HoldAttackCoroutine());
         }
 
-    if (Input.GetButtonDown("Fire2") && !isAttacking)
-    {
-        // Call the new diagonal swing coroutine
-        StartCoroutine(AnimateSpecialSwing()); 
-        comboStep = 0; // Reset combo after a special attack
-    }
+        // Right-click special (uses existing coroutine or animator trigger)
+        if (Input.GetButtonDown("Fire2") && !isAttacking)
+        {
+            StartCoroutine(BrushGun());
+        }
     }
 
-    // ---------------------------
-    // Slash attack (diagonal)
-    // ---------------------------
-    IEnumerator SlashAttack(float xAngle, float yAngle)
+    // Starts the animator boolean and VFX; animation should call AnimationHitEvent() via Animation Events
+    IEnumerator HoldAttackCoroutine()
     {
         isAttacking = true;
+        hitTargets.Clear();
 
         if (attackVFX != null)
         {
-            attackVFX.Play();
-        }
-      
-
-        Quaternion targetRot = originalRotation * Quaternion.Euler(xAngle, yAngle, 0);
-        Vector3 originalPos = attackPart.localPosition;
-        Vector3 backwardsPos = originalPos - attackPart.forward * 0.5f; // Move 0.5 units forward
-
-        DoRaycast();
-
-        float t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * attackSpeed;
-            attackPart.localRotation = Quaternion.Slerp(originalRotation, targetRot, t);
-            attackPart.localPosition = Vector3.Lerp(originalPos, backwardsPos, t);
-            DoRaycast();
-           
-            yield return null;
-        }
-
-        // Return
-        t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * attackSpeed;
-            attackPart.localRotation = Quaternion.Slerp(targetRot, originalRotation, t);
-            attackPart.localPosition = Vector3.Lerp(backwardsPos, originalPos, t);
-
-            if (attackVFX != null)
-            {
-                attackVFX.Stop();
-            }
-
-            DoRaycast();
-            yield return null;
-        }
-
-        attackPart.localRotation = originalRotation;
-        attackPart.localPosition = originalPos;
-        isAttacking = false;
-    }
-
-    IEnumerator PokeAttack()
-    {
-        isAttacking = true;
-
-        if (attackVFX != null)
-        {
+            attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             attackVFX.Play();
         }
 
-        Vector3 originalPos = attackPart.localPosition;
-        Vector3 backwardsPos = originalPos - attackPart.forward * 0.5f;
+        if (animator != null && !string.IsNullOrEmpty(holdAttackBool))
+            animator.SetBool(holdAttackBool, true);
 
-        // Check for hit at initial position
-
-        float t = 0f;
-        while (t < 1f)
+        // Hold while button is down. Actual hits should be invoked from the animation via AnimationHitEvent().
+        while (Input.GetButton("Fire1"))
         {
-            t += Time.deltaTime * attackSpeed;
-            attackPart.localPosition = Vector3.Lerp(originalPos, backwardsPos, t);
-            DoRaycast();
             yield return null;
         }
 
-        // Return
-        t = 0f;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * attackSpeed;
-            attackPart.localPosition = Vector3.Lerp(backwardsPos, originalPos, t);
+        // Released: stop the animator bool so it blends back to idle
+        if (animator != null && !string.IsNullOrEmpty(holdAttackBool))
+            animator.SetBool(holdAttackBool, false);
 
-            if (attackVFX != null)
-            {
-                attackVFX.Stop();
-            }
-
-            DoRaycast();
-            yield return null;
-        }
-
-        attackPart.localPosition = originalPos;
-        isAttacking = false;
-    }
-
-    // ---------------------------
-    // Raycast damage
-    // ---------------------------
-
-
-  IEnumerator AnimateSpecialSwing()
-{
-    isAttacking = true;
-    hitTargets.Clear(); // Clear list of enemies already hit
-    
-    if (attackVFX != null)
-    {
-        attackVFX.Play();
-    }
-
-    // Define the target rotation for the special swing
-        Quaternion targetRotation = originalRotation * Quaternion.Euler(-specialLiftAngle, -specialSwingAngle, 0);
-
-    // --- Animate the swing outwards ---
-    float t = 0f;
-    while (t < 1f)
-    {
-        t += Time.deltaTime * specialSwingSpeed;
-        transform.localRotation = Quaternion.Slerp(originalRotation, targetRotation, t);
-
-
-        DoRaycast(); // Check for hits during the swing
-        yield return null;
-    }
-
-    // --- Animate the swing back ---
-    t = 0f;
-    while (t < 1f)
-    {
-        t += Time.deltaTime * specialSwingSpeed;
-        transform.localRotation = Quaternion.Slerp(targetRotation, originalRotation, t);
+        // Stop VFX immediately (the animation can also stop it via event if preferred)
         if (attackVFX != null)
-        {
             attackVFX.Stop();
-        }
-        DoRaycast(); // Check for hits during the return
-        yield return null;
+
+        isAttacking = false;
+        yield break;
     }
 
-    // Ensure the weapon is perfectly reset
-    transform.localRotation = originalRotation;
-    isAttacking = false;
-}
+    // Called from Animation Event at the exact hit frame(s)
+    public void AnimationHitEvent()
+    {
+        DoRaycast();
+    }
 
+    // Optional helper: call from animation at moment you want to allow the same targets to be hit again
+    public void ClearHitTargets()
+    {
+        hitTargets.Clear();
+    }
+
+    // Optional helper: call from animation at the end of the special/attack clip to re-enable input
+    public void EndAttackEvent()
+    {
+        isAttacking = false;
+        if (attackVFX != null)
+            attackVFX.Stop();
+    }
+
+    // ---------------------------
+    // Existing code-driven special (kept as fallback)
+    // ---------------------------
+    IEnumerator BrushGun()
+    {
+        isAttacking = true;
+        hitTargets.Clear();
+
+        if (attackVFX != null)
+        {
+            attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            attackVFX.Play();
+        }
+
+        if (animator != null && !string.IsNullOrEmpty(brushgunBool))
+            animator.SetBool(brushgunBool, true);
+
+        // Click-based attack: play animation/VFX for a short configurable duration.
+        // Animation should call AnimationHitEvent() at the correct frame(s). After duration, return to idle.
+        yield return new WaitForSeconds(brushgunDuration);
+
+        // End the brushgun state
+        if (animator != null && !string.IsNullOrEmpty(brushgunBool))
+            animator.SetBool(brushgunBool, false);
+
+        if (attackVFX != null)
+            attackVFX.Stop();
+
+        isAttacking = false;
+        yield break;
+    }
+
+    public void ParticleStart()
+    {
+        if (attackVFX != null)
+        {
+            // Ensure radius is applied in case it was changed at runtime
+            var shape = attackVFX.shape;
+            shape.radius = attackVFXRadius;
+
+            attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            attackVFX.Play();
+        }
+    }
+
+    public void ParticleStop()
+    {
+        if (attackVFX != null)
+            attackVFX.Stop();
+    }
+
+    // ---------------------------
+    // Raycast damage (used by AnimationHitEvent or code)
+    // ---------------------------
     void DoRaycast()
     {
         RaycastHit hit;
         if (Physics.Raycast(attackPart.position, attackPart.forward, out hit, rayLength, hitMask))
         {
-            Health health = hit.collider.GetComponent<Health>();
-            if (health != null)
+            GameObject go = hit.collider.gameObject;
+            if (!hitTargets.Contains(go))
             {
-                health.Damage(weaponDamage);
-                Debug.Log($"{hit.collider.name} took {weaponDamage} damage from raycast attack!");
+                hitTargets.Add(go);
+                Health health = go.GetComponent<Health>();
+                if (health != null)
+                {
+                    health.Damage(weaponDamage);
+                    Debug.Log($"{go.name} took {weaponDamage} damage from raycast attack!");
+                }
             }
         }
 
