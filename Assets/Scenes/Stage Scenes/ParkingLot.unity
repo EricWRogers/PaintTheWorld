@@ -7100,26 +7100,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 914460482668207994, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      propertyPath: tagToHit
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 914460482668207994, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      propertyPath: maxRadius
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 914460482668207994, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      propertyPath: minRadius
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 914460482668207994, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      propertyPath: hitEvent.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 914460482668207994, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      propertyPath: hitEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.33363152
@@ -7164,16 +7144,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerPrefab
       objectReference: {fileID: 0}
-    - target: {fileID: 9104941373587113884, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      propertyPath: minGrindSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 9104941373587113884, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      propertyPath: grindExitForce
-      value: 5
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 110202169985674937, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

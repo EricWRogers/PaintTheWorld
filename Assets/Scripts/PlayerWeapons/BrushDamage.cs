@@ -43,6 +43,7 @@ public class BushDamage : MonoBehaviour
 
         originalRotation = attackPart.localRotation;
         originalPosition = attackPart.localPosition;
+        attackVFX.GetComponent<ParticlePainter>().particleDamage = weaponDamage;
 
         if (attackVFX != null)
         {

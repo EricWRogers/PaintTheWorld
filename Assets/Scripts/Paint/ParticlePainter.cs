@@ -12,6 +12,7 @@ public class ParticlePainter : MonoBehaviour
     public float maxRadius = 0.2f;
     public float strength = 1;
     public float hardness = 1;
+    public int particleDamage;
     public UnityEvent hitEvent;
     public string tagToHit;
     [Space]
@@ -37,7 +38,7 @@ public class ParticlePainter : MonoBehaviour
             {
                 if (other.tag == tagToHit)
                 {
-                    hitEvent.Invoke();
+                    other.GetComponent<Health>().Damage(particleDamage);
                 }
                 Vector3 pos = collisionEvents[i].intersection;
                 float radius = Random.Range(minRadius, maxRadius);
