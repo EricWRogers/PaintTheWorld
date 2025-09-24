@@ -263,18 +263,12 @@ namespace KinematicCharacterControler
             Vector3 railDir = rail.GetDirectionOnRail(progress);
             
             // Determine which direction along the rail matches player's movement better
-            float forwardDot = Vector3.Dot(inputDir.normalized, railDir);
-            float backwardDot = Vector3.Dot(inputDir.normalized, -railDir);
+            float forwardDot = Vector3.Dot(transform.forward, railDir);
+            float backwardDot = Vector3.Dot(transform.forward, -railDir);
             
-            // Set initial rail direction (1 = forward along rail, -1 = backward)
-            if (inputDir.magnitude > 0.1f) // If player has input
-            {
+
+            
                 m_railDir = forwardDot > backwardDot ? 1f : -1f;
-            }
-            else
-            {
-                m_railDir = 1f; // Default to forward
-            }
             
             
             Vector3 railPosition = rail.GetPointOnRail(progress);
@@ -367,7 +361,7 @@ namespace KinematicCharacterControler
             railProgress = 0f;
             grindSpeed = 0f;
         }
-        
+
         // Visualization
         void OnDrawGizmos()
         {
@@ -376,10 +370,14 @@ namespace KinematicCharacterControler
                 Gizmos.color = Color.yellow;
                 Vector3 railPos = currentRail.GetPointOnRail(railProgress);
                 Gizmos.DrawWireSphere(railPos, 0.5f);
-                
+
                 Vector3 railDir = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
                 Gizmos.DrawRay(railPos, railDir * 2f);
             }
+
+            Gizmos.color = Color.blue;
+
+            Gizmos.DrawWireSphere(m_railDetectionPoint.position, railDetectionRadius);
             
         }
     }
