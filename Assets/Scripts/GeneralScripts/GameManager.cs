@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager>
 
     public void StageComplete()
     {
-
+        
     }
 
     public void SpawnBoss()

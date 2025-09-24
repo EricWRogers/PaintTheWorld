@@ -769,7 +769,7 @@ Transform:
   m_GameObject: {fileID: 974815436}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -29.1, y: 0.34, z: -24.7}
+  m_LocalPosition: {x: 8.4, y: 0.34, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1419,6 +1419,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Turret
       objectReference: {fileID: 0}
+    - target: {fileID: 7623234513540899692, guid: 0706320ce4fa64b449b5ee60c2f81723, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1594,6 +1598,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2547038236037799631, guid: 51e15d41cd6a7dd458d0bcc3d03af359, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2661077708692788967, guid: 51e15d41cd6a7dd458d0bcc3d03af359, type: 3}
       propertyPath: spawners.Array.size
       value: 1
@@ -1630,6 +1638,10 @@ PrefabInstance:
     - target: {fileID: 6449207097394993412, guid: d09365cf8fca94c41acda8452378ff9c, type: 3}
       propertyPath: m_Name
       value: Boss1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6449207097394993412, guid: d09365cf8fca94c41acda8452378ff9c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6590005544873225303, guid: d09365cf8fca94c41acda8452378ff9c, type: 3}
       propertyPath: m_LocalPosition.x
