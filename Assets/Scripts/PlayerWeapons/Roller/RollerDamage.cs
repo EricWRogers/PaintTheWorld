@@ -50,6 +50,8 @@ public class RollerDamage : MonoBehaviour
             {
                 health.Damage(weaponDamage);
                 Debug.Log($"{hit.collider.name} took {weaponDamage} damage!");
+
+                GameEvents.PlayerHitEnemy?.Invoke(health.gameObject, weaponDamage, HitSource.PlayerWeapon);
             }
         }
 
