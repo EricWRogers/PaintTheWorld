@@ -50,7 +50,7 @@ namespace KinematicCharacterControler
         public Vector3 grindVelocity;
         public bool grindInputHeld;
         public float m_railDir = 1f;
-
+        [SerializeField] private Transform m_railDetectionPoint;
         void Start()
         {
             player = GameObject.Find("Player");
@@ -110,16 +110,20 @@ namespace KinematicCharacterControler
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
+    
 
             Vector3 viewDir = transform.position - new Vector3(cam.position.x, transform.position.y, cam.position.z);
             m_orientation.forward = viewDir.normalized;
 
             Vector3 inputDir = m_orientation.forward * vertical + m_orientation.right * horizontal;
 
+
             // Rotate player
             if (inputDir != Vector3.zero)
             {
                 player.transform.forward = Vector3.Slerp(player.transform.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+                m_velocity.x = 0f;
+                m_velocity.z = 0f;
             }
 
             bool onGround = engine.CheckIfGrounded(out RaycastHit groundHit) && m_velocity.y <= 0.0f;
@@ -165,10 +169,9 @@ namespace KinematicCharacterControler
         void TryStartGrinding()
         {
 
-            if (!grindInputHeld) return;
             
             // Check for nearby rails
-            Collider[] railColliders = Physics.OverlapSphere(transform.position, railDetectionRadius, railLayer);
+            Collider[] railColliders = Physics.OverlapSphere(m_railDetectionPoint.position, railDetectionRadius, railLayer);
             
             Rail closestRail = null;
             float closestDistance = float.MaxValue;
