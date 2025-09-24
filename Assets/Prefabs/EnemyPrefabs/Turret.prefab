@@ -192,16 +192,64 @@ MonoBehaviour:
   EM: {fileID: 0}
   health: 20
   laserFirePoint: {fileID: 473290879081334283}
-  laserRotationSpeed: 20
+  laserRotationSpeed: 360
   yawOnly: 0
-  layerMask:
+  accuracyCurve:
     serializedVersion: 2
-    m_Bits: 8
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0006928444
+      value: 1.003139
+      inSlope: -0.024485053
+      outSlope: -0.024485053
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.050917894
+      value: 1.0019093
+      inSlope: -Infinity
+      outSlope: -Infinity
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.051150903
+      value: 0.3003421
+      inSlope: -16.949457
+      outSlope: -16.949457
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.09318449
+    - serializedVersion: 3
+      time: 0.10001206
+      value: 0.025041416
+      inSlope: -0.04041789
+      outSlope: -0.04041789
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.26840925
+      outWeight: 0.066125154
+    - serializedVersion: 3
+      time: 1.0000153
+      value: 0.0031433105
+      inSlope: 0.039472077
+      outSlope: 0.039472077
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.020913823
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   windupTime: 1.2
-  fireTime: 2
+  fireTime: 5
   laserCooldown: 3
   SingleFire: 0
-  maxBeamDistance: 50
+  maxBeamDistance: 80
   beamWidth: 0.2
   damage: 5
   isLasering: 0

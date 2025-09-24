@@ -9,7 +9,7 @@ public class TurretScript : MonoBehaviour
     public GameObject laserFirePoint;
     public float laserRotationSpeed = 360f;
     public bool yawOnly = true;
-    public LayerMask layerMask;
+    public AnimationCurve accuracyCurve;
 
     [Header("laser Timers")]
     public float windupTime = 1.2f;
@@ -49,6 +49,10 @@ public class TurretScript : MonoBehaviour
         lr.useWorldSpace = true;
         lr.widthCurve = AnimationCurve.Constant(0, 1, beamWidth);
         lr.enabled = false;
+        if (SingleFire)
+        {
+            fireTime = 1f;
+        }
     }
     void OnValidate()
     {
@@ -60,7 +64,11 @@ public class TurretScript : MonoBehaviour
 
     void Update()
     {
-        LaserBeam();
+        if (Vector3.Distance(m_player.transform.position, transform.position) <= maxBeamDistance)
+        {
+            LaserBeam();
+        }
+            
     }
 
 
@@ -70,7 +78,7 @@ public class TurretScript : MonoBehaviour
         switch (laserPhase)
         {
             case LaserPhase.Idle:
-                laserFirePoint.transform.LookAt(m_player.transform);
+                RotateTowardsTarget(delta);
                 lr.enabled = true;
                 lr.widthCurve = AnimationCurve.Constant(0, 1, telegraphWidth);
                 laserTimer = windupTime;
@@ -119,7 +127,6 @@ public class TurretScript : MonoBehaviour
                         if (SingleFire)
                         {
                             hitF.collider.GetComponent<Health>().Damage(damage);
-                            laserTimer = 0f;
                         }
                         else
                         {
@@ -149,7 +156,7 @@ public class TurretScript : MonoBehaviour
                 break;
 
             case LaserPhase.Cooldown:
-                laserFirePoint.transform.LookAt(m_player.transform);
+                RotateTowardsTarget(delta);
                 laserTimer -= delta;
                 if (laserTimer <= 0f)
                 {
@@ -171,8 +178,11 @@ public class TurretScript : MonoBehaviour
         if (yawOnly) toTarget.y = 0;
         if (toTarget.sqrMagnitude < 0.0001f) return;
 
-        float distance = toTarget.magnitude;
-        float scaledRotation = laserRotationSpeed / (1f + distance * distance * 0.01f);
+        float distance = Vector3.Distance(transform.position, m_player.transform.position);
+        float scaledRotation = accuracyCurve.Evaluate(distance / maxBeamDistance) * laserRotationSpeed;
+        Debug.Log("distance" + distance);
+        Debug.Log("scaled Rot" + scaledRotation);
+
         Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
         laserFirePoint.transform.rotation = Quaternion.RotateTowards(laserFirePoint.transform.rotation,targetRot,scaledRotation * delta);
     }
