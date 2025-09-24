@@ -12226,7 +12226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items:
-  - id: PaintLauncher
+  - id: paint_launcher
     displayName: Paint Launcher
     description: 'With this item, hitting an enemy will cause globs of paint to launch
       off of them and land onto nearby enemies. Causes more paint blobs when stacked. '
@@ -12235,7 +12235,7 @@ MonoBehaviour:
     stackable: 1
     maxStack: 5
     initialStock: 1
-  - id: ReactiveArmor
+  - id: reactive_armor
     displayName: Reactive Armor
     description: When activated, being hit by an enemy causes an explosion of paint
       around the player. Stacking causes a bigger effect radius
@@ -12244,7 +12244,7 @@ MonoBehaviour:
     stackable: 1
     maxStack: 5
     initialStock: 5
-  - id: ExplosivePaint
+  - id: explosive_paint
     displayName: Explosive Paint
     description: When an enemy is defeated, they explode in paint, dealing damage
       to other enemies around them
@@ -12253,7 +12253,7 @@ MonoBehaviour:
     stackable: 1
     maxStack: 5
     initialStock: 5
-  - id: SiphonPaint
+  - id: siphon_paint
     displayName: Siphon Paint
     description: 'Hitting enemies gives the player health. More health points when
       stacked. '
@@ -12262,7 +12262,7 @@ MonoBehaviour:
     stackable: 1
     maxStack: 5
     initialStock: 5
-  - id: GiftOfLife
+  - id: gift_of_life
     displayName: Gift of Life
     description: 'When the player gains health, they shoot paint globs to the closest
       enemy, triggering the paint launcher if activated. More globs when stacked. '
@@ -12271,7 +12271,7 @@ MonoBehaviour:
     stackable: 1
     maxStack: 5
     initialStock: 5
-  - id: FountainOfYouth
+  - id: fountain_of_youth
     displayName: Fountain of Youth
     description: "When enemies dies an aura spawns where they died that heals the
       player if they are in range. Stacking increases aura range\_"
