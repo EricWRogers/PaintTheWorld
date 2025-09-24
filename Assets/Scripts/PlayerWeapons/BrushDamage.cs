@@ -66,7 +66,7 @@ public class BushDamage : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!isAttacking) return; // Only damage during attack
-
+        Debug.Log(other.gameObject.name);
         if (other.CompareTag(targetTag))
         {
             Health health = other.GetComponent<Health>();
