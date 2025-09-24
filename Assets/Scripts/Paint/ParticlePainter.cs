@@ -38,6 +38,7 @@ public class ParticlePainter : MonoBehaviour
             {
                 if (other.tag == tagToHit)
                 {
+                    Debug.Log("damaged enemy");
                     other.GetComponent<Health>().Damage(particleDamage);
                 }
                 Vector3 pos = collisionEvents[i].intersection;
