@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using SuperPupSystems.Helper;
+using UnityEngine.Events;
 
 public class ParticlePainter : MonoBehaviour
 {
@@ -10,6 +12,8 @@ public class ParticlePainter : MonoBehaviour
     public float maxRadius = 0.2f;
     public float strength = 1;
     public float hardness = 1;
+    public UnityEvent hitEvent;
+    public string tagToHit;
     [Space]
     ParticleSystem part;
     List<ParticleCollisionEvent> collisionEvents;
@@ -31,6 +35,10 @@ public class ParticlePainter : MonoBehaviour
         if(p != null){
             for  (int i = 0; i< numCollisionEvents; i++)
             {
+                if (other.tag == tagToHit)
+                {
+                    hitEvent.Invoke();
+                }
                 Vector3 pos = collisionEvents[i].intersection;
                 float radius = Random.Range(minRadius, maxRadius);
                 PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);

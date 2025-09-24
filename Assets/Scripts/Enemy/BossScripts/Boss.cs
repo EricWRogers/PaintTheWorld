@@ -62,7 +62,7 @@ public class Boss : MonoBehaviour
     public float slamSpeed;
     public int slamDamage;
     public bool canSlam;
-
+    public Vector3 slamOffset;
     public Vector3 spawnAreaSize = new Vector3(50f, 20f, 50f);
     public int totalSpawned = 0;
     public int poolSize = 20;
@@ -231,7 +231,7 @@ public class Boss : MonoBehaviour
     public void SlamAttack()
     {
         slamIsDone = false;
-        transform.position = centerPoint.position;
+        transform.position = centerPoint.position + slamOffset;
         SpawnAllObjects();
         canSlam = false;
         slamIsDone = true;
@@ -361,11 +361,14 @@ public class Boss : MonoBehaviour
     public void StartSwingCombo()
     {
         dashDirection = (m_player.transform.position - transform.position).normalized;
+        dashDirection.y = 0;
         DoNextSwing();
     }
 
     private void DoNextSwing()
     {
+        dashDirection = (m_player.transform.position - transform.position).normalized;
+        dashDirection.y = 0;
         dashTarget = transform.position + dashDirection * swingDashDistance;
         isDashing = true;
     }
