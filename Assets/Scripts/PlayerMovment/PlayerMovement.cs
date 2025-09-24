@@ -297,15 +297,18 @@ namespace KinematicCharacterControler
                 return;
             }
             
-            // Exit if at end of rail
+            if (!currentRail.isLoop)
+            {
+                // Exit if at end of rail
                 if (railProgress >= 1f || railProgress <= 0f)
                 {
                     ExitGrinding();
                     return;
                 }
+            }    
             
             // Calculate movement along rail
-            Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
+                Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
             
             
             Vector3 railMovement = railDirection * grindSpeed * Time.deltaTime;
