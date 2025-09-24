@@ -73,6 +73,7 @@ public class BushDamage : MonoBehaviour
             {
                 health.Damage(weaponDamage);
                 Debug.Log($"{other.name} took {weaponDamage} damage from collider attack!");
+                 GameEvents.PlayerHitEnemy?.Invoke(health.gameObject, weaponDamage, HitSource.PlayerWeapon);
             }
         }
     }
@@ -213,6 +214,7 @@ public class BushDamage : MonoBehaviour
                 {
                     health.Damage(weaponDamage);
                     Debug.Log($"{go.name} took {weaponDamage} damage from raycast attack!");
+                    GameEvents.PlayerHitEnemy?.Invoke(health.gameObject, weaponDamage, HitSource.PlayerWeapon);
                 }
             }
         }
