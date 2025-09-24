@@ -156,6 +156,9 @@ GameObject:
   - component: {fileID: 3795677865678502492}
   - component: {fileID: 3989345470266273338}
   - component: {fileID: 7706458509901835205}
+  - component: {fileID: 6745306877372577002}
+  - component: {fileID: 2397916554979345586}
+  - component: {fileID: 5770500017975098429}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -391,6 +394,82 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   standingColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &6745306877372577002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b01434b107ae8f4f82dac22844a2d23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2397916554979345586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5df09c889e9ada40ab979ab17de94d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  onChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5770500017975098429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5861edd3bc2b5745b63d0ca06106a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skills:
+  - id: Health
+    displayName: Health
+    description: Max HP up.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    baseCost: 50
+    costGrowth: 1.5
+  - id: Damage
+    displayName: Damage
+    description: Attack power up.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    baseCost: 60
+    costGrowth: 1.5
+  - id: Defense
+    displayName: Defense
+    description: Reduce damage taken.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    baseCost: 55
+    costGrowth: 1.5
+  - id: Speed
+    displayName: Speed
+    description: Move faster.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 6
+    baseCost: 45
+    costGrowth: 1.6
+  onSkillChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0
