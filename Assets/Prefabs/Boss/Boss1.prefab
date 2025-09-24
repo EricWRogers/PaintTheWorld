@@ -487,7 +487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0aee385b04753459b0ab3e6b97c118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  m_player: {fileID: 0}
   health: 100
   speed: 4
   rotationSpeed: 10
@@ -502,6 +502,12 @@ MonoBehaviour:
   laserFirePoint: {fileID: 6535865964897755200}
   laserRotationSpeed: 30
   yawOnly: 0
+  accuracyCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   canLaser: 0
   maxBeamDistance: 100
   beamWidth: 0.2
@@ -579,7 +585,7 @@ MonoBehaviour:
   slamSpeed: 400
   slamDamage: 0
   canSlam: 0
-  spawnAreaSize: {x: 100, y: 1, z: 100}
+  spawnAreaSize: {x: 115, y: 1, z: 69}
   totalSpawned: 0
   poolSize: 40
   slamIsDone: 0

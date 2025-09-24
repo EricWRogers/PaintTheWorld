@@ -38,7 +38,7 @@ public class TurretScript : MonoBehaviour
 
     void Awake()
     {
-        m_player = GameObject.FindGameObjectWithTag("Player");
+        m_player = GameObject.Find("PlayerManager").GetComponent<PlayerManager>().player;
         GetComponent<Health>().maxHealth = health;
     }
     void Start()

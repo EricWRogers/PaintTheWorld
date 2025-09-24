@@ -23,11 +23,18 @@ public class GameManager : Singleton<GameManager>
 
     public void StageComplete()
     {
-        
+
     }
 
     public void SpawnBoss()
     {
         GameObject boss = Instantiate(Boss, transform.position, transform.rotation);
+        GameObject centerPoint = Instantiate(new GameObject(), transform.position, transform.rotation);
+        boss.GetComponent<Boss>().centerPoint = centerPoint.transform;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        StageComplete();
     }
 }

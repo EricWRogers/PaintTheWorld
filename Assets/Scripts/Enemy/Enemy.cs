@@ -42,7 +42,7 @@ public class Enemy : MonoBehaviour
     }
     public void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.Find("PlayerManager").GetComponent<PlayerManager>().player;
         EM = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
     }
 

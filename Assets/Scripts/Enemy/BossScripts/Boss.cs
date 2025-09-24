@@ -7,7 +7,7 @@ using UnityEngine.WSA;
 
 public class Boss : MonoBehaviour
 {
-    public GameObject player;
+    public GameObject m_player;
 
     [Header("Stats")]
     public int health = 100;
@@ -33,6 +33,7 @@ public class Boss : MonoBehaviour
     public GameObject laserFirePoint;
     public float laserRotationSpeed = 360f;
     public bool yawOnly = true;
+    public AnimationCurve accuracyCurve;
     public bool canLaser;
 
     [Header("laser stats")]
@@ -92,7 +93,7 @@ public class Boss : MonoBehaviour
     {
         GetComponent<Health>().maxHealth = health;
         p_agent = GetComponent<NavMeshAgent>();
-        player = GameObject.FindGameObjectWithTag("Player");
+        m_player = GameObject.Find("PlayerManager").GetComponent<PlayerManager>().player;
         m_hitbox = hitboxObj.GetComponent<BoxCollider>();
         p_rb = GetComponent<Rigidbody>();
         p_agent.speed = speed;
@@ -169,7 +170,7 @@ public class Boss : MonoBehaviour
     public void DamagePlayer(int _damage)
     {
         Debug.Log("HitPlayer");
-        player.GetComponent<Health>().Damage(_damage);
+        m_player.GetComponent<Health>().Damage(_damage);
         m_hitPlayer = true;
     }
 
@@ -321,13 +322,18 @@ public class Boss : MonoBehaviour
 
     private void RotateTowardsTarget(float delta)
     {
-        if (player == null) return;
-        Vector3 toTarget = player.transform.position - laserFirePoint.transform.position;
+        if (m_player == null) return;
+        Vector3 toTarget = m_player.transform.position - laserFirePoint.transform.position;
         if (yawOnly) toTarget.y = 0;
         if (toTarget.sqrMagnitude < 0.0001f) return;
 
+        float distance = Vector3.Distance(transform.position, m_player.transform.position);
+        float scaledRotation = accuracyCurve.Evaluate(distance / maxBeamDistance) * laserRotationSpeed;
+        Debug.Log("distance" + distance);
+        Debug.Log("scaled Rot" + scaledRotation);
+
         Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
-        laserFirePoint.transform.rotation = Quaternion.RotateTowards(laserFirePoint.transform.rotation, targetRot, laserRotationSpeed * delta);
+        laserFirePoint.transform.rotation = Quaternion.RotateTowards(laserFirePoint.transform.rotation, targetRot, scaledRotation * delta);
     }
 
     void SetLineRendererForTelegraph(float alpha)
@@ -354,7 +360,7 @@ public class Boss : MonoBehaviour
 
     public void StartSwingCombo()
     {
-        dashDirection = (player.transform.position - transform.position).normalized;
+        dashDirection = (m_player.transform.position - transform.position).normalized;
         DoNextSwing();
     }
 
@@ -371,5 +377,10 @@ public class Boss : MonoBehaviour
     public void StopSwinging()
     {
         anim.SetBool("Swing", false);
+    }
+
+    public void Dead()
+    {
+        Destroy(gameObject);
     }
 }

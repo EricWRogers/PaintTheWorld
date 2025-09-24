@@ -41,18 +41,6 @@ public class BaseEnemySM : SimpleStateMachine
 
     void Update()
     {
-        //sets moveplayer varibles
-        moveToPlayer.enemy = gameObject;
-        moveToPlayer.agent = gameObject.GetComponent<NavMeshAgent>();
-        moveToPlayer.target = gameObject.GetComponent<Enemy>().player.transform;
-        moveToPlayer.attackRange = gameObject.GetComponent<Enemy>().attackRange;
-        moveToPlayer.sm = this;
-
-        //sets meleeAttack varibles
-        meleeAttack.anim = gameObject.GetComponent<Enemy>().anim;
-        meleeAttack.enemyObj = gameObject;
-        meleeAttack.target = gameObject.GetComponent<Enemy>().player.transform;
-        meleeAttack.attackRange = gameObject.GetComponent<Enemy>().attackRange;
-        meleeAttack.sm = this;
+        
     }
 }
