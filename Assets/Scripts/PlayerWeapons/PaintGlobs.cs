@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class PaintGlobs : CollisonPainter
 {
-    public int damage;
+    public int damage = 10;
     new void OnCollisionStay(Collision other)
     {
+        Debug.Log("Hit" + other.transform.name);
         Paint(other);
         if (other.transform.tag == "Enemy")
         {

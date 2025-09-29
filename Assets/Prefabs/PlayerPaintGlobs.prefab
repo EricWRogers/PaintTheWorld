@@ -14,8 +14,6 @@ GameObject:
   - component: {fileID: 6889192839316972647}
   - component: {fileID: 8236159256814332571}
   - component: {fileID: 8848378419885262440}
-  - component: {fileID: -5312533868918406338}
-  - component: {fileID: 7146478953648296406}
   m_Layer: 0
   m_Name: PlayerPaintGlobs
   m_TagString: Untagged
@@ -155,48 +153,3 @@ MonoBehaviour:
   radius: 1
   strength: 1
   hardness: 1
-  damage: 10
---- !u!114 &-5312533868918406338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3070470379224099556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad54517dc19258185960ef6d2f3a1b93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeout:
-    m_PersistentCalls:
-      m_Calls: []
-  autoStart: 0
-  autoRestart: 0
-  countDownTime: 1
-  timeScale: 1
---- !u!114 &7146478953648296406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3070470379224099556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23ab43fbf1d545f4d83de9439c7a66da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 0
-  speed: 5
-  lifeTime: 10
-  gravity: 0
-  destroyOnImpact: 1
-  hitTarget:
-    m_PersistentCalls:
-      m_Calls: []
-  mask:
-    serializedVersion: 2
-    m_Bits: 64
-  tags:
-  - Enemy
