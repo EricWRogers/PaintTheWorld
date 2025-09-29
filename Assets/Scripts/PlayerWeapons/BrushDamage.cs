@@ -12,6 +12,10 @@ public class BushDamage : MonoBehaviour
     public string targetTag = "Enemy";
     public LayerMask layerMask;
     public GameObject damageZone;
+    public GameObject paintGlobPrefab; // Your PaintGlobs projectile
+    public Transform bulletSpawnPoint1; // Where the projectile will be created
+    public Transform bulletSpawnPoint2; // Where the projectile will be created 
+    public Transform bulletSpawnPoint3; // Where the projectile will be created
 
     [Header("BoxCast Settings")]
     [Tooltip("The size of the box for hit detection. This is HALF the full size.")]
@@ -98,19 +102,21 @@ public class BushDamage : MonoBehaviour
     // Hold while button is down
     while (Input.GetButton("Fire1"))
     {
-        // Check if enough time has passed to deal damage again
-        if (Time.time >= nextDamageTime)
-        {
-            // IMPORTANT: Clear the list before each cast. This allows an enemy
-            // to be hit again on the next damage tick if they are still in range.
-            hitTargets.Clear();
+            // Check if enough time has passed to deal damage again
+            if (Time.time >= nextDamageTime)
+            {
+                // IMPORTANT: Clear the list before each cast. This allows an enemy
+                // to be hit again on the next damage tick if they are still in range.
+                hitTargets.Clear();
 
-            // Perform the box cast to deal damage
-            DoBoxCastDamage();
+                // Perform the box cast to deal damage
+                DoBoxCastDamage();
 
-            // Set the time for the next possible damage tick
-            nextDamageTime = Time.time + damageTickRate;
-        }
+                // Set the time for the next possible damage tick
+                nextDamageTime = Time.time + damageTickRate;
+
+                Glob(); // Call the Glob method to shoot paint globs
+             }
 
         yield return null; // Wait for the next frame
     }
@@ -185,6 +191,16 @@ public class BushDamage : MonoBehaviour
         }
     }
 
+    public void Glob()
+    {
+                if (paintGlobPrefab != null && bulletSpawnPoint1 != null && bulletSpawnPoint2 != null && bulletSpawnPoint3 != null)
+        {
+            Instantiate(paintGlobPrefab, bulletSpawnPoint1.position, bulletSpawnPoint1.rotation);
+            Instantiate(paintGlobPrefab, bulletSpawnPoint2.position, bulletSpawnPoint2.rotation);
+            Instantiate(paintGlobPrefab, bulletSpawnPoint3.position, bulletSpawnPoint3.rotation);
+        }
+    }
+
     public void ParticleStop()
     {
         if (attackVFX != null)
@@ -242,6 +258,7 @@ public class BushDamage : MonoBehaviour
                         Debug.Log($"{go.name} took {weaponDamage} damage from BoxCast attack!");
                     }
                 }
+                
             }
         }
     }

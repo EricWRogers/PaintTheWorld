@@ -5,52 +5,26 @@ using SuperPupSystems.Helper;
 
 public class PaintGun : MonoBehaviour
 {
-    [Header("Weapon Settings")]
-    public int weaponDamage = 10;
-    [Tooltip("How many shots can be fired per second.")]
-    public float fireRate = 5f;
-    
-    [Header("Ammo & Reload Settings")]
-    public int maxAmmo = 30;
-    public float reloadTime = 2.0f;
+     [Header("Weapon Settings")]
+    public GameObject paintGlobPrefab; // Your PaintGlobs projectile
+    public Transform bulletSpawnPoint; // Where the projectile will be created
+    public float fireRate = 0.5f;
+    public int magazineSize = 10;
+    public float reloadTime = 1.5f;
+
+    [Header("Animator")]
+    public Animator animator;
+    public string shootingBool = "IsShooting";
+    public string reloadingBool = "IsReloading";
+
     private int currentAmmo;
     private bool isReloading = false;
-
-    [Header("References")]
-    [Tooltip("The bullet prefab to be fired. Must have the 'Bullet' script on it.")]
-    public GameObject bulletPrefab;
-    [Tooltip("The point from which bullets are spawned.")]
-    public Transform bulletSpawnPoint;
-    [Tooltip("The animator for the weapon/character.")]
-    public Animator animator;
-
-    [Header("Animator Boolean Names")]
-    public string isShootingBool = "IsShooting";
-    public string isReloadingBool = "IsReloading";
-
-    [Header("VFX & SFX (Optional)")]
-    public ParticleSystem muzzleFlash;
-    public AudioClip shootingSound;
-    public AudioClip reloadSound;
-    private AudioSource audioSource;
-    
-    // Private variables
     private float nextFireTime = 0f;
 
     void Start()
     {
-        // Initialize ammo
-        currentAmmo = maxAmmo;
-
-        // Get the AudioSource component on this GameObject
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            // Add an AudioSource if one doesn't exist to prevent errors
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-
-        // Ensure animator is assigned
+        currentAmmo = magazineSize;
+        // Automatically get the Animator component if not assigned
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -59,97 +33,63 @@ public class PaintGun : MonoBehaviour
 
     void Update()
     {
-        // Prevent any actions if currently reloading
+        // Don't allow any actions if reloading
         if (isReloading)
-            return;
-
-        // Check for reload input
-        // Only reload if the key is pressed AND the magazine isn't already full
-        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo)
         {
-            StartCoroutine(Reload());
-            return; // Stop further checks this frame
-        }
-        
-        // Out of ammo check
-        if (currentAmmo <= 0)
-        {
-            // Optionally, you could trigger an "out of ammo" sound or click here
-            // And then automatically start reloading if you want
-            StartCoroutine(Reload());
             return;
         }
 
-        // Check for shooting input (hold left mouse button for automatic fire)
+        // Left-click to shoot
         if (Input.GetButton("Fire1") && Time.time >= nextFireTime)
         {
-            // Set the next time the player can fire
-            nextFireTime = Time.time + 1f / fireRate;
-            Shoot();
+            if (currentAmmo > 0)
+            {
+                nextFireTime = Time.time + fireRate;
+                StartCoroutine(Shoot());
+            }
+            else // Automatically reload if out of ammo
+            {
+                StartCoroutine(Reload());
+            }
+        }
+
+        // Press 'R' to reload
+        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < magazineSize)
+        {
+            StartCoroutine(Reload());
         }
     }
 
-    void Shoot()
+    IEnumerator Shoot()
     {
-        // Trigger shooting animation
-        if (animator != null && !string.IsNullOrEmpty(isShootingBool))
-            StartCoroutine(ShootingAnimationRoutine());
+        // Trigger the shooting animation
+        animator.SetBool(shootingBool, true);
 
-        // Play VFX and SFX
-        if (muzzleFlash != null)
-            muzzleFlash.Play();
-        
-        if (shootingSound != null)
-            audioSource.PlayOneShot(shootingSound);
-        
-        // Decrease ammo count
+        // Create the PaintGlob projectile
+        if (paintGlobPrefab != null && bulletSpawnPoint != null)
+        {
+            Instantiate(paintGlobPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
+        }
+
         currentAmmo--;
 
-        // Instantiate the bullet
-        if (bulletPrefab != null && bulletSpawnPoint != null)
-        {
-            GameObject bulletGO = Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
-            Bullet bullet = bulletGO.GetComponent<Bullet>();
-            
-            // Set the damage on the spawned bullet from this gun's settings
-            if (bullet != null)
-            {
-                bullet.damage = weaponDamage;
-            }
-        }
+        // Wait for a moment before setting the animation boolean back to false
+        yield return new WaitForSeconds(0.1f);
+        animator.SetBool(shootingBool, false);
     }
 
     IEnumerator Reload()
     {
         isReloading = true;
-        Debug.Log("Reloading...");
-
         // Trigger the reloading animation
-        if (animator != null && !string.IsNullOrEmpty(isReloadingBool))
-            animator.SetBool(isReloadingBool, true);
-        
-        if (reloadSound != null)
-            audioSource.PlayOneShot(reloadSound);
+        animator.SetBool(reloadingBool, true);
 
         // Wait for the reload duration
         yield return new WaitForSeconds(reloadTime);
 
-        // Stop the reloading animation
-        if (animator != null && !string.IsNullOrEmpty(isReloadingBool))
-            animator.SetBool(isReloadingBool, false);
-
-        // Refill ammo
-        currentAmmo = maxAmmo;
+        // Refill ammo and end the reloading state
+        currentAmmo = magazineSize;
+        animator.SetBool(reloadingBool, false);
         isReloading = false;
-    }
-
-    // A small coroutine to briefly activate the shooting boolean
-    IEnumerator ShootingAnimationRoutine()
-    {
-        animator.SetBool(isShootingBool, true);
-        // Wait a very short time before setting it back to false.
-        // This makes it act like a trigger, which is good for single-shot animations.
-        yield return new WaitForSeconds(0.1f);
-        animator.SetBool(isShootingBool, false);
     }
 }
