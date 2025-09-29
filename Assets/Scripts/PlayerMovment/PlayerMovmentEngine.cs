@@ -30,6 +30,11 @@ namespace KinematicCharacterControler
 
         public GroundedState groundedState { get; protected set; }
 
+        public PhysicsMaterial DefaultPhysicsMat;
+        private PhysicsMaterial currPhysicsMat;
+
+        protected Vector3 m_velocity;
+
         private Bounds bounds;
 
 
@@ -127,6 +132,86 @@ namespace KinematicCharacterControler
             }
 
              
+            return position;
+        }
+
+
+            public Vector3 MovePlayerVelocity(Vector3 movement)
+        {
+            m_velocity += movement;
+            Vector3 position = transform.position;
+            Quaternion rotation = transform.rotation;
+
+            Vector3 remaining = m_velocity;
+
+            int bounces = 0;
+
+            while (bounces < maxBounces && remaining.magnitude > 0.001f)
+            {
+                // Do a cast of the collider to see if an object is hit during this
+                // movement bounce
+                float distance = remaining.magnitude;
+                if (!CastSelf(position, rotation, remaining.normalized, distance, out RaycastHit hit))
+                {
+                    // If there is no hit, move to desired position
+                    position += remaining;
+
+                    // Exit as we are done bouncing
+                    break;
+                }
+
+                // If we are overlapping with something, just exit.
+                if (hit.distance == 0)
+                {
+                    position += hit.normal * skinWidth * 2;  // Push out
+                    remaining *= 0.5f;  // Reduce remaining movement
+                    bounces++;
+                    continue;
+                }
+
+                float fraction = hit.distance / distance;
+
+                // Set the fraction of remaining movement (minus some small value)
+                position += remaining * (fraction);
+                // Push slightly along normal to stop from getting caught in walls
+                position += hit.normal * 0.001f * 2;
+                // Decrease remaining movement by fraction of movement remaining
+                remaining *= (1 - fraction);
+
+                // Plane to project rest of movement onto
+                Vector3 planeNormal = hit.normal;
+
+                // Only apply angular change if hitting something
+                // Get angle between surface normal and remaining movement
+                float angleBetween = Vector3.Angle(hit.normal, remaining) - 90.0f;
+
+                // Normalize angle between to be between 0 and 1
+                // 0 means no angle, 1 means 90 degree angle
+                angleBetween = Mathf.Min(60f, Mathf.Abs(angleBetween));
+                float normalizedAngle = angleBetween / 60f;
+
+                // Reduce the remaining movement by the remaining movement that ocurred
+                remaining *= Mathf.Pow(1 - normalizedAngle, m_anglePower) * 0.9f + 0.1f;
+
+                // Rotate the remaining movement to be projected along the plane of the hit surface
+                Vector3 projected = Vector3.ProjectOnPlane(remaining, planeNormal).normalized * remaining.magnitude;
+
+                // If projected remaining movement is less than original remaining movement (broke from floating point),
+                // then change this to just project along the vertical.
+                if (projected.magnitude + 0.001f < remaining.magnitude)
+                {
+                    remaining = Vector3.ProjectOnPlane(remaining, Vector3.up).normalized * remaining.magnitude;
+                }
+                else
+                {
+                    remaining = projected;
+                }
+
+                // Track number of times the character has bounced
+                bounces++;
+            }
+
+            m_velocity *= currPhysicsMat == null ? DefaultPhysicsMat.dynamicFriction : currPhysicsMat.dynamicFriction;
             return position;
         }
 

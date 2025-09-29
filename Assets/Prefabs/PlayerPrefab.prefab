@@ -221,7 +221,6 @@ GameObject:
   - component: {fileID: 7236730804248690065}
   - component: {fileID: 7259321759212538560}
   - component: {fileID: 9104941373587113884}
-  - component: {fileID: 3795677865678502492}
   - component: {fileID: 3989345470266273338}
   - component: {fileID: 7706458509901835205}
   - component: {fileID: 6745306877372577002}
@@ -373,13 +372,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb459d0ef24860c4da7994f076d118df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  capsule: {fileID: 7236730804248690065}
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 503
+  skinWidth: 0.015
+  maxBounces: 5
+  maxSlopeAngle: 55
+  defaultGroundCheck: 0.25
+  defaultGroundedDistance: 0.05
+  snapDownDistance: 0.45
+  shouldSnapDown: 1
+  gravity: {x: 0, y: -9, z: 0}
+  DefaultPhysicsMat: {fileID: 13400000, guid: c938007490e861b8f96f9117fbb7a36b, type: 2}
   speed: 10
   rotationSpeed: 5
   maxWalkAngle: 60
   player: {fileID: 987569071003229930}
   cam: {fileID: 2558197743922652643}
-  engine: {fileID: 3795677865678502492}
-  gravity: {x: 0, y: -9, z: 0}
   lockCursor: 1
   jumpForce: 5
   maxJumpAngle: 80
@@ -401,30 +411,6 @@ MonoBehaviour:
   grindInputHeld: 0
   m_railDir: 1
   m_railDetectionPoint: {fileID: 3256202762024098186}
---- !u!114 &3795677865678502492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4aea8857a5f9ad22688209937fc22572, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  capsule: {fileID: 7236730804248690065}
-  collisionLayers:
-    serializedVersion: 2
-    m_Bits: 503
-  skinWidth: 0.015
-  maxBounces: 5
-  maxSlopeAngle: 55
-  defaultGroundCheck: 0.1
-  defaultGroundedDistance: 0.05
-  snapDownDistance: 0.45
-  shouldSnapDown: 1
-  gravity: {x: 0, y: -0.05, z: 0}
 --- !u!114 &3989345470266273338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1181,6 +1167,10 @@ PrefabInstance:
     - target: {fileID: 7136550898122886120, guid: d78eac89c2cc6344fa799c3274c70f35, type: 3}
       propertyPath: minRadius
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7136550898122886120, guid: d78eac89c2cc6344fa799c3274c70f35, type: 3}
+      propertyPath: paintColor.g
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
