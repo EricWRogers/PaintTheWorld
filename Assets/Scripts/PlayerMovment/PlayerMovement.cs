@@ -119,7 +119,7 @@ namespace KinematicCharacterControler
 
 
             // Rotate player
-            if (inputDir != Vector3.zero)
+            if (inputDir != Vector3.zero )
             {
                 player.transform.forward = Vector3.Slerp(player.transform.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
@@ -266,10 +266,7 @@ namespace KinematicCharacterControler
             float forwardDot = Vector3.Dot(transform.forward, railDir);
             float backwardDot = Vector3.Dot(transform.forward, -railDir);
             
-
-            
-                m_railDir = forwardDot > backwardDot ? 1f : -1f;
-            
+             m_railDir = forwardDot > backwardDot ? 1f : -1f;
             
             Vector3 railPosition = rail.GetPointOnRail(progress);
             transform.position = railPosition;
