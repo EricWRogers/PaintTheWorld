@@ -210,54 +210,64 @@ MonoBehaviour:
   health: 20
   laserFirePoint: {fileID: 473290879081334283}
   laserRotationSpeed: 360
+  scaledRotation: 0
   yawOnly: 0
   accuracyCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0006928444
-      value: 1.003139
-      inSlope: 0.015199408
-      outSlope: 0.015199408
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.023688585
-      value: 1.0034885
-      inSlope: -Infinity
-      outSlope: -Infinity
+      time: 0
+      value: 360
+      inSlope: Infinity
+      outSlope: Infinity
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0
     - serializedVersion: 3
-      time: 0.024661645
-      value: 0.30348542
-      inSlope: -5.8848963
-      outSlope: -5.8848963
+      time: 2
+      value: 25
+      inSlope: -0.6810461
+      outSlope: -0.6810461
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0.26324528
+      inWeight: 1
+      outWeight: 0.049498253
     - serializedVersion: 3
-      time: 0.09853958
-      value: 0.13572867
-      inSlope: -0.47272283
-      outSlope: -0.47272283
+      time: 20
+      value: 21
+      inSlope: -0.4118154
+      outSlope: -0.4118154
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.26840925
-      outWeight: 0.061132196
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.9988556
-      value: 0.0064452104
-      inSlope: -0.039024446
-      outSlope: -0.039024446
+      time: 45
+      value: 10
+      inSlope: -0.20152986
+      outSlope: -0.20152986
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.06044512
+      inWeight: 0.20441987
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 70
+      value: 5
+      inSlope: -0.1672284
+      outSlope: -0.1672284
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 100
+      value: 0
+      inSlope: -0.16666667
+      outSlope: -0.16666667
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -266,7 +276,7 @@ MonoBehaviour:
   fireTime: 2
   laserCooldown: 3
   SingleFire: 1
-  maxBeamDistance: 80
+  maxBeamDistance: 100
   beamWidth: 0.2
   damage: 5
   isLasering: 0

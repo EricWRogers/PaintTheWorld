@@ -9,6 +9,7 @@ public class TurretScript : MonoBehaviour
     [Header("laser targeting")]
     public GameObject laserFirePoint;
     public float laserRotationSpeed = 360f;
+    public float scaledRotation;
     public bool yawOnly = true;
     public AnimationCurve accuracyCurve;
 
@@ -184,7 +185,8 @@ public class TurretScript : MonoBehaviour
         if (toTarget.sqrMagnitude < 0.0001f) return;
 
         float distance = Vector3.Distance(transform.position, m_player.transform.position);
-        float scaledRotation = accuracyCurve.Evaluate(distance / maxBeamDistance) * laserRotationSpeed;
+        Debug.Log(distance);
+        scaledRotation = accuracyCurve.Evaluate(distance);
         //Debug.Log("distance" + distance);
         //Debug.Log("scaled Rot" + scaledRotation);
 
