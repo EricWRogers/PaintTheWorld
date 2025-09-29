@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KinematicCharacterControler
 {
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : PlayerMovmentEngine
     {
         [Header("Movement")]
         public float speed = 5f;
@@ -15,12 +15,9 @@ namespace KinematicCharacterControler
 
         private Transform m_orientation;
         public Transform cam;
-        public PlayerMovmentEngine engine;
 
         [Header("Physics")]
-        public Vector3 gravity = new Vector3(0, -9, 0);
         private float m_elapsedFalling;
-        private Vector3 m_velocity;
         public bool lockCursor = true;
 
         [Header("Jump Settings")]
@@ -126,7 +123,7 @@ namespace KinematicCharacterControler
                 m_velocity.z = 0f;
             }
 
-            bool onGround = engine.CheckIfGrounded(out RaycastHit groundHit) && m_velocity.y <= 0.0f;
+            bool onGround = CheckIfGrounded(out RaycastHit groundHit) && m_velocity.y <= 0.0f;
             bool falling = !(onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal));
 
             // Handle gravity and falling
@@ -142,7 +139,7 @@ namespace KinematicCharacterControler
             }
 
             // Handle jumping
-            bool canJump = onGround && engine.groundedState.angle <= maxJumpAngle && m_timeSinceLastJump >= jumpCooldown;
+            bool canJump = onGround && groundedState.angle <= maxJumpAngle && m_timeSinceLastJump >= jumpCooldown;
             bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
             if (canJump && attemptingJump)
@@ -157,11 +154,11 @@ namespace KinematicCharacterControler
             }
 
             // Apply movement
-            transform.position = engine.MovePlayer(inputDir * speed * Time.deltaTime);
-            transform.position = engine.MovePlayer(m_velocity * Time.deltaTime);
+            transform.position = MovePlayer(inputDir * speed * Time.deltaTime);
+            transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
             if (onGround && !attemptingJump)
-                engine.SnapPlayerDown();
+                SnapPlayerDown();
         }
 
 
@@ -273,7 +270,7 @@ namespace KinematicCharacterControler
             
             m_velocity = Vector3.zero;
         }
-        
+
         void ContinueGrinding()
         {
             if (currentRail == null)
@@ -287,7 +284,7 @@ namespace KinematicCharacterControler
                 ExitGrinding();
                 return;
             }
-            
+
             if (!currentRail.isLoop)
             {
                 // Exit if at end of rail
@@ -296,35 +293,35 @@ namespace KinematicCharacterControler
                     ExitGrinding();
                     return;
                 }
-            }    
-            
+            }
+
             // Calculate movement along rail
-                Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
-            
-            
+            Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
+
+
             Vector3 railMovement = railDirection * grindSpeed * Time.deltaTime;
-            
+
 
             Vector3 currentPos = transform.position;
-            Vector3 newPosition = engine.MovePlayer(railMovement);
+            Vector3 newPosition = MovePlayer(railMovement);
             transform.position = newPosition;
-            
+
             // Update rail progress based on actual movement achieved along rail direction
             Vector3 actualMovement = transform.position - currentPos;
             float actualDistance = Vector3.Dot(actualMovement, railDirection);
-            
+
             float railLength = currentRail.GetRailLength();
             if (railLength > 0)
             {
                 float progressDelta = (actualDistance / railLength) * m_railDir;
                 railProgress += progressDelta;
             }
-            
-            
+
+
 
             Vector3 idealRailPosition = currentRail.GetPointOnRail(railProgress);
             Vector3 currentRailPosition = transform.position;
-            
+
             // Only correct position if we've drifted too far from the rail
             float driftDistance = Vector3.Distance(currentRailPosition, idealRailPosition);
             if (driftDistance > 0.5f) // Allow some tolerance
@@ -334,9 +331,10 @@ namespace KinematicCharacterControler
                 Vector3 correction = correctionDirection * Mathf.Min(driftDistance, 2f * Time.deltaTime);
                 transform.position += correction;
             }
-            
+
             // Store grind velocity for potential exit
             grindVelocity = railDirection * grindSpeed;
+            SnapPlayerDown();
         }
         
         void ExitGrinding()
