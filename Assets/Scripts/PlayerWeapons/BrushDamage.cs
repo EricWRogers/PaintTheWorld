@@ -5,36 +5,35 @@ using System.Collections.Generic;
 
 public class BushDamage : MonoBehaviour
 {
- [Header("Trap Damage (On Touch)")]
-    public string targetTag = "Enemy";
-
     [Header("Weapon Attack Settings")]
-    public Transform attackPart;       // The handle/child cube
-    public float attackAngle = 45f;    // Swing angle (unused for hardcoded animation)
-    public float attackSpeed = 6f;     // Swing speed (unused for hardcoded animation)
-    public int weaponDamage = 15;      // Damage dealt per hit
-    public float rayLength = 2f;       // Attack reach
-    public LayerMask hitMask;          // Who can be hit
-    public float comboResetTime = 1f;  // Time allowed between combo clicks (unused)
-    public float brushgunDuration = 1.5f; // How long the brushgun attack stays active on click
+    public Transform attackPart;
+    public int weaponDamage = 15;
+    public float brushgunDuration = 1.5f;
+    public string targetTag = "Enemy";
+    public LayerMask layerMask;
+    public GameObject damageZone;
+
+    [Header("BoxCast Settings")]
+    [Tooltip("The size of the box for hit detection. This is HALF the full size.")]
+    public Vector3 boxCastSize = new Vector3(0.5f, 0.5f, 0.5f);
+    [Tooltip("The distance to cast the box.")]
+    public float castDistance = 1f;
+    [Tooltip("How often damage is applied while holding the attack (in seconds).")]
+    public float damageTickRate = 0.5f; // New variable for damage tick rate
 
     [Header("VFX")]
-    [Tooltip("The particle system to play during an attack.")]
     public ParticleSystem attackVFX;
-    [Tooltip("Radius for the particle system shape (editable at runtime).")]
     public float attackVFXRadius = 2.0f;
 
     [Header("Animator (for attacks)")]
-    public Animator animator;                 
-    public string holdAttackBool = "HoldAttack"; 
+    public Animator animator;
+    public string holdAttackBool = "HoldAttack";
     public string brushgunBool = "BrushGun";
 
     private bool isAttacking = false;
+    private List<GameObject> hitTargets = new List<GameObject>();
     private Quaternion originalRotation;
     private Vector3 originalPosition;
-
-    // Prevent multiple damages in a single hit/frame; cleared by animation at start of each hit window
-    private List<GameObject> hitTargets = new List<GameObject>();
 
     void Start()
     {
@@ -63,22 +62,6 @@ public class BushDamage : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (!isAttacking) return; // Only damage during attack
-        Debug.Log(other.gameObject.name);
-        if (other.CompareTag(targetTag))
-        {
-            Health health = other.GetComponent<Health>();
-            if (health != null)
-            {
-                health.Damage(weaponDamage);
-                Debug.Log($"{other.name} took {weaponDamage} damage from collider attack!");
-                 GameEvents.PlayerHitEnemy?.Invoke(health.gameObject, weaponDamage, HitSource.PlayerWeapon);
-            }
-        }
-    }
-
     void Update()
     {
         // Hold-to-attack: start when Fire1 pressed, stop when released
@@ -98,41 +81,51 @@ public class BushDamage : MonoBehaviour
     IEnumerator HoldAttackCoroutine()
     {
         isAttacking = true;
-        hitTargets.Clear();
+    hitTargets.Clear(); // Clear at the very start
 
-        if (attackVFX != null)
-        {
-            attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            attackVFX.Play();
-        }
-
-        if (animator != null && !string.IsNullOrEmpty(holdAttackBool))
-            animator.SetBool(holdAttackBool, true);
-
-        // Hold while button is down. Actual hits should be invoked from the animation via AnimationHitEvent().
-        while (Input.GetButton("Fire1"))
-        {
-            yield return null;
-        }
-
-        // Released: stop the animator bool so it blends back to idle
-        if (animator != null && !string.IsNullOrEmpty(holdAttackBool))
-            animator.SetBool(holdAttackBool, false);
-
-        // Stop VFX immediately (the animation can also stop it via event if preferred)
-        if (attackVFX != null)
-            attackVFX.Stop();
-
-        isAttacking = false;
-        yield break;
-    }
-
-    // Called from Animation Event at the exact hit frame(s)
-    public void AnimationHitEvent()
+    if (attackVFX != null)
     {
-        DoRaycast();
+        attackVFX.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        attackVFX.Play();
     }
 
+    if (animator != null && !string.IsNullOrEmpty(holdAttackBool))
+        animator.SetBool(holdAttackBool, true);
+    
+    // --- MODIFIED SECTION ---
+    float nextDamageTime = 0f; // Timer for controlling damage rate
+
+    // Hold while button is down
+    while (Input.GetButton("Fire1"))
+    {
+        // Check if enough time has passed to deal damage again
+        if (Time.time >= nextDamageTime)
+        {
+            // IMPORTANT: Clear the list before each cast. This allows an enemy
+            // to be hit again on the next damage tick if they are still in range.
+            hitTargets.Clear();
+
+            // Perform the box cast to deal damage
+            DoBoxCastDamage();
+
+            // Set the time for the next possible damage tick
+            nextDamageTime = Time.time + damageTickRate;
+        }
+
+        yield return null; // Wait for the next frame
+    }
+    // --- END OF MODIFIED SECTION ---
+
+    // Released: stop the animator bool so it blends back to idle
+    if (animator != null && !string.IsNullOrEmpty(holdAttackBool))
+        animator.SetBool(holdAttackBool, false);
+
+    // Stop VFX immediately
+    if (attackVFX != null)
+        attackVFX.Stop();
+
+    isAttacking = false;
+    }
     // Optional helper: call from animation at moment you want to allow the same targets to be hit again
     public void ClearHitTargets()
     {
@@ -199,27 +192,71 @@ public class BushDamage : MonoBehaviour
     }
 
     // ---------------------------
-    // Raycast damage (used by AnimationHitEvent or code)
+    // Box-cast damage (used by AnimationHitEvent or code)
     // ---------------------------
-    void DoRaycast()
+
+
+    void DoBoxCastDamage()
     {
+        /*
         RaycastHit hit;
-        if (Physics.Raycast(attackPart.position, attackPart.forward, out hit, rayLength, hitMask))
+        // Perform the BoxCast from the attackPart's position and orientation
+        bool hasHit = Physics.BoxCast(
+            damageZone.transform.position,      // Center of the box
+            damageZone.GetComponent<BoxCollider>().size / 2,              // Half the size of the box
+            transform.forward,       // Direction to cast
+            out hit,                  // Variable to store hit information
+            transform.rotation,      // Orientation of the box
+            Vector3.Distance(damageZone.transform.localPosition, damageZone.GetComponent<BoxCollider>().center), layerMask              // How far to cast
+        );
+        if (hasHit)
         {
-            GameObject go = hit.collider.gameObject;
-            if (!hitTargets.Contains(go))
+            Debug.Log("hit " + hit.collider.name);
+            if (!hit.collider.CompareTag(targetTag))
             {
-                hitTargets.Add(go);
-                Health health = go.GetComponent<Health>();
-                if (health != null)
+                GameObject go = hit.collider.gameObject;
+                if (!hitTargets.Contains(go))
                 {
-                    health.Damage(weaponDamage);
-                    Debug.Log($"{go.name} took {weaponDamage} damage from raycast attack!");
-                    GameEvents.PlayerHitEnemy?.Invoke(health.gameObject, weaponDamage, HitSource.PlayerWeapon);
+                    hitTargets.Add(go);
+                    Health health = go.GetComponent<Health>();
+                    if (health != null)
+                    {
+                        health.Damage(weaponDamage);
+                        Debug.Log($"{go.name} took {weaponDamage} damage from BoxCast attack!");
+                    }
                 }
             }
         }
+        */
+        if (damageZone.GetComponent<AttackZone>().enemyInZone == true)
+        {
+            foreach (GameObject go in damageZone.GetComponent<AttackZone>().enemiesInZone)
+            {
+                if (!hitTargets.Contains(go))
+                {
+                    hitTargets.Add(go);
+                    Health health = go.GetComponent<Health>();
+                    if (health != null)
+                    {
+                        health.Damage(weaponDamage);
+                        Debug.Log($"{go.name} took {weaponDamage} damage from BoxCast attack!");
+                    }
+                }
+            }
+        }
+    }
+    
+    private void OnDrawGizmos()
+    {
+        if (attackPart == null) return;
 
-        Debug.DrawRay(attackPart.position, attackPart.forward * rayLength, Color.red, 0.05f);
+        Gizmos.color = Color.red;
+
+        // Use a matrix to handle the rotation of the Gizmo
+        Matrix4x4 rotationMatrix = Matrix4x4.TRS(attackPart.position, attackPart.rotation, Vector3.one);
+        Gizmos.matrix = rotationMatrix;
+
+        // Draw the box at its casted position
+        Gizmos.DrawWireCube(Vector3.forward * castDistance, boxCastSize * 2); // Multiply by 2 because BoxCast uses half-extents
     }
 }

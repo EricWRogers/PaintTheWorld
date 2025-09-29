@@ -8,6 +8,7 @@ using UnityEngine.WSA;
 public class Boss : MonoBehaviour
 {
     public GameObject m_player;
+    public GameManager gameManager;
 
     [Header("Stats")]
     public int health = 100;
@@ -79,6 +80,9 @@ public class Boss : MonoBehaviour
     public float m_slamcur = 0;
     public float m_laserCur = 0;
 
+    [Header("On Death")]
+    public Vector2 moneyToAdd;
+
     private enum LaserPhase { Idle, Windup, Firing }
     private LaserPhase laserPhase = LaserPhase.Idle;
     private float laserTimer = 0f;
@@ -97,7 +101,7 @@ public class Boss : MonoBehaviour
         m_hitbox = hitboxObj.GetComponent<BoxCollider>();
         p_rb = GetComponent<Rigidbody>();
         p_agent.speed = speed;
-
+        //gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         lr = GetComponent<LineRenderer>();
         lr.positionCount = 2;
         lr.useWorldSpace = true;
@@ -156,7 +160,7 @@ public class Boss : MonoBehaviour
         if (isDashing)
         {
             TurnOnHitBox();
-            transform.position = Vector3.MoveTowards(transform.position, dashTarget, swingDashSpeed * Time.deltaTime);
+            p_rb.MovePosition(Vector3.MoveTowards(transform.position, dashTarget, swingDashSpeed * Time.deltaTime));
 
             if (Vector3.Distance(transform.position, dashTarget) <= 0.1f)
             {
@@ -384,6 +388,8 @@ public class Boss : MonoBehaviour
 
     public void Dead()
     {
+        m_player.GetComponent<Currency>().Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
+        gameManager.bossDefeated = true;
         Destroy(gameObject);
     }
 }

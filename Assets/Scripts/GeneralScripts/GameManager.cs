@@ -6,7 +6,10 @@ public class GameManager : Singleton<GameManager>
 {
     public int currentStage;
     public float stageTime;
-    public GameObject Boss;
+    public GameObject boss;
+    public GameObject stageGate;
+    public bool bossDefeated;
+    public GameObject shopUi;
     void Start()
     {
         StartStage();
@@ -14,7 +17,10 @@ public class GameManager : Singleton<GameManager>
 
     void Update()
     {
-
+        if (bossDefeated)
+        {
+            stageGate.SetActive(false);
+        }
     }
     public void StartStage()
     {
@@ -23,14 +29,14 @@ public class GameManager : Singleton<GameManager>
 
     public void StageComplete()
     {
-        
+        shopUi.SetActive(true);
     }
 
     public void SpawnBoss()
     {
-        GameObject boss = Instantiate(Boss, transform.position, transform.rotation);
+        GameObject _boss = Instantiate(boss, transform.position, transform.rotation);
         GameObject centerPoint = Instantiate(new GameObject(), transform.position, transform.rotation);
-        boss.GetComponent<Boss>().centerPoint = centerPoint.transform;
+        _boss.GetComponent<Boss>().centerPoint = centerPoint.transform;
     }
 
     void OnTriggerEnter(Collider other)

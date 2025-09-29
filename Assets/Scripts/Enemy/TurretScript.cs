@@ -4,6 +4,7 @@ using UnityEngine;
 public class TurretScript : MonoBehaviour
 {
     public EnemyManager EM;
+    public PlayerManager PM;
     public int health;
     [Header("laser targeting")]
     public GameObject laserFirePoint;
@@ -27,8 +28,10 @@ public class TurretScript : MonoBehaviour
     public Gradient telegraphGradient;
     public Gradient firingGradient;
     public float telegraphWidth = 0.08f;
-
     public LineRenderer lr;
+
+    [Header("On Death")]
+    public Vector2 moneyToAdd;
 
     private enum LaserPhase { Idle, Windup, Firing, Cooldown }
     private LaserPhase laserPhase = LaserPhase.Idle;
@@ -38,12 +41,14 @@ public class TurretScript : MonoBehaviour
 
     void Awake()
     {
-        m_player = GameObject.Find("PlayerManager").GetComponent<PlayerManager>().player;
+        PM = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
+        m_player = PM.player;
         GetComponent<Health>().maxHealth = health;
     }
     void Start()
     {
         EM = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
+        PM = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
         lr = GetComponent<LineRenderer>();
         lr.positionCount = 2;
         lr.useWorldSpace = true;
@@ -209,6 +214,7 @@ public class TurretScript : MonoBehaviour
     }
     public void Dead()
     {
+        m_player.GetComponent<Currency>().Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
         Destroy(gameObject);
     }
     public void OnDestroy()

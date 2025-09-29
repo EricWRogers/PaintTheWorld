@@ -206,6 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EM: {fileID: 0}
+  PM: {fileID: 0}
   health: 20
   laserFirePoint: {fileID: 473290879081334283}
   laserRotationSpeed: 360
@@ -261,10 +262,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  windupTime: 1.2
-  fireTime: 5
+  windupTime: 3
+  fireTime: 2
   laserCooldown: 3
-  SingleFire: 0
+  SingleFire: 1
   maxBeamDistance: 80
   beamWidth: 0.2
   damage: 5
@@ -331,6 +332,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   telegraphWidth: 0.1
   lr: {fileID: 5112687833836725046}
+  moneyToAdd: {x: 0, y: 0}
 --- !u!120 &5112687833836725046
 LineRenderer:
   serializedVersion: 2
