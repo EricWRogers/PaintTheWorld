@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -79,7 +78,10 @@ namespace KinematicCharacterControler
                 // If we are overlapping with something, just exit.
                 if (hit.distance == 0)
                 {
-                    break;
+                    position += hit.normal * skinWidth * 2;  // Push out
+                    remaining *= 0.5f;  // Reduce remaining movement
+                    bounces++;
+                    continue;
                 }
 
                 float fraction = hit.distance / distance;
