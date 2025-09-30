@@ -15,6 +15,7 @@ public class CollisonPainter : MonoBehaviour
     }
     public void Paint(Collision other)
     {
+        Debug.Log("paint" + other.gameObject.name);
         Paintable p = other.collider.GetComponent<Paintable>();
         if (p != null)
         {

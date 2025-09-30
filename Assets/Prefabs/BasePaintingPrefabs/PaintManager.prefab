@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1876050794977122174}
   - component: {fileID: 7706467268296609603}
+  - component: {fileID: 7048160144281234683}
   m_Layer: 0
   m_Name: PaintManager
   m_TagString: Untagged
@@ -46,3 +47,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   texturePaint: {fileID: 4800000, guid: 7f5d8526a7c30db40a8ac316f2869732, type: 3}
   extendIslands: {fileID: 4800000, guid: a41f820955c73f34883439c6bd2f38de, type: 3}
+--- !u!114 &7048160144281234683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1192529217508576463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b82c68b58886d246b6a1ff94c1ca286, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damagePaint: {r: 0.7921569, g: 0.21176471, b: 0.5176471, a: 1}
+  jumpPaint: {r: 0.14117648, g: 0.8862745, b: 0.7372549, a: 1}
+  movementPaint: {r: 0.9372549, g: 0.9019608, b: 0.22745098, a: 1}

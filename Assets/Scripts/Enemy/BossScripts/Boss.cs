@@ -8,7 +8,6 @@ using UnityEngine.WSA;
 public class Boss : MonoBehaviour
 {
     public GameObject m_player;
-    public GameManager gameManager;
 
     [Header("Stats")]
     public int health = 100;
@@ -33,6 +32,7 @@ public class Boss : MonoBehaviour
     [Header("laser targeting")]
     public GameObject laserFirePoint;
     public float laserRotationSpeed = 360f;
+    public float scaledRotation;
     public bool yawOnly = true;
     public AnimationCurve accuracyCurve;
     public bool canLaser;
@@ -249,6 +249,7 @@ public class Boss : MonoBehaviour
         switch (laserPhase)
         {
             case LaserPhase.Idle:
+                laserFirePoint.transform.LookAt(m_player.transform);
                 lr.enabled = true;
                 lr.widthCurve = AnimationCurve.Constant(0, 1, telegraphWidth);
                 laserTimer = laserWindupTime;
@@ -265,8 +266,11 @@ public class Boss : MonoBehaviour
 
                 Vector3 startW = laserFirePoint.transform.position;
                 Vector3 dirW = GetAimDirection();
-                lr.SetPosition(0, startW);
-                lr.SetPosition(1, startW + dirW * maxBeamDistance);
+                if (Physics.Raycast(startW, dirW, out RaycastHit hitW, maxBeamDistance))
+                {
+                    lr.SetPosition(0, startW);
+                    lr.SetPosition(1, hitW.point);
+                }
 
                 if (laserTimer <= 0f)
                 {
@@ -284,19 +288,19 @@ public class Boss : MonoBehaviour
                 Vector3 startF = laserFirePoint.transform.position;
                 Vector3 dirF = GetAimDirection();
 
-                if (Physics.Raycast(startF, dirF, out RaycastHit hit, maxBeamDistance, layerMask))
+                if (Physics.Raycast(startF, dirF, out RaycastHit hitF, maxBeamDistance, layerMask))
                 {
 
                     lr.SetPosition(0, startF);
-                    lr.SetPosition(1, hit.point);
+                    lr.SetPosition(1, hitF.point);
 
-                    if (hit.collider.CompareTag("Player"))
+                    if (hitF.collider.CompareTag("Player"))
                     {
                         damageAccumulator += damagePerSecond * Time.deltaTime;
                         if (damageAccumulator >= 1f)
                         {
                             int applyDamage = Mathf.FloorToInt(damageAccumulator);
-                            hit.collider.GetComponent<Health>().Damage(applyDamage);
+                            hitF.collider.GetComponent<Health>().Damage(applyDamage);
                             damageAccumulator -= applyDamage;
                         }
                     }
@@ -332,12 +336,13 @@ public class Boss : MonoBehaviour
         if (toTarget.sqrMagnitude < 0.0001f) return;
 
         float distance = Vector3.Distance(transform.position, m_player.transform.position);
-        float scaledRotation = accuracyCurve.Evaluate(distance / maxBeamDistance) * laserRotationSpeed;
+        //Debug.Log(distance);
+        scaledRotation = accuracyCurve.Evaluate(distance);
         //Debug.Log("distance" + distance);
         //Debug.Log("scaled Rot" + scaledRotation);
 
         Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
-        laserFirePoint.transform.rotation = Quaternion.RotateTowards(laserFirePoint.transform.rotation, targetRot, scaledRotation * delta);
+        laserFirePoint.transform.rotation = Quaternion.RotateTowards(laserFirePoint.transform.rotation,targetRot,scaledRotation * delta);
     }
 
     void SetLineRendererForTelegraph(float alpha)
@@ -389,7 +394,7 @@ public class Boss : MonoBehaviour
     public void Dead()
     {
         m_player.GetComponent<Currency>().Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
-        gameManager.bossDefeated = true;
+        GameManager.instance.bossDefeated = true;
         Destroy(gameObject);
     }
 }

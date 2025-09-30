@@ -9,7 +9,7 @@ public class ObjectSpawner : MonoBehaviour
     public List<GameObject> objectsToSpawn;
     public bool spawnAllOnStart;
 
-    void Start()
+    public void Start()
     {
         if (spawnAllOnStart)
         {
