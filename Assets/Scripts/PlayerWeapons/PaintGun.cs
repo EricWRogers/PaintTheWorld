@@ -5,10 +5,11 @@ using SuperPupSystems.Helper;
 
 public class PaintGun : MonoBehaviour
 {
-     [Header("Weapon Settings")]
-    public GameObject paintGlobPrefab; // Your PaintGlobs projectile
-    public Transform bulletSpawnPoint; // Where the projectile will be created
-    public float fireRate = 0.5f;
+    [Header("Weapon Settings")]
+    public GameObject paintGlobPrefab;
+    public Transform bulletSpawnPoint;
+    [Tooltip("The time in seconds between each shot in the continuous stream. A smaller number means a faster stream.")]
+    public float timeBetweenShots = 0.1f; // Controls the speed of the stream
     public int magazineSize = 10;
     public float reloadTime = 1.5f;
 
@@ -24,7 +25,6 @@ public class PaintGun : MonoBehaviour
     void Start()
     {
         currentAmmo = magazineSize;
-        // Automatically get the Animator component if not assigned
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -33,61 +33,65 @@ public class PaintGun : MonoBehaviour
 
     void Update()
     {
-        // Don't allow any actions if reloading
         if (isReloading)
         {
             return;
         }
 
-        // Left-click to shoot
-        if (Input.GetButton("Fire1") && Time.time >= nextFireTime)
+        // --- Manual Reload ---
+        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < magazineSize)
         {
-            if (currentAmmo > 0)
-            {
-                nextFireTime = Time.time + fireRate;
-                StartCoroutine(Shoot());
-            }
-            else // Automatically reload if out of ammo
-            {
-                StartCoroutine(Reload());
-            }
+            StartCoroutine(Reload());
+            return; // Exit early
         }
 
-        // Press 'R' to reload
-        if (Input.GetKeyDown(KeyCode.R) && currentAmmo < magazineSize)
+        // --- Continuous Shooting Logic ---
+        if (Input.GetButton("Fire1") && currentAmmo > 0)
+        {
+            // If holding the button and have ammo, set the animation to shooting
+            animator.SetBool(shootingBool, true);
+
+            // Fire projectiles on a timer to create a stream
+            if (Time.time >= nextFireTime)
+            {
+                nextFireTime = Time.time + timeBetweenShots;
+                Shoot();
+            }
+        }
+        else // This block runs if the button is released OR if ammo is zero
+        {
+            // Stop the shooting animation
+            animator.SetBool(shootingBool, false);
+        }
+
+        // --- Auto-Reload Logic ---
+        // If holding the button but out of ammo, start reloading
+        if (Input.GetButton("Fire1") && currentAmmo <= 0)
         {
             StartCoroutine(Reload());
         }
     }
 
-    IEnumerator Shoot()
+    // CHANGED: This is now a simple method, not a coroutine
+    void Shoot()
     {
-        // Trigger the shooting animation
-        animator.SetBool(shootingBool, true);
-
-        // Create the PaintGlob projectile
         if (paintGlobPrefab != null && bulletSpawnPoint != null)
         {
             Instantiate(paintGlobPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
         }
-
         currentAmmo--;
-
-        // Wait for a moment before setting the animation boolean back to false
-        yield return new WaitForSeconds(0.1f);
-        animator.SetBool(shootingBool, false);
     }
 
     IEnumerator Reload()
     {
         isReloading = true;
-        // Trigger the reloading animation
+        
+        // IMPORTANT: Ensure the shooting animation stops when reloading begins
+        animator.SetBool(shootingBool, false);
         animator.SetBool(reloadingBool, true);
 
-        // Wait for the reload duration
         yield return new WaitForSeconds(reloadTime);
 
-        // Refill ammo and end the reloading state
         currentAmmo = magazineSize;
         animator.SetBool(reloadingBool, false);
         isReloading = false;
