@@ -40,7 +40,7 @@ namespace KinematicCharacterControler
 
         void Awake()
         {
-            
+            capsule = gameObject.GetComponent<CapsuleCollider>(); 
         }
         /*
         public void Move(Vector3 inputMove)
