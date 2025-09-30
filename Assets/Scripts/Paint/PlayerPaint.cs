@@ -10,6 +10,7 @@ public class PlayerPaint : GetPaintColor
     }
     void Update()
     {
+        CheckOnPaint();
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             selectedPaint = PaintManager.instance.GetComponent<PaintColors>().damagePaint;
