@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class TurretScript : MonoBehaviour
 {
-    public EnemyManager EM;
-    public PlayerManager PM;
     public int health;
     [Header("laser targeting")]
     public GameObject laserFirePoint;
@@ -42,14 +40,11 @@ public class TurretScript : MonoBehaviour
 
     void Awake()
     {
-        PM = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
-        m_player = PM.player;
+        m_player = PlayerManager.instance.player;
         GetComponent<Health>().maxHealth = health;
     }
     void Start()
     {
-        EM = GameObject.Find("EnemyManager").GetComponent<EnemyManager>();
-        PM = GameObject.Find("PlayerManager").GetComponent<PlayerManager>();
         lr = GetComponent<LineRenderer>();
         lr.positionCount = 2;
         lr.useWorldSpace = true;
@@ -185,7 +180,7 @@ public class TurretScript : MonoBehaviour
         if (toTarget.sqrMagnitude < 0.0001f) return;
 
         float distance = Vector3.Distance(transform.position, m_player.transform.position);
-        Debug.Log(distance);
+        //Debug.Log(distance);
         scaledRotation = accuracyCurve.Evaluate(distance);
         //Debug.Log("distance" + distance);
         //Debug.Log("scaled Rot" + scaledRotation);
@@ -221,6 +216,6 @@ public class TurretScript : MonoBehaviour
     }
     public void OnDestroy()
     {
-        EM.RemoveEnemy();
+        EnemyManager.instance.RemoveEnemy();
     }
 }

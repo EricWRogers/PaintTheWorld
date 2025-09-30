@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using SuperPupSystems.Helper;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : Singleton<EnemyManager>
 {
     public List<ObjectSpawner> spawners;
     public int maxNumberOfEnemies;
@@ -10,8 +10,9 @@ public class EnemyManager : MonoBehaviour
     public int m_numberOfEnemies;
     private int m_ranSpawner;
 
-    void Awake()
+    new void Awake()
     {
+        base.Awake();
         Timer timer = GetComponent<Timer>();
         timer.autoStart = true;
         timer.countDownTime = spawnDelay;

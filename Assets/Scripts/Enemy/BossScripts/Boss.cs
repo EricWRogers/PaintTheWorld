@@ -333,8 +333,8 @@ public class Boss : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, m_player.transform.position);
         float scaledRotation = accuracyCurve.Evaluate(distance / maxBeamDistance) * laserRotationSpeed;
-        Debug.Log("distance" + distance);
-        Debug.Log("scaled Rot" + scaledRotation);
+        //Debug.Log("distance" + distance);
+        //Debug.Log("scaled Rot" + scaledRotation);
 
         Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
         laserFirePoint.transform.rotation = Quaternion.RotateTowards(laserFirePoint.transform.rotation, targetRot, scaledRotation * delta);
