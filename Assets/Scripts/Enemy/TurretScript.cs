@@ -45,6 +45,7 @@ public class TurretScript : MonoBehaviour
     }
     void Start()
     {
+        laserFirePoint.transform.LookAt(m_player.transform);
         lr = GetComponent<LineRenderer>();
         lr.positionCount = 2;
         lr.useWorldSpace = true;

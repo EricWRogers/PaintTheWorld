@@ -476,6 +476,8 @@ GameObject:
   - component: {fileID: 7637335859374626467}
   - component: {fileID: 7743250148349381331}
   - component: {fileID: 37832528474092358}
+  - component: {fileID: -2469205236274879816}
+  - component: {fileID: 5178683197433434980}
   m_Layer: 6
   m_Name: Boss1
   m_TagString: Enemy
@@ -516,7 +518,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_player: {fileID: 0}
-  gameManager: {fileID: 0}
   health: 100
   speed: 4
   rotationSpeed: 10
@@ -530,64 +531,65 @@ MonoBehaviour:
   hitboxActive: 0
   laserFirePoint: {fileID: 6535865964897755200}
   laserRotationSpeed: 30
+  scaledRotation: 0
   yawOnly: 0
   accuracyCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.050848007
-      value: 1.0009453
-      inSlope: -Infinity
-      outSlope: -Infinity
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.05102802
-      value: 1.0009453
-      inSlope: -Infinity
-      outSlope: -Infinity
+      value: 360
+      inSlope: Infinity
+      outSlope: Infinity
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0
     - serializedVersion: 3
-      time: 0.05195278
-      value: 0.5047156
-      inSlope: -1.5772865
-      outSlope: -1.5772865
+      time: 2
+      value: 25
+      inSlope: -0.6810461
+      outSlope: -0.6810461
       tangentMode: 0
       weightedMode: 0
       inWeight: 1
-      outWeight: 0
+      outWeight: 0.049498253
     - serializedVersion: 3
-      time: 0.18206616
-      value: 0.07484168
-      inSlope: -0.07047369
-      outSlope: -0.07047369
+      time: 20
+      value: 21
+      inSlope: -0.4118154
+      outSlope: -0.4118154
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.071093544
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.9992635
-      value: 0.001572303
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 136
+      time: 45
+      value: 10
+      inSlope: -0.20152986
+      outSlope: -0.20152986
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.20441987
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 70
+      value: 5
+      inSlope: -0.1672284
+      outSlope: -0.1672284
+      tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 100
+      value: 0
+      inSlope: -0.16666667
+      outSlope: -0.16666667
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -771,8 +773,20 @@ MonoBehaviour:
       m_Calls: []
   outOfHealth:
     m_PersistentCalls:
-      m_Calls: []
-  maxHealth: 100
+      m_Calls:
+      - m_Target: {fileID: 7647201157404394646}
+        m_TargetAssemblyTypeName: Boss, Assembly-CSharp
+        m_MethodName: Dead
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  maxHealth: 1000
   currentHealth: 0
   defaultToMaxHealth: 1
 --- !u!95 &7637335859374626467
@@ -935,6 +949,56 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 0
+--- !u!54 &-2469205236274879816
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6449207097394993412}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &5178683197433434980
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6449207097394993412}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Height: 6
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6535865964897755200
 GameObject:
   m_ObjectHideFlags: 0

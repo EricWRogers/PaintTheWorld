@@ -13,14 +13,15 @@ public class EnemyManager : Singleton<EnemyManager>
     new void Awake()
     {
         base.Awake();
-        Timer timer = GetComponent<Timer>();
-        timer.autoStart = true;
-        timer.countDownTime = spawnDelay;
-        timer.autoRestart = true;
+        
     }
 
     void Start()
     {
+        Timer timer = GetComponent<Timer>();
+        timer.autoStart = true;
+        timer.countDownTime = spawnDelay;
+        timer.autoRestart = true;
         AddEnemy(maxNumberOfEnemies / 4);
     }
 
@@ -42,5 +43,9 @@ public class EnemyManager : Singleton<EnemyManager>
     public void RemoveEnemy()
     {
         m_numberOfEnemies--;
+    }
+    public void AddSpawners(ObjectSpawner _spawner)
+    {
+        spawners.Add(_spawner);
     }
 }

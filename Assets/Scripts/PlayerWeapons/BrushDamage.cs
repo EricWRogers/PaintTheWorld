@@ -193,11 +193,12 @@ public class BushDamage : MonoBehaviour
 
     public void Glob()
     {
-                if (paintGlobPrefab != null && bulletSpawnPoint1 != null && bulletSpawnPoint2 != null && bulletSpawnPoint3 != null)
+        if (paintGlobPrefab != null && bulletSpawnPoint1 != null && bulletSpawnPoint2 != null && bulletSpawnPoint3 != null)
         {
-            Instantiate(paintGlobPrefab, bulletSpawnPoint1.position, bulletSpawnPoint1.rotation);
-            Instantiate(paintGlobPrefab, bulletSpawnPoint2.position, bulletSpawnPoint2.rotation);
-            Instantiate(paintGlobPrefab, bulletSpawnPoint3.position, bulletSpawnPoint3.rotation);
+            Instantiate(paintGlobPrefab, bulletSpawnPoint1.position, bulletSpawnPoint1.rotation).GetComponent<PaintGlobs>().paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
+            Instantiate(paintGlobPrefab, bulletSpawnPoint2.position, bulletSpawnPoint2.rotation).GetComponent<PaintGlobs>().paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
+            Instantiate(paintGlobPrefab, bulletSpawnPoint3.position, bulletSpawnPoint3.rotation).GetComponent<PaintGlobs>().paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
+
         }
     }
 
