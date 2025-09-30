@@ -400,14 +400,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerPrefab
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7706458509901835205, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-      insertIndex: 7
-      addedObject: {fileID: 816527766}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
 --- !u!1 &322795899
 GameObject:
@@ -723,20 +719,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
   m_PrefabInstance: {fileID: 287313840}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &816527766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 816527739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 045a2454fa5f7a44bbd4c27298c01826, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standingColor: {r: 0, g: 0, b: 0, a: 0}
-  selectedPaint: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &871354069 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7623234513540899692, guid: 0706320ce4fa64b449b5ee60c2f81723, type: 3}

@@ -11,6 +11,7 @@ public class CollisonPainter : MonoBehaviour
 
     public void OnCollisionStay(Collision other)
     {
+        paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
         Paint(other);
     }
     public void Paint(Collision other)

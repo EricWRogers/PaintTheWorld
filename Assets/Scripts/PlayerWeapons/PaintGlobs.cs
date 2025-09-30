@@ -13,5 +13,6 @@ public class PaintGlobs : CollisonPainter
             other.gameObject.GetComponent<Health>().Damage(damage);
         }
         Destroy(gameObject);
+        
     }
 }

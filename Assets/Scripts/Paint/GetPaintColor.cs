@@ -4,6 +4,7 @@ using UnityEngine;
 public class GetPaintColor : MonoBehaviour
 {
     public Color standingColor;
+    public LayerMask ignoreMask;
     RenderTexture activeMask;
     private Texture2D readableTexture;
     void Awake()
@@ -18,7 +19,7 @@ public class GetPaintColor : MonoBehaviour
     public void CheckOnPaint()
     {
         Ray ray = new Ray(transform.position, Vector3.down);
-        if (Physics.Raycast(ray, out RaycastHit hit, 2f))
+        if (Physics.Raycast(ray, out RaycastHit hit, 3f, ~ignoreMask))
         {
             Paintable temp = hit.transform.gameObject.GetComponent<Paintable>();
             if (temp == null) return;
