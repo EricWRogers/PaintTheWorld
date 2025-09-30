@@ -249,12 +249,8 @@ namespace KinematicCharacterControler
             currentRail = rail;
             railProgress = progress;
 
-            ;
+            
             grindSpeed = speed;
-
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-            Vector3 inputDir = m_orientation.forward * vertical + m_orientation.right * horizontal;
             
             // Get rail direction at this point
             Vector3 railDir = rail.GetDirectionOnRail(progress);
