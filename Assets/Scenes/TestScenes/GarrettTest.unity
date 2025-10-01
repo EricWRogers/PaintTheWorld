@@ -2544,7 +2544,7 @@ MonoBehaviour:
   paintPosButton: {fileID: 461603187}
   gunOne: {fileID: 3626416404593912390, guid: d78eac89c2cc6344fa799c3274c70f35, type: 3}
   gunTwo: {fileID: 2928339781881501685, guid: 86b13d4a08986a94a80717772fc315ed, type: 3}
-  gunThree: {fileID: 0}
+  gunThree: {fileID: 5766046971032739393, guid: 79428c235ceb8d64db22e2ae5795dfeb, type: 3}
   playerMovement: {fileID: 1318878538}
   moveText: {fileID: 942889243}
   playerDamage: {fileID: 944956189}
@@ -4246,7 +4246,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1698859693}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 816527740}
+        m_TargetAssemblyTypeName: PlayerWeapon, Assembly-CSharp
+        m_MethodName: ChangeWeapon
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 5766046971032739393, guid: 79428c235ceb8d64db22e2ae5795dfeb, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1698859693
 MonoBehaviour:
   m_ObjectHideFlags: 0
