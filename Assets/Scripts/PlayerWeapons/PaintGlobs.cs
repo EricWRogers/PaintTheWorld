@@ -1,30 +1,30 @@
+using System;
 using SuperPupSystems.Helper;
 using UnityEngine;
 
 public class PaintGlobs : CollisonPainter
 {
     public int bulletDamage = 10;
-    void Update()
-    {
-        bulletDamage = PlayerManager.instance.player.GetComponent<PlayerWeapon>().damage;
-    }
     public int damage = 10;
     
     public float launchForce = 15f;
     private Rigidbody rb;
 
 
-    void Awake()
+   
+    public  void Start()
     {
-        // Get the Rigidbody component attached to this GameObject
         rb = GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.AddForce(transform.forward * launchForce, ForceMode.Impulse);
+        Renderer blobRenderer = gameObject.GetComponent<Renderer>();
+        blobRenderer.material.SetColor("_BaseColor", paintColor);
     }
-    void Start()
-    {
-        rb.AddForce(transform.forward * launchForce, ForceMode.Impulse);
-    }
+    
+
     new void OnCollisionStay(Collision other)
     {
+        
         Paint(other);
         if (other.transform.tag == "Enemy")
         {
