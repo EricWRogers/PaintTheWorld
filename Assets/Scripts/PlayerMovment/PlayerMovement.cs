@@ -2,6 +2,7 @@ using System.ComponentModel.Design.Serialization;
 using System.Net.Mail;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.Assertions.Comparers;
 
 namespace KinematicCharacterControler
 {
@@ -15,6 +16,10 @@ namespace KinematicCharacterControler
 
         private Transform m_orientation;
         public Transform cam;
+        public float movementColorMult = 2f;
+        private float m_currColorMult = 1f;
+        public GetPaintColor standPaintColor;
+        private PaintColors colors;
 
         [Header("Physics")]
         private float m_elapsedFalling;
@@ -52,6 +57,7 @@ namespace KinematicCharacterControler
         {
             player = GameObject.Find("Player");
             m_orientation = cam;
+            colors = PaintManager.instance.GetComponent<PaintColors>();
         }
 
         void Update()
@@ -59,7 +65,8 @@ namespace KinematicCharacterControler
             HandleCursor();
             UpdateGrindInput();
             HandleInput();
-            
+            HandlePaintColor();
+
             if (!isGrinding)
             {
                 HandleRegularMovement();
@@ -70,6 +77,12 @@ namespace KinematicCharacterControler
                 ContinueGrinding();
             }
         }
+        
+        public void HandlePaintColor()
+        {
+            m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
+            Debug.Log(m_currColorMult);
+         }
 
         public void HandleCursor()
         {
@@ -84,7 +97,6 @@ namespace KinematicCharacterControler
                 Cursor.visible = true;
             }
         }
-
         void UpdateGrindInput()
         {
             grindInputHeld = Input.GetKey(grindKey);

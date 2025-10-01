@@ -14,13 +14,15 @@ public class GetPaintColor : MonoBehaviour
 
     void Update()
     {
-        CheckOnPaint();
+        
     }
     public void CheckOnPaint()
     {
+        Debug.Log("Check paint");
         Ray ray = new Ray(transform.position, Vector3.down);
         if (Physics.Raycast(ray, out RaycastHit hit, 3f, ~ignoreMask))
         {
+            Debug.Log("OBJ: " + hit.transform.name);
             Paintable temp = hit.transform.gameObject.GetComponent<Paintable>();
             if (temp == null) return;
             activeMask = null;
