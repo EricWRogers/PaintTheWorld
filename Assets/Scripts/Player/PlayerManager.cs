@@ -51,6 +51,10 @@ public class PlayerManager : Singleton<PlayerManager>
     {
         base.Awake();
         player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+        {
+            return;
+        }
         InitializeComponents();
         Debug.Log("initialized components");
         SaveGame();

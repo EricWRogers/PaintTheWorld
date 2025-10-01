@@ -11,8 +11,11 @@ public class DevTools : MonoBehaviour
     public List<Vector3> paintTrailPos;
     public Button paintPosButton;
     public GameObject gunOne;
+    public Button button1;
     public GameObject gunTwo;
+    public Button button2;
     public GameObject gunThree;
+    public Button button3;
     public Slider playerMovement;
     public TextMeshProUGUI moveText;
     public Slider playerDamage;
@@ -27,6 +30,10 @@ public class DevTools : MonoBehaviour
     {
         m_player = PlayerManager.instance.player;
         paintPosButton.onClick.AddListener(SwitchPaintPos);
+        button1.onClick.AddListener(Gun1);
+        button2.onClick.AddListener(Gun2);
+        button3.onClick.AddListener(Gun3);
+        
     }
 
     void Update()
@@ -52,6 +59,18 @@ public class DevTools : MonoBehaviour
                 i = 0;
             }
         }
+    }
+    private void Gun1()
+    {
+        m_player.GetComponent<PlayerWeapon>().ChangeWeapon(gunOne);
+    }
+    private void Gun2()
+    {
+        m_player.GetComponent<PlayerWeapon>().ChangeWeapon(gunTwo);
+    }
+    private void Gun3()
+    {
+        m_player.GetComponent<PlayerWeapon>().ChangeWeapon(gunThree);
     }
 
     private void ToggleTools()

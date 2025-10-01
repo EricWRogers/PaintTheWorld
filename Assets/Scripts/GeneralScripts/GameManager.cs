@@ -1,4 +1,5 @@
 
+using KinematicCharacterControler;
 using SuperPupSystems.Helper;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,7 +27,9 @@ public class GameManager : Singleton<GameManager>
 
     public void StageComplete()
     {
-        SceneManager.LoadSceneAsync("SkillAndShopTest");
+        PlayerManager.instance.player.GetComponent<PlayerMovement>().lockCursor = false;
+        PlayerManager.instance.player.GetComponent<PlayerMovement>().HandleCursor();
+        SceneManager.LoadSceneAsync(1);
     }
 
     public void SpawnBoss()

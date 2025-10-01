@@ -4927,6 +4927,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 653820723770324074}
+  - component: {fileID: 8051954353855837785}
   m_Layer: 3
   m_Name: BrushWeapon
   m_TagString: Untagged
@@ -4954,6 +4955,18 @@ Transform:
   - {fileID: 2860813535095682785}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8051954353855837785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361506764179290426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0afdafabc65f7af43b51e6e591541f4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3328140588715004941
 GameObject:
   m_ObjectHideFlags: 0
@@ -5235,6 +5248,7 @@ MonoBehaviour:
   animator: {fileID: 3600167483412021329}
   holdAttackBool: HoldAttack
   brushgunBool: BrushGun
+  isAttacking: 0
 --- !u!95 &3600167483412021329
 Animator:
   serializedVersion: 7

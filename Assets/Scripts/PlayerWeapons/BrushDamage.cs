@@ -29,7 +29,7 @@ public class BushDamage : MonoBehaviour
     public string holdAttackBool = "HoldAttack";
     public string brushgunBool = "BrushGun";
 
-    private bool isAttacking = false;
+    public bool isAttacking = false;
     private List<GameObject> hitTargets = new List<GameObject>();
     private Quaternion originalRotation;
     private Vector3 originalPosition;
