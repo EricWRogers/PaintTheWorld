@@ -123,7 +123,7 @@ namespace KinematicCharacterControler
             m_orientation.forward = viewDir.normalized;
 
             Vector3 inputDir = m_orientation.forward * vertical + m_orientation.right * horizontal;
-
+            inputDir = inputDir.normalized;
 
             // Rotate player
             if (inputDir != Vector3.zero || Input.GetMouseButton(0) )
