@@ -71,7 +71,7 @@ namespace KinematicCharacterControler
             }
         }
 
-        void HandleCursor()
+        public void HandleCursor()
         {
             if (lockCursor)
             {
@@ -81,7 +81,7 @@ namespace KinematicCharacterControler
             else
             {
                 Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = false;
+                Cursor.visible = true;
             }
         }
 

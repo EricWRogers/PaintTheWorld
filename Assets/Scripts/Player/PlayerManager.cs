@@ -46,6 +46,7 @@ public class PlayerManager : Singleton<PlayerManager>
     private SaveData saveData; //= new SaveData();
     private const string SAVE_KEY = "PlayerSaveData";
     private SaveData startSaveData;
+    private bool m_cursorEnabled;
     new void Awake()
     {
         base.Awake();
@@ -106,7 +107,7 @@ public class PlayerManager : Singleton<PlayerManager>
         inventory.items = saveData.playerItems;
         stats.skills = saveData.playerSkills;
         Debug.Log("Game loaded successfully");
-        
+
     }
     public void RegisterPlayer(GameObject _player)
     {
@@ -155,4 +156,6 @@ public class SaveData
 
 
     }
+
+    
 }

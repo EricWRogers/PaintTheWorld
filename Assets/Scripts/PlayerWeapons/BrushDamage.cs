@@ -38,6 +38,7 @@ public class BushDamage : MonoBehaviour
     private List<GameObject> hitTargets = new List<GameObject>();
     private Quaternion originalRotation;
     private Vector3 originalPosition;
+    private GameObject m_player;
 
     void Start()
     {
@@ -64,10 +65,12 @@ public class BushDamage : MonoBehaviour
             // Try to get an Animator on this GameObject if not assigned
             animator = GetComponent<Animator>();
         }
+        m_player = PlayerManager.instance.player;
     }
 
     void Update()
     {
+        weaponDamage = PlayerManager.instance.player.GetComponent<PlayerWeapon>().damage;
         // Hold-to-attack: start when Fire1 pressed, stop when released
         if (Input.GetButtonDown("Fire1") && !isAttacking)
         {
@@ -195,10 +198,23 @@ public class BushDamage : MonoBehaviour
     {
         if (paintGlobPrefab != null && bulletSpawnPoint1 != null && bulletSpawnPoint2 != null && bulletSpawnPoint3 != null)
         {
-            Instantiate(paintGlobPrefab, bulletSpawnPoint1.position, bulletSpawnPoint1.rotation).GetComponent<PaintGlobs>().paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
-            Instantiate(paintGlobPrefab, bulletSpawnPoint2.position, bulletSpawnPoint2.rotation).GetComponent<PaintGlobs>().paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
-            Instantiate(paintGlobPrefab, bulletSpawnPoint3.position, bulletSpawnPoint3.rotation).GetComponent<PaintGlobs>().paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
+            GameObject glob1 = Instantiate(paintGlobPrefab, bulletSpawnPoint1.position, bulletSpawnPoint1.rotation);
+            GameObject glob2 = Instantiate(paintGlobPrefab, bulletSpawnPoint2.position, bulletSpawnPoint2.rotation);
+            GameObject glob3 = Instantiate(paintGlobPrefab, bulletSpawnPoint3.position, bulletSpawnPoint3.rotation);
+            PaintGlobs temp1 = glob1.GetComponent<PaintGlobs>();
+            PaintGlobs temp2 = glob2.GetComponent<PaintGlobs>();
+            PaintGlobs temp3 = glob3.GetComponent<PaintGlobs>();
+            temp1.paintColor = m_player.GetComponent<PlayerPaint>().selectedPaint;
+            temp1.bulletDamage = m_player.GetComponent<PlayerWeapon>().damage;
+            temp1.radius = m_player.GetComponent<PlayerWeapon>().paintRadius;
 
+            temp2.paintColor = m_player.GetComponent<PlayerPaint>().selectedPaint;
+            temp2.bulletDamage = m_player.GetComponent<PlayerWeapon>().damage;
+            temp2.radius = m_player.GetComponent<PlayerWeapon>().paintRadius;
+
+            temp3.paintColor = m_player.GetComponent<PlayerPaint>().selectedPaint;
+            temp2.bulletDamage = m_player.GetComponent<PlayerWeapon>().damage;
+            temp2.radius = m_player.GetComponent<PlayerWeapon>().paintRadius;
         }
     }
 
