@@ -1,9 +1,6 @@
 using SuperPupSystems.Helper;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Events;
-using UnityEngine.WSA;
 
 public class Boss : MonoBehaviour
 {

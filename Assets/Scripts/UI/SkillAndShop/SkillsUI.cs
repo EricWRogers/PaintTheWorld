@@ -24,8 +24,8 @@ public class SkillsUI : MonoBehaviour
 
     private void Awake()
     {
-        if (!stats) stats = FindObjectOfType<PlayerStats>();
-        if (!wallet) wallet = FindObjectOfType<Currency>();
+        if (!stats) stats = PlayerManager.instance.stats;
+        if (!wallet) wallet = PlayerManager.instance.wallet;
     }
 
     private void OnEnable()
