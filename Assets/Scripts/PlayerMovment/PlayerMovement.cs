@@ -1,8 +1,5 @@
-using System.ComponentModel.Design.Serialization;
-using System.Net.Mail;
-using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.Assertions.Comparers;
+
 
 namespace KinematicCharacterControler
 {
@@ -113,6 +110,7 @@ namespace KinematicCharacterControler
                 jumpInputElapsed = 0.0f;
             else
                 jumpInputElapsed += Time.deltaTime;
+
         }
 
         void HandleRegularMovement()
@@ -128,9 +126,9 @@ namespace KinematicCharacterControler
 
 
             // Rotate player
-            if (inputDir != Vector3.zero )
+            if (inputDir != Vector3.zero || Input.GetMouseButton(0) )
             {
-                player.transform.forward = Vector3.Slerp(player.transform.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+                player.transform.forward = Vector3.Slerp(player.transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
                 m_velocity.z = 0f;
             }
