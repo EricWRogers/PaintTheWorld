@@ -17,11 +17,6 @@ public class BushDamage : MonoBehaviour
     public Transform bulletSpawnPoint2; // Where the projectile will be created 
     public Transform bulletSpawnPoint3; // Where the projectile will be created
 
-    [Header("BoxCast Settings")]
-    [Tooltip("The size of the box for hit detection. This is HALF the full size.")]
-    public Vector3 boxCastSize = new Vector3(0.5f, 0.5f, 0.5f);
-    [Tooltip("The distance to cast the box.")]
-    public float castDistance = 1f;
     [Tooltip("How often damage is applied while holding the attack (in seconds).")]
     public float damageTickRate = 0.5f; // New variable for damage tick rate
 
@@ -213,8 +208,8 @@ public class BushDamage : MonoBehaviour
             temp2.radius = m_player.GetComponent<PlayerWeapon>().paintRadius;
 
             temp3.paintColor = m_player.GetComponent<PlayerPaint>().selectedPaint;
-            temp2.bulletDamage = m_player.GetComponent<PlayerWeapon>().damage;
-            temp2.radius = m_player.GetComponent<PlayerWeapon>().paintRadius;
+            temp3.bulletDamage = m_player.GetComponent<PlayerWeapon>().damage;
+            temp3.radius = m_player.GetComponent<PlayerWeapon>().paintRadius;
         }
     }
 
@@ -231,66 +226,57 @@ public class BushDamage : MonoBehaviour
 
     void DoBoxCastDamage()
     {
-        /*
-        RaycastHit hit;
-        // Perform the BoxCast from the attackPart's position and orientation
-        bool hasHit = Physics.BoxCast(
-            damageZone.transform.position,      // Center of the box
-            damageZone.GetComponent<BoxCollider>().size / 2,              // Half the size of the box
-            transform.forward,       // Direction to cast
-            out hit,                  // Variable to store hit information
-            transform.rotation,      // Orientation of the box
-            Vector3.Distance(damageZone.transform.localPosition, damageZone.GetComponent<BoxCollider>().center), layerMask              // How far to cast
+        if (damageZone == null) return;
+
+        // Get the center and half-extents of the box
+        Vector3 boxCenter = damageZone.transform.position;   // Fixed world position
+        Vector3 halfExtents = damageZone.GetComponent<BoxCollider>().size / 2;                  // half-size of the box
+        Quaternion boxRotation = damageZone.transform.rotation;
+
+        // Get all colliders in the box
+        Collider[] hits = Physics.OverlapBox(
+            boxCenter,
+            halfExtents,
+            boxRotation,
+            layerMask
         );
-        if (hasHit)
+
+        foreach (Collider col in hits)
         {
-            Debug.Log("hit " + hit.collider.name);
-            if (!hit.collider.CompareTag(targetTag))
+            if (col.CompareTag(targetTag))
             {
-                GameObject go = hit.collider.gameObject;
+                GameObject go = col.gameObject;
                 if (!hitTargets.Contains(go))
                 {
                     hitTargets.Add(go);
+
                     Health health = go.GetComponent<Health>();
                     if (health != null)
                     {
                         health.Damage(weaponDamage);
-                        Debug.Log($"{go.name} took {weaponDamage} damage from BoxCast attack!");
+                        Debug.Log($"{go.name} took {weaponDamage} damage!");
                     }
                 }
-            }
-        }
-        */
-        if (damageZone.GetComponent<AttackZone>().enemyInZone == true)
-        {
-            foreach (GameObject go in damageZone.GetComponent<AttackZone>().enemiesInZone)
-            {
-                if (!hitTargets.Contains(go))
-                {
-                    hitTargets.Add(go);
-                    Health health = go.GetComponent<Health>();
-                    if (health != null)
-                    {
-                        health.Damage(weaponDamage);
-                        Debug.Log($"{go.name} took {weaponDamage} damage from BoxCast attack!");
-                    }
-                }
-                
             }
         }
     }
+    // if (damageZone.GetComponent<AttackZone>().enemyInZone == true)
+    // {
+    //     foreach (GameObject go in damageZone.GetComponent<AttackZone>().enemiesInZone)
+    //     {
+    //         if (!hitTargets.Contains(go))
+    //         {
+    //             hitTargets.Add(go);
+    //             Health health = go.GetComponent<Health>();
+    //             if (health != null)
+    //             {
+    //                 health.Damage(weaponDamage);
+    //                 Debug.Log($"{go.name} took {weaponDamage} damage from BoxCast attack!");
+    //             }
+    //         }
+
+    //     }
+    // }
+    //}
     
-    private void OnDrawGizmos()
-    {
-        if (attackPart == null) return;
-
-        Gizmos.color = Color.red;
-
-        // Use a matrix to handle the rotation of the Gizmo
-        Matrix4x4 rotationMatrix = Matrix4x4.TRS(attackPart.position, attackPart.rotation, Vector3.one);
-        Gizmos.matrix = rotationMatrix;
-
-        // Draw the box at its casted position
-        Gizmos.DrawWireCube(Vector3.forward * castDistance, boxCastSize * 2); // Multiply by 2 because BoxCast uses half-extents
-    }
 }

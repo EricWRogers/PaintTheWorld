@@ -11,7 +11,7 @@ public class PlayerWeapon : MonoBehaviour
     {
         if (weaponSlot.transform.childCount > 0)
         {
-            Destroy(weaponSlot.transform.GetChild(0));
+            weaponSlot.transform.GetChild(0).GetComponent<Weapon>().DestroyWeapon();
             Instantiate(_gunPrefab, weaponSlot.transform);
         }
     }

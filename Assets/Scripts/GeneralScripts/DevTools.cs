@@ -39,8 +39,8 @@ public class DevTools : MonoBehaviour
         m_player.GetComponent<PlayerWeapon>().paintRadius = paintRadius.value;
         m_player.GetComponent<PlayerWeapon>().damage = (int)playerDamage.value;
         moveText.text = playerMovement.value.ToString();
-        damageText.text = paintRadius.value.ToString();
-        radiusText.text = ((int)playerDamage.value).ToString();
+        radiusText.text = paintRadius.value.ToString();
+        damageText.text = ((int)playerDamage.value).ToString();
     }
     private void SwitchPaintPos()
     {

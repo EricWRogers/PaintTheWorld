@@ -68,4 +68,8 @@ public class PowerPainter : RayCastPainter
             m_lineRender.enabled = false;
         }
     }
+    public void DestroyGun()
+    {
+        Destroy(gameObject);
+    }
 }
