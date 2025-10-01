@@ -10,7 +10,7 @@ public class CollisonPainter : MonoBehaviour
     public float hardness = 1;
     public void Awake()
     {
-        paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
+        //paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
         
     }
 
@@ -20,6 +20,7 @@ public class CollisonPainter : MonoBehaviour
     }
     public void Paint(Collision other)
     {
+        paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
         Paintable p = other.collider.GetComponent<Paintable>();
         if (p != null)
         {

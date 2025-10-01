@@ -57,7 +57,7 @@ public class PlayerManager : Singleton<PlayerManager>
         Debug.Log("initialized components");
         SaveGame();
         LoadGame();
-        health.outOfHealth.AddListener(OnDeath);
+        //health.outOfHealth.AddListener(OnDeath);
     }
     void Start()
     {
