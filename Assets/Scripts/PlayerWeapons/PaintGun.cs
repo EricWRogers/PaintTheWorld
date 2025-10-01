@@ -38,11 +38,11 @@ public class PaintGun : MonoBehaviour
             return;
         }
 
-        // --- Manual Reload ---
+
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < magazineSize)
         {
             StartCoroutine(Reload());
-            return; // Exit early
+            return;
         }
 
         // --- Continuous Shooting Logic ---
@@ -72,7 +72,6 @@ public class PaintGun : MonoBehaviour
         }
     }
 
-    // CHANGED: This is now a simple method, not a coroutine
     void Shoot()
     {
         if (paintGlobPrefab != null && bulletSpawnPoint != null)
