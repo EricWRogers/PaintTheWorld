@@ -8,6 +8,21 @@ public class PaintGlobs : CollisonPainter
     {
         bulletDamage = PlayerManager.instance.player.GetComponent<PlayerWeapon>().damage;
     }
+    public int damage = 10;
+    
+    public float launchForce = 15f;
+    private Rigidbody rb;
+
+
+    void Awake()
+    {
+        // Get the Rigidbody component attached to this GameObject
+        rb = GetComponent<Rigidbody>();
+    }
+    void Start()
+    {
+        rb.AddForce(transform.forward * launchForce, ForceMode.Impulse);
+    }
     new void OnCollisionStay(Collision other)
     {
         Paint(other);
