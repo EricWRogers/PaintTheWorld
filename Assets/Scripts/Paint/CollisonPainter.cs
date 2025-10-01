@@ -8,10 +8,14 @@ public class CollisonPainter : MonoBehaviour
     public float radius = 1;
     public float strength = 1;
     public float hardness = 1;
+    public void Awake()
+    {
+        paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
+        
+    }
 
     public void OnCollisionStay(Collision other)
     {
-        paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
         Paint(other);
     }
     public void Paint(Collision other)
