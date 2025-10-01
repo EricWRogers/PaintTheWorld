@@ -29,6 +29,7 @@ public class GameManager : Singleton<GameManager>
     {
         PlayerManager.instance.player.GetComponent<PlayerMovement>().lockCursor = false;
         PlayerManager.instance.player.GetComponent<PlayerMovement>().HandleCursor();
+        EnemyManager.instance.ClearSpawners();
         SceneManager.LoadSceneAsync(1);
     }
 

@@ -77,7 +77,7 @@ namespace KinematicCharacterControler
         
         public void HandlePaintColor()
         {
-            //m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
+            m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
             Debug.Log(m_currColorMult);
          }
 
@@ -164,7 +164,7 @@ namespace KinematicCharacterControler
             }
 
             // Apply movement
-            transform.position = MovePlayer(inputDir * speed * Time.deltaTime);
+            transform.position = MovePlayer(inputDir * speed * Time.deltaTime * movementColorMult);
             transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
             if (onGround && !attemptingJump)

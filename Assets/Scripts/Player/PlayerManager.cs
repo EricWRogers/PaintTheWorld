@@ -72,13 +72,13 @@ public class PlayerManager : Singleton<PlayerManager>
             playerSkills
         );
     }
-    private void InitializeComponents()
+    public void InitializeComponents()
     {
         // Get required components
-        wallet = player.GetComponent<Currency>() == null ? player.AddComponent<Currency>() : player.GetComponent<Currency>();
-        health = player.GetComponent<Health>() == null ? player.AddComponent<Health>() : player.GetComponent<Health>();
-        inventory = player.GetComponent<Inventory>() == null ? player.AddComponent<Inventory>() : player.GetComponent<Inventory>();
-        stats = player.GetComponent<PlayerStats>() == null ? player.AddComponent<PlayerStats>() : player.GetComponent<PlayerStats>();
+        wallet = GetComponent<Currency>() == null ? gameObject.AddComponent<Currency>() : GetComponent<Currency>();
+        health = GetComponent<Health>() == null ? gameObject.AddComponent<Health>() : GetComponent<Health>();
+        inventory = GetComponent<Inventory>() == null ? gameObject.AddComponent<Inventory>() : GetComponent<Inventory>();
+        stats = GetComponent<PlayerStats>() == null ? gameObject.AddComponent<PlayerStats>() : GetComponent<PlayerStats>();
 
     }
 

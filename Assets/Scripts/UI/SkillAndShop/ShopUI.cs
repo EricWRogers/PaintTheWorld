@@ -73,9 +73,9 @@ public class ShopUI : MonoBehaviour
 
         if (!catalog.HasStock(index)) return;   // out of stock
         if (wallet.amount < def.price) return;  // cannot afford
-        if (!wallet.Spend(def.price)) return;
+        if (!PlayerManager.instance.wallet.Spend(def.price)) return;
 
-        inventory.Add(def, 1);
+        PlayerManager.instance.inventory.Add(def, 1);
         catalog.ConsumeStock(index);
         RefreshAll();
     }

@@ -956,8 +956,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eecdda35e2bda5349970c67c072131bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats: {fileID: 1454869406}
-  wallet: {fileID: 673367747}
+  stats: {fileID: 0}
+  wallet: {fileID: 0}
   rows:
   - icon: {fileID: 808858446}
     nameText: {fileID: 2025422531}
@@ -2390,54 +2390,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 638853791}
   m_CullTransparentMesh: 1
---- !u!1 &673367746
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 673367748}
-  - component: {fileID: 673367747}
-  m_Layer: 0
-  m_Name: Wallet
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &673367747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 673367746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cadd460795f26b748b98351c8ca8b3e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  amount: 1000000
-  changed:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!4 &673367748
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 673367746}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 356.24994, y: 258.52484, z: 7.7929688}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &681220369
 GameObject:
   m_ObjectHideFlags: 0
@@ -4825,6 +4777,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1090927080}
   m_CullTransparentMesh: 1
+--- !u!1 &1094300201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1094300203}
+  - component: {fileID: 1094300202}
+  m_Layer: 0
+  m_Name: PlayerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1094300202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094300201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f49e4fa51ff75de41a62aa0dd59d33b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  health: {fileID: 0}
+  wallet: {fileID: 0}
+  inventory: {fileID: 0}
+  stats: {fileID: 0}
+  playerItems: []
+  playerSkills: []
+--- !u!4 &1094300203
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094300201}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.4389424, y: 4.9117613, z: -24.655422}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1113630722
 GameObject:
   m_ObjectHideFlags: 0
@@ -7187,86 +7190,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453888603}
   m_CullTransparentMesh: 1
---- !u!1 &1454869405
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1454869407}
-  - component: {fileID: 1454869406}
-  m_Layer: 0
-  m_Name: PlayerStats
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1454869406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1454869405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5861edd3bc2b5745b63d0ca06106a2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skills:
-  - id: Health
-    displayName: Health
-    description: Max HP up.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 5
-    baseCost: 50
-    costGrowth: 1.5
-  - id: Damage
-    displayName: Damage
-    description: Attack power up.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 5
-    baseCost: 60
-    costGrowth: 1.5
-  - id: Defense
-    displayName: Defense
-    description: Reduce damage taken.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 5
-    baseCost: 55
-    costGrowth: 1.5
-  - id: Speed
-    displayName: Speed
-    description: Move faster.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 6
-    baseCost: 45
-    costGrowth: 1.6
-  onSkillChanged:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!4 &1454869407
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1454869405}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 356.24994, y: 258.52484, z: 7.7929688}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1478354295
 GameObject:
   m_ObjectHideFlags: 0
@@ -12229,7 +12152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   catalog: {fileID: 2093751669}
-  wallet: {fileID: 673367747}
+  wallet: {fileID: 0}
   inventory: {fileID: 2093751668}
   rows:
   - icon: {fileID: 925139188}
@@ -12761,7 +12684,6 @@ SceneRoots:
   - {fileID: 2029552896}
   - {fileID: 1407056386}
   - {fileID: 1613355089}
-  - {fileID: 1454869407}
-  - {fileID: 673367748}
   - {fileID: 2093751670}
   - {fileID: 60187488}
+  - {fileID: 1094300203}

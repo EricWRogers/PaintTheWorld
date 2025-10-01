@@ -13,11 +13,13 @@ public class EnemyManager : Singleton<EnemyManager>
     new void Awake()
     {
         base.Awake();
-        
+
     }
 
     void Start()
     {
+        if (spawners.Count <= 0)
+            return;
         Timer timer = GetComponent<Timer>();
         timer.autoStart = true;
         timer.countDownTime = spawnDelay;
@@ -27,6 +29,10 @@ public class EnemyManager : Singleton<EnemyManager>
 
     public void AddEnemy(int _amount)
     {
+        if (spawners.Count == 0)
+        {
+            return;
+        }
         m_ranSpawner = Random.Range(0, spawners.Count);
 
         for (int i = 0; i < _amount; i++)
@@ -47,5 +53,9 @@ public class EnemyManager : Singleton<EnemyManager>
     public void AddSpawners(ObjectSpawner _spawner)
     {
         spawners.Add(_spawner);
+    }
+    public void ClearSpawners()
+    {
+        spawners.Clear();
     }
 }
