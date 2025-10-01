@@ -15,6 +15,7 @@ namespace KinematicCharacterControler
         public Transform cam;
         public float movementColorMult = 2f;
         private float m_currColorMult = 1f;
+        private float m_shopMoveMult => PlayerManager.instance.stats.skills[3].currentMult;
         public GetPaintColor standPaintColor;
         private PaintColors colors;
 
@@ -49,6 +50,8 @@ namespace KinematicCharacterControler
         public Vector3 grindVelocity;
         public bool grindInputHeld;
         public float m_railDir = 1f;
+
+
         [SerializeField] private Transform m_railDetectionPoint;
         void Start()
         {
@@ -164,7 +167,7 @@ namespace KinematicCharacterControler
             }
 
             // Apply movement
-            transform.position = MovePlayer(inputDir * speed * Time.deltaTime * movementColorMult);
+            transform.position = MovePlayer(inputDir * speed * Time.deltaTime * movementColorMult* m_shopMoveMult);
             transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
             if (onGround && !attemptingJump)
