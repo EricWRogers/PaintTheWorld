@@ -66,6 +66,10 @@ public class TurretScript : MonoBehaviour
 
     void Update()
     {
+        if (m_player == null)
+        {
+            return;
+        }
         if (Vector3.Distance(m_player.transform.position, transform.position) <= maxBeamDistance)
         {
             LaserBeam();
@@ -212,7 +216,7 @@ public class TurretScript : MonoBehaviour
     }
     public void Dead()
     {
-        m_player.GetComponent<Currency>().Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
+        PlayerManager.instance.wallet.Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
         Destroy(gameObject);
     }
     public void OnDestroy()

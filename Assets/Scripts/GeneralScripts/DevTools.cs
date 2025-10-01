@@ -42,6 +42,8 @@ public class DevTools : MonoBehaviour
         {
             ToggleTools();
         }
+        if (m_player == null)
+            return;
         m_player.GetComponent<PlayerMovement>().speed = playerMovement.value;
         m_player.GetComponent<PlayerWeapon>().paintRadius = paintRadius.value;
         m_player.GetComponent<PlayerWeapon>().damage = (int)playerDamage.value;
