@@ -1618,6 +1618,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extendsIslandOffset: 1
+--- !u!1 &249186750 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+  m_PrefabInstance: {fileID: 1709760052}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &249186765
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 249186750}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &279237978
 GameObject:
   m_ObjectHideFlags: 0
@@ -3778,7 +3799,7 @@ MonoBehaviour:
   totalSpawned: 0
   poolSize: 20
   objectsToSpawn:
-  - {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
+  - {fileID: 7623234513540899692, guid: 0706320ce4fa64b449b5ee60c2f81723, type: 3}
   spawnAllOnStart: 0
 --- !u!1 &992350756
 GameObject:
@@ -4075,7 +4096,7 @@ MonoBehaviour:
   totalSpawned: 0
   poolSize: 20
   objectsToSpawn:
-  - {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
+  - {fileID: 7623234513540899692, guid: 0706320ce4fa64b449b5ee60c2f81723, type: 3}
   spawnAllOnStart: 0
 --- !u!1 &1040331176
 GameObject:
@@ -5151,8 +5172,8 @@ GameObject:
   - component: {fileID: 1218260166}
   - component: {fileID: 1218260165}
   - component: {fileID: 1218260164}
-  - component: {fileID: 1218260167}
   - component: {fileID: 1218260168}
+  - component: {fileID: 1218260169}
   m_Layer: 8
   m_Name: GaurdRail (1)
   m_TagString: Untagged
@@ -5251,7 +5272,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1218260162}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1218260167
+--- !u!208 &1218260168
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218260162}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0
+--- !u!114 &1218260169
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5270,22 +5307,6 @@ MonoBehaviour:
   isLoop: 0
   baseGrindSpeed: 8
   gravityInfluence: 0
---- !u!208 &1218260168
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1218260162}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
-  m_MoveThreshold: 0
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0
 --- !u!1 &1219530712
 GameObject:
   m_ObjectHideFlags: 0
@@ -5631,7 +5652,7 @@ MonoBehaviour:
         m_CallState: 2
   autoStart: 1
   autoRestart: 0
-  countDownTime: 60
+  countDownTime: 10
   timeScale: 1
 --- !u!114 &1324319633
 MonoBehaviour:
@@ -7466,9 +7487,13 @@ PrefabInstance:
       value: PlayerPrefab
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7580527484394410410, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 249186765}
   m_SourcePrefab: {fileID: 100100000, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
 --- !u!1 &1712257746
 GameObject:
