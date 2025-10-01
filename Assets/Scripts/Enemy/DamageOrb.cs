@@ -21,7 +21,7 @@ public class DamageOrb : MonoBehaviour
             Collider[] hits = Physics.OverlapSphere(transform.position, radius, layerMask);
             foreach (Collider hit in hits)
             {
-                Health health = hit.GetComponent<Health>();
+                Health health = PlayerManager.instance.health;
                 if (health != null)
                 {
                     health.Damage(damage);

@@ -132,7 +132,7 @@ public class TurretScript : MonoBehaviour
                     {
                         if (SingleFire)
                         {
-                            hitF.collider.GetComponent<Health>().Damage(damage);
+                            PlayerManager.instance.health.Damage(damage);
                         }
                         else
                         {
@@ -140,7 +140,7 @@ public class TurretScript : MonoBehaviour
                             if (damageAccumulator >= 1f)
                             {
                                 int applyDamage = Mathf.FloorToInt(damageAccumulator);
-                                hitF.collider.GetComponent<Health>().Damage(applyDamage);
+                                PlayerManager.instance.health.Damage(applyDamage);
                                 damageAccumulator -= applyDamage;
                             }
                         }

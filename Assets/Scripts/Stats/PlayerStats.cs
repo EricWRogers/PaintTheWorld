@@ -15,7 +15,7 @@ public class SkillData
     public int level = 0;
     public int maxLevel = 5;
     public float levelGrowth = .5f;
-    public float currentMult = 0;
+    public float currentMult = 1;
 
     [Header("Cost Curve")]
     public int baseCost = 50;               // cost at level 0 to 1
@@ -63,7 +63,7 @@ public class PlayerStats : MonoBehaviour
         if (cost < 0 || wallet.amount < cost) return false;
 
         if (!wallet.Spend(cost)) return false;
-        
+
         s.currentMult += s.levelGrowth;
         s.level++;
         onSkillChanged.Invoke(index, s);

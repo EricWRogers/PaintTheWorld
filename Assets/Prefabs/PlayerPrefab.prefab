@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paintColor: {r: 1, g: 0, b: 0, a: 1}
-  radius: 0.75
+  radius: 1.2
   strength: 1
   hardness: 1
 --- !u!1 &587523326298893597
@@ -251,14 +251,11 @@ GameObject:
   - component: {fileID: 7236730804248690065}
   - component: {fileID: 7259321759212538560}
   - component: {fileID: 9104941373587113884}
-  - component: {fileID: 3989345470266273338}
   - component: {fileID: 3895829346118088575}
-  - component: {fileID: 6745306877372577002}
-  - component: {fileID: 2397916554979345586}
-  - component: {fileID: 5770500017975098429}
-  - component: {fileID: 422444754509909595}
   - component: {fileID: 2468560044189325215}
   - component: {fileID: 7293591459916750331}
+  - component: {fileID: 6904136681751602516}
+  - component: {fileID: 3262931826661946817}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -422,7 +419,7 @@ MonoBehaviour:
   player: {fileID: 987569071003229930}
   cam: {fileID: 2558197743922652643}
   movementColorMult: 2
-  standPaintColor: {fileID: 0}
+  standPaintColor: {fileID: 3895829346118088575}
   lockCursor: 1
   jumpForce: 5
   maxJumpAngle: 80
@@ -444,33 +441,6 @@ MonoBehaviour:
   grindInputHeld: 0
   m_railDir: 1
   m_railDetectionPoint: {fileID: 3256202762024098186}
---- !u!114 &3989345470266273338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 604dfbbf654f92618bc36972daaa4968, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  healed:
-    m_PersistentCalls:
-      m_Calls: []
-  hurt:
-    m_PersistentCalls:
-      m_Calls: []
-  outOfHealth:
-    m_PersistentCalls:
-      m_Calls: []
-  maxHealth: 100
-  currentHealth: 0
-  defaultToMaxHealth: 1
 --- !u!114 &3895829346118088575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -488,98 +458,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   selectedPaint: {r: 0, g: 0, b: 0, a: 0}
---- !u!114 &6745306877372577002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b01434b107ae8f4f82dac22844a2d23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2397916554979345586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5df09c889e9ada40ab979ab17de94d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  items: []
-  onChanged:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &5770500017975098429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5861edd3bc2b5745b63d0ca06106a2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skills:
-  - id: Health
-    displayName: Health
-    description: Max HP up.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 5
-    baseCost: 50
-    costGrowth: 1.5
-  - id: Damage
-    displayName: Damage
-    description: Attack power up.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 5
-    baseCost: 60
-    costGrowth: 1.5
-  - id: Defense
-    displayName: Defense
-    description: Reduce damage taken.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 5
-    baseCost: 55
-    costGrowth: 1.5
-  - id: Speed
-    displayName: Speed
-    description: Move faster.
-    icon: {fileID: 0}
-    level: 0
-    maxLevel: 6
-    baseCost: 45
-    costGrowth: 1.6
-  onSkillChanged:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &422444754509909595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cadd460795f26b748b98351c8ca8b3e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  amount: 0
-  changed:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!54 &2468560044189325215
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -622,6 +500,34 @@ MonoBehaviour:
   weaponSlot: {fileID: 6164599180086905048}
   paintRadius: 1
   damage: 5
+--- !u!114 &6904136681751602516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d77600bf56611f448d70b558aa47007, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!208 &3262931826661946817
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0

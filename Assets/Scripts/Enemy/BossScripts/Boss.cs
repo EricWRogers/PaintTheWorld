@@ -94,7 +94,7 @@ public class Boss : MonoBehaviour
     {
         GetComponent<Health>().maxHealth = health;
         p_agent = GetComponent<NavMeshAgent>();
-        m_player = GameObject.Find("PlayerManager").GetComponent<PlayerManager>().player;
+        m_player = PlayerManager.instance.player;
         m_hitbox = hitboxObj.GetComponent<BoxCollider>();
         p_rb = GetComponent<Rigidbody>();
         p_agent.speed = speed;
@@ -171,7 +171,7 @@ public class Boss : MonoBehaviour
     public void DamagePlayer(int _damage)
     {
         Debug.Log("HitPlayer");
-        m_player.GetComponent<Health>().Damage(_damage);
+        PlayerManager.instance.health.Damage(_damage);
         m_hitPlayer = true;
     }
 
@@ -297,7 +297,7 @@ public class Boss : MonoBehaviour
                         if (damageAccumulator >= 1f)
                         {
                             int applyDamage = Mathf.FloorToInt(damageAccumulator);
-                            hitF.collider.GetComponent<Health>().Damage(applyDamage);
+                            PlayerManager.instance.health.Damage(applyDamage);
                             damageAccumulator -= applyDamage;
                         }
                     }
