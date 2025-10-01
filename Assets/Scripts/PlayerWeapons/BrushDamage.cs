@@ -65,6 +65,10 @@ public class BushDamage : MonoBehaviour
 
     void Update()
     {
+        if (m_player == null)
+        {
+            return;
+        }
         weaponDamage = PlayerManager.instance.player.GetComponent<PlayerWeapon>().damage;
         // Hold-to-attack: start when Fire1 pressed, stop when released
         if (Input.GetButtonDown("Fire1") && !isAttacking)

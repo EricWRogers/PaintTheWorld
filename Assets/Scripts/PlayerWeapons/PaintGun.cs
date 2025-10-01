@@ -49,7 +49,7 @@ public class PaintGun : MonoBehaviour
         if (Input.GetButton("Fire1") && currentAmmo > 0)
         {
             // If holding the button and have ammo, set the animation to shooting
-            animator.SetBool(shootingBool, true);
+          //  animator.SetBool(shootingBool, true);
 
             // Fire projectiles on a timer to create a stream
             if (Time.time >= nextFireTime)
@@ -61,7 +61,7 @@ public class PaintGun : MonoBehaviour
         else // This block runs if the button is released OR if ammo is zero
         {
             // Stop the shooting animation
-            animator.SetBool(shootingBool, false);
+         //   animator.SetBool(shootingBool, false);
         }
 
         // --- Auto-Reload Logic ---
@@ -86,13 +86,13 @@ public class PaintGun : MonoBehaviour
         isReloading = true;
         
         // IMPORTANT: Ensure the shooting animation stops when reloading begins
-        animator.SetBool(shootingBool, false);
-        animator.SetBool(reloadingBool, true);
+      //  animator.SetBool(shootingBool, false);
+     //   animator.SetBool(reloadingBool, true);
 
         yield return new WaitForSeconds(reloadTime);
 
         currentAmmo = magazineSize;
-        animator.SetBool(reloadingBool, false);
+    //    animator.SetBool(reloadingBool, false);
         isReloading = false;
     }
 }

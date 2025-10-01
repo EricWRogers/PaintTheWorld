@@ -10,19 +10,24 @@ public class GameManager : Singleton<GameManager>
     public GameObject boss;
     public GameObject stageGate;
     public bool bossDefeated;
+    private bool m_timerStarted;
     void Start()
     {
         StartStage();
-        
+
     }
 
     void Update()
     {
-        
+        if (SceneManager.GetActiveScene().name != "SkillsAndShopTest" && !m_timerStarted)
+        {
+            StartStage();
+        }
     }
     public void StartStage()
     {
         GetComponent<Timer>().StartTimer();
+        m_timerStarted = true;
     }
 
     public void StageComplete()
@@ -31,10 +36,12 @@ public class GameManager : Singleton<GameManager>
         PlayerManager.instance.player.GetComponent<PlayerMovement>().HandleCursor();
         EnemyManager.instance.ClearSpawners();
         SceneManager.LoadSceneAsync(1);
+        m_timerStarted = false;
     }
 
     public void SpawnBoss()
     {
+        GetComponent<Timer>().StopTimer();
         GameObject _boss = Instantiate(boss, transform.position, transform.rotation);
         GameObject centerPoint = Instantiate(new GameObject(), transform.position, transform.rotation);
         _boss.GetComponent<Boss>().centerPoint = centerPoint.transform;
@@ -49,4 +56,5 @@ public class GameManager : Singleton<GameManager>
     {
         StageComplete();
     }
+    
 }

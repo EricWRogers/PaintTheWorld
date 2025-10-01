@@ -582,7 +582,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5772554397911134167}
-  - component: {fileID: 434625377428824684}
   - component: {fileID: 5905077745415254802}
   - component: {fileID: 6661989534388650128}
   m_Layer: 0
@@ -612,28 +611,6 @@ Transform:
   - {fileID: 2036011462696469236}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &434625377428824684
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5766046971032739393}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 4351eaf7fd238f0498f19d3fbb337f72, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &5905077745415254802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -651,7 +628,7 @@ MonoBehaviour:
   timeBetweenShots: 0.4
   magazineSize: 10
   reloadTime: 2.11
-  animator: {fileID: 434625377428824684}
+  animator: {fileID: 0}
   shootingBool: IsShooting
   reloadingBool: IsReloading
 --- !u!114 &6661989534388650128

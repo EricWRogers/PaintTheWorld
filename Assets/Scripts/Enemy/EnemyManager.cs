@@ -26,6 +26,16 @@ public class EnemyManager : Singleton<EnemyManager>
         timer.autoRestart = true;
         AddEnemy(maxNumberOfEnemies / 4);
     }
+    void Update()
+    {
+        foreach (ObjectSpawner spawner in spawners)
+        {
+            if (spawner == null)
+            {
+                spawners.Remove(spawner);
+            }
+        }
+    }
 
     public void AddEnemy(int _amount)
     {

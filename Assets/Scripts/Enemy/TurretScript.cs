@@ -133,6 +133,9 @@ public class TurretScript : MonoBehaviour
                         if (SingleFire)
                         {
                             PlayerManager.instance.health.Damage(damage);
+                            lr.enabled = false;
+                            laserTimer = laserCooldown;
+                            laserPhase = LaserPhase.Cooldown;
                         }
                         else
                         {

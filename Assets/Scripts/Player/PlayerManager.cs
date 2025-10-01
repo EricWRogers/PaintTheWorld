@@ -40,8 +40,6 @@ public class PlayerManager : Singleton<PlayerManager>
     public Currency wallet;
     public Inventory inventory;
     public PlayerStats stats;
-    public List<ItemStack> playerItems = new();
-    public List<SkillData> playerSkills;
 
     private SaveData saveData; //= new SaveData();
     private const string SAVE_KEY = "PlayerSaveData";
@@ -59,6 +57,7 @@ public class PlayerManager : Singleton<PlayerManager>
         Debug.Log("initialized components");
         SaveGame();
         LoadGame();
+        health.outOfHealth.AddListener(OnDeath);
     }
     void Start()
     {
@@ -68,9 +67,10 @@ public class PlayerManager : Singleton<PlayerManager>
             wallet.amount,
             health.currentHealth,
             health.maxHealth,
-            playerItems,
-            playerSkills
+            inventory.items,
+            stats.skills
         );
+        health.currentHealth = health.maxHealth;
     }
     public void InitializeComponents()
     {
@@ -89,7 +89,7 @@ public class PlayerManager : Singleton<PlayerManager>
             wallet.amount,
             health.currentHealth,
             health.maxHealth,
-            playerItems,
+            inventory.items,
             stats.skills
         );
         string json = JsonUtility.ToJson(saveData, true);
@@ -127,9 +127,9 @@ public class PlayerManager : Singleton<PlayerManager>
     }
     public void OnDeath()
     {
-        Debug.Log("Player Died");
+        EnemyManager.instance.ClearSpawners();
         SceneManager.LoadSceneAsync(0);
-        ResetData();
+        LoadGame();
 
     }
 
@@ -160,6 +160,7 @@ public class SaveData
 
 
     }
+    
 
     
 }
