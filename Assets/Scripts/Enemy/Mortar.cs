@@ -26,7 +26,7 @@ public class Mortar : MonoBehaviour
     }
     public void Dead()
     {
-        PlayerManager.instance.wallet.GetComponent<Currency>().Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
+        PlayerManager.instance.wallet.Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
         Destroy(gameObject);
     }
 
