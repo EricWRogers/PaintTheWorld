@@ -11,21 +11,13 @@ public abstract class Weapon : MonoBehaviour
 
     [HideInInspector] public GameObject player;
     [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;
-    [HideInInspector] public float damageAccumulator = 0f;
+    [HideInInspector] public float attackSpeedMult = 1; //=> dps * PlayerManager.instance.stats.skills[4].currentMult; 
 
     public abstract void Fire();
 
     public void Start()
     {
         player = PlayerManager.instance.player;
-    }
-
-    public void Update()
-    {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            Fire();
-        }
     }
 
     public void DestroyWeapon()

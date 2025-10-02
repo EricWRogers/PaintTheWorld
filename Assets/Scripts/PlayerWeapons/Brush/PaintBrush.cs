@@ -12,15 +12,19 @@ public class PaintBrush : Weapon
     private Animator anim;
     public string holdAttackBool = "HoldAttack";
     public bool hitEnemy = false;
+    public float maxSpeedMult;
     void Awake()
     {
         anim = GetComponent<Animator>();
     }
 
-    new void Update()
+    void Update()
     {
-        base.Update();
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Fire();
+        }
 
         if (stateInfo.IsName("BrushAttacks") && !hitEnemy)
         {
@@ -36,7 +40,7 @@ public class PaintBrush : Weapon
     public override void Fire()
     {
         anim.SetBool(holdAttackBool, true);
-        anim.speed = dps;
+        anim.speed = Mathf.Clamp(attackSpeedMult, 0.5f, maxSpeedMult);
     }
     public void ResetAttack()
     {

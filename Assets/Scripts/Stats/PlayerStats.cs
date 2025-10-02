@@ -39,7 +39,8 @@ public class PlayerStats : MonoBehaviour
         new SkillData{ id="Health", displayName="Health", description="Max HP up.", baseCost=50, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
         new SkillData{ id="Damage", displayName="Damage", description="Attack power up.", baseCost=60, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
         new SkillData{ id="Radius", displayName="Radius", description="Increase paint raddius", baseCost=55, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
-        new SkillData{ id="Speed", displayName="Speed", description="Move faster.", baseCost=45, costGrowth=1.6f, levelGrowth = .5f, maxLevel=6 },
+        new SkillData{ id="Move Speed", displayName="Move Speed", description="Move faster.", baseCost=45, costGrowth=1.6f, levelGrowth = .5f, maxLevel=6 },
+        new SkillData{ id="Attack Speed", displayName="Attack Speed", description="Attack faster.", baseCost=45, costGrowth=1.6f, levelGrowth = .5f, maxLevel=6 },
     };
 
     [Header("Events")]

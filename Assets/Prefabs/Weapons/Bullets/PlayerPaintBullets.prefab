@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 7325321119993600495}
   - component: {fileID: 8828349133383764564}
   - component: {fileID: 241294259523085244}
-  - component: {fileID: 8181288188810806404}
   - component: {fileID: 5856379886496916344}
   - component: {fileID: 5431411933663441772}
+  - component: {fileID: -761066381390377633}
   m_Layer: 3
   m_Name: PlayerPaintBullets
   m_TagString: Untagged
@@ -89,25 +89,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &8181288188810806404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3928063777681849571}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fbc5c7ba8cc11043a9f2ca5f6177452, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  paintColor: {r: 0.91194963, g: 0.0889006, b: 0.0889006, a: 1}
-  radius: 1
-  strength: 1
-  hardness: 1
-  bulletDamage: 10
-  damage: 10
-  launchForce: 15
 --- !u!114 &5856379886496916344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,15 +121,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 5
-  speed: 30
+  speed: 70
   lifeTime: 10
   gravity: 0
   destroyOnImpact: 1
   hitTarget:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -761066381390377633}
+        m_TargetAssemblyTypeName: PaintBullet, Assembly-CSharp
+        m_MethodName: paint
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   mask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 503
   tags:
   - Enemy
+  - Paintable
+--- !u!114 &-761066381390377633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3928063777681849571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455938691cbd0fa41b8ff90ed7154fb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  paintColor: {r: 1, g: 0, b: 0, a: 1}
+  radius: 1
+  strength: 1
+  hardness: 1
