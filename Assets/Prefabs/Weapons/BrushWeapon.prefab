@@ -250,7 +250,7 @@ GameObject:
   - component: {fileID: 2626350298319025983}
   - component: {fileID: 6167912035200749408}
   - component: {fileID: 3600167483412021329}
-  - component: {fileID: 2202231489933788879}
+  - component: {fileID: 2940628584464810361}
   m_Layer: 3
   m_Name: BrushHandle
   m_TagString: Untagged
@@ -370,7 +370,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2202231489933788879
+--- !u!114 &2940628584464810361
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -383,21 +383,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 6294355732165060790}
-  dps: 0
+  dps: 1
   damage: 5
   layerMask:
     serializedVersion: 2
     m_Bits: 64
-  paintColor: {r: 0, g: 0, b: 0, a: 0}
   player: {fileID: 0}
-  damageAccumulator: 0
+  attackSpeedMult: 1
   leftFirePos: {fileID: 2823779358601818534}
   rightFirePos: {fileID: 8605906833773524264}
   bullet: {fileID: 3070470379224099556, guid: fadb43fab5f6e2d479819424ee862d6c, type: 3}
   swipeZone: {fileID: 8622841606767584514}
+  anim: {fileID: 3600167483412021329}
   holdAttackBool: HoldAttack
-  brushgunBool: BrushGun
   hitEnemy: 0
+  maxSpeedMult: 1
 --- !u!1 &8622841606767584514
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,7 +408,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7982746499026370853}
   - component: {fileID: 6493617123711399722}
-  - component: {fileID: 2566737363568059319}
   m_Layer: 3
   m_Name: DamageZone
   m_TagString: Untagged
@@ -452,17 +451,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.5, y: 1, z: 2}
   m_Center: {x: 0.20896983, y: 0, z: 0.30506992}
---- !u!114 &2566737363568059319
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8622841606767584514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4f52cf66a66348459754d7b274f1478, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyInZone: 0
-  enemiesInZone: []

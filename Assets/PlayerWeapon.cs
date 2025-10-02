@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
@@ -11,7 +12,8 @@ public class PlayerWeapon : MonoBehaviour
     {
         if (weaponSlot.transform.childCount > 0)
         {
-            weaponSlot.transform.GetChild(0).GetComponent<Weapon>().DestroyWeapon();
+            Weapon temp = weaponSlot.GetComponentInChildren<Weapon>();
+            temp.DestroyWeapon();
             Instantiate(_gunPrefab, weaponSlot.transform);
         }
     }

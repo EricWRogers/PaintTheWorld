@@ -7,6 +7,8 @@ public class PaintBullet : RayCastPainter
     void Start()
     {
         m_bullet = GetComponent<Bullet>();
+        Renderer blobRenderer = gameObject.GetComponent<Renderer>();
+        blobRenderer.material.SetColor("_BaseColor", paintColor);
     }
     void Update()
     {

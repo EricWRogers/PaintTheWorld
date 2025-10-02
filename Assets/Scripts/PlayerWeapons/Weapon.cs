@@ -7,7 +7,6 @@ public abstract class Weapon : MonoBehaviour
     public float dps;
     public int damage;
     public LayerMask layerMask;
-    public Color paintColor;
 
     [HideInInspector] public GameObject player;
     [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;

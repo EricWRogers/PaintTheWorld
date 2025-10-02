@@ -9,19 +9,18 @@ public class PaintBrush : Weapon
     public GameObject bullet;
     public GameObject swipeZone;
     [Header("Anim")]
-    private Animator anim;
+    public Animator anim;
     public string holdAttackBool = "HoldAttack";
     public bool hitEnemy = false;
     public float maxSpeedMult;
     void Awake()
     {
-        anim = GetComponent<Animator>();
     }
 
     void Update()
     {
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Fire1"))
         {
             Fire();
         }
