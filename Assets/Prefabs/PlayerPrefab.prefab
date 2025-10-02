@@ -255,7 +255,7 @@ GameObject:
   - component: {fileID: 2468560044189325215}
   - component: {fileID: 7293591459916750331}
   - component: {fileID: 6904136681751602516}
-  - component: {fileID: 3262931826661946817}
+  - component: {fileID: 6208220107138550641}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -413,8 +413,8 @@ MonoBehaviour:
   shouldSnapDown: 1
   gravity: {x: 0, y: -9, z: 0}
   DefaultPhysicsMat: {fileID: 13400000, guid: c938007490e861b8f96f9117fbb7a36b, type: 2}
-  speed: 10
-  rotationSpeed: 5
+  speed: 15
+  rotationSpeed: 15
   maxWalkAngle: 60
   player: {fileID: 987569071003229930}
   cam: {fileID: 2558197743922652643}
@@ -512,7 +512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d77600bf56611f448d70b558aa47007, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!208 &3262931826661946817
+--- !u!208 &6208220107138550641
 NavMeshObstacle:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1090,6 +1090,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1012839890602641465}
     m_Modifications:
+    - target: {fileID: 297826364458721717, guid: e5dfef78a2175894cb6a58313c1dda5c, type: 3}
+      propertyPath: m_Name
+      value: LeftFirePoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 609369185091918935, guid: e5dfef78a2175894cb6a58313c1dda5c, type: 3}
+      propertyPath: m_Name
+      value: FrontFirePoint
+      objectReference: {fileID: 0}
     - target: {fileID: 653820723770324074, guid: e5dfef78a2175894cb6a58313c1dda5c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1133,6 +1141,14 @@ PrefabInstance:
     - target: {fileID: 1361506764179290426, guid: e5dfef78a2175894cb6a58313c1dda5c, type: 3}
       propertyPath: m_Name
       value: BrushWeapon
+      objectReference: {fileID: 0}
+    - target: {fileID: 2202231489933788879, guid: e5dfef78a2175894cb6a58313c1dda5c, type: 3}
+      propertyPath: dps
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328140588715004941, guid: e5dfef78a2175894cb6a58313c1dda5c, type: 3}
+      propertyPath: m_Name
+      value: RightFirePoint
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -81,7 +81,7 @@ namespace KinematicCharacterControler
         public void HandlePaintColor()
         {
             m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
-            Debug.Log(m_currColorMult);
+            //Debug.Log(m_currColorMult);
          }
 
         public void HandleCursor()
