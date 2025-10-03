@@ -158,12 +158,15 @@ namespace KinematicCharacterControler
 
 
             // Rotate player
-            if (inputDir != Vector3.zero || Input.GetMouseButton(0))
+            if (inputDir != Vector3.zero)
             {
-                player.transform.forward = Vector3.Slerp(player.transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
+                player.transform.forward = Vector3.Slerp(player.transform.forward, m_momentum, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
                 m_velocity.z = 0f;
             }
+            
+            if (Input.GetMouseButton(0))
+                player.transform.forward = Vector3.Slerp(player.transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
 
             bool onGround = CheckIfGrounded(out RaycastHit groundHit) && m_velocity.y <= 0.0f;
             bool falling = !(onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal));
