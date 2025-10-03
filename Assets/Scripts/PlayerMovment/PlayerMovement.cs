@@ -10,6 +10,7 @@ namespace KinematicCharacterControler
         public float rotationSpeed = 5f;
         public float maxWalkAngle = 60f;
         public GameObject player;
+        private float currSpeed;
 
         private Transform m_orientation;
         public Transform cam;
@@ -18,6 +19,13 @@ namespace KinematicCharacterControler
         private float m_shopMoveMult => PlayerManager.instance.stats.skills[3].currentMult;
         public GetPaintColor standPaintColor;
         private PaintColors colors;
+
+        [Header("Momentum")]
+        public float acceleration = 10f;
+        public float deceleration = 8f;
+        public float maxSpeed = 20;
+
+        private Vector3 m_momentum = Vector3.zero;
 
         [Header("Physics")]
         private float m_elapsedFalling;
@@ -118,9 +126,10 @@ namespace KinematicCharacterControler
 
         void HandleRegularMovement()
         {
+            currSpeed = speed * movementColorMult * m_shopMoveMult;
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
-    
+
 
             Vector3 viewDir = transform.position - new Vector3(cam.position.x, transform.position.y, cam.position.z);
             m_orientation.forward = viewDir.normalized;
@@ -128,8 +137,28 @@ namespace KinematicCharacterControler
             Vector3 inputDir = m_orientation.forward * vertical + m_orientation.right * horizontal;
             inputDir = inputDir.normalized;
 
+            // target velocity
+            Vector3 targetVelocity = inputDir * currSpeed;
+
+            if (inputDir.magnitude > 0.1f)
+            {
+                m_momentum = Vector3.MoveTowards(m_momentum, targetVelocity, currSpeed * Time.deltaTime);
+            }
+            else
+            {
+                m_momentum = Vector3.MoveTowards(m_momentum, Vector3.zero, currSpeed * Time.deltaTime);
+            }
+            
+            if (m_momentum.magnitude > maxSpeed)
+            {
+                m_momentum = m_momentum.normalized * maxSpeed;
+            }
+            
+
+
+
             // Rotate player
-            if (inputDir != Vector3.zero || Input.GetMouseButton(0) )
+            if (inputDir != Vector3.zero || Input.GetMouseButton(0))
             {
                 player.transform.forward = Vector3.Slerp(player.transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
@@ -167,7 +196,7 @@ namespace KinematicCharacterControler
             }
 
             // Apply movement
-            transform.position = MovePlayer(inputDir * speed * Time.deltaTime * movementColorMult* m_shopMoveMult);
+            transform.position = MovePlayer(m_momentum * Time.deltaTime);
             transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
             if (onGround && !attemptingJump)
