@@ -49,7 +49,6 @@ public class PaintBrush : Weapon
     public void LaunchPaintAtFirepoint(Transform _firePoint)
     {
         PaintGlobs temp = Instantiate(bullet, _firePoint.position, _firePoint.rotation).GetComponent<PaintGlobs>();
-        temp.paintColor = player.GetComponent<PlayerPaint>().selectedPaint;
     }
 
     public void FireFront()

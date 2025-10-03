@@ -391,7 +391,6 @@ public class Boss : MonoBehaviour
     public void Dead()
     {
         PlayerManager.instance.wallet.Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
-        GameManager.instance.bossDefeated = true;
         Destroy(gameObject);
     }
 }

@@ -17,6 +17,11 @@ public abstract class Weapon : MonoBehaviour
     public void Start()
     {
         player = PlayerManager.instance.player;
+        if (player == null)
+        {
+            Debug.Log(gameObject.name + " is missing player");
+            return;
+        }
     }
 
     public void DestroyWeapon()

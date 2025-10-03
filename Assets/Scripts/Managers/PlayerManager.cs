@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -30,10 +29,11 @@ public class PlayerManagerEditor : Editor
             pm.ResetData();
         }
     }
+    
 }
 #endif
 
-public class PlayerManager : Singleton<PlayerManager>
+public class PlayerManager : SceneAwareSingleton<PlayerManager>
 {
     public GameObject player;
     public Health health;
@@ -41,45 +41,41 @@ public class PlayerManager : Singleton<PlayerManager>
     public Inventory inventory;
     public PlayerStats stats;
 
-    private SaveData saveData; //= new SaveData();
+    private SaveData saveData;
     private const string SAVE_KEY = "PlayerSaveData";
     private SaveData startSaveData;
-    private bool m_cursorEnabled;
     new void Awake()
     {
         base.Awake();
-        player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
+    }
+
+
+    public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        //player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
         {
-            return;
+            RegisterPlayer(player);
+            startSaveData = new SaveData(wallet.amount, health.currentHealth, health.maxHealth, inventory.items, stats.skills);
+            IsReady = true;
         }
+    }
+
+    public void RegisterPlayer(GameObject newPlayer)
+    {
+        player = newPlayer;
         InitializeComponents();
-        Debug.Log("initialized components");
-        SaveGame();
-        LoadGame();
-        //health.outOfHealth.AddListener(OnDeath);
-    }
-    void Start()
-    {
 
-        startSaveData = new SaveData
-        (
-            wallet.amount,
-            health.currentHealth,
-            health.maxHealth,
-            inventory.items,
-            stats.skills
-        );
-        health.currentHealth = health.maxHealth;
+        Debug.Log("Player registered in PlayerManager");
     }
-    public void InitializeComponents()
-    {
-        // Get required components
-        wallet = GetComponent<Currency>() == null ? gameObject.AddComponent<Currency>() : GetComponent<Currency>();
-        health = GetComponent<Health>() == null ? gameObject.AddComponent<Health>() : GetComponent<Health>();
-        inventory = GetComponent<Inventory>() == null ? gameObject.AddComponent<Inventory>() : GetComponent<Inventory>();
-        stats = GetComponent<PlayerStats>() == null ? gameObject.AddComponent<PlayerStats>() : GetComponent<PlayerStats>();
 
+    private void InitializeComponents()
+    {
+        wallet = player.GetComponent<Currency>() ?? player.AddComponent<Currency>();
+        health = player.GetComponent<Health>() ?? player.AddComponent<Health>();
+        inventory = player.GetComponent<Inventory>() ?? player.AddComponent<Inventory>();
+        stats = player.GetComponent<PlayerStats>() ?? player.AddComponent<PlayerStats>();
     }
 
     public void SaveGame()
@@ -100,43 +96,54 @@ public class PlayerManager : Singleton<PlayerManager>
 
     public void LoadGame()
     {
+        if (!PlayerPrefs.HasKey(SAVE_KEY)) return;
         string json = PlayerPrefs.GetString(SAVE_KEY);
         Debug.Log("Loading JSON: " + json);
         saveData = JsonUtility.FromJson<SaveData>(json);
+        if (saveData == null) return;
         // Apply loaded data
         Debug.Log("Loaded JSON: " + json);
         wallet.amount = saveData.coins;
         health.currentHealth = saveData.health;
         health.maxHealth = saveData.maxHealth;
-        inventory.items = saveData.playerItems;
-        stats.skills = saveData.playerSkills;
+        inventory.items.Clear();
+        inventory.items.AddRange(saveData.playerItems);
+        stats.skills.Clear();
+        stats.skills.AddRange(saveData.playerSkills);
         Debug.Log("Game loaded successfully");
 
     }
-    public void RegisterPlayer(GameObject _player)
-    {
-        player = _player;
-        print("player registered");
-    }
 
-
-    // Auto-save when application quits
     private void OnApplicationQuit()
     {
         SaveGame();
     }
     public void OnDeath()
     {
-        EnemyManager.instance.ClearSpawners();
+        SceneManager.sceneLoaded += OnSceneReloaded;
         SceneManager.LoadSceneAsync(0);
-        LoadGame();
+    }
 
+    private void OnSceneReloaded(Scene scene, LoadSceneMode mode)
+    {
+        SceneManager.sceneLoaded -= OnSceneReloaded;
+        LoadGame();
     }
 
     public void ResetData()
     {
         PlayerPrefs.SetString(SAVE_KEY, JsonUtility.ToJson(startSaveData, true));
         Debug.Log("Save data reset.");
+        LoadGame();
+    }
+    public void EditorInit()
+    {
+        player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+            RegisterPlayer(player);
+
+        IsReady = true;
     }
 }
 

@@ -6313,7 +6313,6 @@ MonoBehaviour:
   currentStage: 1
   boss: {fileID: 6449207097394993412, guid: d09365cf8fca94c41acda8452378ff9c, type: 3}
   stageGate: {fileID: 1941073247}
-  bossDefeated: 0
 --- !u!4 &1324319634
 Transform:
   m_ObjectHideFlags: 0
@@ -8251,7 +8250,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerPrefab
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6904136681751602516, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

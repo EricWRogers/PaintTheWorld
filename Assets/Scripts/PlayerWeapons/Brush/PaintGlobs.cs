@@ -13,10 +13,10 @@ public class PaintGlobs : CollisonPainter
     public void Start()
     {
         rb = GetComponent<Rigidbody>();
-        if (rb != null)
+        if (rb != null) 
             rb.AddForce(transform.forward * launchForce, ForceMode.Impulse);
         Renderer blobRenderer = gameObject.GetComponent<Renderer>();
-        blobRenderer.material.SetColor("_BaseColor", paintColor);
+        blobRenderer.material.SetColor("_BaseColor", PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint);
     }
 
 
