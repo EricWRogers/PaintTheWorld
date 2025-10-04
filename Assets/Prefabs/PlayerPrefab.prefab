@@ -254,7 +254,6 @@ GameObject:
   - component: {fileID: 3895829346118088575}
   - component: {fileID: 2468560044189325215}
   - component: {fileID: 7293591459916750331}
-  - component: {fileID: 6904136681751602516}
   - component: {fileID: 6208220107138550641}
   m_Layer: 3
   m_Name: Player
@@ -421,6 +420,39 @@ MonoBehaviour:
   movementColorMult: 2
   standPaintColor: {fileID: 3895829346118088575}
   lockCursor: 1
+  acceleration: 10
+  deceleration: 8
+  maxSpeed: 20
+  dashSpeedCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.005286813
+      value: 3.0077617
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.99647164
+      value: 0.54073024
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  dashSpeed: 40
+  dashKey: 304
+  isDashing: 0
+  dashDuration: 0.5
+  dashCooldown: 2
+  m_dashInputPressed: 0
   jumpForce: 5
   maxJumpAngle: 80
   jumpCooldown: 0.25
@@ -500,18 +532,6 @@ MonoBehaviour:
   weaponSlot: {fileID: 6164599180086905048}
   paintRadius: 1
   damage: 5
---- !u!114 &6904136681751602516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d77600bf56611f448d70b558aa47007, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!208 &6208220107138550641
 NavMeshObstacle:
   m_ObjectHideFlags: 0

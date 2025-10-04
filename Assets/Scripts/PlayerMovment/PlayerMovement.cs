@@ -19,6 +19,8 @@ namespace KinematicCharacterControler
         private float m_shopMoveMult => PlayerManager.instance.stats.skills[3].currentMult;
         public GetPaintColor standPaintColor;
         private PaintColors colors;
+        private Vector2 moveInput;
+        public bool lockCursor = true;
 
         [Header("Momentum")]
         public float acceleration = 10f;
@@ -27,9 +29,16 @@ namespace KinematicCharacterControler
 
         private Vector3 m_momentum = Vector3.zero;
 
-        [Header("Physics")]
-        private float m_elapsedFalling;
-        public bool lockCursor = true;
+        [Header("Dashing")]
+        public AnimationCurve dashSpeedCurve;
+        public float dashSpeed = 20f;
+        public KeyCode dashKey = KeyCode.LeftShift;
+        public bool isDashing = false;
+        public float dashDuration = 0.5f;
+        public float dashCooldown = 2f;
+        private float m_dashTime = 0f;
+        private float m_timeSinceLastDash = 0f;
+        public bool m_dashInputPressed = false;
 
         [Header("Jump Settings")]
         public float jumpForce = 5.0f;
@@ -39,6 +48,8 @@ namespace KinematicCharacterControler
         private float m_timeSinceLastJump = 0.0f;
         public bool m_jumpInputPressed = false;
         private float m_jumpBufferTime = 0.25f;
+        private float m_elapsedFalling;
+
 
         [Header("Rail Grinding")]
         public LayerMask railLayer;
@@ -92,6 +103,10 @@ namespace KinematicCharacterControler
             //Debug.Log(m_currColorMult);
          }
 
+        void UpdateGrindInput()
+        {
+            grindInputHeld = Input.GetKey(grindKey);
+        }
         public void HandleCursor()
         {
             if (lockCursor)
@@ -105,13 +120,12 @@ namespace KinematicCharacterControler
                 Cursor.visible = true;
             }
         }
-        void UpdateGrindInput()
-        {
-            grindInputHeld = Input.GetKey(grindKey);
-        }
+
 
         void HandleInput()
         {
+            moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            
             if (Input.GetKey(KeyCode.Space))
                 m_jumpInputPressed = true;
             else
@@ -122,34 +136,46 @@ namespace KinematicCharacterControler
             else
                 jumpInputElapsed += Time.deltaTime;
 
+            if (Input.GetKeyDown(dashKey))
+            {
+                m_dashInputPressed = true;
+                isDashing = true;
+            }
+                
+
         }
 
         void HandleRegularMovement()
         {
+            m_timeSinceLastDash += Time.deltaTime;
+        
             currSpeed = speed * movementColorMult * m_shopMoveMult;
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
 
 
             Vector3 viewDir = transform.position - new Vector3(cam.position.x, transform.position.y, cam.position.z);
             m_orientation.forward = viewDir.normalized;
 
-            Vector3 inputDir = m_orientation.forward * vertical + m_orientation.right * horizontal;
+            Vector3 inputDir = m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x;
             inputDir = inputDir.normalized;
 
             // target velocity
             Vector3 targetVelocity = inputDir * currSpeed;
 
-            if (inputDir.magnitude > 0.1f)
+            if (isDashing)
+            {
+                HandleDashing();
+            }
+
+            if (inputDir.magnitude > 0.1f && !isDashing)
             {
                 m_momentum = Vector3.MoveTowards(m_momentum, targetVelocity, currSpeed * Time.deltaTime);
             }
             else
             {
-                m_momentum = Vector3.MoveTowards(m_momentum, Vector3.zero, currSpeed * Time.deltaTime);
+                m_momentum *= (1 - DefaultPhysicsMat.dynamicFriction);
             }
             
-            if (m_momentum.magnitude > maxSpeed)
+            if (m_momentum.magnitude > maxSpeed && !isDashing)
             {
                 m_momentum = m_momentum.normalized * maxSpeed;
             }
@@ -207,6 +233,38 @@ namespace KinematicCharacterControler
         }
 
 
+        void HandleDashing()
+        {
+            
+
+            bool canDash = m_timeSinceLastDash >= dashCooldown;
+            if (m_dashInputPressed && canDash)
+            {
+                m_dashTime = 0f;
+                m_timeSinceLastDash = 0f;
+                m_dashInputPressed = false;
+            }
+
+            if (m_dashTime < dashDuration)
+            {
+                float dashProgress = m_dashTime / dashDuration;
+                float currentDashSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress);
+
+                Vector3 dashDirection = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+                if (dashDirection == Vector3.zero)
+                    dashDirection = m_orientation.forward;
+
+                Vector3 dashVelocity = dashDirection * currentDashSpeed;
+
+                m_momentum = Vector3.MoveTowards(m_momentum, dashVelocity, currentDashSpeed * Time.deltaTime);
+
+                m_dashTime += Time.deltaTime;
+            }
+            else
+            {
+                isDashing = false;
+            }
+        }
         // RAIL GRINDING SYSTEM
         void TryStartGrinding()
         {
