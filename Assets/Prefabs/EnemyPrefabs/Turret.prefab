@@ -205,9 +205,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96676620cb234d448930b99afafc12a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  bulletPrefab: {fileID: 0}
+  baseDamage: 20
   health: 20
-  laserFirePoint: {fileID: 473290879081334283}
-  laserRotationSpeed: 360
+  attackSpeed: 4
+  rotationSpeed: 10
+  attackRange: 0
+  moneyToAdd: {x: 5, y: 10}
+  firePoint: {fileID: 1456465760118057507}
   scaledRotation: 0
   yawOnly: 0
   accuracyCurve:
@@ -273,10 +279,8 @@ MonoBehaviour:
   windupTime: 3
   fireTime: 1
   laserCooldown: 3
-  SingleFire: 1
   maxBeamDistance: 100
   beamWidth: 0.2
-  damage: 3
   isLasering: 0
   telegraphGradient:
     serializedVersion: 2
@@ -340,7 +344,6 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   telegraphWidth: 0.1
   lr: {fileID: 5112687833836725046}
-  moneyToAdd: {x: 5, y: 10}
 --- !u!120 &5112687833836725046
 LineRenderer:
   serializedVersion: 2

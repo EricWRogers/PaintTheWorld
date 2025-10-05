@@ -7,7 +7,8 @@ public class Boss : MonoBehaviour
     public GameObject m_player;
 
     [Header("Stats")]
-    public int health = 100;
+    public int baseHealth = 100;
+    private float currentHealth;
     public float speed = 4;
     public float rotationSpeed = 10;
     public float attackRange;
@@ -92,7 +93,7 @@ public class Boss : MonoBehaviour
 
     void Awake()
     {
-        GetComponent<Health>().maxHealth = health;
+        
         p_agent = GetComponent<NavMeshAgent>();
         m_player = PlayerManager.instance.player;
         m_hitbox = hitboxObj.GetComponent<BoxCollider>();
@@ -115,8 +116,8 @@ public class Boss : MonoBehaviour
     }
     void Start()
     {
-
-
+        currentHealth = baseHealth * GameManager.instance.BossHealthModifier;
+        GetComponent<Health>().currentHealth = GetComponent<Health>().maxHealth;
     }
 
     void Update()

@@ -52,12 +52,13 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         {
             RegisterPlayer(player);
-            startSaveData = new SaveData(wallet.amount, health.currentHealth, health.maxHealth, inventory.items, stats.skills);
+            if (startSaveData == null)
+                startSaveData = new SaveData(wallet.amount, health.currentHealth, health.maxHealth, inventory.items, stats.skills);
             IsReady = true;
         }
     }

@@ -23,7 +23,7 @@ public class PaintManager : Singleton<PaintManager>
 
     private CommandBuffer m_command;
 
-    public override void Awake()
+    protected override void Awake()
     {
         base.Awake();
         

@@ -4,9 +4,13 @@ using UnityEngine.SceneManagement;
 public abstract class SceneAwareSingleton<T> : Singleton<T>, ISceneLoadHandler where T : MonoBehaviour
 {
     public virtual bool IsReady { get; protected set; } = false;
-    public override void Awake()
+
+    protected override void Awake()
     {
         base.Awake();
+
+        // Subscribe only once
+        SceneManager.sceneLoaded -= HandleSceneLoaded;
         SceneManager.sceneLoaded += HandleSceneLoaded;
     }
 
@@ -19,5 +23,6 @@ public abstract class SceneAwareSingleton<T> : Singleton<T>, ISceneLoadHandler w
     {
         OnSceneLoaded(scene, mode);
     }
+
     public virtual void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }
 }
