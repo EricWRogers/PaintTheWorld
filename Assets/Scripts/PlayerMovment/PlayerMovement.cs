@@ -85,6 +85,7 @@ namespace KinematicCharacterControler
             UpdateGrindInput();
             HandleInput();
             HandlePaintColor();
+            HandleFOV();
 
             if (!isGrinding)
             {
@@ -96,12 +97,22 @@ namespace KinematicCharacterControler
                 ContinueGrinding();
             }
         }
+
+
+        public void HandleFOV()
+        {
+            Camera cam = Camera.main;
+            if (cam == null) return;
+
+            float targetFOV = isDashing ? 80f : 60f;
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, Time.deltaTime * 8f);
+        }
         
         public void HandlePaintColor()
         {
             m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
             //Debug.Log(m_currColorMult);
-         }
+        }
 
         void UpdateGrindInput()
         {
@@ -184,7 +195,7 @@ namespace KinematicCharacterControler
 
 
             // Rotate player
-            if (inputDir != Vector3.zero)
+            if (inputDir != Vector3.zero &&  !Input.GetMouseButton(0))
             {
                 player.transform.forward = Vector3.Slerp(player.transform.forward, m_momentum, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
