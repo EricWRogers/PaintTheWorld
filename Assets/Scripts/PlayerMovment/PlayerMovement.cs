@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 
 
@@ -50,7 +51,17 @@ namespace KinematicCharacterControler
         private float m_jumpBufferTime = 0.25f;
         private float m_elapsedFalling;
 
+        [Header("Wall Riding")]
+        public bool isWallRiding = false;
+        public float wallCheckDist = 1;
 
+        private float m_wallTimer = 0f;
+        public LayerMask wallLayers;
+        private bool leftWall;
+        private bool rightWall;
+        private RaycastHit leftWallHit;
+        private RaycastHit rightWallHit;
+        
         [Header("Rail Grinding")]
         public LayerMask railLayer;
         public float railDetectionRadius = 1.5f;
@@ -150,6 +161,7 @@ namespace KinematicCharacterControler
 
         void HandleRegularMovement()
         {
+            
             m_timeSinceLastDash += Time.deltaTime;
         
             currSpeed = speed * movementColorMult * m_shopMoveMult;
@@ -189,7 +201,7 @@ namespace KinematicCharacterControler
             // Rotate player
             if (inputDir != Vector3.zero &&  !Input.GetMouseButton(0))
             {
-                player.transform.forward = Vector3.Slerp(player.transform.forward, m_momentum, Time.deltaTime * rotationSpeed);
+                player.transform.forward = Vector3.Slerp(player.transform.forward, m_momentum.normalized, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
                 m_velocity.z = 0f;
             }
@@ -201,7 +213,7 @@ namespace KinematicCharacterControler
             bool falling = !(onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal));
 
             // Handle gravity and falling
-            if (falling)
+            if (falling && !isWallRiding)
             {
                 m_velocity += gravity * Time.deltaTime;
                 m_elapsedFalling += Time.deltaTime;
@@ -227,14 +239,51 @@ namespace KinematicCharacterControler
                 m_timeSinceLastJump += Time.deltaTime;
             }
 
-            // Apply movement
-            transform.position = MovePlayer(m_momentum * Time.deltaTime);
-            transform.position = MovePlayer(m_velocity * Time.deltaTime);
+            if (isWallRiding)
+            {
+                m_wallTimer += Time.deltaTime;
+                if (CheckForWall())
+                {
+                    RaycastHit wallHit = leftWall ? leftWallHit : rightWallHit;
+                    HandleWallRunning(wallHit);
+                }
+                else
+                {
+                    ExitWallRide();
+                }
+                return;
+            }
+
+
+            if (m_jumpInputPressed && falling && CheckForWall())
+            {
+                if (leftWall)
+                {
+                    HandleWallRunning(leftWallHit);
+                    m_wallTimer = 0f;
+                    isWallRiding = true;
+                    return;
+                }
+                if (rightWall)
+                {
+                    HandleWallRunning(rightWallHit);
+                    m_wallTimer = 0f;
+                    isWallRiding = true;
+                    return;
+                }
+                isWallRiding = false;
+            }
+            else
+                isWallRiding = false;
+             
+
+            // Apply movement (combine momentum and velocity so one doesn't overwrite the other)
+            Vector3 totalMovement = m_momentum + m_velocity;
+            transform.position = MovePlayer(totalMovement * Time.deltaTime);
 
             if (onGround && !attemptingJump)
                 SnapPlayerDown();
         }
-
 
         void HandleDashing()
         {
@@ -268,6 +317,66 @@ namespace KinematicCharacterControler
                 isDashing = false;
             }
         }
+
+
+        void HandleWallRunning(RaycastHit _hit)
+        {
+            Vector3 wallNormal = _hit.normal;
+
+            if (m_jumpInputPressed  && m_wallTimer > 0.2f)
+                {
+                    RaycastHit currentWallHit = leftWall ? leftWallHit : rightWallHit;
+
+                    m_velocity = (wallNormal + Vector3.up).normalized * jumpForce;
+                    m_momentum = wallNormal * jumpForce * 0.5f; // Push away from wall
+                    jumpInputElapsed = Mathf.Infinity; // Consume the jump input
+                    ExitWallRide();
+                    return;
+                } 
+
+
+            if (!isWallRiding)
+            {
+                float wallOffset = 0.5f;
+                transform.position = _hit.point + wallNormal * wallOffset;
+            }
+
+            isWallRiding = true;
+
+            Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
+            if (Vector3.Dot(wallDirection, transform.forward) < 0)
+                wallDirection *= -1;
+
+            m_momentum = wallDirection * Mathf.Max(m_momentum.magnitude, speed);
+
+
+            Vector3 totalMovement = m_momentum + m_velocity;
+            transform.position = MovePlayer(totalMovement * Time.deltaTime);
+
+            m_elapsedFalling = 0f;
+        }
+
+        void ExitWallRide()
+        {
+
+            isWallRiding = false;
+        }
+
+        bool CheckForWall()
+        {
+            // Cast rays to each side and store the proper hit information.
+            bool hitLeft = Physics.Raycast(transform.position, -transform.right, out RaycastHit leftHitTemp, wallCheckDist, collisionLayers);
+            bool hitRight = Physics.Raycast(transform.position, transform.right, out RaycastHit rightHitTemp, wallCheckDist, collisionLayers);
+
+            leftWall = hitLeft;
+            rightWall = hitRight;
+            leftWallHit = leftHitTemp;
+            rightWallHit = rightHitTemp;
+
+            return leftWall || rightWall;
+        }
+
+        #region Rail grinding
         // RAIL GRINDING SYSTEM
         void TryStartGrinding()
         {
@@ -465,7 +574,7 @@ namespace KinematicCharacterControler
             railProgress = 0f;
             grindSpeed = 0f;
         }
-
+        #endregion
         // Visualization
         void OnDrawGizmos()
         {
