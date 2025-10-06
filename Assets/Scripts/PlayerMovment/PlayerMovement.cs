@@ -82,7 +82,6 @@ namespace KinematicCharacterControler
         void Update()
         {
             HandleCursor();
-            UpdateGrindInput();
             HandleInput();
             HandlePaintColor();
             HandleFOV();
@@ -111,12 +110,6 @@ namespace KinematicCharacterControler
         public void HandlePaintColor()
         {
             m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
-            //Debug.Log(m_currColorMult);
-        }
-
-        void UpdateGrindInput()
-        {
-            grindInputHeld = Input.GetKey(grindKey);
         }
         public void HandleCursor()
         {
@@ -131,7 +124,6 @@ namespace KinematicCharacterControler
                 Cursor.visible = true;
             }
         }
-
 
         void HandleInput()
         {
@@ -364,7 +356,7 @@ namespace KinematicCharacterControler
             railProgress = progress;
 
             
-            grindSpeed = speed;
+            grindSpeed = m_momentum.magnitude;
             
             // Get rail direction at this point
             Vector3 railDir = rail.GetDirectionOnRail(progress);
@@ -377,6 +369,8 @@ namespace KinematicCharacterControler
             
             Vector3 railPosition = rail.GetPointOnRail(progress);
             transform.position = railPosition;
+            railDir *= m_railDir;
+            m_momentum = m_momentum.magnitude * railDir;
             
             m_velocity = Vector3.zero;
         }
@@ -409,12 +403,17 @@ namespace KinematicCharacterControler
             Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
 
 
-            Vector3 railMovement = railDirection * grindSpeed * Time.deltaTime;
+            m_momentum += railDirection * grindSpeed;
+            if(m_momentum.magnitude > grindSpeed)
+            {
+                m_momentum = m_momentum.normalized * grindSpeed;
+            }
+
 
 
             Vector3 currentPos = transform.position;
-            Vector3 newPosition = MovePlayer(railMovement);
-            transform.position = newPosition;
+
+            transform.position = MovePlayer(m_momentum * Time.deltaTime);
 
             // Update rail progress based on actual movement achieved along rail direction
             Vector3 actualMovement = transform.position - currentPos;
@@ -442,8 +441,7 @@ namespace KinematicCharacterControler
                 transform.position += correction;
             }
 
-            // Store grind velocity for potential exit
-            grindVelocity = railDirection * grindSpeed;
+
             SnapPlayerDown();
         }
         
@@ -452,14 +450,15 @@ namespace KinematicCharacterControler
             if (!isGrinding) return;
             
             isGrinding = false;
-            
+
             // Give player exit velocity
             if (currentRail != null)
             {
                 Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
-                m_velocity = railDirection * grindSpeed;
-                
-                m_velocity.y = grindExitForce;
+                m_momentum += railDirection * grindSpeed;
+                m_momentum.y = grindExitForce;
+
+                //m_velocity.y = grindExitForce;
             }
             
             currentRail = null;
