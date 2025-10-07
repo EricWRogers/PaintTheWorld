@@ -57,8 +57,8 @@ namespace KinematicCharacterControler
 
         private float m_wallTimer = 0f;
         public LayerMask wallLayers;
-        private bool leftWall;
-        private bool rightWall;
+        public bool leftWall;
+        public bool rightWall;
         private RaycastHit leftWallHit;
         private RaycastHit rightWallHit;
         
