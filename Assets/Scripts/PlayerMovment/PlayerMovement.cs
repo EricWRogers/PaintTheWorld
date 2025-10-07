@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using UnityEngine;
 
 
@@ -10,17 +11,35 @@ namespace KinematicCharacterControler
         public float rotationSpeed = 5f;
         public float maxWalkAngle = 60f;
         public GameObject player;
+        private float currSpeed;
 
         private Transform m_orientation;
         public Transform cam;
         public float movementColorMult = 2f;
         private float m_currColorMult = 1f;
+        private float m_shopMoveMult => PlayerManager.instance.stats.skills[3].currentMult;
         public GetPaintColor standPaintColor;
         private PaintColors colors;
-
-        [Header("Physics")]
-        private float m_elapsedFalling;
+        private Vector2 moveInput;
         public bool lockCursor = true;
+
+        [Header("Momentum")]
+        public float acceleration = 10f;
+        public float deceleration = 8f;
+        public float maxSpeed = 20;
+
+        private Vector3 m_momentum = Vector3.zero;
+
+        [Header("Dashing")]
+        public AnimationCurve dashSpeedCurve;
+        public float dashSpeed = 20f;
+        public KeyCode dashKey = KeyCode.LeftShift;
+        public bool isDashing = false;
+        public float dashDuration = 0.5f;
+        public float dashCooldown = 2f;
+        private float m_dashTime = 0f;
+        private float m_timeSinceLastDash = 0f;
+        public bool m_dashInputPressed = false;
 
         [Header("Jump Settings")]
         public float jumpForce = 5.0f;
@@ -30,7 +49,19 @@ namespace KinematicCharacterControler
         private float m_timeSinceLastJump = 0.0f;
         public bool m_jumpInputPressed = false;
         private float m_jumpBufferTime = 0.25f;
+        private float m_elapsedFalling;
 
+        [Header("Wall Riding")]
+        public bool isWallRiding = false;
+        public float wallCheckDist = 1;
+
+        private float m_wallTimer = 0f;
+        public LayerMask wallLayers;
+        private bool leftWall;
+        private bool rightWall;
+        private RaycastHit leftWallHit;
+        private RaycastHit rightWallHit;
+        
         [Header("Rail Grinding")]
         public LayerMask railLayer;
         public float railDetectionRadius = 1.5f;
@@ -49,6 +80,8 @@ namespace KinematicCharacterControler
         public Vector3 grindVelocity;
         public bool grindInputHeld;
         public float m_railDir = 1f;
+
+
         [SerializeField] private Transform m_railDetectionPoint;
         void Start()
         {
@@ -60,9 +93,9 @@ namespace KinematicCharacterControler
         void Update()
         {
             HandleCursor();
-            UpdateGrindInput();
             HandleInput();
             HandlePaintColor();
+            HandleFOV();
 
             if (!isGrinding)
             {
@@ -74,13 +107,21 @@ namespace KinematicCharacterControler
                 ContinueGrinding();
             }
         }
+
+
+        public void HandleFOV()
+        {
+            Camera cam = Camera.main;
+            if (cam == null) return;
+
+            float targetFOV = isDashing ? 80f : 60f;
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, Time.deltaTime * 8f);
+        }
         
         public void HandlePaintColor()
         {
             m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
-            Debug.Log(m_currColorMult);
-         }
-
+        }
         public void HandleCursor()
         {
             if (lockCursor)
@@ -94,13 +135,11 @@ namespace KinematicCharacterControler
                 Cursor.visible = true;
             }
         }
-        void UpdateGrindInput()
-        {
-            grindInputHeld = Input.GetKey(grindKey);
-        }
 
         void HandleInput()
         {
+            moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            
             if (Input.GetKey(KeyCode.Space))
                 m_jumpInputPressed = true;
             else
@@ -111,33 +150,70 @@ namespace KinematicCharacterControler
             else
                 jumpInputElapsed += Time.deltaTime;
 
+            if (Input.GetKeyDown(dashKey))
+            {
+                m_dashInputPressed = true;
+                isDashing = true;
+            }
+                
+
         }
 
         void HandleRegularMovement()
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-    
+            
+            m_timeSinceLastDash += Time.deltaTime;
+        
+            currSpeed = speed * movementColorMult * m_shopMoveMult;
+
 
             Vector3 viewDir = transform.position - new Vector3(cam.position.x, transform.position.y, cam.position.z);
             m_orientation.forward = viewDir.normalized;
 
-            Vector3 inputDir = m_orientation.forward * vertical + m_orientation.right * horizontal;
+            Vector3 inputDir = m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x;
+            inputDir = inputDir.normalized;
+
+            // target velocity
+            Vector3 targetVelocity = inputDir * currSpeed;
+
+            if (isDashing)
+            {
+                HandleDashing();
+            }
+
+            if (inputDir.magnitude > 0.1f && !isDashing)
+            {
+                m_momentum = Vector3.MoveTowards(m_momentum, targetVelocity, currSpeed * Time.deltaTime);
+            }
+            else
+            {
+                m_momentum *= (1 - DefaultPhysicsMat.dynamicFriction);
+            }
+            
+            if (m_momentum.magnitude > maxSpeed && !isDashing)
+            {
+                m_momentum = m_momentum.normalized * maxSpeed;
+            }
+            
+
 
 
             // Rotate player
-            if (inputDir != Vector3.zero || Input.GetMouseButton(0) )
+            if (inputDir != Vector3.zero &&  !Input.GetMouseButton(0))
             {
-                player.transform.forward = Vector3.Slerp(player.transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
+                player.transform.forward = Vector3.Slerp(player.transform.forward, m_momentum.normalized, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
                 m_velocity.z = 0f;
             }
+            
+            if (Input.GetMouseButton(0))
+                player.transform.forward = Vector3.Slerp(player.transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
 
             bool onGround = CheckIfGrounded(out RaycastHit groundHit) && m_velocity.y <= 0.0f;
             bool falling = !(onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal));
 
             // Handle gravity and falling
-            if (falling)
+            if (falling && !isWallRiding)
             {
                 m_velocity += gravity * Time.deltaTime;
                 m_elapsedFalling += Time.deltaTime;
@@ -163,15 +239,144 @@ namespace KinematicCharacterControler
                 m_timeSinceLastJump += Time.deltaTime;
             }
 
-            // Apply movement
-            transform.position = MovePlayer(inputDir * speed * Time.deltaTime * movementColorMult);
-            transform.position = MovePlayer(m_velocity * Time.deltaTime);
+            if (isWallRiding)
+            {
+                m_wallTimer += Time.deltaTime;
+                if (CheckForWall())
+                {
+                    RaycastHit wallHit = leftWall ? leftWallHit : rightWallHit;
+                    HandleWallRunning(wallHit);
+                }
+                else
+                {
+                    ExitWallRide();
+                }
+                return;
+            }
+
+
+            if (m_jumpInputPressed && falling && CheckForWall())
+            {
+                if (leftWall)
+                {
+                    HandleWallRunning(leftWallHit);
+                    m_wallTimer = 0f;
+                    isWallRiding = true;
+                    return;
+                }
+                if (rightWall)
+                {
+                    HandleWallRunning(rightWallHit);
+                    m_wallTimer = 0f;
+                    isWallRiding = true;
+                    return;
+                }
+                isWallRiding = false;
+            }
+            else
+                isWallRiding = false;
+             
+
+            // Apply movement (combine momentum and velocity so one doesn't overwrite the other)
+            Vector3 totalMovement = m_momentum + m_velocity;
+            transform.position = MovePlayer(totalMovement * Time.deltaTime);
 
             if (onGround && !attemptingJump)
                 SnapPlayerDown();
         }
 
+        void HandleDashing()
+        {
+            
 
+            bool canDash = m_timeSinceLastDash >= dashCooldown;
+            if (m_dashInputPressed && canDash)
+            {
+                m_dashTime = 0f;
+                m_timeSinceLastDash = 0f;
+                m_dashInputPressed = false;
+            }
+
+            if (m_dashTime < dashDuration)
+            {
+                float dashProgress = m_dashTime / dashDuration;
+                float currentDashSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress);
+
+                Vector3 dashDirection = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+                if (dashDirection == Vector3.zero)
+                    dashDirection = m_orientation.forward;
+
+                Vector3 dashVelocity = dashDirection * currentDashSpeed;
+
+                m_momentum = Vector3.MoveTowards(m_momentum, dashVelocity, currentDashSpeed * Time.deltaTime);
+
+                m_dashTime += Time.deltaTime;
+            }
+            else
+            {
+                isDashing = false;
+            }
+        }
+
+
+        void HandleWallRunning(RaycastHit _hit)
+        {
+            Vector3 wallNormal = _hit.normal;
+
+            if (m_jumpInputPressed  && m_wallTimer > 0.2f)
+                {
+                    RaycastHit currentWallHit = leftWall ? leftWallHit : rightWallHit;
+
+                    m_velocity = (wallNormal + Vector3.up).normalized * jumpForce;
+                    m_momentum = wallNormal * jumpForce * 0.5f; // Push away from wall
+                    jumpInputElapsed = Mathf.Infinity; // Consume the jump input
+                    ExitWallRide();
+                    return;
+                } 
+
+
+            if (!isWallRiding)
+            {
+                float wallOffset = 0.5f;
+                transform.position = _hit.point + wallNormal * wallOffset;
+            }
+
+            isWallRiding = true;
+
+            Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
+            if (Vector3.Dot(wallDirection, transform.forward) < 0)
+                wallDirection *= -1;
+
+            m_momentum = wallDirection * Mathf.Max(m_momentum.magnitude, speed);
+
+
+            Vector3 totalMovement = m_momentum + m_velocity;
+            transform.position = MovePlayer(totalMovement * Time.deltaTime);
+
+            m_elapsedFalling = 0f;
+        }
+
+        void ExitWallRide()
+        {
+
+            isWallRiding = false;
+        }
+
+        bool CheckForWall()
+        {
+            // Cast rays to each side and store the proper hit information.
+            bool hitLeft = Physics.Raycast(transform.position, -transform.right, out RaycastHit leftHitTemp, wallCheckDist, collisionLayers);
+            bool hitRight = Physics.Raycast(transform.position, transform.right, out RaycastHit rightHitTemp, wallCheckDist, collisionLayers);
+
+            leftWall = hitLeft;
+            rightWall = hitRight;
+            leftWallHit = leftHitTemp;
+            rightWallHit = rightHitTemp;
+
+            return leftWall || rightWall;
+        }
+
+        #region Rail grinding
         // RAIL GRINDING SYSTEM
         void TryStartGrinding()
         {
@@ -260,7 +465,7 @@ namespace KinematicCharacterControler
             railProgress = progress;
 
             
-            grindSpeed = speed;
+            grindSpeed = m_momentum.magnitude;
             
             // Get rail direction at this point
             Vector3 railDir = rail.GetDirectionOnRail(progress);
@@ -273,6 +478,8 @@ namespace KinematicCharacterControler
             
             Vector3 railPosition = rail.GetPointOnRail(progress);
             transform.position = railPosition;
+            railDir *= m_railDir;
+            m_momentum = m_momentum.magnitude * railDir;
             
             m_velocity = Vector3.zero;
         }
@@ -305,12 +512,17 @@ namespace KinematicCharacterControler
             Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
 
 
-            Vector3 railMovement = railDirection * grindSpeed * Time.deltaTime;
+            m_momentum += railDirection * grindSpeed;
+            if(m_momentum.magnitude > grindSpeed)
+            {
+                m_momentum = m_momentum.normalized * grindSpeed;
+            }
+
 
 
             Vector3 currentPos = transform.position;
-            Vector3 newPosition = MovePlayer(railMovement);
-            transform.position = newPosition;
+
+            transform.position = MovePlayer(m_momentum * Time.deltaTime);
 
             // Update rail progress based on actual movement achieved along rail direction
             Vector3 actualMovement = transform.position - currentPos;
@@ -338,8 +550,7 @@ namespace KinematicCharacterControler
                 transform.position += correction;
             }
 
-            // Store grind velocity for potential exit
-            grindVelocity = railDirection * grindSpeed;
+
             SnapPlayerDown();
         }
         
@@ -348,21 +559,22 @@ namespace KinematicCharacterControler
             if (!isGrinding) return;
             
             isGrinding = false;
-            
+
             // Give player exit velocity
             if (currentRail != null)
             {
                 Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
-                m_velocity = railDirection * grindSpeed;
-                
-                m_velocity.y = grindExitForce;
+                m_momentum += railDirection * grindSpeed;
+                m_momentum.y = grindExitForce;
+
+                //m_velocity.y = grindExitForce;
             }
             
             currentRail = null;
             railProgress = 0f;
             grindSpeed = 0f;
         }
-
+        #endregion
         // Visualization
         void OnDrawGizmos()
         {

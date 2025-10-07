@@ -1,0 +1,170 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7371480379964606641
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8046079611901358893}
+  - component: {fileID: 7906907807127236356}
+  - component: {fileID: 3409026915229165813}
+  - component: {fileID: 6749895433787296348}
+  - component: {fileID: 2641730136661341872}
+  - component: {fileID: 3073684157256886998}
+  m_Layer: 0
+  m_Name: PlayerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8046079611901358893
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371480379964606641}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.4389424, y: 4.9117613, z: -24.655422}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7906907807127236356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371480379964606641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f49e4fa51ff75de41a62aa0dd59d33b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  health: {fileID: 0}
+  wallet: {fileID: 0}
+  inventory: {fileID: 0}
+  stats: {fileID: 0}
+--- !u!114 &3409026915229165813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371480379964606641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 604dfbbf654f92618bc36972daaa4968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  healed:
+    m_PersistentCalls:
+      m_Calls: []
+  hurt:
+    m_PersistentCalls:
+      m_Calls: []
+  outOfHealth:
+    m_PersistentCalls:
+      m_Calls: []
+  maxHealth: 100
+  currentHealth: 100
+  defaultToMaxHealth: 1
+--- !u!114 &6749895433787296348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371480379964606641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cadd460795f26b748b98351c8ca8b3e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 0
+  changed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &2641730136661341872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371480379964606641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5df09c889e9ada40ab979ab17de94d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  onChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &3073684157256886998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371480379964606641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5861edd3bc2b5745b63d0ca06106a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skills:
+  - id: Health
+    displayName: Health
+    description: Max HP up.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 50
+    costGrowth: 1.5
+  - id: Damage
+    displayName: Damage
+    description: Attack power up.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 60
+    costGrowth: 1.5
+  - id: Radius
+    displayName: Radius
+    description: Increase paint raddius
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 55
+    costGrowth: 1.5
+  - id: Speed
+    displayName: Speed
+    description: Move faster.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 6
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 45
+    costGrowth: 1.6
+  onSkillChanged:
+    m_PersistentCalls:
+      m_Calls: []

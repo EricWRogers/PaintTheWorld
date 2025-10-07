@@ -25,6 +25,7 @@ public class DevTools : MonoBehaviour
     public KeyCode debugButton;
     private bool m_toolsActive;
     private GameObject m_player;
+    private int m_paintIndex = 0;
 
     void Start()
     {
@@ -43,7 +44,7 @@ public class DevTools : MonoBehaviour
             ToggleTools();
         }
         if (m_player == null)
-            return;
+            m_player = PlayerManager.instance.player;
         m_player.GetComponent<PlayerMovement>().speed = playerMovement.value;
         m_player.GetComponent<PlayerWeapon>().paintRadius = paintRadius.value;
         m_player.GetComponent<PlayerWeapon>().damage = (int)playerDamage.value;
@@ -53,13 +54,14 @@ public class DevTools : MonoBehaviour
     }
     private void SwitchPaintPos()
     {
-        for (int i = 0; i < paintTrailPos.Count - 1; i++)
+        if (paintTrailPos.Count == 0) return;
+
+        playerPaint.transform.localPosition = paintTrailPos[m_paintIndex];
+
+        m_paintIndex++;
+        if (m_paintIndex >= paintTrailPos.Count)
         {
-            playerPaint.transform.localPosition = paintTrailPos[i];
-            if (i == paintTrailPos.Count - 1)
-            {
-                i = 0;
-            }
+            m_paintIndex = 0;
         }
     }
     private void Gun1()

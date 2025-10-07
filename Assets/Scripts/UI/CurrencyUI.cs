@@ -6,9 +6,9 @@ public class CurrencyUI : MonoBehaviour
     [SerializeField] private Currency wallet;
     [SerializeField] private TMP_Text label;
 
-    private void Awake()
+    private void Start()
     {
-        if (!wallet) wallet = FindObjectOfType<Currency>();
+        wallet = PlayerManager.instance.wallet;
     }
 
     private void OnEnable()
@@ -23,6 +23,13 @@ public class CurrencyUI : MonoBehaviour
     private void OnDisable()
     {
         if (wallet != null) wallet.changed.RemoveListener(OnChanged);
+    }
+    void Update()
+    {
+        if (wallet == null)
+        {
+            //wallet = PlayerManager.instance.wallet;
+        }
     }
 
     private void OnChanged(int amt)

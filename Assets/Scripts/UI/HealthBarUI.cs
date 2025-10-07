@@ -12,7 +12,7 @@ public class HealthBarUI : MonoBehaviour
 
     private void Awake()
     {
-        if (!target) target = FindObjectOfType<Health>(); // fallback
+        
     }
 
     private void OnEnable()
@@ -29,9 +29,17 @@ public class HealthBarUI : MonoBehaviour
 
     private void Start()
     {
+        target = PlayerManager.instance.health; // fallback
         // Initialize UI to thee current values
         if (target != null)
             OnHealthChanged(new HealthChangedObject { maxHealth = target.maxHealth, currentHealth = target.currentHealth, delta = target.currentHealth });
+    }
+    void Update()
+    {
+        if (target == null)
+        {
+            //target = PlayerManager.instance.health;
+        }
     }
 
     private void OnHealthChanged(HealthChangedObject obj)

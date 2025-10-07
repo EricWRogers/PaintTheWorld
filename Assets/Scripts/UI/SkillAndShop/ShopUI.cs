@@ -25,9 +25,9 @@ public class ShopUI : MonoBehaviour
 
     private void Awake()
     {
-        if (!catalog) catalog = FindObjectOfType<ShopCatalog>();
-        if (!wallet) wallet = FindObjectOfType<Currency>();
-        if (!inventory) inventory = FindObjectOfType<Inventory>();
+        if (!catalog) catalog = GetComponent<ShopCatalog>();
+        if (!wallet) wallet = PlayerManager.instance.wallet;
+        if (!inventory) inventory = PlayerManager.instance.inventory;
     }
 
     private void OnEnable()
@@ -73,7 +73,7 @@ public class ShopUI : MonoBehaviour
 
         if (!catalog.HasStock(index)) return;   // out of stock
         if (wallet.amount < def.price) return;  // cannot afford
-        if (!PlayerManager.instance.wallet.Spend(def.price)) return;
+        if (!wallet.Spend(def.price)) return;
 
         PlayerManager.instance.inventory.Add(def, 1);
         catalog.ConsumeStock(index);

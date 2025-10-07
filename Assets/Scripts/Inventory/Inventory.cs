@@ -1,6 +1,10 @@
+
+
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+
 
 [System.Serializable]
 public class ItemDefinition
@@ -15,6 +19,7 @@ public class ItemDefinition
     public int initialStock = -1; // -1 = unlimited in shop
 }
 
+
 [System.Serializable]
 public class ItemStack
 {
@@ -22,22 +27,27 @@ public class ItemStack
     public int count;
 }
 
+
 [System.Serializable] public class InventoryChangedEvent : UnityEvent {}
+
 
 public class Inventory : MonoBehaviour
 {
     public List<ItemStack> items = new List<ItemStack>();
     public InventoryChangedEvent onChanged;
 
+
     private void Awake()
     {
         if (onChanged == null) onChanged = new InventoryChangedEvent();
     }
 
+
     /// <summary>Adds amount of a definition. Merges by item.id
     public void Add(ItemDefinition def, int amount = 1)
     {
         if (def == null || amount <= 0) return;
+
 
         if (def.stackable)
         {
@@ -63,8 +73,10 @@ public class Inventory : MonoBehaviour
                 items.Add(new ItemStack { item = def, count = 1 });
         }
 
+
         onChanged.Invoke();
     }
+
 
     /// <summary>Total count across all stacks for an item id.</summary>
     public int GetCount(string id)
@@ -77,10 +89,12 @@ public class Inventory : MonoBehaviour
         return total;
     }
 
+
     /// <summary>Consumes up to amount from stacks with this id. Returns true if fully consumed.</summary>
     public bool Consume(string id, int amount = 1)
     {
         if (string.IsNullOrEmpty(id) || amount <= 0) return false;
+
 
         int need = amount;
         for (int i = items.Count - 1; i >= 0 && need > 0; i--)
@@ -88,18 +102,22 @@ public class Inventory : MonoBehaviour
             var s = items[i];
             if (s?.item == null || s.item.id != id) continue;
 
+
             int take = Mathf.Min(s.count, need);
             s.count -= take;
             need -= take;
 
+
             if (s.count <= 0) items.RemoveAt(i);
         }
+
 
         if (need == 0) { onChanged.Invoke(); return true; }
        
         onChanged.Invoke();
         return false;
     }
+
 
     /// collapse duplicate stacks with the same id
     public void MergeDuplicatesById()
@@ -111,6 +129,7 @@ public class Inventory : MonoBehaviour
             if (s?.item == null) { items.RemoveAt(i); continue; }
             string id = s.item.id;
             if (string.IsNullOrEmpty(id)) { continue; }
+
 
             if (!map.TryGetValue(id, out var existing))
             {
@@ -132,9 +151,13 @@ public class Inventory : MonoBehaviour
         onChanged.Invoke();
     }
 
+
     public void ClearAll()
     {
         items.Clear();
         onChanged.Invoke();
     }
 }
+
+
+

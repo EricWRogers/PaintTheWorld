@@ -1,19 +1,30 @@
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+public abstract class Weapon : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
+    [Header("Base Weapon")]
+    public Transform firePoint;
+    public float dps;
+    public int damage;
+    public LayerMask layerMask;
 
+    [HideInInspector] public GameObject player;
+    [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;
+    [HideInInspector] public float attackSpeedMult = 1; //=> dps * PlayerManager.instance.stats.skills[4].currentMult; 
+
+    public abstract void Fire();
+
+    public void Start()
+    {
+        player = PlayerManager.instance.player;
+        if (player == null)
+        {
+            Debug.Log(gameObject.name + " is missing player");
+            return;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-        public void DestroyWeapon()
+    public void DestroyWeapon()
     {
         Destroy(gameObject);
     }
