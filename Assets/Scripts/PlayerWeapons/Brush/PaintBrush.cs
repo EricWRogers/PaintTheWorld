@@ -8,8 +8,6 @@ public class PaintBrush : Weapon
 {
     public Transform leftFirePos;
     public Transform rightFirePos;
-    public Transform leftFirePosUp;
-    public Transform rightFirePosUp;
     public Transform parentTransform;
     public GameObject bullet;
     public GameObject swipeZone;
