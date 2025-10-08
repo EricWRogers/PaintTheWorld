@@ -34,11 +34,6 @@ public class PaintBrush : Weapon
                 DoBoxCastDamage();
             }
 
-        if (stateInfo.IsName("BrushUp") && !hitEnemy)
-        {
-            DoBoxCastDamage();
-        }
-
         if (Input.GetButtonUp("Fire1"))
         {
             anim.SetBool(holdAttackBool, false);
@@ -53,12 +48,12 @@ public class PaintBrush : Weapon
         if (parentTransform != null)
         {
             parentTransform.rotation = Camera.main.transform.rotation;
-
         }
     }
     public void ResetAttack()
     {
         hitEnemy = false;
+        parentTransform.rotation = Quaternion.Euler(0, parentTransform.rotation.eulerAngles.y, 0);
     }
 
     public void LaunchPaintAtFirepoint(Transform _firePoint)
