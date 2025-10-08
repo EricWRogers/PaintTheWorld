@@ -1,11 +1,15 @@
 using UnityEngine.Animations;
 using SuperPupSystems.Helper;
 using UnityEngine;
+using UnityEditor.UI;
+using UnityEngine.UIElements;
 
 public class PaintBrush : Weapon
 {
     public Transform leftFirePos;
     public Transform rightFirePos;
+    public Transform leftFirePosUp;
+    public Transform rightFirePosUp;
     public GameObject bullet;
     public GameObject swipeZone;
     [Header("Anim")]
@@ -13,6 +17,7 @@ public class PaintBrush : Weapon
     public string holdAttackBool = "HoldAttack";
     public bool hitEnemy = false;
     public float maxSpeedMult;
+  
     void Awake()
     {
     }
@@ -86,14 +91,39 @@ public class PaintBrush : Weapon
     {
         LaunchPaintAtFirepoint(rightFirePos);
     }
+        public void FireFrontUp()
+    {
+        LaunchPaintAtFirepoint(firePointUp);
+    }
+    
+    public void FireLeftUp()
+    {
+        LaunchPaintAtFirepoint(leftFirePosUp);
+    }
+
+    public void FireRightUp()
+    {
+        LaunchPaintAtFirepoint(rightFirePosUp);
+    }
     void DoBoxCastDamage()
     {
         if (swipeZone == null) return;
+        float verticalAngle = Camera.main.transform.forward.y;
 
         // Get the center and half-extents of the box
         Vector3 boxCenter = swipeZone.transform.position;   // Fixed world position
         Vector3 halfExtents = swipeZone.GetComponent<BoxCollider>().size / 2;                  // half-size of the box
         Quaternion boxRotation = swipeZone.transform.rotation;
+
+        if (verticalAngle > 0.03101708f)
+        {
+            boxCenter.y = 1.33f;
+        }
+        else
+        {
+            boxCenter.y = -0.19f;
+        }
+
 
         // Get all colliders in the box
         Collider[] hits = Physics.OverlapBox(

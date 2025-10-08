@@ -4,6 +4,7 @@ public abstract class Weapon : MonoBehaviour
 {
     [Header("Base Weapon")]
     public Transform firePoint;
+    public Transform firePointUp;
     public float dps;
     public int damage;
     public LayerMask layerMask;
