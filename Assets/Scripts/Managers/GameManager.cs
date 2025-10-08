@@ -9,10 +9,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : SceneAwareSingleton<GameManager>
 {
     public GameObject boss;
-    public UnityAction bossDefeated;
+    public UnityAction stageDefeated;
     public float stageTimer;
     public int stagesBeforeFinal = 5;
     public bool allowLooping = true;
+    public bool stageHasBoss = false;
 
     [Header("Scaling Settings")]
     public EnemyScalingData scalingData;
@@ -24,6 +25,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private float enemyDamageModifier;
     private float bossHealthModifier;
     private float enemyCountModifier;
+    private float coinGainModifier;
 
     private bool gameplayStarted = false;
 
@@ -34,7 +36,13 @@ public class GameManager : SceneAwareSingleton<GameManager>
         m_spawnTimer = GetComponent<Timer>();
         m_spawnTimer.StartTimer(stageTimer, true);
         m_spawnTimer.timeout.RemoveAllListeners();
-        m_spawnTimer.timeout.AddListener(SpawnBoss);
+        
+        if (stageHasBoss)
+            m_spawnTimer.timeout.AddListener(SpawnBoss);
+        else
+        {
+            m_spawnTimer.timeout.AddListener(StageComplete);
+        }
         RecalculateScaling();
         gameplayStarted = false;
         IsReady = true;
@@ -45,7 +53,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if (gameplayStarted) return;
         gameplayStarted = true;
 
-        EnemyManager.instance.SpawnEnemies(EnemyManager.instance.baseMaxEnemyCount / 4);
+        //EnemyManager.instance.SpawnEnemies(EnemyManager.instance.baseMaxEnemyCount / 4);
 
         Timer timer = GetComponent<Timer>();
         if (timer != null)
@@ -83,7 +91,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public void BossDefeated()
     {
-        bossDefeated.Invoke();
+        m_spawnTimer.timeout.AddListener(EnemyManager.instance.StopSpawning);
+        stageDefeated.Invoke();
     }
     public void NextStage()
     {
@@ -110,6 +119,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         enemyDamageModifier = 1f + (scalingData.enemyDamageIncrease * (CurrentStage - 1));
         bossHealthModifier = 1f + (scalingData.bossHealthIncrease * (CurrentStage - 1));
         enemyCountModifier = 1f + (scalingData.enemyCountIncrease * (CurrentStage - 1));
+        coinGainModifier = 1f + (scalingData.coinGainIncrease * (CurrentStage - 1));
 
         // Loop bonuses applied multiplicatively
         if (CurrentLoop > 0)
@@ -127,12 +137,18 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public float EnemyDamageModifier => enemyDamageModifier;
     public float BossHealthModifier => bossHealthModifier;
     public float EnemyCountModifier => enemyCountModifier;
+    public float CoinGainModifier => coinGainModifier;
     public void EditorInit()
     {
         m_spawnTimer = GetComponent<Timer>();
         m_spawnTimer.StartTimer(stageTimer, true);
         m_spawnTimer.timeout.RemoveAllListeners();
-        m_spawnTimer.timeout.AddListener(SpawnBoss);
+        if (stageHasBoss)
+            m_spawnTimer.timeout.AddListener(SpawnBoss);
+        else
+        {
+            m_spawnTimer.timeout.AddListener(StageComplete);
+        }
         IsReady = true;
     }
 }

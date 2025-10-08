@@ -49,6 +49,10 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
             }
         }
     }
+    public void StopSpawning()
+    {
+        m_spawnTimer.StopTimer();
+    }
 
     public void RemoveEnemy()
     {

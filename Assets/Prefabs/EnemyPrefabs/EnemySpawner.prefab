@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1119664439060394954}
-  - component: {fileID: 2610325040171764753}
+  - component: {fileID: 4866183121753860991}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -26,13 +26,13 @@ Transform:
   m_GameObject: {fileID: 852661615770288309}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -24.4, y: 0, z: 23.2}
+  m_LocalPosition: {x: 19.6, y: 3.52, z: 7.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2610325040171764753
+--- !u!114 &4866183121753860991
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,11 +41,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 852661615770288309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 840ffb005524543448ec84803b949d18, type: 3}
+  m_Script: {fileID: 11500000, guid: 0efee06f242fdac4b9ed029889eea088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnAreaSize: {x: 50, y: 2.06, z: 50}
+  spawnAreaSize: {x: 49.3, y: 0.3, z: 63.7}
   totalSpawned: 0
   poolSize: 20
-  objectsToSpawn: []
+  objectsToSpawn:
+  - {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
   spawnAllOnStart: 0

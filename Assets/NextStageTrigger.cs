@@ -6,7 +6,7 @@ public class NextStageTrigger : MonoBehaviour
 
     void Start()
     {
-        GameManager.instance.bossDefeated += DisableBlocker;
+        GameManager.instance.stageDefeated += DisableBlocker;
     }
     void OnTriggerEnter(Collider other)
     {
@@ -16,6 +16,6 @@ public class NextStageTrigger : MonoBehaviour
     private void DisableBlocker()
     {
         triggerBlocker.SetActive(false);
-        GameManager.instance.bossDefeated -= DisableBlocker;
+        GameManager.instance.stageDefeated -= DisableBlocker;
     }
 }

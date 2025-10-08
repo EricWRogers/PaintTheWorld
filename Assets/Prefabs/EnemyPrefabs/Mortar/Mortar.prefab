@@ -253,10 +253,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1466289999841150659}
-  - component: {fileID: 5472731473974361928}
   - component: {fileID: 9198579359197475161}
   - component: {fileID: 3780218610274901045}
   - component: {fileID: 7962096642784740953}
+  - component: {fileID: 5472731473974361928}
   m_Layer: 6
   m_Name: Mortar
   m_TagString: Enemy
@@ -282,45 +282,6 @@ Transform:
   - {fileID: 1662781083831670743}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5472731473974361928
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6371524131278298181}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 604dfbbf654f92618bc36972daaa4968, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  healed:
-    m_PersistentCalls:
-      m_Calls: []
-  hurt:
-    m_PersistentCalls:
-      m_Calls: []
-  outOfHealth:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7962096642784740953}
-        m_TargetAssemblyTypeName: TurretScript, Assembly-CSharp
-        m_MethodName: Dead
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  maxHealth: 50
-  currentHealth: 0
-  defaultToMaxHealth: 1
 --- !u!65 &9198579359197475161
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -384,7 +345,7 @@ MonoBehaviour:
   player: {fileID: 0}
   bulletPrefab: {fileID: 7327330972339907486, guid: 36f33c96f92c7d24aa657bb824b386dd, type: 3}
   baseDamage: 10
-  health: 100
+  health: 50
   attackSpeed: 4
   rotationSpeed: 10
   attackRange: 1000
@@ -399,8 +360,47 @@ MonoBehaviour:
     m_Bits: 128
   wallMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 257
   targetIndicatorPrefab: {fileID: 8258464394648088516, guid: 286599ec40302eb46b75a152c10b64f9, type: 3}
+--- !u!114 &5472731473974361928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6371524131278298181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 604dfbbf654f92618bc36972daaa4968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  healed:
+    m_PersistentCalls:
+      m_Calls: []
+  hurt:
+    m_PersistentCalls:
+      m_Calls: []
+  outOfHealth:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7962096642784740953}
+        m_TargetAssemblyTypeName: TurretScript, Assembly-CSharp
+        m_MethodName: Dead
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  maxHealth: 20
+  currentHealth: 0
+  defaultToMaxHealth: 1
 --- !u!1 &6631511515309108805
 GameObject:
   m_ObjectHideFlags: 0

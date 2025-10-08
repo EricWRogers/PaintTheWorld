@@ -88,7 +88,7 @@ public class Mortar : Enemy
         if (m_currentIndicator != null)
             Destroy(m_currentIndicator);
 
-        m_currentIndicator = Instantiate(targetIndicatorPrefab, position, Quaternion.identity);
+        m_currentIndicator = Instantiate(targetIndicatorPrefab, position, Quaternion.identity, transform);
     }
 
     private void HideTargetIndicator()
