@@ -57,8 +57,8 @@ namespace KinematicCharacterControler
 
         private float m_wallTimer = 0f;
         public LayerMask wallLayers;
-        private bool leftWall;
-        private bool rightWall;
+        public bool leftWall;
+        public bool rightWall;
         private RaycastHit leftWallHit;
         private RaycastHit rightWallHit;
         
@@ -201,7 +201,9 @@ namespace KinematicCharacterControler
             // Rotate player
             if (inputDir != Vector3.zero &&  !Input.GetMouseButton(0))
             {
-                player.transform.forward = Vector3.Slerp(player.transform.forward, m_momentum.normalized, Time.deltaTime * rotationSpeed);
+                Vector3 forwardNoY = m_momentum; 
+                forwardNoY.y = 0;
+                player.transform.forward = Vector3.Slerp(player.transform.forward, forwardNoY.normalized, Time.deltaTime * rotationSpeed);
                 m_velocity.x = 0f;
                 m_velocity.z = 0f;
             }
@@ -337,20 +339,31 @@ namespace KinematicCharacterControler
 
             if (!isWallRiding)
             {
-                float wallOffset = 0.5f;
+                float wallOffset = 0.51f;
                 transform.position = _hit.point + wallNormal * wallOffset;
             }
 
             isWallRiding = true;
 
+            m_momentum = Vector3.ProjectOnPlane(m_momentum, wallNormal);
+
             Vector3 wallDirection = Vector3.Cross(wallNormal, Vector3.up).normalized;
-            if (Vector3.Dot(wallDirection, transform.forward) < 0)
-                wallDirection *= -1;
+            Vector3 preferDir = m_momentum.magnitude > 0.1f ? m_momentum.normalized : transform.forward;
+            preferDir = Vector3.ProjectOnPlane(preferDir, wallNormal).normalized;
 
-            m_momentum = wallDirection * Mathf.Max(m_momentum.magnitude, speed);
+            if (Vector3.Dot(wallDirection, preferDir) < 0f)
+                wallDirection *= -1f;
 
+            float along = Vector3.Dot(m_momentum, wallDirection);
+            if (along < 0f)
+            {
+                along = 0f;
+            }
+
+            m_momentum = wallDirection * along;
 
             Vector3 totalMovement = m_momentum + m_velocity;
+
             transform.position = MovePlayer(totalMovement * Time.deltaTime);
 
             m_elapsedFalling = 0f;
