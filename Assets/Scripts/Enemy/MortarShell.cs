@@ -1,7 +1,6 @@
 using SuperPupSystems.Helper;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class MortarShell : MonoBehaviour
 {
     public Vector3 startPos;
