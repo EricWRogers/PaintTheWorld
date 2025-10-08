@@ -8,8 +8,7 @@ public class PaintBrush : Weapon
 {
     public Transform leftFirePos;
     public Transform rightFirePos;
-    public Transform leftFirePosUp;
-    public Transform rightFirePosUp;
+    public Transform parentTransform;
     public GameObject bullet;
     public GameObject swipeZone;
     [Header("Anim")]
@@ -24,36 +23,16 @@ public class PaintBrush : Weapon
 
     void Update()
     {
-        float verticalAngle = Camera.main.transform.forward.y;
-        Debug.Log(verticalAngle);
-        anim.SetFloat("AimAngle", verticalAngle);
-
-
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
         if (Input.GetButton("Fire1"))
         {
             Fire();
-            if (verticalAngle > 0.03101708f)
-            {
-                Debug.Log("Brush Up");
-                anim.Play("BrushUp");
-            }
-            else if (verticalAngle < 0.03101710f)
-            {
-                Debug.Log("Brush Down");
-                anim.Play("BrushAttacks");
-            }
         }
 
         if (stateInfo.IsName("BrushAttacks") && !hitEnemy)
-        {
-            DoBoxCastDamage();
-        }
-
-        if (stateInfo.IsName("BrushUp") && !hitEnemy)
-        {
-            DoBoxCastDamage();
-        }
+            {
+                DoBoxCastDamage();
+            }
 
         if (Input.GetButtonUp("Fire1"))
         {
@@ -66,10 +45,15 @@ public class PaintBrush : Weapon
     {
         anim.SetBool(holdAttackBool, true);
         anim.speed = Mathf.Clamp(attackSpeedMult, 0.5f, maxSpeedMult);
+        if (parentTransform != null)
+        {
+            parentTransform.rotation = Camera.main.transform.rotation;
+        }
     }
     public void ResetAttack()
     {
         hitEnemy = false;
+        parentTransform.rotation = Quaternion.Euler(0, parentTransform.rotation.eulerAngles.y, 0);
     }
 
     public void LaunchPaintAtFirepoint(Transform _firePoint)
@@ -90,20 +74,6 @@ public class PaintBrush : Weapon
     public void FireRight()
     {
         LaunchPaintAtFirepoint(rightFirePos);
-    }
-        public void FireFrontUp()
-    {
-        LaunchPaintAtFirepoint(firePointUp);
-    }
-    
-    public void FireLeftUp()
-    {
-        LaunchPaintAtFirepoint(leftFirePosUp);
-    }
-
-    public void FireRightUp()
-    {
-        LaunchPaintAtFirepoint(rightFirePosUp);
     }
     void DoBoxCastDamage()
     {
