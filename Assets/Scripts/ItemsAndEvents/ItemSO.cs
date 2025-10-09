@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public enum ItemRarity { Common, Rare, Legendary }
+public enum ItemRarity { Common, Rare, Epic }
 
 public abstract class ItemSO : ScriptableObject
 {
     [Header("Identity")]
-    public string id;                      //used for saving and loading
+    public string id;                 // ID usedd for saving and loading
     public string displayName;
     [TextArea] public string description;
     public Sprite icon;
@@ -15,9 +15,10 @@ public abstract class ItemSO : ScriptableObject
     public int basePrice = 100;
     public bool stackable = true;
     public int maxStack = 99;
+
     public virtual int GetPriceForNext(int currentCount) => basePrice;
 
-    // Trigger hooks that ovveride the ones we need
+    // Trigger hooks 
     public virtual void OnPurchased(PlayerContext ctx, int newCount) {}
     public virtual void OnEquipped(PlayerContext ctx, int count) {}
     public virtual void OnUnequipped(PlayerContext ctx, int count) {}
@@ -27,7 +28,7 @@ public abstract class ItemSO : ScriptableObject
     public virtual void OnEnemyKilled(PlayerContext ctx, GameObject enemy, int count) {}
 }
 
-// Contexts passed into item hooks
+// Contexts that item hooks can use
 public struct PlayerContext
 {
     public Transform player;
@@ -42,7 +43,6 @@ public struct HitContext
 {
     public GameObject enemy;
     public int damage;
-    public HitSource source;
+    public HitSource source;      
     public Vector3 position;
 }
-
