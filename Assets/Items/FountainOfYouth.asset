@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 088248ec848bcc545b9dba4b6f046b62, type: 3}
+  m_Name: FountainOfYouth
+  m_EditorClassIdentifier: 
+  id: fountain_of_youth
+  displayName: Fountain of Youth
+  description: "When enemies dies an aura spawns where they died that heals the player
+    if they are in range. Stacking: increase aura range\_"
+  icon: {fileID: 0}
+  rarity: 2
+  basePrice: 100
+  stackable: 1
+  maxStack: 99
+  baseRadius: 2
+  radiusPerStack: 0.8
+  duration: 6
+  healPerTick: 1
+  tickInterval: 0.3
