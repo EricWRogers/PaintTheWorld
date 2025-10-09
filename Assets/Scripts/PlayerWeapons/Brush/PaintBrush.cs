@@ -8,7 +8,7 @@ public class PaintBrush : Weapon
 {
     public Transform leftFirePos;
     public Transform rightFirePos;
-    public Transform parentTransform;
+    private Transform m_parentTransform;
     public GameObject bullet;
     public GameObject swipeZone;
     [Header("Anim")]
@@ -16,9 +16,10 @@ public class PaintBrush : Weapon
     public string holdAttackBool = "HoldAttack";
     public bool hitEnemy = false;
     public float maxSpeedMult;
-  
+
     void Awake()
     {
+        m_parentTransform = transform.parent;
     }
 
     void Update()
@@ -45,15 +46,15 @@ public class PaintBrush : Weapon
     {
         anim.SetBool(holdAttackBool, true);
         anim.speed = Mathf.Clamp(attackSpeedMult, 0.5f, maxSpeedMult);
-        if (parentTransform != null)
+        if (m_parentTransform != null)
         {
-            parentTransform.rotation = Camera.main.transform.rotation;
+            m_parentTransform.rotation = Camera.main.transform.rotation;
         }
     }
     public void ResetAttack()
     {
         hitEnemy = false;
-        parentTransform.rotation = Quaternion.Euler(0, parentTransform.rotation.eulerAngles.y, 0);
+        m_parentTransform.rotation = Quaternion.Euler(0, m_parentTransform.rotation.eulerAngles.y, 0);
     }
 
     public void LaunchPaintAtFirepoint(Transform _firePoint)
