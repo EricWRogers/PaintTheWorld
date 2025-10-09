@@ -4,8 +4,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Items/Item Database")]
 public class ItemDatabase : ScriptableObject
 {
-    public List<ItemSO> items = new List<ItemSO>();
-    Dictionary<string, ItemSO> byId;
+    public List<ItemSO> items = new();
+    private Dictionary<string, ItemSO> byId;
 
     public void BuildIndex()
     {
@@ -23,7 +23,7 @@ public class ItemDatabase : ScriptableObject
         return (!string.IsNullOrEmpty(id) && byId.TryGetValue(id, out var it)) ? it : null;
     }
 
-    static ItemDatabase _instance;
+    private static ItemDatabase _instance;
     public static ItemDatabase Load()
     {
         if (_instance) return _instance;
@@ -32,4 +32,3 @@ public class ItemDatabase : ScriptableObject
         return _instance;
     }
 }
-

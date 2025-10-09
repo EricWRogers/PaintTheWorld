@@ -33,8 +33,20 @@ public class PlayerManagerEditor : Editor
 }
 #endif
 
+[System.Serializable] public class InvEntry { public string id; public int count; }
 public class PlayerManager : SceneAwareSingleton<PlayerManager>
 {
+    private static List<InvEntry> MakeInvEntries(Inventory inv)
+    {
+        var list = new List<InvEntry>();
+        if (inv != null && inv.items != null)
+        {
+            foreach (var s in inv.items)
+                if (s != null && s.item != null)
+                    list.Add(new InvEntry { id = s.item.id, count = s.count });
+        }
+        return list;
+    }
     public GameObject player;
     public Health health;
     public Currency wallet;
@@ -44,6 +56,22 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     private SaveData saveData;
     private const string SAVE_KEY = "PlayerSaveData";
     private SaveData startSaveData;
+
+    [Header("Item Runtime Context")]
+    public LayerMask enemyLayer;
+    public GameObject paintGlobPrefab;
+    public GameObject healAuraPrefab;
+    public float globSpeed = 18f;
+
+    public PlayerContext GetContext() => new PlayerContext {
+        player = player ? player.transform : null,
+        playerHealth = health,
+        enemyLayer = enemyLayer,
+        paintGlobPrefab = paintGlobPrefab,
+        healAuraPrefab = healAuraPrefab,
+        globSpeed = globSpeed
+    };
+
     new void Awake()
     {
         base.Awake();
@@ -58,7 +86,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         {
             RegisterPlayer(player);
             if (startSaveData == null)
-                startSaveData = new SaveData(wallet.amount, health.currentHealth, health.maxHealth, inventory.items, stats.skills);
+                startSaveData = new SaveData(wallet.amount, health.currentHealth, health.maxHealth, MakeInvEntries(inventory), stats.skills);
             IsReady = true;
         }
     }
@@ -81,14 +109,14 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     public void SaveGame()
     {
-        saveData = new SaveData
-        (
+        saveData = new SaveData(
             wallet.amount,
             health.currentHealth,
             health.maxHealth,
-            inventory.items,
+            MakeInvEntries(inventory),
             stats.skills
         );
+
         string json = JsonUtility.ToJson(saveData, true);
         PlayerPrefs.SetString(SAVE_KEY, json);
         PlayerPrefs.Save();
@@ -97,22 +125,18 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     public void LoadGame()
     {
-        if (!PlayerPrefs.HasKey(SAVE_KEY)) return;
-        string json = PlayerPrefs.GetString(SAVE_KEY);
-        Debug.Log("Loading JSON: " + json);
-        saveData = JsonUtility.FromJson<SaveData>(json);
-        if (saveData == null) return;
-        // Apply loaded data
-        Debug.Log("Loaded JSON: " + json);
-        wallet.amount = saveData.coins;
-        health.currentHealth = saveData.health;
-        health.maxHealth = saveData.maxHealth;
-        inventory.items.Clear();
-        inventory.items.AddRange(saveData.playerItems);
-        stats.skills.Clear();
-        stats.skills.AddRange(saveData.playerSkills);
-        Debug.Log("Game loaded successfully");
+        saveData = new SaveData(
+            wallet.amount,
+            health.currentHealth,
+            health.maxHealth,
+            MakeInvEntries(inventory),
+            stats.skills
+        );
 
+        string json = JsonUtility.ToJson(saveData, true);
+        PlayerPrefs.SetString(SAVE_KEY, json);
+        PlayerPrefs.Save();
+        Debug.Log("Game saved successfully");
     }
 
     private void OnApplicationQuit()
@@ -153,22 +177,17 @@ public class SaveData
 {
     public int health;
     public int coins;
-    public List<ItemStack> playerItems = new();
     public int maxHealth = 100;
+    public List<InvEntry> items = new();
     public List<SkillData> playerSkills;
 
     public SaveData(int _coins, int _health, int _maxHealth,
-    List<ItemStack> _playerItems, List<SkillData> _playerSkills)
+                    List<InvEntry> _items, List<SkillData> _skills)
     {
         coins = _coins;
         health = _health;
         maxHealth = _maxHealth;
-        playerItems = _playerItems;
-        playerSkills = _playerSkills;
-
-
+        items = _items;
+        playerSkills = _skills;
     }
-    
-
-    
 }

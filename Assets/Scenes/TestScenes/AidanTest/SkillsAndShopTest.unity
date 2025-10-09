@@ -816,7 +816,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 49807335}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2093751667}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: Buy
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &49807335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2148,7 +2160,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 470654923}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2093751667}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: Buy
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &470654923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2788,7 +2812,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 698189519}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2093751667}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: Buy
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &729090069
 GameObject:
   m_ObjectHideFlags: 0
@@ -4369,6 +4405,121 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061599892}
   m_CullTransparentMesh: 1
+--- !u!1 &1077189212 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+  m_PrefabInstance: {fileID: 2068336018}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1077189214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1077189212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5861edd3bc2b5745b63d0ca06106a2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skills:
+  - id: Health
+    displayName: Health
+    description: Max HP up.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 50
+    costGrowth: 1.5
+  - id: Damage
+    displayName: Damage
+    description: Attack power up.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 60
+    costGrowth: 1.5
+  - id: Radius
+    displayName: Radius
+    description: Increase paint raddius
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 5
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 55
+    costGrowth: 1.5
+  - id: Move Speed
+    displayName: Move Speed
+    description: Move faster.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 6
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 45
+    costGrowth: 1.6
+  - id: Attack Speed
+    displayName: Attack Speed
+    description: Attack faster.
+    icon: {fileID: 0}
+    level: 0
+    maxLevel: 6
+    levelGrowth: 0.5
+    currentMult: 1
+    baseCost: 45
+    costGrowth: 1.6
+  onSkillChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1077189215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1077189212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cadd460795f26b748b98351c8ca8b3e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  amount: 0
+  changed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1077189216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1077189212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b01434b107ae8f4f82dac22844a2d23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1077189217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1077189212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5df09c889e9ada40ab979ab17de94d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  onChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1086294316
 GameObject:
   m_ObjectHideFlags: 0
@@ -4787,6 +4938,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1094300203}
   - component: {fileID: 1094300202}
+  - component: {fileID: 1094300204}
   m_Layer: 0
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -4806,11 +4958,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f49e4fa51ff75de41a62aa0dd59d33b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 1077189212}
   health: {fileID: 0}
-  wallet: {fileID: 0}
-  inventory: {fileID: 0}
-  stats: {fileID: 0}
+  wallet: {fileID: 1077189215}
+  inventory: {fileID: 1077189217}
+  stats: {fileID: 1077189214}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  paintGlobPrefab: {fileID: 6655044781481675122, guid: ca2dcbc5ed99fbf4982095e6da4aaf30, type: 3}
+  healAuraPrefab: {fileID: 1996810351807582178, guid: e4337ae2ff8f8c04f81b35f278c3802a, type: 3}
+  globSpeed: 18
 --- !u!4 &1094300203
 Transform:
   m_ObjectHideFlags: 0
@@ -4826,6 +4984,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1094300204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094300201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23e871e39797df64a904096f7f193033, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1113630722
 GameObject:
   m_ObjectHideFlags: 0
@@ -8201,7 +8371,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1613741053}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2093751667}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: Buy
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1613741053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8819,7 +9001,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1654520928}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2093751667}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: Buy
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1654520928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12118,6 +12312,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2063739965}
   m_CullTransparentMesh: 1
+--- !u!1001 &2068336018
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.044994
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.1766365
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.0555916
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8724370133860522315, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_Name
+      value: PlayerPrefab
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1077189217}
+    - targetCorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1077189216}
+    - targetCorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1077189215}
+    - targetCorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1077189214}
+  m_SourcePrefab: {fileID: 100100000, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
 --- !u!1 &2093751666
 GameObject:
   m_ObjectHideFlags: 0
@@ -12150,8 +12413,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   catalog: {fileID: 2093751669}
-  wallet: {fileID: 0}
-  inventory: {fileID: 2093751668}
   rows:
   - icon: {fileID: 925139188}
     nameText: {fileID: 1238106527}
@@ -12159,36 +12420,42 @@ MonoBehaviour:
     priceText: {fileID: 818373742}
     stockText: {fileID: 2042777978}
     buyButton: {fileID: 698189521}
+    rarityStripe: {fileID: 800834476}
   - icon: {fileID: 800834476}
     nameText: {fileID: 1334861887}
     descText: {fileID: 1545617476}
     priceText: {fileID: 2112910187}
     stockText: {fileID: 1025160150}
     buyButton: {fileID: 1613741052}
+    rarityStripe: {fileID: 800834476}
   - icon: {fileID: 685986276}
     nameText: {fileID: 2018592981}
     descText: {fileID: 1172604758}
     priceText: {fileID: 1839665448}
     stockText: {fileID: 1721483724}
     buyButton: {fileID: 49807334}
+    rarityStripe: {fileID: 800834476}
   - icon: {fileID: 2026703176}
     nameText: {fileID: 1834562165}
     descText: {fileID: 1621837105}
     priceText: {fileID: 1453888605}
     stockText: {fileID: 1205700151}
     buyButton: {fileID: 1654520927}
+    rarityStripe: {fileID: 800834476}
   - icon: {fileID: 225297953}
     nameText: {fileID: 774065230}
     descText: {fileID: 1614008589}
     priceText: {fileID: 1383465169}
     stockText: {fileID: 1447856535}
     buyButton: {fileID: 2133212944}
+    rarityStripe: {fileID: 800834476}
   - icon: {fileID: 1061599894}
     nameText: {fileID: 1883765327}
     descText: {fileID: 4507220}
     priceText: {fileID: 1086294318}
     stockText: {fileID: 757596208}
     buyButton: {fileID: 470654922}
+    rarityStripe: {fileID: 800834476}
 --- !u!114 &2093751668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12218,60 +12485,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   items:
-  - id: paint_launcher
-    displayName: Paint Launcher
-    description: 'With this item, hitting an enemy will cause globs of paint to launch
-      off of them and land onto nearby enemies. Causes more paint blobs when stacked. '
-    icon: {fileID: 0}
-    price: 500
-    stackable: 1
-    maxStack: 5
-    initialStock: 1
-  - id: reactive_armor
-    displayName: Reactive Armor
-    description: When activated, being hit by an enemy causes an explosion of paint
-      around the player. Stacking causes a bigger effect radius
-    icon: {fileID: 0}
-    price: 100
-    stackable: 1
-    maxStack: 5
-    initialStock: 5
-  - id: explosive_paint
-    displayName: Explosive Paint
-    description: When an enemy is defeated, they explode in paint, dealing damage
-      to other enemies around them
-    icon: {fileID: 0}
-    price: 100
-    stackable: 1
-    maxStack: 5
-    initialStock: 5
-  - id: siphon_paint
-    displayName: Siphon Paint
-    description: 'Hitting enemies gives the player health. More health points when
-      stacked. '
-    icon: {fileID: 0}
-    price: 100
-    stackable: 1
-    maxStack: 5
-    initialStock: 5
-  - id: gift_of_life
-    displayName: Gift of Life
-    description: 'When the player gains health, they shoot paint globs to the closest
-      enemy, triggering the paint launcher if activated. More globs when stacked. '
-    icon: {fileID: 0}
-    price: 100
-    stackable: 1
-    maxStack: 5
-    initialStock: 5
-  - id: fountain_of_youth
-    displayName: Fountain of Youth
-    description: "When enemies dies an aura spawns where they died that heals the
-      player if they are in range. Stacking increases aura range\_"
-    icon: {fileID: 0}
-    price: 100
-    stackable: 1
-    maxStack: 5
-    initialStock: 5
+  - {fileID: 11400000, guid: 596c5240110db6e468947837e1e92cac, type: 2}
+  - {fileID: 11400000, guid: bb8aeb4dcd8d96e4faf45b802a766e27, type: 2}
+  - {fileID: 11400000, guid: 9c1f5bd08458cc64faf95307b0a5d03a, type: 2}
+  - {fileID: 11400000, guid: 2259216c78acf184cb78d3a7cd75375c, type: 2}
+  - {fileID: 11400000, guid: 7dcc399f528ede845a4105571b7afb70, type: 2}
+  - {fileID: 11400000, guid: 9c65c22e8673f5546a4a8ae9d186eedd, type: 2}
   stockRuntime: 010000000500000005000000050000000500000005000000
 --- !u!4 &2093751670
 Transform:
@@ -12571,7 +12790,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2133212945}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2093751667}
+        m_TargetAssemblyTypeName: ShopUI, Assembly-CSharp
+        m_MethodName: Buy
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2133212945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12685,3 +12916,4 @@ SceneRoots:
   - {fileID: 2093751670}
   - {fileID: 60187488}
   - {fileID: 1094300203}
+  - {fileID: 2068336018}
