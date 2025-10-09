@@ -6,8 +6,6 @@ public class ShopUI : MonoBehaviour
 {
     [Header("Refs")]
     public ShopCatalog catalog;
-    public Currency wallet;
-    public Inventory inventory;
 
     [System.Serializable]
     public class ItemRow
@@ -18,27 +16,30 @@ public class ShopUI : MonoBehaviour
         public TMP_Text priceText;
         public TMP_Text stockText;
         public Button buyButton;
+        public Image rarityStripe; // optional: tint by rarity
     }
 
-    [Header("UI Rows (create same count as items)")]
+    [Header("UI Rows (size >= catalog.items length)")]
     public ItemRow[] rows;
 
     private void Awake()
     {
         if (!catalog) catalog = GetComponent<ShopCatalog>();
-        if (!wallet) wallet = PlayerManager.instance.wallet;
-        if (!inventory) inventory = PlayerManager.instance.inventory;
     }
 
     private void OnEnable()
     {
-        if (wallet && wallet.changed != null) wallet.changed.AddListener(OnWalletChanged);
+        var pm = PlayerManager.instance;
+        if (pm && pm.wallet && pm.wallet.changed != null)
+            pm.wallet.changed.AddListener(OnWalletChanged);
         RefreshAll();
     }
 
     private void OnDisable()
     {
-        if (wallet && wallet.changed != null) wallet.changed.RemoveListener(OnWalletChanged);
+        var pm = PlayerManager.instance;
+        if (pm && pm.wallet && pm.wallet.changed != null)
+            pm.wallet.changed.RemoveListener(OnWalletChanged);
     }
 
     private void Start()
@@ -65,49 +66,83 @@ public class ShopUI : MonoBehaviour
 
     private void Buy(int index)
     {
-        if (catalog == null || wallet == null || inventory == null) return;
-        if (catalog.items == null || index < 0 || index >= catalog.items.Length) return;
+        var pm = PlayerManager.instance;
+        if (!pm || catalog == null || catalog.items == null) return;
+        if (index < 0 || index >= catalog.items.Length) return;
 
-        var def = catalog.items[index];
-        if (def == null) return;
+        var item = catalog.items[index];
+        if (!item) return;
+        if (!catalog.HasStock(index)) return;
 
-        if (!catalog.HasStock(index)) return;   // out of stock
-        if (wallet.amount < def.price) return;  // cannot afford
-        if (!wallet.Spend(def.price)) return;
+        int currentCount = pm.inventory.GetCount(item.id);
+        int price = item.GetPriceForNext(currentCount);
 
-        PlayerManager.instance.inventory.Add(def, 1);
+        if (!pm.wallet.Spend(price)) return;
+
+        pm.inventory.Add(item, 1);
+        item.OnPurchased(pm.GetContext(), pm.inventory.GetCount(item.id));
         catalog.ConsumeStock(index);
+
         RefreshAll();
     }
 
     private void RefreshAll()
     {
-        if (rows == null || catalog == null || catalog.items == null) return;
+        var pm = PlayerManager.instance;
+        if (!pm || rows == null || catalog == null || catalog.items == null) return;
 
         int count = Mathf.Min(rows.Length, catalog.items.Length);
         for (int i = 0; i < count; i++)
         {
-            var def = catalog.items[i];
+            var item = catalog.items[i];
             var row = rows[i];
-            if (def == null || row == null) continue;
+            if (row == null) continue;
 
-            if (row.icon) row.icon.sprite = def.icon;
-            if (row.nameText) row.nameText.text = def.displayName;
-            if (row.descText) row.descText.text = def.description;
-            if (row.priceText) row.priceText.text = $"$ {def.price}";
+            if (!item)
+            {
+                SetRow(row, false);
+                continue;
+            }
+
+            if (row.icon) row.icon.sprite = item.icon;
+            if (row.nameText) row.nameText.text = item.displayName;
+            if (row.descText) row.descText.text = item.description;
+
+            int owned = pm.inventory.GetCount(item.id);
+            int price = item.GetPriceForNext(owned);
+            if (row.priceText) row.priceText.text = $"$ {price}";
 
             bool inStock = catalog.HasStock(i);
             if (row.stockText)
             {
-                int s = catalog.stockRuntime[i];
+                int s = catalog.GetStock(i);
                 row.stockText.text = (s < 0) ? "∞" : $"Stock: {s}";
             }
 
             if (row.buyButton)
-            {
-                bool canAfford = wallet && wallet.amount >= def.price;
-                row.buyButton.interactable = canAfford && inStock;
-            }
+                row.buyButton.interactable = inStock && pm.wallet.amount >= price;
+
+            if (row.rarityStripe)
+                row.rarityStripe.color = item.rarity switch
+                {
+                    ItemRarity.Common => new Color(0.80f,0.80f,0.80f),
+                    ItemRarity.Rare   => new Color(0.45f,0.75f,1.00f),
+                    ItemRarity.Epic   => new Color(0.80f,0.55f,1.00f),
+                    _ => Color.white
+                };
         }
+        for (int i = count; i < rows.Length; i++) SetRow(rows[i], false);
+    }
+
+    private void SetRow(ItemRow row, bool on)
+    {
+        if (row == null) return;
+        if (row.buyButton) row.buyButton.interactable = false;
+        if (row.icon) row.icon.enabled = on;
+        if (row.nameText) row.nameText.enabled = on;
+        if (row.descText) row.descText.enabled = on;
+        if (row.priceText) row.priceText.enabled = on;
+        if (row.stockText) row.stockText.enabled = on;
+        if (row.rarityStripe) row.rarityStripe.enabled = on;
     }
 }
