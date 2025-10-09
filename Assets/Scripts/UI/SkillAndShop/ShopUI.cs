@@ -17,6 +17,7 @@ public class ShopUI : MonoBehaviour
         public TMP_Text stockText;
         public Button buyButton;
         public Image rarityStripe; // optional: tint by rarity
+        
     }
 
     [Header("UI Rows (size >= catalog.items length)")]
@@ -64,7 +65,7 @@ public class ShopUI : MonoBehaviour
         }
     }
 
-    private void Buy(int index)
+    public void Buy(int index)
     {
         var pm = PlayerManager.instance;
         if (!pm || catalog == null || catalog.items == null) return;
@@ -92,11 +93,12 @@ public class ShopUI : MonoBehaviour
         if (!pm || rows == null || catalog == null || catalog.items == null) return;
 
         int count = Mathf.Min(rows.Length, catalog.items.Length);
+
         for (int i = 0; i < count; i++)
         {
             var item = catalog.items[i];
             var row = rows[i];
-            if (row == null) continue;
+            if (row == null) { Debug.LogWarning($"[ShopUI] Row {i} is null"); continue; }
 
             if (!item)
             {
@@ -104,13 +106,14 @@ public class ShopUI : MonoBehaviour
                 continue;
             }
 
-            if (row.icon) row.icon.sprite = item.icon;
-            if (row.nameText) row.nameText.text = item.displayName;
-            if (row.descText) row.descText.text = item.description;
+            // Icon / Texts (guard every field)
+            if (row.icon) row.icon.sprite = item.icon; else Debug.LogWarning($"[ShopUI] row[{i}].icon not assigned");
+            if (row.nameText) row.nameText.text = item.displayName; else Debug.LogWarning($"[ShopUI] row[{i}].nameText not assigned");
+            if (row.descText) row.descText.text = item.description; else Debug.LogWarning($"[ShopUI] row[{i}].descText not assigned");
 
             int owned = pm.inventory.GetCount(item.id);
             int price = item.GetPriceForNext(owned);
-            if (row.priceText) row.priceText.text = $"$ {price}";
+            if (row.priceText) row.priceText.text = $"$ {price}"; else Debug.LogWarning($"[ShopUI] row[{i}].priceText not assigned");
 
             bool inStock = catalog.HasStock(i);
             if (row.stockText)
@@ -118,19 +121,26 @@ public class ShopUI : MonoBehaviour
                 int s = catalog.GetStock(i);
                 row.stockText.text = (s < 0) ? "∞" : $"Stock: {s}";
             }
+            else Debug.LogWarning($"[ShopUI] row[{i}].stockText not assigned");
 
             if (row.buyButton)
                 row.buyButton.interactable = inStock && pm.wallet.amount >= price;
+            else
+                Debug.LogWarning($"[ShopUI] row[{i}].buyButton not assigned");
 
             if (row.rarityStripe)
+            {
                 row.rarityStripe.color = item.rarity switch
                 {
-                    ItemRarity.Common => new Color(0.80f,0.80f,0.80f),
-                    ItemRarity.Rare   => new Color(0.45f,0.75f,1.00f),
-                    ItemRarity.Epic   => new Color(0.80f,0.55f,1.00f),
+                    ItemRarity.Common => new Color(0.80f, 0.80f, 0.80f),
+                    ItemRarity.Rare   => new Color(0.45f, 0.75f, 1.00f),
+                    ItemRarity.Epic   => new Color(0.80f, 0.55f, 1.00f),
                     _ => Color.white
                 };
+            }
         }
+
+        // Hide extras
         for (int i = count; i < rows.Length; i++) SetRow(rows[i], false);
     }
 
