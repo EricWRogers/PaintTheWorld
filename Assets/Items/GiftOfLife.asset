@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f9c921832ecd3a4496cdeb549ac5a36, type: 3}
+  m_Name: GiftOfLife
+  m_EditorClassIdentifier: 
+  id: gift_of_life
+  displayName: Gift of Life
+  description: 'When the player gains health they shoot paint globs to the closest
+    enemy. This can trigger the paint launcher if the player has it activated. Stacking:
+    more globs'
+  icon: {fileID: 0}
+  rarity: 1
+  basePrice: 100
+  stackable: 1
+  maxStack: 99
+  globsPerStack: 1

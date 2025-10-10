@@ -27,7 +27,7 @@ public abstract class  Enemy : MonoBehaviour
     public abstract void Attack();
         public void Dead()
     {
-        PlayerManager.instance.wallet.Add((int)Random.Range(moneyToAdd.x, moneyToAdd.y));
+        PlayerManager.instance.wallet.Add((int)(Random.Range(moneyToAdd.x, moneyToAdd.y) * GameManager.instance.CoinGainModifier));
         Destroy(gameObject);
     }
 
