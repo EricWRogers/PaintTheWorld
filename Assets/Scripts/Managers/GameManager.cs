@@ -70,6 +70,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
             movement.HandleCursor();
         }
         NextStage();
+        PauseGame();
         SceneManager.LoadSceneAsync(1); // later will be either store scene or next stage depending on where you are calling it from
     }
 
@@ -105,6 +106,20 @@ public class GameManager : SceneAwareSingleton<GameManager>
         CurrentStage = 1;
         CurrentLoop++;
         RecalculateScaling();
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    
+    public void ResumeGame()
+    {
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void RecalculateScaling()

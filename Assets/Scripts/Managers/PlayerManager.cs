@@ -101,10 +101,10 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     private void InitializeComponents()
     {
-        wallet = player.GetComponent<Currency>() ?? player.AddComponent<Currency>();
-        health = player.GetComponent<Health>() ?? player.AddComponent<Health>();
-        inventory = player.GetComponent<Inventory>() ?? player.AddComponent<Inventory>();
-        stats = player.GetComponent<PlayerStats>() ?? player.AddComponent<PlayerStats>();
+        wallet = GetComponent<Currency>() ?? gameObject.AddComponent<Currency>();
+        health = GetComponent<Health>() ?? gameObject.AddComponent<Health>();
+        inventory = GetComponent<Inventory>() ?? gameObject.AddComponent<Inventory>();
+        stats = GetComponent<PlayerStats>() ?? gameObject.AddComponent<PlayerStats>();
     }
 
     public void SaveGame()
@@ -163,6 +163,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     }
     public void EditorInit()
     {
+        Debug.Log("editorInit");
         player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)

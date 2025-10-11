@@ -88,11 +88,12 @@ namespace KinematicCharacterControler
             player = GameObject.Find("Player");
             m_orientation = cam;
             colors = PaintManager.instance.GetComponent<PaintColors>();
+            //HandleCursor();
         }
 
         void Update()
         {
-            HandleCursor();
+            //HandleCursor();
             HandleInput();
             HandlePaintColor();
             HandleFOV();
