@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro; 
-using SuperPupSystems.Helper; 
+using SuperPupSystems.Helper;
 
 public class HealthBarUI : MonoBehaviour
 {
@@ -29,16 +29,17 @@ public class HealthBarUI : MonoBehaviour
 
     private void Start()
     {
-        target = PlayerManager.instance.health; // fallback
         // Initialize UI to thee current values
         if (target != null)
             OnHealthChanged(new HealthChangedObject { maxHealth = target.maxHealth, currentHealth = target.currentHealth, delta = target.currentHealth });
     }
     void Update()
     {
-        if (target == null)
+        if(target == null)
         {
-            //target = PlayerManager.instance.health;
+            target = PlayerManager.instance.health;
+            target.healthChanged.AddListener(OnHealthChanged);
+            OnHealthChanged(new HealthChangedObject { maxHealth = target.maxHealth, currentHealth = target.currentHealth, delta = target.currentHealth });
         }
     }
 

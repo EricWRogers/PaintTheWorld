@@ -61,7 +61,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public void EditorInit()
     {
         m_spawnTimer.StartTimer(spawnDelay, true);
-        m_spawnTimer.timeout.AddListener(Spawn);   
+        m_spawnTimer.timeout.AddListener(Spawn);
         spawners.Clear();
         spawners.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
         IsReady = true;

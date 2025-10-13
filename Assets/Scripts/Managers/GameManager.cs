@@ -30,13 +30,14 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private bool gameplayStarted = false;
 
     private Timer m_spawnTimer;
+    public bool m_isPaused;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         m_spawnTimer = GetComponent<Timer>();
         m_spawnTimer.StartTimer(stageTimer, true);
         m_spawnTimer.timeout.RemoveAllListeners();
-        
+
         if (stageHasBoss)
             m_spawnTimer.timeout.AddListener(SpawnBoss);
         else
@@ -48,13 +49,18 @@ public class GameManager : SceneAwareSingleton<GameManager>
         IsReady = true;
     }
 
+    void Update()
+    {
+        
+    }
+
     public void BeginGameplay()
     {
         if (gameplayStarted) return;
         gameplayStarted = true;
 
         //EnemyManager.instance.SpawnEnemies(EnemyManager.instance.baseMaxEnemyCount / 4);
-
+        
         Timer timer = GetComponent<Timer>();
         if (timer != null)
             timer.StartTimer();
@@ -70,6 +76,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
             movement.HandleCursor();
         }
         NextStage();
+        PauseGame();
         SceneManager.LoadSceneAsync(1); // later will be either store scene or next stage depending on where you are calling it from
     }
 
@@ -105,6 +112,20 @@ public class GameManager : SceneAwareSingleton<GameManager>
         CurrentStage = 1;
         CurrentLoop++;
         RecalculateScaling();
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    
+    public void ResumeGame()
+    {
+         Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void RecalculateScaling()

@@ -59,9 +59,9 @@ Transform:
   m_GameObject: {fileID: 515670151489404679}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: -1.5}
+  m_LocalPosition: {x: 0, y: -0.66, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1044665414035860105}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -84,7 +84,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7106258019041810718
 Rigidbody:
@@ -255,6 +255,7 @@ GameObject:
   - component: {fileID: 2468560044189325215}
   - component: {fileID: 7293591459916750331}
   - component: {fileID: 6208220107138550641}
+  - component: {fileID: 7155521859917543831}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -402,33 +403,34 @@ MonoBehaviour:
   capsule: {fileID: 7236730804248690065}
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 503
+    m_Bits: 2039
   skinWidth: 0.015
   maxBounces: 5
   maxSlopeAngle: 55
-  defaultGroundCheck: 0.25
+  defaultGroundCheck: 0.1
   defaultGroundedDistance: 0.05
   snapDownDistance: 0.45
   shouldSnapDown: 1
-  gravity: {x: 0, y: -9, z: 0}
+  gravity: {x: 0, y: -13, z: 0}
   DefaultPhysicsMat: {fileID: 13400000, guid: c938007490e861b8f96f9117fbb7a36b, type: 2}
   speed: 15
+  maxSpeed: 20
   rotationSpeed: 20
   maxWalkAngle: 60
-  player: {fileID: 987569071003229930}
   cam: {fileID: 2558197743922652643}
   movementColorMult: 2
   standPaintColor: {fileID: 3895829346118088575}
   lockCursor: 1
-  acceleration: 10
-  deceleration: 8
-  maxSpeed: 20
+  groundAccelMult: 1
+  airAccelMult: 0.8
+  airDrag: 0.0005
+  groundDrag: 0.05
   dashSpeedCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: -0.005286813
-      value: 3.0077617
+      time: -0.009460807
+      value: 3.0138001
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -453,11 +455,20 @@ MonoBehaviour:
   dashDuration: 0.5
   dashCooldown: 2
   m_dashInputPressed: 0
-  jumpForce: 5
+  jumpForce: 8
   maxJumpAngle: 80
   jumpCooldown: 0.25
   jumpInputElapsed: Infinity
   m_jumpInputPressed: 0
+  m_isWallRiding: 0
+  wallCheckDist: 1
+  climbMult: 1
+  wallLayers:
+    serializedVersion: 2
+    m_Bits: 640
+  leftWall: 0
+  rightWall: 0
+  wallCheckDistance: 1
   railLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -465,12 +476,9 @@ MonoBehaviour:
   railSnapDistance: 2
   minGrindSpeed: 10
   grindExitForce: 8
-  grindKey: 306
   currentRail: {fileID: 0}
   railProgress: 0
   grindSpeed: 5
-  grindVelocity: {x: 0, y: 0, z: 0}
-  grindInputHeld: 0
   m_railDir: 1
   m_railDetectionPoint: {fileID: 3256202762024098186}
 --- !u!114 &3895829346118088575
@@ -548,6 +556,19 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &7155521859917543831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fccbacc7e1d93314ca84637b86346937, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPos: {fileID: 0}
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0
@@ -578,7 +599,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.16018222, y: 0.000000032889762, z: -0.0000000053372733, w: 0.9870875}
+  m_LocalRotation: {x: 0.16018224, y: -1.1255463e-11, z: 2.7344007e-13, w: 0.9870875}
   m_LocalPosition: {x: 2.7, y: 1.8000001, z: -9.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -927,7 +948,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1601823, y: -0.000000023336213, z: 0.000000003786947, w: 0.9870875}
+  m_LocalRotation: {x: 0.16018225, y: -1.1514309e-11, z: 1.868515e-12, w: 0.9870875}
   m_LocalPosition: {x: 2.7, y: 1.8000001, z: -9.299999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

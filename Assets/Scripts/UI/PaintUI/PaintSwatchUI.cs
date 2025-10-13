@@ -18,7 +18,7 @@ public class PaintSwatchUI : MonoBehaviour
     void Awake()
     {
         img = GetComponent<Image>();
-        if (!playerPaint) playerPaint = FindObjectOfType<PlayerPaint>();
+        if (!playerPaint) playerPaint = FindFirstObjectByType<PlayerPaint>();
     }
 
     void Update()

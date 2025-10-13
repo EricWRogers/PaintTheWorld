@@ -6,10 +6,6 @@ public class CurrencyUI : MonoBehaviour
     [SerializeField] private Currency wallet;
     [SerializeField] private TMP_Text label;
 
-    private void Start()
-    {
-        wallet = PlayerManager.instance.wallet;
-    }
 
     private void OnEnable()
     {
@@ -28,7 +24,9 @@ public class CurrencyUI : MonoBehaviour
     {
         if (wallet == null)
         {
-            //wallet = PlayerManager.instance.wallet;
+            wallet = PlayerManager.instance.wallet;
+            wallet.changed.AddListener(OnChanged);
+            OnChanged(wallet.amount);
         }
     }
 
