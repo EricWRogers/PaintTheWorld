@@ -30,7 +30,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private bool gameplayStarted = false;
 
     private Timer m_spawnTimer;
-    private bool m_isPaused;
+    public bool m_isPaused;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -51,18 +51,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
-        if (m_isPaused)
-        {
-            Time.timeScale = 0;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
-        {
-            Time.timeScale = 1;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        
     }
 
     public void BeginGameplay()
@@ -71,7 +60,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         gameplayStarted = true;
 
         //EnemyManager.instance.SpawnEnemies(EnemyManager.instance.baseMaxEnemyCount / 4);
-
+        
         Timer timer = GetComponent<Timer>();
         if (timer != null)
             timer.StartTimer();
@@ -127,14 +116,16 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public void PauseGame()
     {
-        Debug.Log("is Paused");
-        m_isPaused = true;
+        Time.timeScale = 0;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
     
     public void ResumeGame()
     {
-        Debug.Log("not Paused");
-        m_isPaused = false;
+         Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void RecalculateScaling()

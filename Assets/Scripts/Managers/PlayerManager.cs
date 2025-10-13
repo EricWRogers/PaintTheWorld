@@ -146,6 +146,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public void OnDeath()
     {
         ResetData();
+        LoadGame();
         SceneManager.sceneLoaded += OnSceneReloaded;
         SceneManager.LoadSceneAsync(0);
     }

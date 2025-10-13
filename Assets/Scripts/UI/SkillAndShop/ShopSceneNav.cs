@@ -15,16 +15,16 @@ public class ShopSceneNav : MonoBehaviour
     
     public void HandleCursor()
         {
-        // if (Cursor.lockState == CursorLockMode.None)
-        // {
-        //     Cursor.lockState = CursorLockMode.Locked;
-        //     Cursor.visible = false;
-        // }
-        // else
-        // {
-        //     Cursor.lockState = CursorLockMode.None;
-        //     Cursor.visible = true;
-        // }
+        if (Cursor.lockState == CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
         }
 }
 

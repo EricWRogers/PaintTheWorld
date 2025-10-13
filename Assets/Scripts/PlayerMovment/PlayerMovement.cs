@@ -92,7 +92,7 @@ public class PlayerMovement : PlayerMovmentEngine
     void Update()
     {
         
-        HandleCursor();
+        //HandleCursor();
         HandleInput();
         HandlePaintColor();
         HandleFOV();
@@ -138,16 +138,16 @@ public class PlayerMovement : PlayerMovmentEngine
     }
     public void HandleCursor()
     {
-        if (lockCursor)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
+        // if (lockCursor)
+        // {
+        //     Cursor.lockState = CursorLockMode.Locked;
+        //     Cursor.visible = false;
+        // }
+        // else
+        // {
+        //     Cursor.lockState = CursorLockMode.None;
+        //     Cursor.visible = true;
+        // }
     }
     void HandleInput()
     {
