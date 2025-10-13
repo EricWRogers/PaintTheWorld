@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 515670151489404679}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: -1.5}
+  m_LocalPosition: {x: 0, y: -0.66, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -403,17 +403,18 @@ MonoBehaviour:
   capsule: {fileID: 7236730804248690065}
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 503
+    m_Bits: 2039
   skinWidth: 0.015
   maxBounces: 5
   maxSlopeAngle: 55
-  defaultGroundCheck: 0.25
+  defaultGroundCheck: 0.1
   defaultGroundedDistance: 0.05
   snapDownDistance: 0.45
   shouldSnapDown: 1
-  gravity: {x: 0, y: -9, z: 0}
+  gravity: {x: 0, y: -13, z: 0}
   DefaultPhysicsMat: {fileID: 13400000, guid: c938007490e861b8f96f9117fbb7a36b, type: 2}
   speed: 15
+  maxSpeed: 20
   rotationSpeed: 20
   maxWalkAngle: 60
   cam: {fileID: 2558197743922652643}
@@ -421,16 +422,15 @@ MonoBehaviour:
   standPaintColor: {fileID: 3895829346118088575}
   lockCursor: 1
   groundAccelMult: 1
-  airAccelMult: 0.5
-  airDrag: 0.1
-  groundDrag: 0.3
-  maxSpeed: 20
+  airAccelMult: 0.8
+  airDrag: 0.0005
+  groundDrag: 0.05
   dashSpeedCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: -0.005286813
-      value: 3.0077617
+      time: -0.009460807
+      value: 3.0138001
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -455,18 +455,20 @@ MonoBehaviour:
   dashDuration: 0.5
   dashCooldown: 2
   m_dashInputPressed: 0
-  jumpForce: 5
+  jumpForce: 8
   maxJumpAngle: 80
   jumpCooldown: 0.25
   jumpInputElapsed: Infinity
   m_jumpInputPressed: 0
-  isWallRiding: 0
+  m_isWallRiding: 0
   wallCheckDist: 1
+  climbMult: 1
   wallLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 640
   leftWall: 0
   rightWall: 0
+  wallCheckDistance: 1
   railLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -474,12 +476,9 @@ MonoBehaviour:
   railSnapDistance: 2
   minGrindSpeed: 10
   grindExitForce: 8
-  grindKey: 306
   currentRail: {fileID: 0}
   railProgress: 0
   grindSpeed: 5
-  grindVelocity: {x: 0, y: 0, z: 0}
-  grindInputHeld: 0
   m_railDir: 1
   m_railDetectionPoint: {fileID: 3256202762024098186}
 --- !u!114 &3895829346118088575

@@ -315,7 +315,6 @@ public class PlayerMovement : PlayerMovmentEngine
                 m_isWallRiding = true;
                 if (left && right)
                 {
-                    // choose closer hit if both sides hit
                     float distL = Vector3.Distance(transform.position, leftHit.point);
                     float distR = Vector3.Distance(transform.position, rightHit.point);
                     m_wallNormal = distL <= distR ? leftHit.normal : rightHit.normal;
@@ -326,7 +325,7 @@ public class PlayerMovement : PlayerMovmentEngine
         
         }
 
-        // Continue wall riding
+
         if (m_isWallRiding)
         {
             RaycastHit hit;
