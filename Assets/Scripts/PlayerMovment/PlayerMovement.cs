@@ -1,9 +1,6 @@
-using NUnit.Framework;
 using UnityEngine;
 using KinematicCharacterControler;
-using UnityEngine.Experimental.GlobalIllumination;
-
-
+using System.ComponentModel;
 
 public class PlayerMovement : PlayerMovmentEngine
 {
@@ -11,6 +8,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     [Header("Movement")]
     public float speed = 5f;
+    public float maxSpeed = 20f; 
     public float rotationSpeed = 5f;
     public float maxWalkAngle = 60f;
     private float currSpeed;
@@ -29,8 +27,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float airAccelMult = 0.8f;
     public float airDrag = 0.05f;
     public float groundDrag = 0.1f;
-    public float maxSpeed = 20; 
-    private Vector3 m_momentum = Vector3.zero;
+
     [Header("Dashing")]
     public AnimationCurve dashSpeedCurve;
     public float dashSpeed = 20f;
@@ -41,6 +38,7 @@ public class PlayerMovement : PlayerMovmentEngine
     private float m_dashTime = 0f;
     private float m_timeSinceLastDash = 0f;
     public bool m_dashInputPressed = false;
+
     [Header("Jump Settings")]
     public float jumpForce = 5.0f;
     public float maxJumpAngle = 80f;
@@ -49,16 +47,14 @@ public class PlayerMovement : PlayerMovmentEngine
     private float m_timeSinceLastJump = 0.0f;
     public bool m_jumpInputPressed = false;
     private float m_jumpBufferTime = 0.25f;
-    private float m_elapsedFalling;
+
     [Header("Wall Riding")]
-    public bool m_isWallRiding = false;
-    public float wallCheckDist = 1;
-    private float m_wallTimer = 0f;
+    [SerializeField] private bool m_isWallRiding = false;
+    public float wallCheckDist = 1f;
+    public float climbMult = 0.5f;
     public LayerMask wallLayers;
     public bool leftWall;
     public bool rightWall;
-    private RaycastHit leftWallHit;
-    private RaycastHit rightWallHit;
     private Vector3 m_wallNormal;
     private Vector3 m_wallRunDir;
     public float wallCheckDistance = 1f;
@@ -69,19 +65,13 @@ public class PlayerMovement : PlayerMovmentEngine
     public float railSnapDistance = 2f;
     public float minGrindSpeed = 3f;
     public float grindExitForce = 8f;
-
-    [Header("Grinding Input")]
-    public KeyCode grindKey = KeyCode.LeftControl;
-
-    // Grinding state
     public bool isGrinding { get; private set; }
     public Rail currentRail;
     public float railProgress;
     public float grindSpeed;
-    public Vector3 grindVelocity;
-    public bool grindInputHeld;
     public float m_railDir = 1f;
     [SerializeField] private Transform m_railDetectionPoint;
+
     void Start()
     {
         m_orientation = cam;
@@ -89,10 +79,10 @@ public class PlayerMovement : PlayerMovmentEngine
         m_inputActions = new PlayerInputActions().Player;
         m_inputActions.Enable();
     }
+
     void Update()
     {
-        
-        //HandleCursor();
+        HandleCursor();
         HandleInput();
         HandlePaintColor();
         HandleFOV();
@@ -102,28 +92,27 @@ public class PlayerMovement : PlayerMovmentEngine
     void FixedUpdate()
     {
         HandleRotation();
+
+       
         if (TryStartGrinding() || isGrinding)
         {
             ContinueGrinding();
-            return;
         }
         else if (WallRun())
         {
-        
+            transform.position = MovePlayer(m_velocity * Time.deltaTime);
         }
         else if (HandleDashing())
         {
-            
+            // Dashing handles its own momentum
+            transform.position = MovePlayer(m_velocity * Time.deltaTime);
         }
         else
         {
             HandleRegularMovement();
-            return;
         }
-
-        transform.position = MovePlayer(m_momentum * Time.deltaTime);   
-        
     }
+
     public void HandleFOV()
     {
         Camera cam = Camera.main;
@@ -134,8 +123,9 @@ public class PlayerMovement : PlayerMovmentEngine
 
     public void HandlePaintColor()
     {
-        m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? m_currColorMult = movementColorMult : m_currColorMult = 1f;
+        m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? movementColorMult : 1f;
     }
+
     public void HandleCursor()
     {
         // if (lockCursor)
@@ -149,9 +139,10 @@ public class PlayerMovement : PlayerMovmentEngine
         //     Cursor.visible = true;
         // }
     }
+
     void HandleInput()
     {
-        moveInput = new Vector2(m_inputActions.Move.ReadValue<Vector2>().x, m_inputActions.Move.ReadValue<Vector2>().y);
+        moveInput = m_inputActions.Move.ReadValue<Vector2>();
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
         if (m_jumpInputPressed)
@@ -161,57 +152,66 @@ public class PlayerMovement : PlayerMovmentEngine
         
         if (m_inputActions.Dash.WasPressedThisFrame())
             m_dashInputPressed = true;
-
     }
+
     void HandleRegularMovement()
     {
-
         currSpeed = speed * movementColorMult * m_shopMoveMult;
 
         Vector3 inputDir = m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x;
-        inputDir = inputDir.normalized;
-        // target velocity
-        Vector3 targetVelocity = inputDir * currSpeed;
+        inputDir.Normalize();
 
+        // Check ground state
+        bool onGround = CheckIfGrounded(out RaycastHit groundHit);
+        bool canWalk = onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal);
+
+        // Apply horizontal input acceleration
         if (inputDir.magnitude > 0.1f && !isDashing)
         {
-            if(groundedState.isGrounded)
-                m_momentum = Vector3.MoveTowards(m_momentum, targetVelocity* groundAccelMult,  currSpeed * Time.deltaTime);
-            else
-                m_momentum = Vector3.MoveTowards(m_momentum, targetVelocity * airAccelMult,  currSpeed * Time.deltaTime);
-           
+            Vector3 targetVelocity = inputDir * currSpeed;
+            float accelMult = canWalk ? groundAccelMult : airAccelMult;
+            
+            // Only accelerate horizontal components, preserve vertical momentum
+            Vector3 horizontalMomentum = new Vector3(m_velocity.x, 0, m_velocity.z);
+            Vector3 newHorizontal = Vector3.MoveTowards(horizontalMomentum, targetVelocity * accelMult, currSpeed * Time.deltaTime);
+            m_velocity.x = newHorizontal.x;
+            m_velocity.z = newHorizontal.z;
         }
-        else{
-            m_momentum *= 1f - (groundedState.isGrounded ? groundDrag : airDrag);
-        }
-
-
-        if (m_momentum.magnitude > maxSpeed && !isDashing)
+        else
         {
-            m_momentum = m_momentum.normalized * maxSpeed;
+            // Apply drag
+            float drag = canWalk ? groundDrag : airDrag;
+            m_velocity.x *= (1f - drag);
+            m_velocity.z *= (1f - drag);
+        }        
+
+        // Clamp horizontal speed
+        Vector3 horizontalSpeed = new Vector3(m_velocity.x, 0, m_velocity.z);
+        if (horizontalSpeed.magnitude > maxSpeed && !isDashing)
+        {
+            horizontalSpeed = horizontalSpeed.normalized * maxSpeed;
+            m_velocity.x = horizontalSpeed.x;
+            m_velocity.z = horizontalSpeed.z;
         }
 
-        // Rotate player
-      
-        bool onGround = CheckIfGrounded(out RaycastHit groundHit) && m_velocity.y <= 0.0f;
-        bool falling = !(onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal));
-        // Handle gravity and falling
-        if (falling && !m_isWallRiding)
+        // Apply gravity
+        if (!canWalk)
         {
             m_velocity += gravity * Time.deltaTime;
-            m_elapsedFalling += Time.deltaTime;
         }
-        else if (onGround)
+        else
         {
-            m_velocity = Vector3.zero;
-            m_elapsedFalling = 0;
+            // On ground  zero out vertical momentum
+            m_velocity.y = 0f;
         }
+
         // Handle jumping
         bool canJump = onGround && groundedState.angle <= maxJumpAngle && m_timeSinceLastJump >= jumpCooldown;
         bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
+        
         if (canJump && attemptingJump)
         {
-            m_velocity = Vector3.up * jumpForce;
+            m_velocity += jumpForce * Vector3.up;
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
         }
@@ -219,17 +219,18 @@ public class PlayerMovement : PlayerMovmentEngine
         {
             m_timeSinceLastJump += Time.deltaTime;
         }
-        
 
-        // Apply movement (combine momentum and velocity so one doesn't overwrite the other)
-        Vector3 totalMovement = m_momentum + m_velocity;
-        transform.position = MovePlayer(totalMovement * Time.deltaTime);
+        // Apply movement
+        transform.position = MovePlayer(m_velocity * Time.deltaTime);
+        
         if (onGround && !attemptingJump)
             SnapPlayerDown();
     }
+
     bool HandleDashing()
     {
         bool canDash = m_timeSinceLastDash >= dashCooldown;
+        
         if (m_dashInputPressed && canDash)
         {
             m_dashTime = 0f;
@@ -244,22 +245,27 @@ public class PlayerMovement : PlayerMovmentEngine
             float currentDashSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress) * m_shopMoveMult;
 
             Vector3 dashDirection = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
-
             if (dashDirection == Vector3.zero)
                 dashDirection = m_orientation.forward;
 
+            // Preserve vertical momentum during dash, only override horizontal
             Vector3 dashVelocity = dashDirection * currentDashSpeed;
+            dashVelocity.y = m_velocity.y;
 
-            m_momentum = Vector3.MoveTowards(m_momentum, dashVelocity, currentDashSpeed * Time.deltaTime);
+            m_velocity = Vector3.MoveTowards(m_velocity, dashVelocity, currentDashSpeed * Time.deltaTime);
+            
+            // Still apply gravity during dash
+            m_velocity += gravity * Time.deltaTime;
+            
             m_dashTime += Time.deltaTime;
             return true;
         }
         else if (isDashing)
         {
             isDashing = false;
-            return false;
         }
-        return false;
+        
+        return isDashing;
     }
 
     void HandleRotation()
@@ -268,42 +274,57 @@ public class PlayerMovement : PlayerMovmentEngine
         m_orientation.forward = viewDir.normalized;
 
         Vector3 inputDir = m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x;
-        inputDir = inputDir.normalized;
+        inputDir.Normalize();
 
         if (inputDir != Vector3.zero && !m_inputActions.Attack.IsPressed())
         {
-            Vector3 forwardNoY = m_momentum;
+            Vector3 forwardNoY = m_velocity;
             forwardNoY.y = 0;
-            transform.forward = Vector3.Slerp(transform.forward, forwardNoY.normalized, Time.deltaTime * rotationSpeed);
+            if (forwardNoY.sqrMagnitude > 0.01f)
+                transform.forward = Vector3.Slerp(transform.forward, forwardNoY.normalized, Time.deltaTime * rotationSpeed);
         }
+        
         if (m_inputActions.Attack.IsPressed())
             transform.forward = Vector3.Slerp(transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
     }
+
     bool WallRun()
     {
-       
+        // Exit wall run with jump
         if (m_isWallRiding && m_jumpInputPressed)
         {
-            m_momentum = m_wallNormal * jumpForce + Vector3.up * jumpForce;
+            m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
             m_isWallRiding = false;
-            return true;
+            return false;
         }
 
         Vector3 inputDir = new Vector3(moveInput.x, 0, moveInput.y);
 
-        if (inputDir.z > 0)
+        // Try to start wall riding
+        if (inputDir.z > 0 && !m_isWallRiding && !groundedState.isGrounded)
         {
-            if (!m_isWallRiding  && !groundedState.isGrounded)
+            RaycastHit leftHit, rightHit;
+            bool left = Physics.Raycast(transform.position, -transform.right, out leftHit, wallCheckDistance, wallLayers);
+            bool right = Physics.Raycast(transform.position, transform.right, out rightHit, wallCheckDistance, wallLayers);
+        
+            leftWall = left;
+            rightWall = right;
+
+            if (left || right)
             {
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, transform.right, out hit, wallCheckDistance, wallLayers) ||
-                     Physics.Raycast(transform.position, -transform.right, out hit, wallCheckDistance, wallLayers))
+                m_isWallRiding = true;
+                if (left && right)
                 {
-                    m_isWallRiding = true;
-                    m_wallNormal = hit.normal;
+                    float distL = Vector3.Distance(transform.position, leftHit.point);
+                    float distR = Vector3.Distance(transform.position, rightHit.point);
+                    m_wallNormal = distL <= distR ? leftHit.normal : rightHit.normal;
                 }
+                else if (left) m_wallNormal = leftHit.normal;
+                else m_wallNormal = rightHit.normal;
             }
+        
         }
+
 
         if (m_isWallRiding)
         {
@@ -312,36 +333,34 @@ public class PlayerMovement : PlayerMovmentEngine
             {
                 m_wallNormal = hit.normal;
                 Vector3 wallNormalNoY = new Vector3(m_wallNormal.x, 0, m_wallNormal.z);
-
                 m_wallRunDir = Vector3.Cross(wallNormalNoY, Vector3.up).normalized;
 
                 if (Vector3.Dot(m_wallRunDir, transform.forward) < 0)
                     m_wallRunDir *= -1;
-    
-                m_momentum = m_wallRunDir * currSpeed;
+
+                // Set momentum to run along wall with upward climb
+                m_velocity = m_wallRunDir * currSpeed + Vector3.up * climbMult;
                 
                 return true;
             }
             else
             {
+                // Lost contact with wall - push off
                 m_isWallRiding = false;
-                m_momentum = m_wallNormal * jumpForce + Vector3.up * jumpForce;
+                m_velocity = m_wallNormal * jumpForce  + Vector3.up * jumpForce;
+                return false;
             }
-              
-                
-                
         }
 
         m_isWallRiding = false;
         return false;
     }
 
-    #region Rail grinding
-    // RAIL GRINDING SYSTEM
+    #region Rail Grinding
     bool TryStartGrinding()
     {
-        if (isGrinding) return false;
-        // Check for nearby rails
+        if (isGrinding) return true;
+
         Collider[] railColliders = Physics.OverlapSphere(m_railDetectionPoint.position, railDetectionRadius, railLayer);
 
         Rail closestRail = null;
@@ -353,7 +372,6 @@ public class PlayerMovement : PlayerMovmentEngine
             Rail rail = collider.GetComponent<Rail>();
             if (rail == null) continue;
 
-            // Find closest point on this rail
             float progress;
             Vector3 closestPoint = GetClosestPointOnRail(rail, transform.position, out progress);
             float distance = Vector3.Distance(transform.position, closestPoint);
@@ -425,22 +443,25 @@ public class PlayerMovement : PlayerMovmentEngine
         currentRail = rail;
         railProgress = progress;
 
-        grindSpeed = m_momentum.magnitude < 5 ? speed : m_momentum.magnitude;
+        // Use horizontal momentum magnitude for grind speed
+        Vector3 horizontalMomentum = new Vector3(m_velocity.x, 0, m_velocity.z);
+        grindSpeed = Mathf.Max(horizontalMomentum.magnitude, speed);
 
+        // Determine grind direction based on forward facing
         Vector3 railDir = rail.GetDirectionOnRail(progress);
-
         float forwardDot = Vector3.Dot(transform.forward, railDir);
         float backwardDot = Vector3.Dot(transform.forward, -railDir);
-
         m_railDir = forwardDot > backwardDot ? 1f : -1f;
 
+        // Snap to rail
         Vector3 railPosition = rail.GetPointOnRail(progress);
         transform.position = railPosition;
-        railDir *= m_railDir;
-        m_momentum = m_momentum.magnitude * railDir;
 
-        m_velocity = Vector3.zero;
+        // Set momentum along rail (preserve speed, change direction)
+        railDir *= m_railDir;
+        m_velocity = railDir * grindSpeed;
     }
+
     void ContinueGrinding()
     {
         if (currentRail == null)
@@ -448,61 +469,67 @@ public class PlayerMovement : PlayerMovmentEngine
             ExitGrinding();
             return;
         }
+
+        // Exit on jump input
         if (m_jumpInputPressed)
         {
             ExitGrinding();
             return;
         }
-        if (!currentRail.isLoop)
+
+        // Exit if at end of non-looping rail
+        if (!currentRail.isLoop && (railProgress >= 1f || railProgress <= 0f))
         {
-            // Exit if at end of rail
-            if (railProgress >= 1f || railProgress <= 0f)
-            {
-                ExitGrinding();
-                return;
-            }
+            ExitGrinding();
+            return;
         }
+
         // Calculate movement along rail
         Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
-        m_momentum = railDirection * grindSpeed;
-        if (m_momentum.magnitude > grindSpeed)
-        {
-            m_momentum = m_momentum.normalized * grindSpeed;
-        }
-        Vector3 currentPos = transform.position;
-        transform.position = MovePlayer(m_momentum * Time.deltaTime);
+        m_velocity = railDirection * grindSpeed;
 
+        // Clamp speed
+        if (m_velocity.magnitude > grindSpeed)
+        {
+            m_velocity = m_velocity.normalized * grindSpeed;
+        }
+
+        // Move player
+        transform.position = MovePlayer(m_velocity * Time.deltaTime);
+
+        // Update progress along rail
         float railLength = currentRail.GetRailLength();
         if (railLength > 0)
         {
-            float intendedDistance = grindSpeed * Time.deltaTime; 
+            float intendedDistance = grindSpeed * Time.deltaTime;
             float progressDelta = (intendedDistance / railLength) * m_railDir;
             railProgress += progressDelta;
         }
-        Vector3 idealRailPosition = currentRail.GetPointOnRail(railProgress);
-        Vector3 currentRailPosition = transform.position;
 
-        
-        float driftDistance = Vector3.Distance(currentRailPosition, idealRailPosition);
-        float maxAllowedDrift = 0.5f; // meters allowed between actual position and ideal rail point before clamping
+        // Correct drift from ideal rail path
+        Vector3 idealRailPosition = currentRail.GetPointOnRail(railProgress);
+        float driftDistance = Vector3.Distance(transform.position, idealRailPosition);
+        float maxAllowedDrift = 0.5f;
+
         if (driftDistance > maxAllowedDrift)
         {
-            // Find the progress on the rail closest to the current player position and snap progress to it.
-            float correctedProgress = 0f;
-            Vector3 closestPoint = GetClosestPointOnRail(currentRail, currentRailPosition, out correctedProgress);
+            // Snap back if drifted too far
+            float correctedProgress;
+            Vector3 closestPoint = GetClosestPointOnRail(currentRail, transform.position, out correctedProgress);
             railProgress = correctedProgress;
             idealRailPosition = closestPoint;
-            driftDistance = Vector3.Distance(currentRailPosition, idealRailPosition);
+            driftDistance = Vector3.Distance(transform.position, idealRailPosition);
         }
 
-        if (driftDistance > 0.1f) // small tolerance before correcting position
+        if (driftDistance > 0.1f)
         {
-            // Gradually pull back to rail instead of snapping; cap correction per-frame so collisions still apply.
-            Vector3 correctionDirection = (idealRailPosition - currentRailPosition).normalized;
-            float maxCorrectionThisFrame = 2f * Time.deltaTime; 
+            // Gradually correct position
+            Vector3 correctionDirection = (idealRailPosition - transform.position).normalized;
+            float maxCorrectionThisFrame = 2f * Time.deltaTime;
             float correctionAmount = Mathf.Min(driftDistance, maxCorrectionThisFrame);
             transform.position += correctionDirection * correctionAmount;
         }
+
         SnapPlayerDown();
     }
 
@@ -511,13 +538,15 @@ public class PlayerMovement : PlayerMovmentEngine
         if (!isGrinding) return;
 
         isGrinding = false;
-        // Give player exit velocity
+
+        // Give exit velocity
         if (currentRail != null)
         {
             Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
-            m_momentum += railDirection * grindSpeed;
-            m_momentum.y = grindExitForce;
-            //m_velocity.y = grindExitForce;
+            
+            // Preserve horizontal speed, add upward boost
+            Vector3 horizontalVelocity = railDirection * Mathf.Min(grindSpeed, maxSpeed);
+            m_velocity = new Vector3(horizontalVelocity.x, grindExitForce, horizontalVelocity.z);
         }
 
         currentRail = null;
@@ -526,37 +555,36 @@ public class PlayerMovement : PlayerMovmentEngine
     }
     #endregion
 
-
     void OnDestroy()
     {
-          m_inputActions.Disable();   
+        m_inputActions.Disable();
     }
-    // Visualization
+
     void OnDrawGizmos()
     {
         if (isGrinding && currentRail != null)
         {
-            // Ideal point on the rail at current progress
             Gizmos.color = Color.yellow;
             Vector3 railPos = currentRail.GetPointOnRail(railProgress);
             Gizmos.DrawWireSphere(railPos, 0.5f);
             Vector3 railDir = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
             Gizmos.DrawRay(railPos, railDir * 2f);
 
-            // Draw line from player to ideal rail point
             Gizmos.color = Color.cyan;
             Gizmos.DrawLine(transform.position, railPos);
             Gizmos.DrawSphere(transform.position, 0.08f);
 
-            // Draw the closest point on the rail to the player for clamping/debug
             Gizmos.color = Color.magenta;
             float closestProgress;
             Vector3 closestPoint = GetClosestPointOnRail(currentRail, transform.position, out closestProgress);
             Gizmos.DrawWireSphere(closestPoint, 0.2f);
             Gizmos.DrawLine(transform.position, closestPoint);
         }
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(m_railDetectionPoint.position, railDetectionRadius);
-
+        
+        if (m_railDetectionPoint != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(m_railDetectionPoint.position, railDetectionRadius);
+        }
     }
 }
