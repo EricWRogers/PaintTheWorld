@@ -30,13 +30,14 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private bool gameplayStarted = false;
 
     private Timer m_spawnTimer;
+    private bool m_isPaused;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         m_spawnTimer = GetComponent<Timer>();
         m_spawnTimer.StartTimer(stageTimer, true);
         m_spawnTimer.timeout.RemoveAllListeners();
-        
+
         if (stageHasBoss)
             m_spawnTimer.timeout.AddListener(SpawnBoss);
         else
@@ -46,6 +47,22 @@ public class GameManager : SceneAwareSingleton<GameManager>
         RecalculateScaling();
         gameplayStarted = false;
         IsReady = true;
+    }
+
+    void Update()
+    {
+        if (m_isPaused)
+        {
+            Time.timeScale = 0;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Time.timeScale = 1;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     public void BeginGameplay()
@@ -110,16 +127,14 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public void PauseGame()
     {
-        Time.timeScale = 0;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Debug.Log("is Paused");
+        m_isPaused = true;
     }
     
     public void ResumeGame()
     {
-        Time.timeScale = 1;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        Debug.Log("not Paused");
+        m_isPaused = false;
     }
 
     private void RecalculateScaling()
