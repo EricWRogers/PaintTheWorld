@@ -78,6 +78,10 @@ public class PlayerMovement : PlayerMovmentEngine
         colors = PaintManager.instance.GetComponent<PaintColors>();
         m_inputActions = new PlayerInputActions().Player;
         m_inputActions.Enable();
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
     }
 
     void Update()
@@ -369,8 +373,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
         foreach (var collider in railColliders)
         {
-            Rail rail = collider.GetComponent<Rail>();
-            if (rail == null) continue;
+            Rail rail = collider.GetComponent<Rail>() == null ? collider.GetComponentInParent<Rail>() : collider.GetComponent<Rail>();
+             if (rail == null) continue;
 
             float progress;
             Vector3 closestPoint = GetClosestPointOnRail(rail, transform.position, out progress);
@@ -521,9 +525,8 @@ public class PlayerMovement : PlayerMovmentEngine
             driftDistance = Vector3.Distance(transform.position, idealRailPosition);
         }
 
-        if (driftDistance > 0.1f)
+        if (driftDistance > 0.005f)
         {
-            // Gradually correct position
             Vector3 correctionDirection = (idealRailPosition - transform.position).normalized;
             float maxCorrectionThisFrame = 2f * Time.deltaTime;
             float correctionAmount = Mathf.Min(driftDistance, maxCorrectionThisFrame);
