@@ -8,6 +8,10 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerDamaged  += OnDamaged;
         GameEvents.PlayerHealed   += OnHealed;
         GameEvents.EnemyKilled    += OnKilled;
+        GameEvents.PlayerDodged         += OnDodged;
+        GameEvents.PlayerStartedGrinding+= OnGrindStart;
+        GameEvents.PlayerGrindingTick   += OnGrindTick;
+        GameEvents.PaintApplied         += OnPaintApplied;
     }
     void OnDisable()
     {
@@ -15,7 +19,13 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerDamaged  -= OnDamaged;
         GameEvents.PlayerHealed   -= OnHealed;
         GameEvents.EnemyKilled    -= OnKilled;
+        GameEvents.PlayerDodged          -= OnDodged;
+        GameEvents.PlayerStartedGrinding -= OnGrindStart;
+        GameEvents.PlayerGrindingTick    -= OnGrindTick;
+        GameEvents.PaintApplied          -= OnPaintApplied;
     }
+
+
 
     PlayerContext Ctx => PlayerManager.instance.GetContext();
 
@@ -37,6 +47,10 @@ public class ItemRuntimeDispatcher : MonoBehaviour
     }
     void OnDamaged(int dmg)          => ForEachItem((it,c)=> it.OnPlayerDamaged(Ctx, dmg, c));
     void OnHealed(int heal)          => ForEachItem((it,c)=> it.OnPlayerHealed(Ctx, heal, c));
-    void OnKilled(GameObject enemy)  => ForEachItem((it,c)=> it.OnEnemyKilled(Ctx, enemy, c));
+    void OnKilled(GameObject enemy) => ForEachItem((it, c) => it.OnEnemyKilled(Ctx, enemy, c));
+    void OnDodged()                 => ForEachItem((it,c)=> it.OnDodged(Ctx, c));
+    void OnGrindStart()             => ForEachItem((it,c)=> it.OnGrindStart(Ctx, c));
+    void OnGrindTick()              => ForEachItem((it,c)=> it.OnGrindTick(Ctx, c));
+    void OnPaintApplied(float amt)  => ForEachItem((it,c)=> it.OnPaintApplied(Ctx, amt, c));
 }
 
