@@ -8,4 +8,5 @@ public class PlayerPaintWidthScaler : MonoBehaviour
 
     // Call this wherever we compute the brunsh width
     public float Apply(float baseWidth) => baseWidth * Mathf.Max(0.1f, widthMultiplier);
+    
 }
