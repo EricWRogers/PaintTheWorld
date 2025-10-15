@@ -24,7 +24,7 @@ public class PaintGlobs : CollisonPainter
     {
         if (Physics.OverlapSphere(transform.position, radius).Length > 0)
         {
-            Debug.Log("inblast");
+           
             Collider[] hits = Physics.OverlapSphere(transform.position, radius);
             foreach (Collider hit in hits)
             {
@@ -32,6 +32,7 @@ public class PaintGlobs : CollisonPainter
                 if (hit.transform.tag == "Enemy")
                 {
                     hit.gameObject.GetComponent<Health>().Damage(Mathf.RoundToInt(bulletDamage * damageMult));
+                    GameEvents.PlayerHitEnemy.Invoke(hit.gameObject, bulletDamage, HitSource.PlayerWeapon);
                 }
             }
             Destroy(gameObject);
