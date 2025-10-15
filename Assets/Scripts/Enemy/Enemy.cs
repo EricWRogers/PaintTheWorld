@@ -15,6 +15,8 @@ public abstract class  Enemy : MonoBehaviour
     public Vector2 moneyToAdd;
     public Transform firePoint;
     protected Rigidbody p_rb;
+    public GameObject coin;
+    public Vector3 coinOffset;
 
     public void Start()
     {
@@ -27,7 +29,9 @@ public abstract class  Enemy : MonoBehaviour
     public abstract void Attack();
         public void Dead()
     {
-        PlayerManager.instance.wallet.Add((int)(Random.Range(moneyToAdd.x, moneyToAdd.y) * GameManager.instance.CoinGainModifier));
+        //PlayerManager.instance.wallet.Add((int)(Random.Range(moneyToAdd.x, moneyToAdd.y) * GameManager.instance.CoinGainModifier));
+        GameObject temp = Instantiate(coin, transform.position + coinOffset, transform.rotation);
+        temp.GetComponent<TempCoinPickup>().amount = (int)(Random.Range(moneyToAdd.x, moneyToAdd.y) * GameManager.instance.CoinGainModifier);
         Destroy(gameObject);
     }
 

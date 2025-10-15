@@ -8,6 +8,8 @@ public class PaintBallGun : Weapon
     public float roundsPerMinute = 600f;
     public float timeBetweenBursts = 0.25f;
     public float spreadAngle = 6f;
+    public bool autoFire;
+    public float autoFireRate;
 
     [Header("Targeting Settings")]
     public float targetRadius = 15f;
@@ -19,6 +21,7 @@ public class PaintBallGun : Weapon
     private bool m_isFiringBurst = false;
     private int m_bulletsFiredThisBurst = 0;
     private float m_shotTimer = 0f;
+    private float m_autoFireTimer;
     private float m_nextBurstAvailableTime = 0f;
     private Transform m_currentTarget; // Keep track of the current target
     private PlayerPaint m_playerPaint; // Variable to hold the PlayerPaint component
@@ -46,11 +49,11 @@ public class PaintBallGun : Weapon
         }
 
         // Check for firing input
-        if (Input.GetButton("Fire1") && !m_isFiringBurst && Time.time >= m_nextBurstAvailableTime)
-        {
-            StartBurst();
-        }
-
+        // if (Input.GetButton("Fire1") && !m_isFiringBurst && Time.time >= m_nextBurstAvailableTime)
+        // {
+        //     StartBurst();
+        // }
+        m_autoFireTimer -= Time.deltaTime;
         // Handle the burst firing logic
         if (m_isFiringBurst)
         {
@@ -68,6 +71,14 @@ public class PaintBallGun : Weapon
                     m_nextBurstAvailableTime = Time.time + (timeBetweenBursts / Mathf.Max(0.0001f, attackSpeedMult));
                     m_currentTarget = null; // Clear the target after the burst is complete
                 }
+            }
+        }
+        if (autoFire)
+        {
+            if (m_autoFireTimer < 0 && !m_isFiringBurst && Time.time >= m_nextBurstAvailableTime)
+            {
+                StartBurst();
+                m_autoFireTimer = autoFireRate;
             }
         }
     }

@@ -15,7 +15,7 @@ public class TempCoinPickup : MonoBehaviour
     {
         if (!other.CompareTag(playerTag)) return;
 
-        var wallet = other.GetComponent<Currency>();
+        var wallet = PlayerManager.instance.wallet;
         if (!wallet) wallet = other.GetComponentInChildren<Currency>();
         if (wallet)
         {
