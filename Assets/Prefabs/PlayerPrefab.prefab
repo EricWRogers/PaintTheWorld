@@ -256,6 +256,8 @@ GameObject:
   - component: {fileID: 7293591459916750331}
   - component: {fileID: 6208220107138550641}
   - component: {fileID: 7155521859917543831}
+  - component: {fileID: 2377718336949678157}
+  - component: {fileID: 5765820872755269932}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -569,6 +571,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnPos: {fileID: 0}
+--- !u!114 &2377718336949678157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74bb3772fcaa04b4a8fd1c7773caab31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grindTickInterval: 0.6
+--- !u!114 &5765820872755269932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e8a0e0d36150246a69e1c8ff1a90d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extraJumpsGranted: 0
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,8 +627,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.16018224, y: -1.1255463e-11, z: 2.7344007e-13, w: 0.9870875}
-  m_LocalPosition: {x: 2.7, y: 1.8000001, z: -9.3}
+  m_LocalRotation: {x: 0.16018225, y: -0.000000020036385, z: 0.0000000017682831, w: 0.9870875}
+  m_LocalPosition: {x: 2.6999998, y: 1.8000005, z: -9.299999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -948,8 +976,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.16018225, y: -1.1514309e-11, z: 1.868515e-12, w: 0.9870875}
-  m_LocalPosition: {x: 2.7, y: 1.8000001, z: -9.299999}
+  m_LocalRotation: {x: 0.16018228, y: -0.000000020283585, z: 0.0000000032915732, w: 0.9870875}
+  m_LocalPosition: {x: 2.6999998, y: 1.8000005, z: -9.299999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
