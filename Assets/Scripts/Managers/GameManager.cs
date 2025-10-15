@@ -78,7 +78,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         PauseGame();
         NextStage();
         
-        SceneManager.LoadSceneAsync(1); // later will be either store scene or next stage depending on where you are calling it from
+        SceneManager.LoadSceneAsync("SkillsAndShopTest"); // later will be either store scene or next stage depending on where you are calling it from
     }
 
     public void SpawnBoss()

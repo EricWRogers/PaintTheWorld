@@ -214,7 +214,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (canJump && m_jumpInputPressed)
         {
-            m_velocity = jumpForce * Vector3.up;
+            m_velocity.y = jumpForce;
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
             currJumpCount--;

@@ -11,7 +11,7 @@ public class Menus : MonoBehaviour
     public void PlayGame()
     {
         GameManager.instance.ResumeGame();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("RoofTops");
     }
     public void Options()
     {

@@ -1,8 +1,6 @@
-using UnityEngine.Animations;
+
 using SuperPupSystems.Helper;
 using UnityEngine;
-using UnityEditor.UI;
-using UnityEngine.UIElements;
 
 public class PaintBrush : Weapon
 {
