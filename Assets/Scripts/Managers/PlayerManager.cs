@@ -65,6 +65,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public GameObject paintGlobPrefab;
     public GameObject healAuraPrefab;
     public float globSpeed = 18f;
+    public int maxJumpCount = 1;
 
     public PlayerContext GetContext() => new PlayerContext {
         player = player ? player.transform : null,

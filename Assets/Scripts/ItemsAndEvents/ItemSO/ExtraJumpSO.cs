@@ -11,7 +11,10 @@ public class ExtraJumpSO : ItemSO
         if (!ej) return;
         ej.extraJumpsGranted = Mathf.Max(0, jumpsPerStack * Mathf.Max(1, count));
     }
-
+    public override void OnPurchased(PlayerContext ctx, int newCount)
+    {
+        PlayerManager.instance.maxJumpCount += 1;
+    }
     public override void OnUnequipped(PlayerContext ctx, int count)
     {
         var ej = ctx.player ? ctx.player.GetComponent<ExtraJumpController>() : null;
