@@ -44,7 +44,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float maxJumpAngle = 80f;
     public float jumpCooldown = 0.25f;
     public int currJumpCount = 1;
-    public int maxJumpCount = 1;
+    public int maxJumpCount => PlayerManager.instance.maxJumpCount;
     public float jumpInputElapsed = Mathf.Infinity;
     private float m_timeSinceLastJump = 0.0f;
     public bool m_jumpInputPressed = false;
