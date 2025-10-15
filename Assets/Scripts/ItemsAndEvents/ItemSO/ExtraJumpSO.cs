@@ -9,7 +9,6 @@ public class ExtraJumpSO : ItemSO
     {
         var ej = ctx.player ? ctx.player.GetComponent<ExtraJumpController>() : null;
         if (!ej) return;
-        PlayerManager.instance.player.GetComponent<PlayerMovement>().maxJumpCount = Mathf.Max(0, jumpsPerStack * Mathf.Max(1, count));
     }
     public override void OnPurchased(PlayerContext ctx, int newCount)
     {
