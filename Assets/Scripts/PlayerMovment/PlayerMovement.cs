@@ -525,10 +525,10 @@ public class PlayerMovement : PlayerMovmentEngine
             driftDistance = Vector3.Distance(transform.position, idealRailPosition);
         }
 
-        if (driftDistance > 0.005f)
+        if (driftDistance > 0f)
         {
             Vector3 correctionDirection = (idealRailPosition - transform.position).normalized;
-            float maxCorrectionThisFrame = 2f * Time.deltaTime;
+            float maxCorrectionThisFrame = 10f * Time.deltaTime;
             float correctionAmount = Mathf.Min(driftDistance, maxCorrectionThisFrame);
             transform.position += correctionDirection * correctionAmount;
         }
