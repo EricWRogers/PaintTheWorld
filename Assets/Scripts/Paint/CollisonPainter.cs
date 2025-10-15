@@ -23,6 +23,7 @@ public class CollisonPainter : MonoBehaviour
         Paintable p = other.collider.GetComponent<Paintable>();
         if (p != null)
         {
+            Debug.Log(other.transform.name);
             Vector3 pos = other.contacts[0].point;
             PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);
         }
