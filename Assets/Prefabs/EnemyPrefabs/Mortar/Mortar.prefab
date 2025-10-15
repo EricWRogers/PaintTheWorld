@@ -257,6 +257,7 @@ GameObject:
   - component: {fileID: 3780218610274901045}
   - component: {fileID: 7962096642784740953}
   - component: {fileID: 5472731473974361928}
+  - component: {fileID: 8319573050973202509}
   m_Layer: 6
   m_Name: Mortar
   m_TagString: Enemy
@@ -401,6 +402,18 @@ MonoBehaviour:
   maxHealth: 20
   currentHealth: 0
   defaultToMaxHealth: 1
+--- !u!114 &8319573050973202509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6371524131278298181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b77607d151a433b46a32e54a8598041d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6631511515309108805
 GameObject:
   m_ObjectHideFlags: 0
