@@ -83,6 +83,8 @@ public class PaintManager : Singleton<PaintManager>
 
         Graphics.ExecuteCommandBuffer(m_command);
         m_command.Clear();
+        float paintedAmount = Mathf.Max(0.01f, radius * strength);
+        GameEvents.PaintApplied?.Invoke(paintedAmount);
     }
 
 }

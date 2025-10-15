@@ -1,132 +1,125 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class ShopUI : MonoBehaviour
 {
     [Header("Refs")]
     public ShopCatalog catalog;
 
-    [System.Serializable]
-    public class ItemRow
-    {
-        public Image icon;
-        public TMP_Text nameText;
-        public TMP_Text descText;
-        public TMP_Text priceText;
-        public TMP_Text stockText;
-        public Button buyButton;
-        public Image rarityStripe; // optional: tint by rarity
-        
-    }
+    [Header("Dynamic List")]
+    public Transform contentParent;      
+    public ShopItemRow rowPrefab;       
 
-    [Header("UI Rows (size >= catalog.items length)")]
-    public ItemRow[] rows;
+    [Header("Filters")]
+    public bool useRarityFilter = true;
+    public ItemRarity currentFilter = ItemRarity.Common; // default
+    public Toggle allToggle, commonToggle, rareToggle, legendaryToggle; 
 
-    private void Awake()
+    private readonly List<ShopItemRow> pool = new List<ShopItemRow>();
+
+    void Awake()
     {
         if (!catalog) catalog = GetComponent<ShopCatalog>();
+        WireFilterToggles();
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         var pm = PlayerManager.instance;
         if (pm && pm.wallet && pm.wallet.changed != null)
             pm.wallet.changed.AddListener(OnWalletChanged);
+
         RefreshAll();
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         var pm = PlayerManager.instance;
         if (pm && pm.wallet && pm.wallet.changed != null)
             pm.wallet.changed.RemoveListener(OnWalletChanged);
     }
 
-    private void Start()
+    void OnWalletChanged(int _) => RefreshAll();
+
+    void WireFilterToggles()
     {
-        BindButtons();
-        RefreshAll();
+        if (!useRarityFilter) return;
+
+        if (allToggle) allToggle.onValueChanged.AddListener(on =>
+        { if (on) { currentFilter = (ItemRarity)(-1); RefreshAll(); } });
+
+        if (commonToggle) commonToggle.onValueChanged.AddListener(on =>
+        { if (on) { currentFilter = ItemRarity.Common; RefreshAll(); } });
+
+        if (rareToggle) rareToggle.onValueChanged.AddListener(on =>
+        { if (on) { currentFilter = ItemRarity.Rare; RefreshAll(); } });
+
+        if (legendaryToggle) legendaryToggle.onValueChanged.AddListener(on =>
+        { if (on) { currentFilter = ItemRarity.Epic; RefreshAll(); } });
     }
 
-    private void OnWalletChanged(int amt) => RefreshAll();
-
-    public void BindButtons()
+    bool PassesFilter(ItemSO item)
     {
-        if (rows == null) return;
-        for (int i = 0; i < rows.Length; i++)
+        if (!useRarityFilter) return true;
+        if ((int)currentFilter == -1) return true; // All
+        return item && item.rarity == currentFilter;
+    }
+
+    public void RefreshAll()
+    {
+        if (!catalog || catalog.items == null) return;
+
+       
+        var indices = new List<int>();
+        for (int i = 0; i < catalog.items.Length; i++)
+            if (catalog.items[i] && PassesFilter(catalog.items[i])) indices.Add(i);
+
+        // Ensure enough pooled rows
+        for (int i = pool.Count; i < indices.Count; i++)
         {
-            int idx = i;
-            if (rows[i]?.buyButton != null)
-            {
-                rows[i].buyButton.onClick.RemoveAllListeners();
-                rows[i].buyButton.onClick.AddListener(() => Buy(idx));
-            }
+            var row = Instantiate(rowPrefab, contentParent);
+            pool.Add(row);
+            BindRow(row);
         }
-    }
 
-    public void Buy(int index)
-    {
+        // Populate visible rows
         var pm = PlayerManager.instance;
-        if (!pm || catalog == null || catalog.items == null) return;
-        if (index < 0 || index >= catalog.items.Length) return;
+        var inv = pm ? pm.inventory : null;
+        var wal = pm ? pm.wallet : null;
 
-        var item = catalog.items[index];
-        if (!item) return;
-        if (!catalog.HasStock(index)) return;
-
-        int currentCount = pm.inventory.GetCount(item.id);
-        int price = item.GetPriceForNext(currentCount);
-
-        if (!pm.wallet.Spend(price)) return;
-
-        pm.inventory.Add(item, 1);
-        item.OnPurchased(pm.GetContext(), pm.inventory.GetCount(item.id));
-        catalog.ConsumeStock(index);
-
-        RefreshAll();
-    }
-
-    private void RefreshAll()
-    {
-        var pm = PlayerManager.instance;
-        if (!pm || rows == null || catalog == null || catalog.items == null) return;
-
-        int count = Mathf.Min(rows.Length, catalog.items.Length);
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < pool.Count; i++)
         {
-            var item = catalog.items[i];
-            var row = rows[i];
-            if (row == null) { Debug.LogWarning($"[ShopUI] Row {i} is null"); continue; }
-
-            if (!item)
+            var row = pool[i];
+            if (i >= indices.Count)
             {
-                SetRow(row, false);
+                row.gameObject.SetActive(false);
                 continue;
             }
 
-            // Icon / Texts (guard every field)
-            if (row.icon) row.icon.sprite = item.icon; else Debug.LogWarning($"[ShopUI] row[{i}].icon not assigned");
-            if (row.nameText) row.nameText.text = item.displayName; else Debug.LogWarning($"[ShopUI] row[{i}].nameText not assigned");
-            if (row.descText) row.descText.text = item.description; else Debug.LogWarning($"[ShopUI] row[{i}].descText not assigned");
+            int catalogIndex = indices[i];
+            var item = catalog.items[catalogIndex];
+            row.index = catalogIndex;
+            row.gameObject.SetActive(true);
 
-            int owned = pm.inventory.GetCount(item.id);
+            // Fill visuals
+            if (row.icon)      row.icon.sprite = item.icon;
+            if (row.nameText)  row.nameText.text = item.displayName;
+            if (row.descText)  row.descText.text = item.description;
+
+            int owned = (inv != null) ? inv.GetCount(item.id) : 0;
             int price = item.GetPriceForNext(owned);
-            if (row.priceText) row.priceText.text = $"$ {price}"; else Debug.LogWarning($"[ShopUI] row[{i}].priceText not assigned");
+            if (row.priceText) row.priceText.text = $"$ {price}";
 
-            bool inStock = catalog.HasStock(i);
+            bool inStock = catalog.HasStock(catalogIndex);
             if (row.stockText)
             {
-                int s = catalog.GetStock(i);
+                int s = catalog.GetStock(catalogIndex);
                 row.stockText.text = (s < 0) ? "∞" : $"Stock: {s}";
             }
-            else Debug.LogWarning($"[ShopUI] row[{i}].stockText not assigned");
 
-            if (row.buyButton)
-                row.buyButton.interactable = inStock && pm.wallet.amount >= price;
-            else
-                Debug.LogWarning($"[ShopUI] row[{i}].buyButton not assigned");
+            bool canAfford = (wal != null) && wal.amount >= price;
+            if (row.buyButton) row.buyButton.interactable = inStock && canAfford;
 
             if (row.rarityStripe)
             {
@@ -135,24 +128,42 @@ public class ShopUI : MonoBehaviour
                     ItemRarity.Common => new Color(0.80f, 0.80f, 0.80f),
                     ItemRarity.Rare   => new Color(0.45f, 0.75f, 1.00f),
                     ItemRarity.Epic   => new Color(0.80f, 0.55f, 1.00f),
-                    _ => Color.white
+                    _                 => Color.white
                 };
             }
         }
-
-        // Hide extras
-        for (int i = count; i < rows.Length; i++) SetRow(rows[i], false);
     }
 
-    private void SetRow(ItemRow row, bool on)
+    void BindRow(ShopItemRow row)
     {
-        if (row == null) return;
-        if (row.buyButton) row.buyButton.interactable = false;
-        if (row.icon) row.icon.enabled = on;
-        if (row.nameText) row.nameText.enabled = on;
-        if (row.descText) row.descText.enabled = on;
-        if (row.priceText) row.priceText.enabled = on;
-        if (row.stockText) row.stockText.enabled = on;
-        if (row.rarityStripe) row.rarityStripe.enabled = on;
+        row.buyButton.onClick.AddListener(() => Buy(row));
     }
+
+    void Buy(ShopItemRow row)
+    {
+        var pm = PlayerManager.instance;
+        if (!pm) return;
+
+        int index = row.index;
+        if (index < 0 || index >= catalog.items.Length) return;
+
+        var item = catalog.items[index];
+        if (!item || !catalog.HasStock(index)) return;
+
+        int currentCount = pm.inventory ? pm.inventory.GetCount(item.id) : 0;
+        int price = item.GetPriceForNext(currentCount);
+        if (!pm.wallet || !pm.wallet.Spend(price)) return;
+
+        pm.inventory.Add(item, 1);
+        item.OnPurchased(pm.GetContext(), pm.inventory.GetCount(item.id));
+        catalog.ConsumeStock(index);
+
+        RefreshAll();
+    }
+
+    // Public hooks for filter UI
+    public void SetFilterAll()       { currentFilter = (ItemRarity)(-1); RefreshAll(); }
+    public void SetFilterCommon()    { currentFilter = ItemRarity.Common; RefreshAll(); }
+    public void SetFilterRare()      { currentFilter = ItemRarity.Rare; RefreshAll(); }
+    public void SetFilterLegendary() { currentFilter = ItemRarity.Epic; RefreshAll(); }
 }
