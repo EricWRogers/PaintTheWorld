@@ -111,7 +111,7 @@ public class PaintBrush : Weapon
             if (health != null)
             {
                 health.Damage(Mathf.RoundToInt(damage * damageMult));
-                GameEvents.PlayerHitEnemy?.Invoke(health.gameObject, damage, HitSource.PlayerWeapon);
+                GameEvents.PlayerHitEnemy?.Invoke(temp, damage, HitSource.PlayerWeapon);
             }
             
         }
