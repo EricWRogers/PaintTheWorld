@@ -20,7 +20,6 @@ public class EnemyHealthRelay : MonoBehaviour
     private void OnOut()
     {
         GameEvents.EnemyKilled?.Invoke(gameObject);
-        // if enemies destroy themselves on death elsewhere, good; otherwise:
         // Destroy(gameObject);
     }
 }
