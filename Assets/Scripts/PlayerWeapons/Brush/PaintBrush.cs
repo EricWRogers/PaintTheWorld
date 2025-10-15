@@ -20,6 +20,7 @@ public class PaintBrush : Weapon
     void Awake()
     {
         m_parentTransform = transform.parent;
+        
     }
 
     void Update()
@@ -110,10 +111,11 @@ public class PaintBrush : Weapon
             Health health = temp.GetComponent<Health>();
             if (health != null)
             {
+                Debug.Log("Hit enemy");
                 health.Damage(Mathf.RoundToInt(damage * damageMult));
-                GameEvents.PlayerHitEnemy?.Invoke(temp, damage, HitSource.PlayerWeapon);
+                GameEvents.PlayerHitEnemy.Invoke(temp, damage, HitSource.PlayerWeapon);
             }
-            
+
         }
         hitEnemy = true;
     }
