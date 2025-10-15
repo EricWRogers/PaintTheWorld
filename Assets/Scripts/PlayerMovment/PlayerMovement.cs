@@ -1,6 +1,7 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using System.ComponentModel;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : PlayerMovmentEngine
 {
@@ -211,9 +212,9 @@ public class PlayerMovement : PlayerMovmentEngine
         bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount >0) && m_timeSinceLastJump >= jumpCooldown;
         bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
-        if (canJump && attemptingJump)
+        if (canJump && m_jumpInputPressed)
         {
-            m_velocity += jumpForce * Vector3.up;
+            m_velocity = jumpForce * Vector3.up;
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
             currJumpCount--;
