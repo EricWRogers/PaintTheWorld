@@ -280,7 +280,7 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 inputDir = m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x;
         inputDir.Normalize();
 
-        if (inputDir != Vector3.zero && !m_inputActions.Attack.IsPressed())
+        if ((inputDir != Vector3.zero && !m_inputActions.Attack.IsPressed()) || isGrinding)
         {
             Vector3 forwardNoY = m_velocity;
             forwardNoY.y = 0;
