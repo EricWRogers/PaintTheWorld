@@ -53,6 +53,9 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public Inventory inventory;
     public PlayerStats stats;
 
+    private float m_healthMult => PlayerManager.instance.stats.skills[0].currentMult;
+    public int startingHealth;
+
     private SaveData saveData;
     private const string SAVE_KEY = "PlayerSaveData";
     private SaveData startSaveData;
@@ -72,9 +75,9 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         globSpeed = globSpeed
     };
 
-    new void Awake()
+    void Start()
     {
-        base.Awake();
+        startingHealth = health.currentHealth;
     }
 
 
@@ -88,6 +91,8 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             if (startSaveData == null)
                 startSaveData = new SaveData(wallet.amount, health.currentHealth, health.maxHealth, MakeInvEntries(inventory), stats.skills);
             IsReady = true;
+            health.maxHealth = Mathf.RoundToInt(startingHealth * m_healthMult);
+            health.currentHealth = health.maxHealth;
         }
     }
 
@@ -146,9 +151,8 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public void OnDeath()
     {
         ResetData();
-        LoadGame();
         SceneManager.sceneLoaded += OnSceneReloaded;
-        SceneManager.LoadSceneAsync(0);
+        SceneManager.LoadSceneAsync("MainMenu");
     }
 
     private void OnSceneReloaded(Scene scene, LoadSceneMode mode)

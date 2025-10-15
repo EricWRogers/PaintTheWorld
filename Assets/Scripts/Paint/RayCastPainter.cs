@@ -19,7 +19,11 @@ public class RayCastPainter : MonoBehaviour
         if (p != null)
         {
             Debug.Log(hitInfo.transform.name + radius + paintColor);
-            PaintManager.instance.paint(p, hitInfo.point, radius, hardness, strength, paintColor);
+            float r = radius;
+            var scaler = PlayerManager.instance.player.GetComponent<PlayerPaintWidthScaler>();
+            if (scaler) r = scaler.Apply(r);
+
+            PaintManager.instance.paint(p, hitInfo.point, r, hardness, strength, paintColor);
         }
     }
 }
