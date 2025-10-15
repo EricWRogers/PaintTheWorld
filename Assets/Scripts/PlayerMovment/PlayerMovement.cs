@@ -43,6 +43,8 @@ public class PlayerMovement : PlayerMovmentEngine
     public float jumpForce = 5.0f;
     public float maxJumpAngle = 80f;
     public float jumpCooldown = 0.25f;
+    public int currJumpCount = 1;
+    public int maxJumpCount = 1;
     public float jumpInputElapsed = Mathf.Infinity;
     private float m_timeSinceLastJump = 0.0f;
     public bool m_jumpInputPressed = false;
@@ -160,12 +162,15 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void HandleRegularMovement()
     {
+        
         currSpeed = speed * movementColorMult * m_shopMoveMult;
 
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
         bool onGround = CheckIfGrounded(out RaycastHit groundHit);
         bool canWalk = onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal);
+
+        currJumpCount = onGround ? maxJumpCount : currJumpCount;
 
         Vector3 horizontalVel = new Vector3(m_velocity.x, 0, m_velocity.z);
 
@@ -203,7 +208,7 @@ public class PlayerMovement : PlayerMovmentEngine
             m_velocity.y = 0f;
 
         // === Jump handling ===
-        bool canJump = onGround && groundedState.angle <= maxJumpAngle && m_timeSinceLastJump >= jumpCooldown;
+        bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount >0) && m_timeSinceLastJump >= jumpCooldown;
         bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
         if (canJump && attemptingJump)
@@ -211,6 +216,7 @@ public class PlayerMovement : PlayerMovmentEngine
             m_velocity += jumpForce * Vector3.up;
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
+            currJumpCount--;
         }
         else
         {
