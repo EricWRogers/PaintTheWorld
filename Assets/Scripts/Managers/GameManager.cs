@@ -75,8 +75,9 @@ public class GameManager : SceneAwareSingleton<GameManager>
             movement.lockCursor = false;
             movement.HandleCursor();
         }
-        NextStage();
         PauseGame();
+        NextStage();
+        
         SceneManager.LoadSceneAsync(1); // later will be either store scene or next stage depending on where you are calling it from
     }
 

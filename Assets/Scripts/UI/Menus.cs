@@ -6,7 +6,7 @@ public class Menus : MonoBehaviour
 {
     void Start()
     {
-        //GameManager.instance.PauseGame();
+        GameManager.instance.PauseGame();
     }
     public void PlayGame()
     {

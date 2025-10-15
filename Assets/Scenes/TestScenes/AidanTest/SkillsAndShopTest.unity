@@ -2940,7 +2940,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1094300202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2958,6 +2958,7 @@ MonoBehaviour:
   wallet: {fileID: 1077189215}
   inventory: {fileID: 1077189217}
   stats: {fileID: 1077189214}
+  startingHealth: 0
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -3706,7 +3707,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1189942202}
   m_HandleRect: {fileID: 1189942201}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7101,7 +7102,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8724370133860522315, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9104941373587113884, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: collisionLayers.m_Bits
