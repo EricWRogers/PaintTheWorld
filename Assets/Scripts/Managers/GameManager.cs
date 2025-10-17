@@ -75,9 +75,10 @@ public class GameManager : SceneAwareSingleton<GameManager>
             movement.lockCursor = false;
             movement.HandleCursor();
         }
-        NextStage();
         PauseGame();
-        SceneManager.LoadSceneAsync(1); // later will be either store scene or next stage depending on where you are calling it from
+        NextStage();
+        
+        SceneManager.LoadSceneAsync("SkillsAndShopTest"); // later will be either store scene or next stage depending on where you are calling it from
     }
 
     public void SpawnBoss()

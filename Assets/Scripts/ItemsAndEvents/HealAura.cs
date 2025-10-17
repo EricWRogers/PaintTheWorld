@@ -41,12 +41,17 @@ public class HealAura : MonoBehaviour
                 {
                     playerHealth.Heal(healPerTick);
                     // PlayerHealthRelay will fire PlayerHealed for us via healthChanged delta
-                    
+
                     GameEvents.PlayerHealed?.Invoke(healPerTick);
                 }
             }
             yield return new WaitForSeconds(tickInterval);
         }
         Destroy(gameObject);
+    }
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }

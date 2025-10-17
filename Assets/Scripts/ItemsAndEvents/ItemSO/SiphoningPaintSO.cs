@@ -4,7 +4,7 @@ using UnityEngine;
 public class SiphoningPaintSO : ItemSO
 {
     [Header("Healing")]
-    public int healPerHit = 2;
+    public int healPerHit = 12;
 
     public override void OnPlayerHitEnemy(PlayerContext ctx, HitContext hit, int count)
     {

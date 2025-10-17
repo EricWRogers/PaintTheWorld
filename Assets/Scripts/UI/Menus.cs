@@ -6,12 +6,12 @@ public class Menus : MonoBehaviour
 {
     void Start()
     {
-        //GameManager.instance.PauseGame();
+        GameManager.instance.PauseGame();
     }
     public void PlayGame()
     {
         GameManager.instance.ResumeGame();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("RoofTops");
     }
     public void Options()
     {
