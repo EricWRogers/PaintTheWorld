@@ -8,6 +8,7 @@ public class PlayerMovement : PlayerMovmentEngine
     [Header("Movement")]
     public float speed = 5f;
     public float maxSpeed = 20f; 
+
     public float rotationSpeed = 5f;
     public float maxWalkAngle = 60f;
     private float currSpeed;
@@ -16,15 +17,15 @@ public class PlayerMovement : PlayerMovmentEngine
     public float movementColorMult = 2f;
     private float m_currColorMult = 1f;
     private float m_shopMoveMult => PlayerManager.instance.stats.skills[3].currentMult;
-
+    private float m_maxSpeed;
     private Vector2 moveInput;
     public bool lockCursor = true;
 
     [Header("Momentum")]
     public float groundAccelMult = 1f;
     public float airAccelMult = 0.8f;
-    public float airDrag = 0.05f;
-    public float groundDrag = 0.1f;
+    public float airDrag = 0.2f;
+    public float groundDrag = 0.4f;
 
     [Header("Dashing")]
     public AnimationCurve dashSpeedCurve;
@@ -136,6 +137,10 @@ public class PlayerMovement : PlayerMovmentEngine
     public void HandlePaintColor()
     {
         m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? movementColorMult : 1f;
+        if(groundedState.isGrounded)
+        {
+            m_maxSpeed = standPaintColor.standingColor == colors.movementPaint ? maxSpeed : maxSpeed * 1.5f;
+        }
         m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
 
@@ -203,8 +208,8 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         // Clamp horizontal speed
-        if (horizontalVel.magnitude > maxSpeed && !isDashing)
-            horizontalVel = horizontalVel.normalized * maxSpeed;
+        if (horizontalVel.magnitude > m_maxSpeed && !isDashing)
+            horizontalVel = horizontalVel.normalized * m_maxSpeed;
 
         m_velocity.x = horizontalVel.x;
         m_velocity.z = horizontalVel.z;
