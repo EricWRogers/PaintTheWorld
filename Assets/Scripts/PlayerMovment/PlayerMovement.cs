@@ -16,8 +16,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float movementColorMult = 2f;
     private float m_currColorMult = 1f;
     private float m_shopMoveMult => PlayerManager.instance.stats.skills[3].currentMult;
-    public GetPaintColor standPaintColor;
-    private PaintColors colors;
+
     private Vector2 moveInput;
     public bool lockCursor = true;
 
@@ -61,6 +60,7 @@ public class PlayerMovement : PlayerMovmentEngine
     private Vector3 m_wallNormal;
     private Vector3 m_wallRunDir;
     public float wallCheckDistance = 1f;
+    
 
     [Header("Rail Grinding")]
     public LayerMask railLayer;
@@ -74,6 +74,11 @@ public class PlayerMovement : PlayerMovmentEngine
     public float grindSpeed;
     public float m_railDir = 1f;
     [SerializeField] private Transform m_railDetectionPoint;
+    [Header("Paint Things")]
+    public GetPaintColor standPaintColor;
+    private PaintColors colors;
+    private float paintRotation;
+    [SerializeField] private Transform paintPoint;
 
     void Start()
     {
@@ -300,6 +305,8 @@ public class PlayerMovement : PlayerMovmentEngine
         {
             m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
             m_isWallRiding = false;
+            paintPoint.Rotate(0, 0, -paintRotation);
+            paintRotation = 0f;
             return false;
         }
 
@@ -324,8 +331,18 @@ public class PlayerMovement : PlayerMovmentEngine
                     float distR = Vector3.Distance(transform.position, rightHit.point);
                     m_wallNormal = distL <= distR ? leftHit.normal : rightHit.normal;
                 }
-                else if (left) m_wallNormal = leftHit.normal;
-                else m_wallNormal = rightHit.normal;
+                else if (left)
+                {
+                    m_wallNormal = leftHit.normal;
+                    paintRotation -= 90;
+                }
+                else
+                {
+                    m_wallNormal = rightHit.normal;
+                    paintRotation += 90f;
+                   
+                }
+                paintPoint.Rotate(0, 0f, paintRotation);
             }
         
         }
@@ -360,7 +377,9 @@ public class PlayerMovement : PlayerMovmentEngine
             {
                 // Lost contact with wall - push off
                 m_isWallRiding = false;
-                m_velocity = m_wallNormal * jumpForce  + Vector3.up * jumpForce;
+                m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
+                paintPoint.Rotate(0, 0, -paintRotation);
+                paintRotation = 0f;                
                 return false;
             }
         }
