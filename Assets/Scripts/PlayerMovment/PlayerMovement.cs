@@ -1,7 +1,5 @@
 using UnityEngine;
 using KinematicCharacterControler;
-using System.ComponentModel;
-using UnityEngine.InputSystem;
 
 public class PlayerMovement : PlayerMovmentEngine
 {
@@ -55,9 +53,11 @@ public class PlayerMovement : PlayerMovmentEngine
     [SerializeField] private bool m_isWallRiding = false;
     public float wallCheckDist = 1f;
     public float climbMult = 0.5f;
+    public float wallGravity = 1f;
     public LayerMask wallLayers;
     public bool leftWall;
     public bool rightWall;
+    private bool m_wallPaint = false;
     private Vector3 m_wallNormal;
     private Vector3 m_wallRunDir;
     public float wallCheckDistance = 1f;
@@ -131,6 +131,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public void HandlePaintColor()
     {
         m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? movementColorMult : 1f;
+        m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
 
     public void HandleCursor()
@@ -164,7 +165,7 @@ public class PlayerMovement : PlayerMovmentEngine
     void HandleRegularMovement()
     {
         
-        currSpeed = speed * movementColorMult * m_shopMoveMult;
+        currSpeed = speed * m_currColorMult * m_shopMoveMult;
 
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
@@ -342,8 +343,16 @@ public class PlayerMovement : PlayerMovmentEngine
                 if (Vector3.Dot(m_wallRunDir, transform.forward) < 0)
                     m_wallRunDir *= -1;
 
-                // Set momentum to run along wall with upward climb
-                m_velocity = m_wallRunDir * currSpeed + Vector3.up * climbMult;
+                if (m_wallPaint)
+                {
+                    m_velocity = m_wallRunDir * currSpeed + Vector3.up * climbMult;
+                }
+                else
+                {
+                    m_velocity =  m_wallRunDir * currSpeed + -Vector3.up * wallGravity;   
+                }                    
+
+                
                 
                 return true;
             }
