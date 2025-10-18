@@ -1,75 +1,95 @@
-using System;
-using SuperPupSystems.Helper;
 using UnityEngine;
+using SuperPupSystems.Helper;
 
-public class PowerPainter : RayCastPainter
+[RequireComponent(typeof(LineRenderer))]
+public class PowerPainter : Weapon
 {
-    // public int damage;
-    // private LineRenderer m_lineRender;
-    // private GameObject m_player;
-    // private float damageAccumulator = 0f;
-    // public LayerMask ignoreLayers;
+    [Header("Power Painter Settings")]
+    public float rayDistance = 100f;
+    public LayerMask ignoreLayers;
+    public Transform rayStart;
 
-    // void Start()
-    // {
-    //     m_player = PlayerManager.instance.player;
-    //     m_lineRender = GetComponent<LineRenderer>();
-    // }
+    private RayCastPainter painter;
+    private LineRenderer m_lineRender;
+    private GameObject m_player;
+    private float damageAccumulator = 0f;
 
-    // void Update()
-    // {
-    //     paintColor = m_player.GetComponent<PlayerPaint>().selectedPaint;
-    //     damage = m_player.GetComponent<PlayerWeapon>().damage;
-    //     radius = m_player.GetComponent<PlayerWeapon>().paintRadius;
+    new void Start()
+    {
+        base.Start(); // call Weapon.Start()
 
-    //     m_lineRender.startColor = paintColor;
-    //     m_lineRender.endColor = paintColor;
+        m_player = player;
+        m_lineRender = GetComponent<LineRenderer>();
+        painter = new RayCastPainter();
 
-    //     if (Input.GetButton("Fire1"))
-    //     {
-    //         m_lineRender.enabled = true;
+        m_lineRender.enabled = false;
+    }
 
-    //         rayCast = new Ray(rayStart.position, rayStart.forward);
+    new void Update()
+    {
+        base.Update();
+        // Just handle player input here
+        if (Input.GetButton("Fire1"))
+        {
+            Fire();
+        }
+        else
+        {
+            m_lineRender.enabled = false;
+        }
+    }
 
-    //         if (Physics.Raycast(rayStart.position, rayStart.forward, out hit, rayDistance, ~ignoreLayers))
-    //         {
-    //             m_lineRender.SetPosition(0, rayStart.position);
-    //             m_lineRender.SetPosition(1, hit.point);
+    public override void Fire()
+    {
+        if (m_player == null) return;
 
-    //             Debug.Log("Hit: " + hit.transform.name);
-    //             bool isPaintable = hit.collider.GetComponent<Paintable>() != null;
-    //             Debug.Log("Paintable? " + isPaintable);
+        // Update color and damage based on player data
+        var playerPaint = m_player.GetComponent<PlayerPaint>();
+        var playerWeapon = m_player.GetComponent<PlayerWeapon>();
 
-    //             // Paint if surface is paintable
-    //             if (isPaintable)
-    //             {
-    //                 TryPaint(hit);
-    //             }
+        Color paintColor = playerPaint.selectedPaint;
+        int dmg = playerWeapon.damage;
+        float radius = playerWeapon.paintRadius;
 
-    //             if (hit.transform.tag == "Enemy")
-    //             {
-    //                 damageAccumulator += damage * Time.deltaTime;
-    //                 if (damageAccumulator >= 1f)
-    //                 {
-    //                     int applyDamage = Mathf.FloorToInt(damageAccumulator);
-    //                     hit.transform.GetComponent<Health>().Damage(applyDamage);
-    //                     damageAccumulator -= applyDamage;
-    //                 }
-    //             }
-    //         }
-    //         else
-    //         {
-    //             m_lineRender.SetPosition(0, rayStart.position);
-    //             m_lineRender.SetPosition(1, rayStart.position + rayStart.forward * rayDistance);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         m_lineRender.enabled = false;
-    //     }
-    // }
-    // public void DestroyGun()
-    // {
-    //     Destroy(gameObject);
-    // }
+        m_lineRender.startColor = paintColor;
+        m_lineRender.endColor = paintColor;
+        m_lineRender.enabled = true;
+
+        Ray ray = new Ray(rayStart.position, rayStart.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, ~ignoreLayers))
+        {
+            m_lineRender.SetPosition(0, rayStart.position);
+            m_lineRender.SetPosition(1, hit.point);
+
+            // Paintable surface
+            if (hit.collider.TryGetComponent(out Paintable paintable))
+            {
+                painter.TryPaint(hit);
+            }
+
+            // Enemy damage
+            if (hit.transform.CompareTag("Enemy"))
+            {
+                damageAccumulator += dmg * Time.deltaTime;
+                if (damageAccumulator >= 1f)
+                {
+                    int applyDamage = Mathf.FloorToInt(damageAccumulator);
+                    hit.transform.GetComponent<Health>().Damage(applyDamage);
+                    damageAccumulator -= applyDamage;
+                }
+            }
+        }
+        else
+        {
+            // No hit
+            m_lineRender.SetPosition(0, rayStart.position);
+            m_lineRender.SetPosition(1, rayStart.position + rayStart.forward * rayDistance);
+        }
+    }
+
+    public void DestroyGun()
+    {
+        Destroy(gameObject);
+    }
 }

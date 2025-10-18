@@ -8,6 +8,9 @@ public abstract class Weapon : MonoBehaviour
     public int damage;
     public LayerMask layerMask;
 
+    public bool canAim;
+    public FireRaycast aimPoint;
+
     [HideInInspector] public GameObject player;
     [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;
     [HideInInspector] public float attackSpeedMult = 1; //=> dps * PlayerManager.instance.stats.skills[4].currentMult; 
@@ -22,6 +25,22 @@ public abstract class Weapon : MonoBehaviour
             Debug.Log(gameObject.name + " is missing player");
             return;
         }
+    }
+
+    public void Update()
+    {
+        if (canAim)
+        {
+            if (aimPoint.hit)
+            {
+                firePoint.LookAt(aimPoint.hitInfo.point);
+            }
+            else
+            {
+                firePoint.LookAt(aimPoint.transform.position + aimPoint.transform.forward * aimPoint.length);
+            }
+        }
+        
     }
 
     public void DestroyWeapon()
