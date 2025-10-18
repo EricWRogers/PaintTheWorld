@@ -8,7 +8,7 @@ public class PaintLauncherSO : ItemSO
 
     public override void OnPlayerHitEnemy(PlayerContext ctx, HitContext hit, int count)
     {
-        Debug.Log("player hit enemy");
+        //Debug.Log("player hit enemy");
         // Prevent globs from creating more globs
         if (hit.source == HitSource.PaintLauncherGlob) return;
 

@@ -3,67 +3,69 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using SuperPupSystems.Helper;
 
-[RequireComponent(typeof(Timer))]
 public class EnemyManager : SceneAwareSingleton<EnemyManager>
 {
-    public List<ObjectSpawner> spawners = new();
-    public int baseMaxEnemyCount = 15;
-    public int spawnDelay = 5;
-    public int currentEnemies = 0;
+    public List<EnemySpawning> spawnerAreas = new();
+    public int spawnDelay = 1;
     public int scaledCount;
     public int spawnAmount = 1;
-    private Timer m_spawnTimer;
+    public int selectedArea;
+    public List<GameObject> listOfEnemyPrefabs;
+
+    private int m_spawnCount;
+    private float m_timer;
 
     void Start()
     {
-        m_spawnTimer = GetComponent<Timer>();
+        foreach (EnemySpawning go in spawnerAreas)
+        {
+            go.GetComponentInChildren<EnemySpawning>().indicator.SetActive(false);
+        }
+        ChooseSpawnArea();
     }
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        m_spawnTimer.StartTimer(spawnDelay, true);
-        m_spawnTimer.timeout.AddListener(Spawn);
-        spawners.Clear();
-        spawners.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+        spawnerAreas.Clear();
+        spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+
         IsReady = true;
     }
 
-    private void Spawn()
+    void Update()
     {
-        SpawnEnemies(spawnAmount);
-    }
-
-    public void SpawnEnemies(int amount)
-    {
-        if (spawners.Count == 0) return;
-
-        scaledCount = Mathf.RoundToInt(baseMaxEnemyCount * GameManager.instance.EnemyCountModifier);
-
-
-        for (int i = 0; i < amount; i++)
+        m_timer -= Time.deltaTime;
+        if (spawnAmount > m_spawnCount && m_timer <= 0)
         {
-            if (currentEnemies <= scaledCount)
-            {
-                int index = Random.Range(0, spawners.Count);
-                spawners[index].SpawnObject();
-                currentEnemies++;
-            }
+            GameObject prefab = listOfEnemyPrefabs[Random.Range(0, listOfEnemyPrefabs.Count)];
+            spawnerAreas[selectedArea].SpawnEnemy(prefab.name);
+            m_spawnCount++;
+            m_timer = spawnDelay;
         }
     }
-    public void StopSpawning()
+    
+    public void ResetWave()
     {
-        m_spawnTimer.StopTimer();
+        spawnAmount = 0;
+        m_spawnCount = 0;
     }
 
-    public void RemoveEnemy()
+    public void ChooseSpawnArea()
     {
-        currentEnemies = Mathf.Max(0, currentEnemies - 1);
+        spawnerAreas[selectedArea].indicator.SetActive(false);
+        selectedArea = Random.Range(0, spawnerAreas.Count);
+        spawnerAreas[selectedArea].indicator.SetActive(true);
+    }
+
+    public void EnemyKilled()
+    {
+        GameManager.instance.currKilledInWave++;
+        GameManager.instance.totalEnemyKills++;
     }
     public void EditorInit()
     {
-        m_spawnTimer.StartTimer(spawnDelay, true);
-        m_spawnTimer.timeout.AddListener(Spawn);
-        spawners.Clear();
-        spawners.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+        spawnerAreas.Clear();
+        spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+
         IsReady = true;
     }
 }

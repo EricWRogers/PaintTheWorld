@@ -45,11 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c17a339708289a468cf07b9350e4a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boss: {fileID: 6449207097394993412, guid: d09365cf8fca94c41acda8452378ff9c, type: 3}
-  stageTimer: 120
-  stagesBeforeFinal: 4
-  allowLooping: 0
-  stageHasBoss: 0
+  currentWave: 0
+  enemyAmount: 10
+  totalEnemyKills: 0
+  currKilledInWave: 0
+  firstWaveTimer: 5
+  prepTimer: 10
+  inWave: 0
+  timer: 0
   scalingData: {fileID: 11400000, guid: 6abab9b56d5299243ae8c5866198b36a, type: 2}
   m_isPaused: 0
 --- !u!114 &5278923029807091084
