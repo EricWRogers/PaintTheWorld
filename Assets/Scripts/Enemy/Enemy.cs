@@ -18,25 +18,23 @@ public abstract class  Enemy : MonoBehaviour
     public GameObject coin;
     public Vector3 coinOffset;
 
+    void OnEnable()
+    {
+        GetComponent<Health>().maxHealth = Mathf.RoundToInt(health * GameManager.instance.EnemyHealthModifier);
+        GetComponent<Health>().currentHealth = GetComponent<Health>().maxHealth;
+        currentDamage = baseDamage * GameManager.instance.EnemyDamageModifier;
+    }
     public void Start()
     {
         player = PlayerManager.instance.player;
-        GetComponent<Health>().maxHealth = health;
-        currentDamage = baseDamage * GameManager.instance.EnemyDamageModifier;
-        
     }
 
     public abstract void Attack();
-        public void Dead()
+    public void Dead()
     {
-        //PlayerManager.instance.wallet.Add((int)(Random.Range(moneyToAdd.x, moneyToAdd.y) * GameManager.instance.CoinGainModifier));
+        EnemyManager.instance.EnemyKilled();
         GameObject temp = Instantiate(coin, transform.position + coinOffset, transform.rotation);
         temp.GetComponent<TempCoinPickup>().amount = (int)(Random.Range(moneyToAdd.x, moneyToAdd.y) * GameManager.instance.CoinGainModifier);
-        Destroy(gameObject);
-    }
-
-    public void OnDestroy()
-    {
-        EnemyManager.instance.RemoveEnemy();
+        gameObject.SetActive(false);
     }
 }

@@ -13,12 +13,12 @@ public class RayCastPainter : MonoBehaviour
     }
     public void TryPaint(RaycastHit hitInfo)
     {
-        Debug.Log(hitInfo);
+        //Debug.Log(hitInfo);
         paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
         Paintable p = hitInfo.collider.GetComponent<Paintable>();
         if (p != null)
         {
-            Debug.Log(hitInfo.transform.name + radius + paintColor);
+            //Debug.Log(hitInfo.transform.name + radius + paintColor);
             float r = radius;
             var scaler = PlayerManager.instance.player.GetComponent<PlayerPaintWidthScaler>();
             if (scaler) r = scaler.Apply(r);

@@ -38,8 +38,9 @@ public class PaintBallGun : Weapon
         }
     }
 
-    void Update()
+    new void Update()
     {
+        base.Update();
         // Smoothly rotate the player towards the current target every frame
         if (m_currentTarget != null)
         {

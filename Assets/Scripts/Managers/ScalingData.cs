@@ -7,6 +7,9 @@ public class EnemyScalingData : ScriptableObject
     [Tooltip("How much extra damage enemies gain per stage (as a percent of base damage). Ex: 0.1 = +10% per stage")]
     public float enemyDamageIncrease = 0.1f;
 
+    [Tooltip("How much extra Health enemies gain per stage (as a percent of base Health). Ex: 0.1 = +10% per stage")]
+    public float enemyHealthIncrease = 0.1f;
+
     [Tooltip("How much extra boss health per stage (as a percent of base health). Ex: 0.2 = +20% per stage")]
     public float bossHealthIncrease = 0.2f;
 

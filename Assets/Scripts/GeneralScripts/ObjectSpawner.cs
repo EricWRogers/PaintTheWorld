@@ -5,7 +5,7 @@ public class ObjectSpawner : MonoBehaviour
 {
     public Vector3 spawnAreaSize = new Vector3(50f, 20f, 50f);
     public int totalSpawned = 0;
-    public int poolSize = 20;
+    public int objectAmount = 20;
     public List<GameObject> objectsToSpawn;
     public bool spawnAllOnStart;
 
@@ -31,7 +31,7 @@ public class ObjectSpawner : MonoBehaviour
 
     public void SpawnMax()
     {
-        for (int i = 0; i < poolSize; i++)
+        for (int i = 0; i < objectAmount; i++)
         {
             SpawnObject();
             totalSpawned++;

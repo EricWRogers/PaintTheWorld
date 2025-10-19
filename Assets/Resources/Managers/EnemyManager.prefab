@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2218833591423250182}
   - component: {fileID: 2661077708692788967}
-  - component: {fileID: 8309151211709373683}
   m_Layer: 0
   m_Name: EnemyManager
   m_TagString: Untagged
@@ -45,27 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d55513fd358f4a843aa267ebc5942a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawners: []
-  baseMaxEnemyCount: 15
-  spawnDelay: 5
-  currentEnemies: 0
-  spawnAmount: 1
---- !u!114 &8309151211709373683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2547038236037799631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad54517dc19258185960ef6d2f3a1b93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeout:
-    m_PersistentCalls:
-      m_Calls: []
-  autoStart: 1
-  autoRestart: 1
-  countDownTime: 1
-  timeScale: 1
+  spawnerAreas: []
+  spawnDelay: 1
+  scaledCount: 0
+  spawnAmount: 0
+  selectedArea: 0
+  listOfEnemyPrefabs:
+  - {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
