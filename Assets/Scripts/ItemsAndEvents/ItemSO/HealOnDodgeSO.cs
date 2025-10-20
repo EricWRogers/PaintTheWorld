@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName="HealOnDodge", menuName="Items/Common/Heal on Dodge")]
 public class HealOnDodgeSO : ItemSO
 {
-    public int healPerStack = 5;
+    public int healPerStack = 10;
 
     public override void OnDodged(PlayerContext ctx, int count)
     {
