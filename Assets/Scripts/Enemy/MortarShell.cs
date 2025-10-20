@@ -44,18 +44,30 @@ public class MortarShell : MonoBehaviour
 
     private void OnImpact()
     {
-        if (Physics.OverlapSphere(transform.position, radius, layerMask).Length > 0)
+        var hits = Physics.OverlapSphere(transform.position, radius, layerMask);
+        if (hits.Length > 0)
         {
-            Health health = PlayerManager.instance.health;
-            if (health != null)
+            foreach (Collider hit in hits)
             {
-                health.Damage(damage);
-                Destroy(gameObject);
+                Paintable tempPaintable = hit.transform.gameObject.GetComponent<Paintable>();
+                if (tempPaintable != null)
+                {
+                    PaintManager.instance.paint(tempPaintable, hit.ClosestPoint(transform.position), 3f, 1f, 1f, Color.clear);
+                }
+                if (hit.transform.gameObject.tag == "Player")
+                {
+                    Health health = PlayerManager.instance.health;
+                    if (health != null)
+                    {
+                        health.Damage(damage);
+                        Destroy(gameObject);
+                    }
+                }
             }
         }
         Destroy(gameObject);
     }
-
+    
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
