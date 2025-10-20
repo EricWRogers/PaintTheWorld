@@ -4,7 +4,7 @@ using UnityEngine;
 public class GrindBurstSO : ItemSO
 {
     public int spokesPerStack = 6;   // shots per ring
-    public float spawnHeight = 1.2f;
+    public float spawnHeight = 0.1f;
     public float ringSpeed = 18f;
 
     public override void OnGrindStart(PlayerContext ctx, int count) => FireRing(ctx, count);

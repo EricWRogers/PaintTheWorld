@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 3358188497438125722}
   - component: {fileID: 844763361573983353}
   - component: {fileID: 8196761362083089986}
+  - component: {fileID: 3177689471482303882}
   m_Layer: 8
   m_Name: GrindRail
   m_TagString: Untagged
@@ -226,7 +227,29 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
+--- !u!65 &3177689471482303882
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6442113542728188826}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8223185251379628554
 GameObject:
   m_ObjectHideFlags: 0
