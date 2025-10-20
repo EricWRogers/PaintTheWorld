@@ -40,6 +40,7 @@ public struct PlayerContext
     public LayerMask enemyLayer;
     public GameObject paintGlobPrefab;
     public GameObject healAuraPrefab;
+    public GameObject paintBurstPrefab;
     public float globSpeed;
 }
 

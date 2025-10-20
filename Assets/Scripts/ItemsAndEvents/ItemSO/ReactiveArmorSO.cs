@@ -17,5 +17,11 @@ public class ReactiveArmorSO : ItemSO
             var h = c.GetComponent<SuperPupSystems.Helper.Health>();
             if (h) h.Damage(damage);
         }
+
+        if (ctx.paintBurstPrefab) {       // assign this on PlayerManager
+        var fx = Object.Instantiate(ctx.paintBurstPrefab, ctx.player.position, Quaternion.identity);
+        var ps = fx.GetComponentInChildren<ParticleSystem>();
+        if (ps) { var s = ps.shape; s.radius = r; }
+}
     }
 }

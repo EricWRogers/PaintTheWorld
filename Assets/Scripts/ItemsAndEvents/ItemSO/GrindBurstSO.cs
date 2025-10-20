@@ -3,28 +3,26 @@ using UnityEngine;
 [CreateAssetMenu(fileName="GrindBurst", menuName="Items/Legendary/Grind Burst")]
 public class GrindBurstSO : ItemSO
 {
-    public int globsOnStartPerStack = 3;
-    public int globsPerTickPerStack = 1;
+    public int spokesPerStack = 6;   // shots per ring
+    public float spawnHeight = 1.2f;
+    public float ringSpeed = 18f;
 
-    public override void OnGrindStart(PlayerContext ctx, int count)
-    {
-        Launch(ctx, globsOnStartPerStack * Mathf.Max(1, count));
-    }
+    public override void OnGrindStart(PlayerContext ctx, int count) => FireRing(ctx, count);
+    public override void OnGrindTick(PlayerContext ctx, int count)  => FireRing(ctx, count);
 
-    public override void OnGrindTick(PlayerContext ctx, int count)
+    private void FireRing(PlayerContext ctx, int count)
     {
-        Launch(ctx, globsPerTickPerStack * Mathf.Max(1, count));
-    }
+        if (!ctx.paintGlobPrefab || !ctx.player) return;
+        int n = Mathf.Max(1, spokesPerStack) * Mathf.Max(1, count);
+        Vector3 origin = ctx.player.position + Vector3.up * spawnHeight;
 
-    private void Launch(PlayerContext ctx, int n)
-    {
-        if (!ctx.paintGlobPrefab || !ctx.player || n <= 0) return;
-        var targets = EnemyFinder.FindClosest(ctx.player.position, n, ctx.enemyLayer);
-        foreach (var t in targets)
+        for (int i = 0; i < n; i++)
         {
-            var go = Object.Instantiate(ctx.paintGlobPrefab, ctx.player.position + Vector3.up * 1.2f, Quaternion.identity);
+            float ang = (360f / n) * i;
+            Vector3 dir = Quaternion.Euler(0, ang, 0) * Vector3.forward;
+            var go = Object.Instantiate(ctx.paintGlobPrefab, origin, Quaternion.LookRotation(dir));
             var glob = go.GetComponent<PaintGlob>() ?? go.AddComponent<PaintGlob>();
-            glob.Init(t.transform, ctx.globSpeed, HitSource.PaintLauncherGlob, ctx.enemyLayer);
+            glob.Init(null, ringSpeed, HitSource.PaintLauncherGlob, ctx.enemyLayer); //globs fly straight if no target
         }
     }
 }
