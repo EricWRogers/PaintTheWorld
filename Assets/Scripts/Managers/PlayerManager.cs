@@ -90,7 +90,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         {
             RegisterPlayer(player);
             if (startSaveData == null)
-                startSaveData = new SaveData(wallet.amount, health.currentHealth, health.maxHealth, MakeInvEntries(inventory), stats.skills);
+                startSaveData = new SaveData(0, startingHealth, startingHealth, new(), new());
             IsReady = true;
             health.maxHealth = Mathf.RoundToInt(startingHealth * m_healthMult);
             health.currentHealth = health.maxHealth;
@@ -131,18 +131,15 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     public void LoadGame()
     {
-        saveData = new SaveData(
-            wallet.amount,
-            health.currentHealth,
-            health.maxHealth,
-            MakeInvEntries(inventory),
-            stats.skills
-        );
-
-        string json = JsonUtility.ToJson(saveData, true);
-        PlayerPrefs.SetString(SAVE_KEY, json);
-        PlayerPrefs.Save();
-        Debug.Log("Game saved successfully");
+        string json = PlayerPrefs.GetString(SAVE_KEY);
+        Debug.Log("Loading JSON: " + json);
+        saveData = JsonUtility.FromJson<SaveData>(json);
+        // Apply loaded data
+        Debug.Log("Loaded JSON: " + json);
+        health.currentHealth = saveData.health;
+        health.maxHealth = saveData.maxHealth;
+        wallet.amount = saveData.coins;
+        
     }
 
     private void OnApplicationQuit()
@@ -152,6 +149,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public void OnDeath()
     {
         ResetData();
+        GameManager.instance.ResetGame();
         SceneManager.sceneLoaded += OnSceneReloaded;
         SceneManager.LoadSceneAsync("MainMenu");
     }
@@ -165,6 +163,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public void ResetData()
     {
         PlayerPrefs.SetString(SAVE_KEY, JsonUtility.ToJson(startSaveData, true));
+        PlayerPrefs.Save();
         Debug.Log("Save data reset.");
         LoadGame();
     }

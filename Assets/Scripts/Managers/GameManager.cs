@@ -114,6 +114,17 @@ public class GameManager : SceneAwareSingleton<GameManager>
         coinGainModifier = 1f + (scalingData.coinGainIncrease * (currentWave - 1));
     }
 
+    public void ResetGame()
+    {
+        enemyDamageModifier = 0;
+        enemyHealthModifier = 0;
+        bossHealthModifier = 0;
+        enemyCountModifier = 0;
+        coinGainModifier = 0;
+        currentWave = 0;
+        totalEnemyKills = 0;
+    }
+
     // Public accessors for modifiers
     public float EnemyDamageModifier => enemyDamageModifier;
     public float EnemyHealthModifier => enemyHealthModifier;
