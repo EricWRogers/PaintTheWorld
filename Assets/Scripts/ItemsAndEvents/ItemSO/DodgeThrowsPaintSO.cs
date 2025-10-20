@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName="DodgeThrowsPaint", menuName="Items/Common/Dodge Throws Paint")]
 public class DodgeThrowsPaintSO : ItemSO
 {
-    public int globsPerStack = 1;
+    public int globsPerStack = 2;
 
     public override void OnDodged(PlayerContext ctx, int count)
     {
