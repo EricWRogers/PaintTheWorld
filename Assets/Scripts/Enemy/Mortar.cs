@@ -1,6 +1,7 @@
 using UnityEngine;
 using SuperPupSystems.Helper;
 using KinematicCharacterControler;
+using DG.Tweening;
 
 public class Mortar : Enemy
 {
@@ -11,6 +12,7 @@ public class Mortar : Enemy
     public float extraHeight;
     public LayerMask groundMask;
     public LayerMask wallMask;
+    public float hitRadius;
 
     [Header("Indicator Settings")]
     public GameObject targetIndicatorPrefab;
@@ -51,9 +53,7 @@ public class Mortar : Enemy
         if (bulletPrefab == null || firePoint == null) return;
 
         GameObject shell = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        shell.GetComponent<MortarShell>().Launch(firePoint.position, m_targetPos, flightTime, extraHeight);
-
-        HideTargetIndicator();
+        shell.GetComponent<MortarShell>().Launch(firePoint.position, m_targetPos, flightTime, extraHeight, hitRadius);
         m_hasTarget = false;
     }
 
@@ -84,16 +84,9 @@ public class Mortar : Enemy
     private void ShowTargetIndicator(Vector3 position)
     {
         if (targetIndicatorPrefab == null) return;
-
-        if (m_currentIndicator != null)
-            Destroy(m_currentIndicator);
-
         m_currentIndicator = Instantiate(targetIndicatorPrefab, position, Quaternion.identity, transform);
-    }
-
-    private void HideTargetIndicator()
-    {
-        if (m_currentIndicator != null)
-            Destroy(m_currentIndicator);
+        m_currentIndicator.transform.localScale = Vector3.zero;
+        m_currentIndicator.transform.DOScale(new Vector3(hitRadius, hitRadius, hitRadius), aimDelay);
+        Destroy(m_currentIndicator, aimDelay + flightTime);
     }
 }
