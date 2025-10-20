@@ -247,11 +247,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4f52cf66a66348459754d7b274f1478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &267982233 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1915764048430358117, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
-  m_PrefabInstance: {fileID: 583260655}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &320912673
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,19 +521,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9870875
+      value: 0.9904863
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.1601823
+      value: 0.13761044
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000023336213
+      value: 0.00046494987
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000003786947
+      value: -0.000064596505
       objectReference: {fileID: 0}
     - target: {fileID: 3032075839427333033, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -579,7 +574,7 @@ PrefabInstance:
     - target: {fileID: 4272729834898795382, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: parentTransform
       value: 
-      objectReference: {fileID: 267982233}
+      objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.7
@@ -594,19 +589,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9870875
+      value: 0.9904863
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.16018227
+      value: 0.13761044
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.00000002333621
+      value: 0.0004649499
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000003786946
+      value: -0.00006459651
       objectReference: {fileID: 0}
     - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -618,7 +613,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -32.92
       objectReference: {fileID: 0}
     - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -648,6 +643,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7588536519510315746, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: aimPoint
+      value: 
+      objectReference: {fileID: 765926576}
     - target: {fileID: 8724370133860522315, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_Name
       value: PlayerPrefab
@@ -1195,6 +1194,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cbf7db27e02ceba49a44982119156239, type: 3}
+--- !u!114 &765926576 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6969541040226717569, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+  m_PrefabInstance: {fileID: 583260655}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50c1bf046ada2744c9dc99072fae184f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &768138482
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,6 +1826,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1837125462}
     m_Modifications:
+    - target: {fileID: 5716698489953220034, guid: e31291d9cf465ab43805cb1a34704d5b, type: 3}
+      propertyPath: aimPoint
+      value: 
+      objectReference: {fileID: 765926576}
     - target: {fileID: 6274633300428891577, guid: e31291d9cf465ab43805cb1a34704d5b, type: 3}
       propertyPath: m_Name
       value: PaintBallGun

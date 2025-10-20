@@ -12,7 +12,10 @@ public class ItemBullet : RayCastPainter
         Renderer blobRenderer = gameObject.GetComponent<Renderer>();
         blobRenderer.material.SetColor("_BaseColor", paintColor);
         List<GameObject> closeEnemies = EnemyFinder.FindClosest(PlayerManager.instance.player.transform.position, 20, layerMask);
-        transform.LookAt(closeEnemies[0].transform);
+        if (closeEnemies != null && closeEnemies.Count > 0)
+        {
+            transform.LookAt(closeEnemies[0].transform);
+        }
     }
     void Update()
     {
