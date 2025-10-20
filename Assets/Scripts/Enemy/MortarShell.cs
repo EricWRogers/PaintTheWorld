@@ -52,7 +52,7 @@ public class MortarShell : MonoBehaviour
                 Paintable tempPaintable = hit.transform.gameObject.GetComponent<Paintable>();
                 if (tempPaintable != null)
                 {
-                    PaintManager.instance.paint(tempPaintable, hit.ClosestPoint(transform.position), 3f, 1f, 1f, Color.clear);
+                    PaintManager.instance.paint(tempPaintable, hit.ClosestPoint(transform.position), radius, 1f, 1f, Color.clear);
                 }
                 if (hit.transform.gameObject.tag == "Player")
                 {
