@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName="WiderPaintTrail", menuName="Items/Common/Wider Paint Trail")]
 public class WiderPaintTrailSO : ItemSO
 {
-    public float baseMultiplier = 1.8f;
+    public float baseMultiplier = 4f;
 
     public override void OnEquipped(PlayerContext ctx, int count)
     {

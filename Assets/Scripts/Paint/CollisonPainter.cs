@@ -19,13 +19,17 @@ public class CollisonPainter : MonoBehaviour
     }
     public void Paint(Collision other)
     {
-        paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
-        Paintable p = other.collider.GetComponent<Paintable>();
-        if (p != null)
-        {
-            
-            Vector3 pos = other.contacts[0].point;
-            PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);
-        }
+    paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
+    Paintable p = other.collider.GetComponent<Paintable>();
+    if (p != null)
+    {
+        Vector3 pos = other.contacts[0].point;
+
+        float r = radius;
+        var scaler = PlayerManager.instance.player.GetComponent<PlayerPaintWidthScaler>();
+        if (scaler) r = scaler.Apply(r);
+
+        PaintManager.instance.paint(p, pos, r, hardness, strength, paintColor);
+    }
     }
 }

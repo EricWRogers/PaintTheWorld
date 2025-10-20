@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName="PaintMeterLauncher", menuName="Items/Legendary/Paint Meter Launcher")]
 public class PaintMeterLauncherSO : ItemSO
 {
-    public float baseThreshold = 20f; // lower as needed
+    public float baseThreshold = 70f; // lower as needed
     public int globs = 6;
     private float progress;
 
