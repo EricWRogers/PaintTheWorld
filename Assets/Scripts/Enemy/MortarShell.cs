@@ -10,18 +10,20 @@ public class MortarShell : MonoBehaviour
     public int damage;
     public float radius;
     public LayerMask layerMask;
+    [HideInInspector] public GameObject indicator;
     private float timer = 0f;
     private bool isFlying = false;
 
-    public void Launch(Vector3 start, Vector3 end, float time, float height)
+    public void Launch(Vector3 _start, Vector3 _end, float _time, float _height, float _radius)
     {
-        startPos = start;
-        endPos = end;
-        flightTime = time;
-        arcHeight = height;
+        startPos = _start;
+        endPos = _end;
+        flightTime = _time;
+        arcHeight = _height;
         timer = 0f;
         isFlying = true;
         transform.position = startPos;
+        radius = _radius;
     }
 
     void Update()
