@@ -19,17 +19,31 @@ public class CollisonPainter : MonoBehaviour
     }
     public void Paint(Collision other)
     {
-    paintColor = PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint;
-    Paintable p = other.collider.GetComponent<Paintable>();
-    if (p != null)
-    {
-        Vector3 pos = other.contacts[0].point;
+        if (!PaintManager.instance) return;
+
+        var player = PlayerManager.instance ? PlayerManager.instance.player : null;
+
+        var scaler =
+            GetComponent<PlayerPaintWidthScaler>() ??
+            GetComponentInParent<PlayerPaintWidthScaler>() ??
+            (player ? player.GetComponentInChildren<PlayerPaintWidthScaler>(true) : null);
+
+
+        var painter = player ? player.GetComponent<PlayerPaint>() : null;
+        Color paintColor = painter ? painter.selectedPaint : Color.white;
 
         float r = radius;
-        var scaler = PlayerManager.instance.player.GetComponent<PlayerPaintWidthScaler>();
         if (scaler) r = scaler.Apply(r);
 
-        PaintManager.instance.paint(p, pos, r, hardness, strength, paintColor);
-    }
+        foreach (var c in other.contacts)
+        {
+            var p = c.otherCollider.GetComponent<Paintable>();
+            if (!p) p = c.thisCollider.GetComponent<Paintable>();
+            if (!p) continue;
+
+            PaintManager.instance.paint(p, c.point, r, hardness, strength, paintColor);
+            
+            Debug.Log($"[TrailPaint] +{r*r*strength:0.00} at {c.point}");
+        }
     }
 }
