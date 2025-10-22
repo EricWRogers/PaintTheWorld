@@ -20,7 +20,7 @@ public class Mortar : Enemy
     private float m_attackTimer = 0f;
     private Vector3 m_targetPos;
     private GameObject m_currentIndicator;
-    private bool m_hasTarget;
+    [HideInInspector] public bool hasTarget;
 
 
     void Update()
@@ -34,14 +34,28 @@ public class Mortar : Enemy
             Attack();
             m_attackTimer = fireCooldown;
         }
+        if(!hasTarget)
+        {
+            Vector3 direction = PlayerManager.instance.player.transform.position - transform.position;
+            direction.y = 0;
+
+            if (direction == Vector3.zero)
+                return;
+
+            direction = Vector3.Normalize(direction);
+
+            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            transform.localEulerAngles = new Vector3(0, angle, 0);
+            
+        }
     }
 
     public override void Attack()
     {
-        if (!m_hasTarget)
+        if (!hasTarget)
         {
             m_targetPos = GetPlayerTargetPos();
-            m_hasTarget = true;
+            hasTarget = true;
 
             ShowTargetIndicator(m_targetPos);
             Invoke(nameof(FireShell), aimDelay);
@@ -52,9 +66,10 @@ public class Mortar : Enemy
     {
         if (bulletPrefab == null || firePoint == null) return;
 
-        GameObject shell = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        shell.GetComponent<MortarShell>().Launch(firePoint.position, m_targetPos, flightTime, extraHeight, hitRadius);
-        m_hasTarget = false;
+        MortarShell shell = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity).GetComponent<MortarShell>();
+        shell.mortar = this;
+        shell.Launch(firePoint.position, m_targetPos, flightTime, extraHeight, hitRadius);
+        
     }
 
     private Vector3 GetPlayerTargetPos()

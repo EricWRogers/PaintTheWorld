@@ -10,7 +10,7 @@ public class MortarShell : MonoBehaviour
     public int damage;
     public float radius;
     public LayerMask layerMask;
-    [HideInInspector] public GameObject indicator;
+    [HideInInspector] public Mortar mortar;
     private float timer = 0f;
     private bool isFlying = false;
 
@@ -62,11 +62,13 @@ public class MortarShell : MonoBehaviour
                     if (health != null)
                     {
                         health.Damage(damage);
+                        mortar.hasTarget = false;
                         Destroy(gameObject);
                     }
                 }
             }
         }
+        mortar.hasTarget = false;
         Destroy(gameObject);
     }
     

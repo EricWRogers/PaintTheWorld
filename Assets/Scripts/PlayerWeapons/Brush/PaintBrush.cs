@@ -21,10 +21,11 @@ public class PaintBrush : Weapon
         
     }
 
-    void Update()
+    new void Update()
     {
+        base.Update();
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        if (Input.GetButton("Fire1"))
+        if (playerInputs.Attack.IsPressed())
         {
             Fire();
         }
@@ -34,7 +35,7 @@ public class PaintBrush : Weapon
                 DoBoxCastDamage();
             }
 
-        if (Input.GetButtonUp("Fire1"))
+        if (!playerInputs.Attack.IsPressed())
         {
             anim.SetBool(holdAttackBool, false);
         }
