@@ -49,6 +49,7 @@ public class PlayerMovement : PlayerMovmentEngine
     private float m_timeSinceLastJump = 0.0f;
     public bool m_jumpInputPressed = false;
     private float m_jumpBufferTime = 0.25f;
+    private bool wasGrounded = false;
 
     [Header("Wall Riding")]
     [SerializeField] private bool m_isWallRiding = false;
@@ -67,13 +68,15 @@ public class PlayerMovement : PlayerMovmentEngine
     [Header("Rail Grinding")]
     public LayerMask railLayer;
     public SplineContainer splineContainer;
+    private float m_timer;
+    private float betweenRailTime = 0.25f;
     public float railDetectionRadius = 1.5f;
     public float railSnapDistance = 2f;
     public float minGrindSpeed = 3f;
     public float grindExitForce = 8f;
     public bool isGrinding { get; private set; }
     public Rail currentRail;
-
+    private bool wasGrinding = false;
     public float railProgress;
     public float grindSpeed;
     public float m_railDir = 1f;
@@ -109,24 +112,28 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         HandleRotation();
 
-       
-        if (TryStartGrinding() || isGrinding)
+
+        if ((TryStartGrinding() || isGrinding) && m_timer >= betweenRailTime)
         {
             ContinueGrinding();
         }
         else if (WallRun())
         {
+            Debug.Log("handle Wall RUn IF");
             transform.position = MovePlayer(m_velocity * Time.deltaTime);
         }
         else if (HandleDashing())
         {
+            Debug.Log("Handle Dashing If");
             // Dashing handles its own momentum
             transform.position = MovePlayer(m_velocity * Time.deltaTime);
         }
         else
         {
+            Debug.Log("Handle Movment IF");
             HandleRegularMovement();
         }
+        m_timer += Time.deltaTime;
     }
 
     public void HandleFOV()
@@ -218,9 +225,18 @@ public class PlayerMovement : PlayerMovmentEngine
         m_velocity.z = horizontalVel.z;
 
         if (!canWalk)
+        {
+            wasGrounded = false;
             m_velocity += gravity * Time.deltaTime;
+        }
         else
-            m_velocity.y = 0f;
+        {
+            if (!wasGrounded)
+            {
+                m_velocity.y = 0f;
+                wasGrounded = true;
+            }
+        }        
 
         // === Jump handling ===
         bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount >0) && m_timeSinceLastJump >= jumpCooldown;
@@ -238,11 +254,12 @@ public class PlayerMovement : PlayerMovmentEngine
             m_timeSinceLastJump += Time.deltaTime;
         }
 
-        // === Apply movement ===
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
-            if (onGround && !attemptingJump)
-                SnapPlayerDown();
+        if (onGround && !attemptingJump && groundedState.angle < 10)
+            SnapPlayerDown();
+
+        Debug.Log(groundedState.angle);
     }
 
     bool HandleDashing()
@@ -401,6 +418,11 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         // Already grinding? Continue.
         if (isGrinding) return true;
+        if(wasGrinding)
+        {
+            wasGrinding = false;
+            return false;
+        }
         // Detect rails nearby
         Collider[] railColliders = Physics.OverlapSphere(m_railDetectionPoint.position, railDetectionRadius, railLayer);
         if (railColliders.Length == 0) return false;
@@ -434,8 +456,6 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 position = FindClosestPointOnSpline(out float progress);
 
         railProgress = progress;
-        Vector3 worldPos = SplineUtility.EvaluatePosition(splineContainer.Splines[0], progress);
-        Vector3 worldDir = ((Vector3)SplineUtility.EvaluateTangent(splineContainer.Splines[0], progress)).normalized;
 
         // Use horizontal velocity magnitude as grind speed
         Vector3 horizontalVelocity = new Vector3(m_velocity.x, 0, m_velocity.z);
@@ -443,8 +463,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
 
         Vector3 pos = splineContainer.Splines[0].EvaluatePosition(progress);
-        transform.position = position + splineContainer.transform.position + Vector3.up;
-        Debug.Log("Start movment Pos: " + pos);
+        transform.position = position + splineContainer.transform.position + Vector3.up * 1.4f;
 
     }
 
@@ -452,6 +471,7 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         if (splineContainer == null || splineContainer.Splines.Count == 0)
         {
+            
             ExitGrinding();
             return;
         }
@@ -467,33 +487,35 @@ public class PlayerMovement : PlayerMovmentEngine
 
   
         Vector3 position = (Vector3)spline.EvaluatePosition(railProgress);
-        Debug.Log("Update POs: " + position);
         
 
         if (m_velocity.magnitude < 5) m_velocity = m_velocity.normalized * grindSpeed;
         Vector3 dir = (transform.position - position).normalized;
-        transform.position = position + splineContainer.transform.position+ Vector3.up;
+        transform.position = position + splineContainer.transform.position+ Vector3.up *1.4f;
 
 
         float splineLength = splineContainer.Splines[0].GetLength();
 
         float distanceDelta = grindSpeed * Time.deltaTime;
         railProgress += (distanceDelta / splineLength);
-            if (railProgress >= 0.99) ExitGrinding();
-        SnapPlayerDown();
+        if (railProgress >= 0.999)   ExitGrinding();
+        else SnapPlayerDown();
     }
 
     void ExitGrinding()
     {
+        Debug.Log("Exited Grinding");
         if (!isGrinding) return;
         isGrinding = false;
-
+        wasGrinding = true;
         // Give exit velocity
-        if (currentRail != null || splineContainer != null)
+        if (splineContainer != null)
         {
             m_velocity = Vector3.up * jumpForce;
 
         }
+        transform.position = MovePlayer(m_velocity * Time.deltaTime);
+        m_timer = 0f;
         splineContainer = null;
         currentRail = null;
         railProgress = 0f;
