@@ -51,6 +51,10 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
 
     public void ChooseSpawnArea()
     {
+        if(spawnerAreas.Count == 0)
+        {
+            return;
+        }
         spawnerAreas[selectedArea].indicator.SetActive(false);
         selectedArea = Random.Range(0, spawnerAreas.Count);
         spawnerAreas[selectedArea].indicator.SetActive(true);

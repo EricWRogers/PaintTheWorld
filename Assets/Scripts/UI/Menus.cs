@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class Menus : MonoBehaviour
 {
+    public string sceneToLoad;
     void Start()
     {
         GameManager.instance.PauseGame();
@@ -11,7 +12,7 @@ public class Menus : MonoBehaviour
     public void PlayGame()
     {
         GameManager.instance.ResumeGame();
-        SceneManager.LoadScene("RoofTops");
+        SceneManager.LoadScene(sceneToLoad);
     }
     public void Options()
     {

@@ -71,7 +71,8 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public float globSpeed = 18f;
     public int maxJumpCount = 1;
 
-    public PlayerContext GetContext() => new PlayerContext {
+    public PlayerContext GetContext() => new PlayerContext
+    {
         player = player ? player.transform : null,
         playerHealth = health,
         enemyLayer = enemyLayer,
@@ -80,6 +81,15 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         healAuraPrefab = healAuraPrefab,
         globSpeed = globSpeed
     };
+
+    new void Awake()
+    {
+        base.Awake();
+        playerInputs = new PlayerInputActions().Player;
+        uIInputs = new PlayerInputActions().UI;
+        uIInputs.Disable();
+        playerInputs.Enable();
+    }
 
     void Start()
     {
@@ -99,10 +109,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             IsReady = true;
             health.maxHealth = Mathf.RoundToInt(startingHealth * m_healthMult);
             health.currentHealth = health.maxHealth;
-            playerInputs = new PlayerInputActions().Player;
-            uIInputs = new PlayerInputActions().UI;
-            uIInputs.Disable();
-            playerInputs.Enable();
+
         }
     }
 
@@ -201,8 +208,9 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         IsReady = true;
     }
 
-    void OnDisable()
+    new void OnDestroy()
     {
+        base.OnDestroy();
         playerInputs.Disable();
     }
 }
