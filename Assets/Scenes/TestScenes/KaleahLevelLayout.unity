@@ -5214,6 +5214,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7588536519510315746, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: targetRadius
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8112606925083192734, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: HorizontalAxis.Center
       value: 0
@@ -5227,8 +5231,16 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 9104941373587113884, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: airAccelMult
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104941373587113884, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: rotationSpeed
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104941373587113884, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: groundAccelMult
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6904136681751602516, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
