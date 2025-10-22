@@ -1,5 +1,7 @@
 using UnityEngine;
 using KinematicCharacterControler;
+using UnityEngine.Splines;
+using Unity.Mathematics;
 
 public class PlayerMovement : PlayerMovmentEngine
 {
@@ -61,10 +63,11 @@ public class PlayerMovement : PlayerMovmentEngine
     private Vector3 m_wallNormal;
     private Vector3 m_wallRunDir;
     public float wallCheckDistance = 1f;
-    
+
 
     [Header("Rail Grinding")]
     public LayerMask railLayer;
+    public SplineContainer splineContainer;
     public float railDetectionRadius = 1.5f;
     public float railSnapDistance = 2f;
     public float minGrindSpeed = 3f;
@@ -396,39 +399,74 @@ public class PlayerMovement : PlayerMovmentEngine
     #region Rail Grinding
     bool TryStartGrinding()
     {
+        // Already grinding? Continue.
         if (isGrinding) return true;
-
+    
+        // Detect rails nearby
         Collider[] railColliders = Physics.OverlapSphere(m_railDetectionPoint.position, railDetectionRadius, railLayer);
-
-        Rail closestRail = null;
-        float closestDistance = float.MaxValue;
+        if (railColliders.Length == 0) return false;
+    
+        SplineContainer bestContainer = null;
+        Spline bestSpline = null;
         float bestProgress = 0f;
-
+        Vector3 bestPoint = Vector3.zero;
+        float bestDistance = float.MaxValue;
+    
+        // Search for the closest spline point
         foreach (var collider in railColliders)
         {
-            Rail rail = collider.GetComponent<Rail>() == null ? collider.GetComponentInParent<Rail>() : collider.GetComponent<Rail>();
-             if (rail == null) continue;
-
-            float progress;
-            Vector3 closestPoint = GetClosestPointOnRail(rail, transform.position, out progress);
-            float distance = Vector3.Distance(transform.position, closestPoint);
-
-            if (distance < closestDistance && distance <= railSnapDistance)
+            SplineContainer container = collider.GetComponentInParent<SplineContainer>();
+            if (container == null || container.Splines.Count == 0) continue;
+    
+            Spline spline = container.Splines[0]; // You can later extend this for multiple splines
+    
+            Ray ray = new Ray(transform.position, Vector3.forward);
+                float3 nearest;
+                float distance;
+            SplineUtility.GetNearestPoint(spline, ray, out nearest, out distance);
+                Vector3 nearestPos = (Vector3)nearest;
+                float t = distance;
+             distance = Vector3.Distance(transform.position, nearestPos);
+    
+            if (distance < bestDistance && distance <= railSnapDistance)
             {
-                closestDistance = distance;
-                closestRail = rail;
-                bestProgress = progress;
+                bestDistance = distance;
+                bestProgress = t;
+                bestContainer = container;
+                bestSpline = spline;
             }
         }
-
-        if (closestRail != null)
+    
+        // If a valid spline was found within snap distance, start grinding
+        if (bestContainer != null && bestSpline != null)
         {
-            StartGrinding(closestRail, bestProgress);
+            StartGrinding(bestContainer, bestSpline, bestProgress);
             return true;
         }
+    
         return false;
     }
+    bool TryGetClosestPointOnSpline(Spline spline, Vector3 position, out float progress, out Vector3 closest)
+    {
+        progress = 0f;
+        closest = spline.EvaluatePosition(0f);
+        float minDist = float.MaxValue;
 
+        const int sampleCount = 50; // increase for precision
+        for (int i = 0; i <= sampleCount; i++)
+        {
+            float t = i / (float)sampleCount;
+            Vector3 sample = spline.EvaluatePosition(t);
+            float dist = Vector3.Distance(sample, position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = sample;
+                progress = t;
+            }
+        }
+        return minDist < railSnapDistance;
+    }
     Vector3 GetClosestPointOnRail(Rail rail, Vector3 position, out float progress)
     {
         progress = 0f;
@@ -474,100 +512,70 @@ public class PlayerMovement : PlayerMovmentEngine
         return lineStart + lineDirection * projectedDistance;
     }
 
-    void StartGrinding(Rail rail, float progress)
+    void StartGrinding(SplineContainer container, Spline spline, float progress)
     {
         isGrinding = true;
-        currentRail = rail;
+        splineContainer = container;
         railProgress = progress;
 
-        // Use horizontal momentum magnitude for grind speed
-        Vector3 horizontalMomentum = new Vector3(m_velocity.x, 0, m_velocity.z);
-        grindSpeed = Mathf.Max(horizontalMomentum.magnitude, speed);
+        // Evaluate spline direction and position
+        Vector3 worldPos = SplineUtility.EvaluatePosition(spline, progress);
+        Vector3 worldDir = ((Vector3)SplineUtility.EvaluateTangent(spline, progress)).normalized;
 
-        // Determine grind direction based on forward facing
-        Vector3 railDir = rail.GetDirectionOnRail(progress);
-        float forwardDot = Vector3.Dot(transform.forward, railDir);
-        float backwardDot = Vector3.Dot(transform.forward, -railDir);
+        // Use horizontal velocity magnitude as grind speed
+        Vector3 horizontalVelocity = new Vector3(m_velocity.x, 0, m_velocity.z);
+        grindSpeed = Mathf.Max(horizontalVelocity.magnitude, minGrindSpeed);
+
+        // Determine grind direction based on facing
+        float forwardDot = Vector3.Dot(transform.forward, worldDir);
+        float backwardDot = Vector3.Dot(transform.forward, -worldDir);
         m_railDir = forwardDot > backwardDot ? 1f : -1f;
 
-        // Snap to rail
-        Vector3 railPosition = rail.GetPointOnRail(progress);
-        transform.position = railPosition;
+        transform.position += MovePlayer(transform.position -worldPos);
 
-        // Set momentum along rail (preserve speed, change direction)
-        railDir *= m_railDir;
-        m_velocity = railDir * grindSpeed;
+        worldDir *= m_railDir;
+        m_velocity = worldDir * grindSpeed;
+
     }
 
-    void ContinueGrinding()
+ void ContinueGrinding()
+{
+    if (splineContainer == null || splineContainer.Splines.Count == 0)
     {
-        if (currentRail == null)
-        {
-            ExitGrinding();
-            return;
-        }
-
-        // Exit on jump input
-        if (m_jumpInputPressed)
-        {
-            ExitGrinding();
-            return;
-        }
-
-        // Exit if at end of non-looping rail
-        if (!currentRail.isLoop && (railProgress >= 1f || railProgress <= 0f))
-        {
-            ExitGrinding();
-            return;
-        }
-
-        // Calculate movement along rail
-        Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
-        m_velocity = railDirection * grindSpeed;
-
-        // Clamp speed
-        if (m_velocity.magnitude > grindSpeed)
-        {
-            m_velocity = m_velocity.normalized * grindSpeed;
-        }
-
-        // Move player
-        transform.position = MovePlayer(m_velocity * Time.deltaTime);
-
-        // Update progress along rail
-        float railLength = currentRail.GetRailLength();
-        if (railLength > 0)
-        {
-            float intendedDistance = grindSpeed * Time.deltaTime;
-            float progressDelta = (intendedDistance / railLength) * m_railDir;
-            railProgress += progressDelta;
-        }
-
-        // Correct drift from ideal rail path
-        Vector3 idealRailPosition = currentRail.GetPointOnRail(railProgress);
-        float driftDistance = Vector3.Distance(transform.position, idealRailPosition);
-        float maxAllowedDrift = 0.5f;
-
-        if (driftDistance > maxAllowedDrift)
-        {
-            // Snap back if drifted too far
-            float correctedProgress;
-            Vector3 closestPoint = GetClosestPointOnRail(currentRail, transform.position, out correctedProgress);
-            railProgress = correctedProgress;
-            idealRailPosition = closestPoint;
-            driftDistance = Vector3.Distance(transform.position, idealRailPosition);
-        }
-
-        if (driftDistance > 0f)
-        {
-            Vector3 correctionDirection = (idealRailPosition - transform.position).normalized;
-            float maxCorrectionThisFrame = 10f * Time.deltaTime;
-            float correctionAmount = Mathf.Min(driftDistance, maxCorrectionThisFrame);
-            transform.position += correctionDirection * correctionAmount;
-        }
-
-        SnapPlayerDown();
+        ExitGrinding();
+        return;
     }
+
+    // Use the first spline in the container for now
+    var spline = splineContainer.Splines[0];
+
+    // Exit conditions
+    if (m_jumpInputPressed)
+    {
+        ExitGrinding();
+        return;
+    }
+
+    // Move along spline
+    Vector3 position = spline.EvaluatePosition(railProgress);
+    Vector3 direction = ((Vector3)spline.EvaluateTangent(railProgress)).normalized * m_railDir;
+
+    // Apply velocity and position
+    m_velocity = direction * grindSpeed;
+    transform.position = position;
+
+        // Progress based on speed and spline length
+    float splineLength = splineContainer.CalculateLength(0);
+    float distanceDelta = grindSpeed * Time.deltaTime;
+    railProgress += (distanceDelta / splineLength) * m_railDir;
+
+    // Optional: rotate to align to spline direction
+    transform.rotation = Quaternion.Slerp(
+        transform.rotation,
+        Quaternion.LookRotation(direction, Vector3.up),
+        Time.deltaTime * rotationSpeed
+    );
+}
 
     void ExitGrinding()
     {
@@ -576,7 +584,7 @@ public class PlayerMovement : PlayerMovmentEngine
         isGrinding = false;
 
         // Give exit velocity
-        if (currentRail != null)
+        if (currentRail != null || splineContainer != null)
         {
             Vector3 railDirection = currentRail.GetDirectionOnRail(railProgress) * m_railDir;
             
@@ -584,7 +592,7 @@ public class PlayerMovement : PlayerMovmentEngine
             Vector3 horizontalVelocity = railDirection * Mathf.Min(grindSpeed, maxSpeed);
             m_velocity = new Vector3(horizontalVelocity.x, grindExitForce, horizontalVelocity.z);
         }
-
+        splineContainer = null;
         currentRail = null;
         railProgress = 0f;
         grindSpeed = 0f;
