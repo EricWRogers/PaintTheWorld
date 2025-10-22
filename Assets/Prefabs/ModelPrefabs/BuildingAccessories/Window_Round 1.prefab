@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 5504967910107184830}
   - component: {fileID: 4611608564445482012}
   - component: {fileID: 5056100955849620066}
-  m_Layer: 0
+  - component: {fileID: 46901687726687388}
+  m_Layer: 9
   m_Name: rounded_window
-  m_TagString: Untagged
+  m_TagString: Paintable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,6 +111,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -5338368162089326477, guid: 66b4c21ffc53eeb46a877330a1e0609f, type: 3}
+--- !u!114 &46901687726687388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679605246365668571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extendsIslandOffset: 1
 --- !u!1 &5912919259481038036
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,10 +133,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 377735571201605491}
-  - component: {fileID: -8599326306076684014}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Window_Round 1
-  m_TagString: Paintable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -143,16 +156,3 @@ Transform:
   - {fileID: 1958273657872314421}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &-8599326306076684014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5912919259481038036}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  extendsIslandOffset: 1

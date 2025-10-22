@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 984382812601781732}
-  - component: {fileID: -550739558188687919}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FireEscape
-  m_TagString: Paintable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33,19 +32,6 @@ Transform:
   - {fileID: 2589521905299338183}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &-550739558188687919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2817197988337066127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  extendsIslandOffset: 1
 --- !u!1 &4489536147387913416
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,9 +44,10 @@ GameObject:
   - component: {fileID: 4125034230420054141}
   - component: {fileID: 3139781428550814636}
   - component: {fileID: 2823050540342471497}
-  m_Layer: 0
+  - component: {fileID: 3223838299315531393}
+  m_Layer: 7
   m_Name: FireEscapeMainMesh
-  m_TagString: Untagged
+  m_TagString: Paintable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -155,3 +142,16 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 3352067942444113772, guid: a92edf18409b77549bc8e40b38329386, type: 3}
+--- !u!114 &3223838299315531393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4489536147387913416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extendsIslandOffset: 1

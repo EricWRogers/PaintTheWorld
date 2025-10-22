@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 1313824701524205653}
   - component: {fileID: 3378780248685205135}
   - component: {fileID: 4415712999703043794}
-  m_Layer: 0
+  - component: {fileID: 3466509480769582750}
+  m_Layer: 7
   m_Name: FireEscapeMainMesh
-  m_TagString: Untagged
+  m_TagString: Paintable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,6 +110,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 3352067942444113772, guid: a92edf18409b77549bc8e40b38329386, type: 3}
+--- !u!114 &3466509480769582750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3553555518015286139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extendsIslandOffset: 1
 --- !u!1 &6858066884347925894
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,9 +135,10 @@ GameObject:
   - component: {fileID: 1970475635693514350}
   - component: {fileID: 1792108762065755083}
   - component: {fileID: 6742376789035733514}
-  m_Layer: 0
+  - component: {fileID: 6498237422809716218}
+  m_Layer: 7
   m_Name: Ladder
-  m_TagString: Untagged
+  m_TagString: Paintable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -217,6 +232,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.0000007, y: 2, z: 13.260253}
   m_Center: {x: 0.00048828125, y: -0.000002026558, z: 5.6300654}
+--- !u!114 &6498237422809716218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858066884347925894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extendsIslandOffset: 1
 --- !u!1 &8189178622790145374
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,10 +254,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2248498179695598054}
-  - component: {fileID: 4930958204393557452}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FireEscapeStart
-  m_TagString: Paintable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -251,16 +278,3 @@ Transform:
   - {fileID: 6308392858344031537}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &4930958204393557452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8189178622790145374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  extendsIslandOffset: 1

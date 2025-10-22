@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 2409613729990794292}
   - component: {fileID: 4589442984721957393}
   - component: {fileID: 1519010630216880017}
-  m_Layer: 0
+  - component: {fileID: 280741790890750956}
+  m_Layer: 9
   m_Name: long_window
-  m_TagString: Untagged
+  m_TagString: Paintable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,6 +110,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 120.516495, y: 71.47212, z: 2.6902544}
   m_Center: {x: -0.0012817383, y: 35.736, z: 1.3448802}
+--- !u!114 &280741790890750956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226283391058783349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extendsIslandOffset: 1
 --- !u!1 &6810174812145115848
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,10 +132,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6698748383722679678}
-  - component: {fileID: -5144377416953646779}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Window_Long
-  m_TagString: Paintable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -142,16 +155,3 @@ Transform:
   - {fileID: 6303852454942471972}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &-5144377416953646779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6810174812145115848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  extendsIslandOffset: 1
