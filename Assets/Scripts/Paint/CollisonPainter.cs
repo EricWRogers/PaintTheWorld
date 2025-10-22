@@ -43,7 +43,6 @@ public class CollisonPainter : MonoBehaviour
 
             PaintManager.instance.paint(p, c.point, r, hardness, strength, paintColor);
             
-            Debug.Log($"[TrailPaint] +{r*r*strength:0.00} at {c.point}");
         }
     }
 }
