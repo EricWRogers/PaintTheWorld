@@ -16,6 +16,13 @@ public class ExplosivePaintSO : ItemSO
             var h = c.GetComponent<SuperPupSystems.Helper.Health>();
             if (h) h.Damage(damage);
         }
+
+        if (ctx.paintBurstPrefab) {
+        var fx = Object.Instantiate(ctx.paintBurstPrefab, enemy.transform.position, Quaternion.identity);
+        var ps = fx.GetComponentInChildren<ParticleSystem>();
+        if (ps) { var s = ps.shape; s.radius = r; } // r is damage radius
+        }
+
     }
 }
 

@@ -3,15 +3,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName="PaintMeterLauncher", menuName="Items/Legendary/Paint Meter Launcher")]
 public class PaintMeterLauncherSO : ItemSO
 {
-    public float baseThreshold = 100f;   // tune to your paint units
+    public float baseThreshold = 110f; // lower as needed
     public int globs = 6;
-
     private float progress;
 
     public override void OnPaintApplied(PlayerContext ctx, float amount, int count)
     {
-        float threshold = Mathf.Max(1f, baseThreshold) / Mathf.Max(1, count); // stacking lowers requirement
         progress += Mathf.Max(0, amount);
+        float threshold = Mathf.Max(1f, baseThreshold) / Mathf.Max(1, count);
         if (progress >= threshold)
         {
             progress = 0f;

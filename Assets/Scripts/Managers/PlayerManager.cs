@@ -63,6 +63,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     [Header("Item Runtime Context")]
     public LayerMask enemyLayer;
     public GameObject paintGlobPrefab;
+    public GameObject paintBurstPrefab;
     public GameObject healAuraPrefab;
     public float globSpeed = 18f;
     public int maxJumpCount = 1;
@@ -72,6 +73,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         playerHealth = health,
         enemyLayer = enemyLayer,
         paintGlobPrefab = paintGlobPrefab,
+        paintBurstPrefab = paintBurstPrefab,
         healAuraPrefab = healAuraPrefab,
         globSpeed = globSpeed
     };

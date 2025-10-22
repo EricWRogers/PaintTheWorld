@@ -1,47 +1,72 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ItemEffectsManager : MonoBehaviour
 {
-    private Inventory inv;
-    private PlayerManager pm;
+    Inventory inv;
+    PlayerManager pm;
 
     void OnEnable()
     {
-        pm = PlayerManager.instance;
-        if (!pm) return;
-
-        inv = pm.inventory;
-        if (inv != null) inv.onChanged.AddListener(ReapplyEquippedEffects);
-
-        // Also reapply after loads
-        ReapplyEquippedEffects();
+        StartCoroutine(InitAndWire());
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnDisable()
     {
-        if (inv != null) inv.onChanged.RemoveListener(ReapplyEquippedEffects);
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        if (inv) inv.onChanged.RemoveListener(Reapply);
     }
 
-    public void ReapplyEquippedEffects()
+    IEnumerator InitAndWire()
     {
-        if (!pm || pm.player == null) return;
+        // Wait until PlayerManager and Player are ready
+        while ((pm = PlayerManager.instance) == null || pm.player == null) yield return null;
 
-        // reset to default targets
-        var scaler = pm.player.GetComponent<PlayerPaintWidthScaler>();
-        if (scaler) scaler.widthMultiplier = 1f;
+        // Wire inventory change
+        inv = pm.inventory;
+        if (inv != null) inv.onChanged.AddListener(Reapply);
 
-        var jumps = pm.player.GetComponent<ExtraJumpController>();
-        if (jumps) jumps.extraJumpsGranted = 0;
+        
+        yield return null; 
+        Reapply();
+    }
 
-        // Now let each item apply
+    void OnSceneLoaded(Scene s, LoadSceneMode m)
+    {
+        
+        StartCoroutine(InitAndWire());
+    }
+
+    public void Reapply()
+    {
+        pm = PlayerManager.instance;
+        if (!pm || !pm.player) { Debug.Log("[ItemEffectsManager] Reapply skipped: no player."); return; }
+
+        
+        var scaler = pm.player.GetComponentInChildren<PlayerPaintWidthScaler>(true);
+        if (scaler) { scaler.widthMultiplier = 1f; Debug.Log($"[ItemEffectsManager] Reset widthMultiplier on {scaler.gameObject.name}"); }
+
+        var jumps = pm.player.GetComponentInChildren<ExtraJumpController>(true);
+        if (jumps) { jumps.extraJumpsGranted = 0; }
+
+        // Re-apply every owned item’s OnEquipped
+        if (pm.inventory == null || pm.inventory.items == null) return;
+
         var ctx = pm.GetContext();
-        var list = pm.inventory.items;
-
-        for (int i = 0; i < list.Count; i++)
+        foreach (var s in pm.inventory.items)
         {
-            var s = list[i];
             if (s?.item == null || s.count <= 0) continue;
-            s.item.OnEquipped(ctx, s.count);
+            try {
+                s.item.OnEquipped(ctx, s.count);
+                Debug.Log($"[ItemEffectsManager] Equipped {s.item.id} x{s.count}");
+            } catch (System.Exception ex) {
+                Debug.LogError($"[ItemEffectsManager] OnEquipped error for {s.item.name}: {ex}");
+            }
         }
+
+        
+        if (scaler) Debug.Log($"[ItemEffectsManager] widthMultiplier now = {scaler.widthMultiplier}");
     }
 }

@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3073684157256886998}
   - component: {fileID: 8738232361196998708}
   - component: {fileID: 8148210396567737385}
+  - component: {fileID: 2119148475012298221}
   m_Layer: 0
   m_Name: PlayerManager
   m_TagString: Untagged
@@ -60,6 +61,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   paintGlobPrefab: {fileID: 3928063777681849571, guid: 0cc838efb0d540841802ad9f303dfa3c, type: 3}
+  paintBurstPrefab: {fileID: 1996810351807582178, guid: a83920a66dff5aa41a08cb1642889de1, type: 3}
   healAuraPrefab: {fileID: 1996810351807582178, guid: e4337ae2ff8f8c04f81b35f278c3802a, type: 3}
   globSpeed: 18
   maxJumpCount: 1
@@ -214,5 +216,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ebd650f223011e243aaf5f3042b59ba1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2119148475012298221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7371480379964606641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3550658cdc03bcd46a51b608be4d9a13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
