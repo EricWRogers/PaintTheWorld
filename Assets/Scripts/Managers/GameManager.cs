@@ -12,6 +12,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public int enemyAmount = 30;
     public int totalEnemyKills;
     public int currKilledInWave;
+    public GameObject pauseMenu;
 
     [Header("CombatCycle")]
     public float firstWaveTimer;
@@ -89,13 +90,17 @@ public class GameManager : SceneAwareSingleton<GameManager>
         Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        PlayerManager.instance.playerInputs.Disable();
+        PlayerManager.instance.uIInputs.Enable();
     }
     
     public void ResumeGame()
     {
-         Time.timeScale = 1;
+        Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        PlayerManager.instance.playerInputs.Enable();
+        PlayerManager.instance.uIInputs.Disable();
     }
 
     private void RecalculateScaling()

@@ -56,6 +56,9 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     private float m_healthMult => PlayerManager.instance.stats.skills[0].currentMult;
     public int startingHealth;
 
+    public PlayerInputActions.PlayerActions playerInputs;
+    public PlayerInputActions.UIActions uIInputs;
+
     private SaveData saveData;
     private const string SAVE_KEY = "PlayerSaveData";
     private SaveData startSaveData;
@@ -96,6 +99,24 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             IsReady = true;
             health.maxHealth = Mathf.RoundToInt(startingHealth * m_healthMult);
             health.currentHealth = health.maxHealth;
+            playerInputs = new PlayerInputActions().Player;
+            uIInputs = new PlayerInputActions().UI;
+            uIInputs.Disable();
+            playerInputs.Enable();
+        }
+    }
+
+    void Update()
+    {
+        if (playerInputs.Pause.IsPressed())
+        {
+            GameManager.instance.PauseGame();
+            GameManager.instance.pauseMenu.SetActive(true);
+        }
+        if (uIInputs.Resume.IsPressed())
+        {
+            GameManager.instance.ResumeGame();
+            GameManager.instance.pauseMenu.SetActive(false);
         }
     }
 
@@ -178,6 +199,11 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             RegisterPlayer(player);
 
         IsReady = true;
+    }
+
+    void OnDisable()
+    {
+        playerInputs.Disable();
     }
 }
 

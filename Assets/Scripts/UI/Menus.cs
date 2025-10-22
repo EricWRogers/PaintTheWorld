@@ -17,6 +17,19 @@ public class Menus : MonoBehaviour
     {
 
     }
+
+    public void Resume(GameObject _pauseHud)
+    {
+        GameManager.instance.ResumeGame();
+        _pauseHud.SetActive(false);
+    }
+    
+    public void MainMenu(GameObject _pauseHud)
+    {
+        SceneManager.LoadScene("MainMenu");
+        _pauseHud.SetActive(false);
+    }
+
     public void Quit()
     {
         #if UNITY_EDITOR
