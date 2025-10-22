@@ -41,6 +41,19 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
             m_spawnCount++;
             m_timer = spawnDelay;
         }
+
+        foreach(EnemySpawning spawner in spawnerAreas)
+        {
+            if (spawner == spawnerAreas[selectedArea])
+            {
+                spawner.indicator.SetActive(true);
+            }
+            else
+            {
+                spawner.indicator.SetActive(false);
+            }
+        }
+
     }
     
     public void ResetWave()

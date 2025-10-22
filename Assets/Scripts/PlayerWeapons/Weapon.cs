@@ -22,7 +22,7 @@ public abstract class Weapon : MonoBehaviour
     public void Start()
     {
         player = PlayerManager.instance.player;
-        playerInputs = new PlayerInputActions().Player;
+        playerInputs = PlayerManager.instance.playerInputs;
         playerInputs.Enable();
         if (player == null)
         {
