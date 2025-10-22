@@ -15,11 +15,15 @@ public abstract class Weapon : MonoBehaviour
     [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;
     [HideInInspector] public float attackSpeedMult = 1; //=> dps * PlayerManager.instance.stats.skills[4].currentMult; 
 
+    public PlayerInputActions.PlayerActions playerInputs;
+
     public abstract void Fire();
 
     public void Start()
     {
         player = PlayerManager.instance.player;
+        playerInputs = new PlayerInputActions().Player;
+        playerInputs.Enable();
         if (player == null)
         {
             Debug.Log(gameObject.name + " is missing player");
@@ -40,7 +44,12 @@ public abstract class Weapon : MonoBehaviour
                 firePoint.LookAt(aimPoint.transform.position + aimPoint.transform.forward * aimPoint.length);
             }
         }
-        
+
+    }
+    
+    void OnDestroy()
+    {
+        playerInputs.Disable();
     }
 
     public void DestroyWeapon()

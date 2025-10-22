@@ -29,7 +29,7 @@ public class PowerPainter : Weapon
     {
         base.Update();
         // Just handle player input here
-        if (Input.GetButton("Fire1"))
+        if (playerInputs.Attack.IsPressed())
         {
             Fire();
         }
