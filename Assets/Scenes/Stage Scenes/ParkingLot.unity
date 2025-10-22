@@ -174,7 +174,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!65 &3451239
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -379,7 +380,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!208 &51585830
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -727,7 +729,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!1 &92236703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1013,7 +1016,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!1 &136596816
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,7 +1469,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!64 &218844770
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2394,7 +2399,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!1 &383021987
 GameObject:
   m_ObjectHideFlags: 0
@@ -4089,11 +4095,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAreaSize: {x: 44.3, y: 0.3, z: 10}
-  totalSpawned: 0
-  poolSize: 20
-  objectsToSpawn:
-  - {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
-  spawnAllOnStart: 0
+  layerToCheckForSpawning:
+    serializedVersion: 2
+    m_Bits: 0
+  indicator: {fileID: 0}
 --- !u!1 &992350756
 GameObject:
   m_ObjectHideFlags: 0
@@ -4386,11 +4391,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAreaSize: {x: 44.3, y: 0.3, z: 10}
-  totalSpawned: 0
-  poolSize: 20
-  objectsToSpawn:
-  - {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
-  spawnAllOnStart: 0
+  layerToCheckForSpawning:
+    serializedVersion: 2
+    m_Bits: 0
+  indicator: {fileID: 0}
 --- !u!1 &1040331176
 GameObject:
   m_ObjectHideFlags: 0
@@ -5781,7 +5785,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!1 &1219530712
 GameObject:
   m_ObjectHideFlags: 0
@@ -6233,7 +6238,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!208 &1345879114
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -6581,7 +6587,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!208 &1401180807
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -6807,7 +6814,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!208 &1429318789
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -7875,9 +7883,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1044665414035860105, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1044665414035860105, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6
+      objectReference: {fileID: 0}
     - target: {fileID: 4154529207948082809, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_Radius
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8196,7 +8228,8 @@ MonoBehaviour:
   railWidth: 0.5
   isLoop: 0
   baseGrindSpeed: 8
-  gravityInfluence: 0
+  speedBoostMultiplier: 1
+  railBoost: 0
 --- !u!65 &1738155770
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9295,11 +9328,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAreaSize: {x: 49.3, y: 0.3, z: 63.7}
-  totalSpawned: 0
-  poolSize: 20
-  objectsToSpawn:
-  - {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
-  spawnAllOnStart: 0
+  layerToCheckForSpawning:
+    serializedVersion: 2
+    m_Bits: 0
+  indicator: {fileID: 0}
 --- !u!1 &1953845390
 GameObject:
   m_ObjectHideFlags: 0
