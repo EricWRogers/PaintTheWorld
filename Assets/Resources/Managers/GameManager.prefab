@@ -715,7 +715,7 @@ MonoBehaviour:
   firstWaveTimer: 5
   prepTimer: 10
   inWave: 0
-  timer: 0
+  timer: {fileID: 5278923029807091084}
   scalingData: {fileID: 11400000, guid: 6abab9b56d5299243ae8c5866198b36a, type: 2}
   m_isPaused: 0
 --- !u!114 &5278923029807091084
@@ -732,8 +732,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeout:
     m_PersistentCalls:
-      m_Calls: []
-  autoStart: 1
+      m_Calls:
+      - m_Target: {fileID: 3320374524644146964}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: StartWave
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  autoStart: 0
   autoRestart: 0
   countDownTime: 40
   timeScale: 1

@@ -16,6 +16,7 @@ public class Mortar : Enemy
 
     [Header("Indicator Settings")]
     public GameObject targetIndicatorPrefab;
+    public Vector3 offset;
 
     private float m_attackTimer = 0f;
     private Vector3 m_targetPos;
@@ -57,7 +58,7 @@ public class Mortar : Enemy
             m_targetPos = GetPlayerTargetPos();
             hasTarget = true;
 
-            ShowTargetIndicator(m_targetPos);
+            ShowTargetIndicator(m_targetPos + offset);
             Invoke(nameof(FireShell), aimDelay);
         }
     }

@@ -18,7 +18,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public float firstWaveTimer;
     public float prepTimer;
     public bool inWave;
-    public float timer;
+    public Timer timer;
     
 
     [Header("Scaling Settings")]
@@ -38,7 +38,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         currentWave = 0;
         inWave = false;
-        timer = firstWaveTimer;
+        timer.StartTimer(firstWaveTimer);
         RecalculateScaling();
         gameplayStarted = false;
         IsReady = true;
@@ -46,15 +46,6 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
-        if (!inWave)
-        {
-            timer -= Time.deltaTime;
-            if (timer < 0)
-            {
-                StartWave();
-            }
-        }
-
         if(currKilledInWave >= EnemyManager.instance.spawnAmount && inWave)
         {
             WaveComplete();
@@ -71,8 +62,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     
     public void WaveComplete()
     {
-        Debug.Log("wave complete");
-        timer = prepTimer;
+        timer.StartTimer(prepTimer);
         inWave = false;
         currKilledInWave = 0;
         EnemyManager.instance.ResetWave();
