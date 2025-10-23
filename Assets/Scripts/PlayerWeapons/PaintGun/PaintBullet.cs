@@ -11,9 +11,6 @@ public class PaintBullet : RayCastPainter
         blobRenderer.material.SetColor("_BaseColor", paintColor);
         m_bullet.hitTarget.AddListener(OnHitEffects);
     }
-    void Update()
-    {
-    }
     public void paint()
     {
         TryPaint(m_bullet.hitInfo);

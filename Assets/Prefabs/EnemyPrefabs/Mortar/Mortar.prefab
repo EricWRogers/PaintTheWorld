@@ -68,6 +68,7 @@ Transform:
   m_Children:
   - {fileID: 8160938142129756026}
   - {fileID: 1466479654232663941}
+  - {fileID: 5179512397239169985}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3780218610274901045
@@ -120,6 +121,8 @@ MonoBehaviour:
   firePoint: {fileID: 8160938142129756026}
   coin: {fileID: 8705164910154159958, guid: 211ce4a25405807479ed4857dcbf4821, type: 3}
   coinOffset: {x: 0, y: 0.5, z: 0}
+  damageText: {fileID: 1392177967193643494, guid: 7ade7531bc2feef43ab3b1654ec19ae6, type: 3}
+  damageTextSpawn: {fileID: 5179512397239169985}
   aimDelay: 1.5
   flightTime: 0.5
   fireCooldown: 4
@@ -132,6 +135,7 @@ MonoBehaviour:
     m_Bits: 257
   hitRadius: 3
   targetIndicatorPrefab: {fileID: 8258464394648088516, guid: 286599ec40302eb46b75a152c10b64f9, type: 3}
+  offset: {x: 0, y: 0, z: 0}
   hasTarget: 0
 --- !u!114 &5472731473974361928
 MonoBehaviour:
@@ -225,6 +229,37 @@ MonoBehaviour:
     m_Bits: 72
   dOTRate: 1
   paintDamage: 2
+--- !u!1 &8895213193469594128
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5179512397239169985}
+  m_Layer: 6
+  m_Name: DamageSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5179512397239169985
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8895213193469594128}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1466289999841150659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5469276316418057959
 PrefabInstance:
   m_ObjectHideFlags: 0
