@@ -69,12 +69,12 @@ public class PlayerMovement : PlayerMovmentEngine
     public LayerMask railLayer;
     public SplineContainer splineContainer;
     private float m_timer;
-    private float betweenRailTime = 0.25f;
+    private float betweenRailTime = 0.5f;
     public float railDetectionRadius = 1.5f;
     public float railSnapDistance = 2f;
     public float minGrindSpeed = 3f;
     public float grindExitForce = 8f;
-    public bool isGrinding { get; private set; }
+    [ReadOnly] public bool isGrinding;
     public Rail currentRail;
     private bool wasGrinding = false;
     public float railProgress;
@@ -113,24 +113,24 @@ public class PlayerMovement : PlayerMovmentEngine
         HandleRotation();
 
 
-        if ((TryStartGrinding() || isGrinding) && m_timer >= betweenRailTime)
+        if ((TryStartGrinding() || isGrinding) && m_timer > betweenRailTime)
         {
             ContinueGrinding();
         }
         else if (WallRun())
         {
-            Debug.Log("handle Wall RUn IF");
+            splineContainer = null;
             transform.position = MovePlayer(m_velocity * Time.deltaTime);
         }
         else if (HandleDashing())
         {
-            Debug.Log("Handle Dashing If");
+            splineContainer = null;
             // Dashing handles its own momentum
             transform.position = MovePlayer(m_velocity * Time.deltaTime);
         }
         else
         {
-            Debug.Log("Handle Movment IF");
+            splineContainer = null;
             HandleRegularMovement();
         }
         m_timer += Time.deltaTime;
@@ -259,7 +259,6 @@ public class PlayerMovement : PlayerMovmentEngine
         if (onGround && !attemptingJump && groundedState.angle < 10)
             SnapPlayerDown();
 
-        Debug.Log(groundedState.angle);
     }
 
     bool HandleDashing()
@@ -416,34 +415,32 @@ public class PlayerMovement : PlayerMovmentEngine
     #region Rail Grinding
     bool TryStartGrinding()
     {
-        // Already grinding? Continue.
         if (isGrinding) return true;
-        if(wasGrinding)
+        // Already grinding? Continue.
+
+        if (wasGrinding)
         {
             wasGrinding = false;
             return false;
         }
+        splineContainer = null;
         // Detect rails nearby
         Collider[] railColliders = Physics.OverlapSphere(m_railDetectionPoint.position, railDetectionRadius, railLayer);
         if (railColliders.Length == 0) return false;
 
-    
+
         // Search for the closest spline point
         foreach (var collider in railColliders)
         {
             splineContainer = collider.GetComponent<SplineContainer>();
-            if (splineContainer == null || splineContainer.Splines.Count == 0) continue;
-
-
+            if (splineContainer == null || splineContainer.Splines.Count == 0)   continue;
         }
-    
+
         // If a valid spline was found within snap distance, start grinding
         if (splineContainer != null)
         {
-           
             StartGrinding();
             return true;
-
         }
     
         return false;
@@ -451,20 +448,39 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void StartGrinding()
     {
+        if (splineContainer == null || splineContainer.Splines.Count == 0) return;
+
         isGrinding = true;
 
         Vector3 position = FindClosestPointOnSpline(out float progress);
-
         railProgress = progress;
 
-        // Use horizontal velocity magnitude as grind speed
-        Vector3 horizontalVelocity = new Vector3(m_velocity.x, 0, m_velocity.z);
+        var spline = splineContainer.Splines[0];
+
+
+        Vector3 tangent = GetSplineTangentAt(spline, railProgress);
+        Vector3 tangentHoriz = new Vector3(tangent.x, 0f, tangent.z).normalized;
+
+
+        if (tangentHoriz.sqrMagnitude > 0.001f) tangent = tangentHoriz;
+
+        Vector3 horizontalVelocity = new Vector3(m_velocity.x, 0f, m_velocity.z);
+
+        // Choose direction: dot(horizontalVel, tangent). If small, use input.
+        float dot =  Vector3.Dot(horizontalVelocity.normalized, tangent);
+        m_railDir = dot >= 0f ? 1f : -1f;
+
+        // Set grind speed using existing logic but ensure at least minGrindSpeed
         grindSpeed = Mathf.Max(horizontalVelocity.magnitude, minGrindSpeed);
 
+        // Snap position to spline point (plus vertical offset)
+        Vector3 splinePos = (Vector3)spline.EvaluatePosition(railProgress);
+        transform.position = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
 
-        Vector3 pos = splineContainer.Splines[0].EvaluatePosition(progress);
-        transform.position = position + splineContainer.transform.position + Vector3.up * 1.4f;
-
+        // Set player velocity to move along tangent (preserve vertical component)
+        float vertical = m_velocity.y;
+        m_velocity = tangent * grindSpeed * m_railDir;
+        m_velocity.y = vertical;
     }
 
      void ContinueGrinding()
@@ -483,45 +499,46 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         var spline = splineContainer.Splines[0];
-        railProgress += (m_velocity.magnitude * Time.deltaTime) / spline.GetLength();
+        railProgress += (m_velocity.magnitude * Time.deltaTime) / spline.GetLength() * m_railDir;
 
-  
+        railProgress = Mathf.Clamp01(railProgress);
         Vector3 position = (Vector3)spline.EvaluatePosition(railProgress);
-        
+
 
         if (m_velocity.magnitude < 5) m_velocity = m_velocity.normalized * grindSpeed;
         Vector3 dir = (transform.position - position).normalized;
         transform.position = position + splineContainer.transform.position+ Vector3.up *1.4f;
 
 
-        float splineLength = splineContainer.Splines[0].GetLength();
 
-        float distanceDelta = grindSpeed * Time.deltaTime;
-        railProgress += (distanceDelta / splineLength);
-        if (railProgress >= 0.999)   ExitGrinding();
+        if (railProgress >= 0.999 || railProgress <= 0.001)   ExitGrinding();
         else SnapPlayerDown();
     }
 
     void ExitGrinding()
     {
-        Debug.Log("Exited Grinding");
-        if (!isGrinding) return;
+        if (!isGrinding || wasGrinding) return;
+
         isGrinding = false;
         wasGrinding = true;
+
+        
         // Give exit velocity
         if (splineContainer != null)
         {
-            m_velocity = Vector3.up * jumpForce;
+            m_velocity += Vector3.up * jumpForce;
 
         }
-        transform.position = MovePlayer(m_velocity * Time.deltaTime);
+        //transform.position = MovePlayer(m_velocity * Time.deltaTime);
         m_timer = 0f;
         splineContainer = null;
-        currentRail = null;
         railProgress = 0f;
         grindSpeed = 0f;
+        wasGrinding = false;
+
+
     }
-    
+
 
     Vector3 FindClosestPointOnSpline(out float bestT)
     {
@@ -545,6 +562,23 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         return bestPoint;
+    }
+    Vector3 GetSplineTangentAt(UnityEngine.Splines.Spline spline, float t, float deltaT = 0.001f)
+    {
+        // Numerical tangent: sample a small step forward (clamp) to approximate derivative.
+        float t2 = Mathf.Clamp01(t + deltaT);
+        Vector3 p1 = (Vector3)spline.EvaluatePosition(t);
+        Vector3 p2 = (Vector3)spline.EvaluatePosition(t2);
+
+        Vector3 tangent = (p2 - p1).normalized;
+        if (tangent.sqrMagnitude < 0.0001f)
+        {
+            // Fallback: try backward sample
+            float t0 = Mathf.Clamp01(t - deltaT);
+            p2 = (Vector3)spline.EvaluatePosition(t0);
+            tangent = (p1 - p2).normalized;
+        }
+        return tangent;
     }
     #endregion
 

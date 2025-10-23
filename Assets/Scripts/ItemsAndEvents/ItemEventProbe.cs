@@ -9,8 +9,8 @@ public class ItemEventProbe : MonoBehaviour
         GameEvents.EnemyKilled += e => Debug.Log($"[KILL] {e?.name}");
         GameEvents.PlayerDodged += () => Debug.Log("[DODGE]");
         GameEvents.PlayerStartedGrinding += () => Debug.Log("[GRIND START]");
-        GameEvents.PlayerGrindingTick += () => Debug.Log("[GRIND TICK]");
-        GameEvents.PaintApplied += a => Debug.Log($"[PAINT+] {a:0.00}");
+        //GameEvents.PlayerGrindingTick += () => Debug.Log("[GRIND TICK]");
+        //GameEvents.PaintApplied += a => Debug.Log($"[PAINT+] {a:0.00}");
     }
 }
 
