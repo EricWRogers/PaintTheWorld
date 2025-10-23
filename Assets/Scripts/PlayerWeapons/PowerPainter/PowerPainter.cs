@@ -76,6 +76,7 @@ public class PowerPainter : Weapon
                 {
                     int applyDamage = Mathf.FloorToInt(damageAccumulator);
                     hit.transform.GetComponent<Health>().Damage(applyDamage);
+                    //hit.transform.GetComponent<Enemy>().SpawnDamageText(applyDamage);
                     damageAccumulator -= applyDamage;
                 }
             }
