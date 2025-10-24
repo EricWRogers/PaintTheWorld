@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,20 +12,40 @@ public class SkillsHorizontalUI : MonoBehaviour
 
     [Header("UI")]
     public RectTransform contentParent;   
-    public SimpleCardRow cardPrefab;     
+    public SimpleCardRow cardPrefab;      
 
     private readonly List<SimpleCardRow> pool = new();
-    private bool wired = false;
-
-    void Awake()
-    {
-        ResolveRefs();
-    }
+    private bool wiredStats = false, wiredWallet = false;
 
     void OnEnable()
     {
-        ResolveRefs();
-        WireEvents();
+        StartCoroutine(InitAndRefreshWhenReady());
+    }
+
+    IEnumerator InitAndRefreshWhenReady()
+    {
+        // Wait until PlayerManager is spawned and ready
+        for (int i = 0; i < 180; i++)
+        {
+            if (PlayerManager.instance && PlayerManager.instance.IsReady) break;
+            yield return null;
+        }
+
+        var pm = PlayerManager.instance;
+        stats  = stats  ? stats  : pm ? pm.stats  : null;
+        wallet = wallet ? wallet : pm ? pm.wallet : null;
+
+        if (stats && !wiredStats)
+        {
+            stats.onSkillChanged.AddListener(OnSkillChanged);
+            wiredStats = true;
+        }
+        if (wallet && wallet.changed != null && !wiredWallet)
+        {
+            wallet.changed.AddListener(OnWalletChanged);
+            wiredWallet = true;
+        }
+
         BuildPool(stats?.skills.Count ?? 0);
         RefreshAll();
 
@@ -34,29 +55,9 @@ public class SkillsHorizontalUI : MonoBehaviour
 
     void OnDisable()
     {
-        UnwireEvents();
-    }
-
-    void ResolveRefs()
-    {
-        if (!stats)  stats  = PlayerManager.instance ? PlayerManager.instance.stats  : null;
-        if (!wallet) wallet = PlayerManager.instance ? PlayerManager.instance.wallet : null;
-    }
-
-    void WireEvents()
-    {
-        if (wired) return;
-        if (stats)  stats.onSkillChanged.AddListener(OnSkillChanged);
-        if (wallet && wallet.changed != null) wallet.changed.AddListener(OnWalletChanged);
-        wired = true;
-    }
-
-    void UnwireEvents()
-    {
-        if (!wired) return;
-        if (stats)  stats.onSkillChanged.RemoveListener(OnSkillChanged);
-        if (wallet && wallet.changed != null) wallet.changed.RemoveListener(OnWalletChanged);
-        wired = false;
+        if (wiredStats && stats) stats.onSkillChanged.RemoveListener(OnSkillChanged);
+        if (wiredWallet && wallet && wallet.changed != null) wallet.changed.RemoveListener(OnWalletChanged);
+        wiredStats = wiredWallet = false;
     }
 
     void OnSkillChanged(int index, SkillData data) => RefreshRow(index);
@@ -84,18 +85,20 @@ public class SkillsHorizontalUI : MonoBehaviour
 
     void TryUpgrade(int index)
     {
+        // Re-resolve PM at click-time (popup-safe)
+        var pm = PlayerManager.instance;
+        if (pm) { stats = pm.stats; wallet = pm.wallet; }
         if (!stats || !wallet) return;
+
         if (stats.TryUpgradeSkill(index, wallet))
-        {
-            
             FindObjectOfType<ItemEffectsManager>()?.Reapply();
-        }
+
         RefreshRow(index);
     }
 
     public void RefreshAll()
     {
-        ResolveRefs();
+        var pm = PlayerManager.instance; // allows wallet check
         if (stats == null || stats.skills == null) { HideAll(); return; }
 
         BuildPool(stats.skills.Count);
@@ -128,14 +131,19 @@ public class SkillsHorizontalUI : MonoBehaviour
         card.gameObject.SetActive(true);
 
         if (card.icon && s != null && s.icon != null)
-        card.icon.sprite = s.icon;
-        if (card.nameText)  card.nameText.text = s.displayName;
+            card.icon.sprite = s.icon;
+        if (card.nameText)
+            card.nameText.text = s.displayName;
 
         int cost = s.CostForNextLevel();
         bool isMax = (cost < 0);
 
         if (card.actionLabel)  card.actionLabel.text = isMax ? "Maxed" : $"$ {cost}";
-        if (card.actionButton) card.actionButton.interactable =
-            !isMax && wallet != null && wallet.amount >= cost;
+        if (card.actionButton)
+        {
+            var pm = PlayerManager.instance;
+            bool canAfford = !isMax && pm && pm.wallet && pm.wallet.amount >= cost;
+            card.actionButton.interactable = canAfford;
+        }
     }
 }

@@ -1,31 +1,60 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 public class ShopHorizontalUI : MonoBehaviour
 {
     [Header("Refs")]
-    public ShopCatalog catalog;            
-    public RectTransform contentParent;    // ScrollView/Viewport/Content
-    public SimpleCardRow cardPrefab;       // Card_Simple prefab
+    public ShopCatalog catalog;                  
+    public RectTransform contentParent;          // ScrollView/Viewport/Content
+    public SimpleCardRow cardPrefab;             // Card_Simple prefab
 
     private readonly List<SimpleCardRow> pool = new();
-    private PlayerManager pm;
+    private bool walletWired = false;
 
     void OnEnable()
     {
-        pm = PlayerManager.instance;
-        if (!catalog) catalog = GetComponent<ShopCatalog>();
+        StartCoroutine(InitAndRefreshWhenReady());
+    }
 
+    IEnumerator InitAndRefreshWhenReady()
+    {
+        // Wait until PlayerManager is spawned & ready for the popup
+        for (int i = 0; i < 180; i++) 
+        {
+            if (PlayerManager.instance && PlayerManager.instance.IsReady) break;
+            yield return null;
+        }
+
+        if (!catalog) catalog = GetComponent<ShopCatalog>();
         EnsureStockArray();
+
+        // (re)wire wallet change event now that PM exists
+        var pm = PlayerManager.instance;
+        if (pm && pm.wallet && pm.wallet.changed != null && !walletWired)
+        {
+            pm.wallet.changed.AddListener(OnWalletChanged);
+            walletWired = true;
+        }
+
         BuildPool(catalog.items?.Length ?? 0);
         RefreshAll();
 
         Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
+        if (contentParent) LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
     }
+
+    void OnDisable()
+    {
+        var pm = PlayerManager.instance;
+        if (walletWired && pm && pm.wallet && pm.wallet.changed != null)
+            pm.wallet.changed.RemoveListener(OnWalletChanged);
+        walletWired = false;
+    }
+
+    void OnWalletChanged(int _) => RefreshAll();
 
     void EnsureStockArray()
     {
@@ -33,7 +62,8 @@ public class ShopHorizontalUI : MonoBehaviour
         if (catalog.stockRuntime == null || catalog.stockRuntime.Length != catalog.items.Length)
         {
             catalog.stockRuntime = new int[catalog.items.Length];
-            for (int i = 0; i < catalog.items.Length; i++) catalog.stockRuntime[i] = -1; // unlimited by default
+            for (int i = 0; i < catalog.items.Length; i++)
+                catalog.stockRuntime[i] = -1; // unlimited by default
         }
     }
 
@@ -59,7 +89,8 @@ public class ShopHorizontalUI : MonoBehaviour
 
     void Buy(int index)
     {
-        pm = PlayerManager.instance;
+        // Re-resolve PM at click-time (popup-safe)
+        var pm = PlayerManager.instance;
         if (!pm || catalog == null || catalog.items == null) return;
         if (index < 0 || index >= catalog.items.Length) return;
 
@@ -74,19 +105,18 @@ public class ShopHorizontalUI : MonoBehaviour
         item.OnPurchased(pm.GetContext(), pm.inventory.GetCount(item.id));
         catalog.ConsumeStock(index);
 
-        // apply passive effects immediately (optional)
         FindObjectOfType<ItemEffectsManager>()?.Reapply();
-
         RefreshAll();
     }
 
     public void RefreshAll()
     {
         if (catalog == null || catalog.items == null) return;
-        pm = PlayerManager.instance;
 
         int n = catalog.items.Length;
         BuildPool(n);
+
+        var pm = PlayerManager.instance;
 
         for (int i = 0; i < pool.Count; i++)
         {
@@ -102,17 +132,19 @@ public class ShopHorizontalUI : MonoBehaviour
             card.gameObject.SetActive(true);
 
             if (card.icon && def != null && def.icon != null)
-            card.icon.sprite = def.icon;
-            if (card.nameText)  card.nameText.text = def.displayName;
+                card.icon.sprite = def.icon;
+            if (card.nameText)
+                card.nameText.text = def.displayName;
 
-            // Button label shows price ($X)
             int owned = pm?.inventory ? pm.inventory.GetCount(def.id) : 0;
             int price = def.GetPriceForNext(owned);
-            if (card.actionLabel) card.actionLabel.text = $"$ {price}";
+            if (card.actionLabel)
+                card.actionLabel.text = $"$ {price}";
 
-            bool canAfford = pm?.wallet && pm.wallet.amount >= price;
-            bool inStock = catalog.HasStock(i);
-            if (card.actionButton) card.actionButton.interactable = canAfford && inStock;
+            bool canAfford = (pm?.wallet != null) && pm.wallet.amount >= price;
+            bool inStock  = catalog.HasStock(i);
+            if (card.actionButton)
+                card.actionButton.interactable = canAfford && inStock;
         }
     }
 }
