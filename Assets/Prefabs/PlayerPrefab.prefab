@@ -314,7 +314,7 @@ MonoBehaviour:
   wallCheckDistance: 1
   railLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 1024
   splineContainer: {fileID: 0}
   railDetectionRadius: 0.7
   railSnapDistance: 2
@@ -345,6 +345,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   selectedPaint: {r: 0, g: 0, b: 0, a: 0}
+  colorKey: 0
 --- !u!54 &2468560044189325215
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -554,6 +555,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   selectedPaint: {r: 0, g: 0, b: 0, a: 0}
+  colorKey: 0
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,8 +586,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761045, y: 0.0004276425, z: -0.000059413316, w: 0.9904863}
-  m_LocalPosition: {x: 0, y: -19.189999, z: 45.6}
+  m_LocalRotation: {x: 0.14704229, y: 0.0005594418, z: 0.0006328777, w: 0.9891299}
+  m_LocalPosition: {x: -0.002878189, y: -19.07754, z: 45.638664}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -668,8 +670,8 @@ MonoBehaviour:
     SplineCurvature: 0.345
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: 0
-    Center: 0
+    Value: -85.74489
+    Center: -85.74489
     Range: {x: -180, y: 180}
     Wrap: 1
     Recentering:
@@ -933,8 +935,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761047, y: 0.00042764246, z: -0.000059413313, w: 0.9904863}
-  m_LocalPosition: {x: 0, y: -19.189999, z: 45.6}
+  m_LocalRotation: {x: 0.14704229, y: 0.00055927323, z: 0.000632887, w: 0.9891299}
+  m_LocalPosition: {x: -0.002878189, y: -19.07754, z: 45.638664}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

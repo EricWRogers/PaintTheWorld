@@ -36,8 +36,8 @@ public class Paintable : MonoBehaviour {
         m_extendIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_extendIslandsRenderTexture.filterMode = FilterMode.Bilinear;
 
-        m_uvIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
-        m_uvIslandsRenderTexture.filterMode = FilterMode.Bilinear;
+        // m_uvIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
+        // m_uvIslandsRenderTexture.filterMode = FilterMode.Bilinear;
 
         m_supportTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_supportTexture.filterMode =  FilterMode.Bilinear;
