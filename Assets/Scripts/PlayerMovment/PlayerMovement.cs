@@ -449,6 +449,8 @@ public class PlayerMovement : PlayerMovmentEngine
     void StartGrinding()
     {
         isGrinding = true;
+        var spline = splineContainer.Splines[0];
+
 
         Vector3 position = FindClosestPointOnSpline(out float progress);
 
@@ -458,9 +460,29 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 horizontalVelocity = new Vector3(m_velocity.x, 0, m_velocity.z);
         grindSpeed = Mathf.Max(horizontalVelocity.magnitude, minGrindSpeed);
 
+        Vector3 tangent = GetSplineTangentAt(spline, railProgress);
+        Vector3 tangentHoriz = new Vector3(tangent.x, 0f, tangent.z).normalized;
 
-        Vector3 pos = splineContainer.Splines[0].EvaluatePosition(progress);
-        transform.position = pos + splineContainer.transform.position + Vector3.up * 1.4f;
+
+        if (tangentHoriz.sqrMagnitude > 0.001f) tangent = tangentHoriz;
+
+
+
+        // Choose direction: dot(horizontalVel, tangent). If small, use input.
+        float dot =  Vector3.Dot(horizontalVelocity.normalized, tangent);
+        m_railDir = dot >= 0f ? 1f : -1f;
+
+
+        Vector3 splinePos = (Vector3)spline.EvaluatePosition(railProgress);
+        transform.position = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+
+            
+        // Set player velocity to move along tangent (preserve vertical component)
+        float vertical = m_velocity.y;
+        m_velocity = tangent * grindSpeed * m_railDir;
+        m_velocity.y = vertical;
+
+
 
     }
 
@@ -472,12 +494,12 @@ public class PlayerMovement : PlayerMovmentEngine
             return;
         }
     
-        if (m_jumpInputPressed)
+         if (m_jumpInputPressed)
         {
             // Exit but apply a jump-off along the rail tangent
             var spline = splineContainer.Splines[0];
-            Vector3 tangent = GetSplineTangentAt(spline, railProgress);
-            m_velocity = tangent * grindExitForce * m_railDir + Vector3.up * jumpForce;
+            Vector3 tangent = GetSplineTangentAt(spline, railProgress) * m_railDir;
+            m_velocity = tangent * grindExitForce + Vector3.up * jumpForce;
             ExitGrinding();
             return;
         }
@@ -486,23 +508,23 @@ public class PlayerMovement : PlayerMovmentEngine
     
         // Advance progress along the spline using the player's current speed along the rail
         // Use the horizontal component along the tangent for stable progress
-        Vector3 tangentHere = GetSplineTangentAt(splineRef, railProgress);
+        Vector3 tangentHere = GetSplineTangentAt(splineRef, railProgress) * m_railDir;
         Vector3 horizVel = new Vector3(m_velocity.x, 0f, m_velocity.z);
-        float speedAlongTangent = Vector3.Dot(horizVel, tangentHere) * m_railDir;
+        float speedAlongTangent = Vector3.Dot(horizVel, tangentHere);
         // If speedAlongTangent is negative (unexpected) use the stored grindSpeed
         if (speedAlongTangent < 0.01f) speedAlongTangent = grindSpeed;
     
         // Convert to t progression using spline length
         float splineLen = splineRef.GetLength();
         if (splineLen <= 0.001f) splineLen = 1f;
-        railProgress += (speedAlongTangent * Time.deltaTime) / splineLen * m_railDir;
+        railProgress += (speedAlongTangent * Time.deltaTime) * m_railDir / splineLen;
         railProgress = Mathf.Clamp01(railProgress);
     
         Vector3 pos = (Vector3)splineRef.EvaluatePosition(railProgress);
         transform.position = splineContainer.transform.position + pos + Vector3.up * 1.4f;
     
-        // keep horizontal velocity aligned with tangent
-        m_velocity = tangentHere * speedAlongTangent * m_railDir + Vector3.up * m_velocity.y;
+
+        m_velocity = tangentHere * speedAlongTangent + Vector3.up * m_velocity.y;
     
         // Exit at ends of spline
         if (railProgress >= 0.999f || railProgress <= 0.001f)
@@ -516,7 +538,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void ExitGrinding()
     {
-        Debug.Log("Beingin Exit Grinindg");
+
         if (!isGrinding || wasGrinding) return;
 
         isGrinding = false;
@@ -526,7 +548,7 @@ public class PlayerMovement : PlayerMovmentEngine
         // Give exit velocity
         if (splineContainer != null)
         {
-            m_velocity = Vector3.up * jumpForce;
+            m_velocity += Vector3.up * jumpForce;
 
         }
         //transform.position = MovePlayer(m_velocity * Time.deltaTime);
@@ -535,7 +557,7 @@ public class PlayerMovement : PlayerMovmentEngine
         railProgress = 0f;
         grindSpeed = 0f;
         wasGrinding = false;
-        Debug.Log("End Exit Grinindg");
+
 
     }
     
@@ -563,7 +585,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         return bestPoint;
     }
-        Vector3 GetSplineTangentAt(UnityEngine.Splines.Spline spline, float t, float deltaT = 0.001f)
+        Vector3 GetSplineTangentAt(Spline spline, float t, float deltaT = 0.001f)
     {
         // Numerical tangent: sample a small step forward (clamp) to approximate derivative.
         float t2 = Mathf.Clamp01(t + deltaT);
