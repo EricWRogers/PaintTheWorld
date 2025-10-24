@@ -101,7 +101,8 @@ public class ShopHorizontalUI : MonoBehaviour
             card.index = i;
             card.gameObject.SetActive(true);
 
-            if (card.icon)      card.icon.sprite = def.icon;
+            if (card.icon && def != null && def.icon != null)
+            card.icon.sprite = def.icon;
             if (card.nameText)  card.nameText.text = def.displayName;
 
             // Button label shows price ($X)

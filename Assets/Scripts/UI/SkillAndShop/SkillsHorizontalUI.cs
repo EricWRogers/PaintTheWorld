@@ -127,7 +127,8 @@ public class SkillsHorizontalUI : MonoBehaviour
         card.index = i;
         card.gameObject.SetActive(true);
 
-        if (card.icon)      card.icon.sprite = s.icon;
+        if (card.icon && s != null && s.icon != null)
+        card.icon.sprite = s.icon;
         if (card.nameText)  card.nameText.text = s.displayName;
 
         int cost = s.CostForNextLevel();
