@@ -23,6 +23,24 @@ public class Mortar : Enemy
     private GameObject m_currentIndicator;
     [HideInInspector] public bool hasTarget;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip fireSound;
+    [Range(0f, 1f)]
+    public float fireSoundVolume = 0.9f;
+    [Range(0.95f, 1.05f)]
+    public float randomPitchRange = 1.02f;
+
+    new void Start()
+    {
+        base.Start();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f; // 3D sound
+        }
+    }
 
     new void Update()
     {
@@ -67,6 +85,14 @@ public class Mortar : Enemy
     private void FireShell()
     {
         if (bulletPrefab == null || firePoint == null) return;
+
+        if (audioSource != null && fireSound != null)
+        {
+            float delta = randomPitchRange - 1f;
+            float pitch = Random.Range(1f - delta, 1f + delta);
+            audioSource.pitch = pitch;
+            audioSource.PlayOneShot(fireSound, fireSoundVolume);
+        }
 
         MortarShell shell = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity).GetComponent<MortarShell>();
         shell.mortar = this;

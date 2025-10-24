@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TEXTURE_SIZE: 124
   extendsIslandOffset: 1
 --- !u!1 &7623234513540899692
 GameObject:
@@ -216,6 +217,11 @@ MonoBehaviour:
   firePoint: {fileID: 1456465760118057507}
   coin: {fileID: 0}
   coinOffset: {x: 0, y: 0, z: 0}
+  damageText: {fileID: 0}
+  damageTextSpawn: {fileID: 0}
+  modelMeshRenderer: {fileID: 0}
+  hurtColor: {r: 0, g: 0, b: 0, a: 0}
+  flashTime: 0
   scaledRotation: 0
   yawOnly: 0
   accuracyCurve:
@@ -670,6 +676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TEXTURE_SIZE: 124
   extendsIslandOffset: 1
 --- !u!1 &9221585525441014770
 GameObject:
@@ -792,4 +799,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TEXTURE_SIZE: 124
   extendsIslandOffset: 1

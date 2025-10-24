@@ -15,9 +15,22 @@ public class PaintBrush : Weapon
     public bool hitEnemy = false;
     public float maxSpeedMult;
 
+    [Header("Audio")]
+    public AudioSource audioSource;        
+    public AudioClip fireSound;                   
+    [Range(0f, 1f)]
+    public float fireSoundVolume = 0.7f;
+
     void Awake()
     {
         m_parentTransform = transform.parent;
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f;
+        }
         
     }
 
@@ -44,6 +57,11 @@ public class PaintBrush : Weapon
 
     public override void Fire()
     {
+        if (audioSource != null && fireSound != null)
+        {
+            audioSource.PlayOneShot(fireSound, fireSoundVolume);
+        }
+        
         anim.SetBool(holdAttackBool, true);
         anim.speed = Mathf.Clamp(attackSpeedMult, 0.5f, maxSpeedMult);
         if (m_parentTransform != null)
