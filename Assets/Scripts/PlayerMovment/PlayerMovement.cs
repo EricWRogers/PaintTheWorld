@@ -449,39 +449,29 @@ public class PlayerMovement : PlayerMovmentEngine
     void StartGrinding()
     {
         isGrinding = true;
-        var spline = splineContainer.Splines[0];
+        var splineRef = splineContainer.Splines[0];
 
-
-        Vector3 position = FindClosestPointOnSpline(out float progress);
-
+        Vector3 closest = FindClosestPointOnSpline(out float progress);
         railProgress = progress;
 
-        // Use horizontal velocity magnitude as grind speed
-        Vector3 horizontalVelocity = new Vector3(m_velocity.x, 0, m_velocity.z);
-        grindSpeed = Mathf.Max(horizontalVelocity.magnitude, minGrindSpeed);
-
-        Vector3 tangent = GetSplineTangentAt(spline, railProgress);
-        Vector3 tangentHoriz = new Vector3(tangent.x, 0f, tangent.z).normalized;
+        grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
 
 
-        if (tangentHoriz.sqrMagnitude > 0.001f) tangent = tangentHoriz;
+        Vector3 tangent = GetSplineTangentAt(splineRef, railProgress);
+        if (tangent.sqrMagnitude < 0.0001f) tangent = Vector3.forward;
 
 
-
-        // Choose direction: dot(horizontalVel, tangent). If small, use input.
-        float dot =  Vector3.Dot(horizontalVelocity.normalized, tangent);
+        float dot = Vector3.Dot(m_velocity.normalized, tangent.normalized);
         m_railDir = dot >= 0f ? 1f : -1f;
 
+        
+        Vector3 splinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
 
-        Vector3 splinePos = (Vector3)spline.EvaluatePosition(railProgress);
-        transform.position = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+        Vector3 snapDelta = worldSplinePos - transform.position;
+        transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
 
-            
-        // Set player velocity to move along tangent (preserve vertical component)
-        float vertical = m_velocity.y;
-        m_velocity = tangent * grindSpeed * m_railDir;
-        m_velocity.y = vertical;
-
+      m_velocity = tangent.normalized * grindSpeed * m_railDir;
 
 
     }
@@ -493,46 +483,56 @@ public class PlayerMovement : PlayerMovmentEngine
             ExitGrinding();
             return;
         }
-    
-         if (m_jumpInputPressed)
+
+        if (m_jumpInputPressed)
         {
-            // Exit but apply a jump-off along the rail tangent
-            var spline = splineContainer.Splines[0];
-            Vector3 tangent = GetSplineTangentAt(spline, railProgress) * m_railDir;
+            var splineRef = splineContainer.Splines[0];
+            Vector3 tangent = GetSplineTangentAt(splineRef, railProgress).normalized * m_railDir;
             m_velocity = tangent * grindExitForce + Vector3.up * jumpForce;
             ExitGrinding();
             return;
         }
-    
-        var splineRef = splineContainer.Splines[0];
-    
-        // Advance progress along the spline using the player's current speed along the rail
-        // Use the horizontal component along the tangent for stable progress
-        Vector3 tangentHere = GetSplineTangentAt(splineRef, railProgress) * m_railDir;
-        Vector3 horizVel = new Vector3(m_velocity.x, 0f, m_velocity.z);
-        float speedAlongTangent = Vector3.Dot(horizVel, tangentHere);
-        // If speedAlongTangent is negative (unexpected) use the stored grindSpeed
-        if (speedAlongTangent < 0.01f) speedAlongTangent = grindSpeed;
-    
-        // Convert to t progression using spline length
-        float splineLen = splineRef.GetLength();
-        if (splineLen <= 0.001f) splineLen = 1f;
-        railProgress += (speedAlongTangent * Time.deltaTime) * m_railDir / splineLen;
-        railProgress = Mathf.Clamp01(railProgress);
-    
-        Vector3 pos = (Vector3)splineRef.EvaluatePosition(railProgress);
-        transform.position = splineContainer.transform.position + pos + Vector3.up * 1.4f;
-    
 
-        m_velocity = tangentHere * speedAlongTangent + Vector3.up * m_velocity.y;
-    
-        // Exit at ends of spline
+        var splineRef2 = splineContainer.Splines[0];
+
+        // Full 3D tangent at current progress (respecting slope)
+        Vector3 tangentHere = GetSplineTangentAt(splineRef2, railProgress).normalized * m_railDir;
+
+        // Use full velocity (including vertical) to get how fast we're moving along tangent
+        float speedAlongTangent = Vector3.Dot(m_velocity, tangentHere);
+
+        // If speed is tiny or reversed, fall back to stored grindSpeed to keep motion consistent
+        if (speedAlongTangent < 0.01f)
+            speedAlongTangent = grindSpeed;
+
+        // Advance progress based on actual distance along spline (convert world speed to t-space)
+        float splineLen = splineRef2.GetLength();
+        if (splineLen <= 0.001f) splineLen = 1f;
+        railProgress += (speedAlongTangent * Time.deltaTime) / splineLen * m_railDir;
+        railProgress = Mathf.Clamp01(railProgress);
+
+        // Move using controller's MovePlayer so collisions/contacts are handled consistently
+        m_velocity = tangentHere * speedAlongTangent;
+        Vector3 move = m_velocity * Time.deltaTime;
+        transform.position = MovePlayer(move);
+
+        // If near end, exit
         if (railProgress >= 0.999f || railProgress <= 0.001f)
         {
             ExitGrinding();
             return;
         }
-    
+
+        // Keep the player snapped close to the spline laterally to avoid drift:
+        Vector3 splinePos = (Vector3)splineRef2.EvaluatePosition(railProgress);
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+        // Only correct lateral offset (project delta onto plane perpendicular to tangent)
+        Vector3 delta = worldSplinePos - transform.position;
+        Vector3 lateral = delta - Vector3.Project(delta, tangentHere);
+        // Apply a small correction to pull player onto spline smoothly (not teleport)
+        float correctionStrength = Mathf.Clamp01(5f * Time.deltaTime); // tweak if needed
+        transform.position = MovePlayer(lateral * correctionStrength);
+
         SnapPlayerDown();
     }
 

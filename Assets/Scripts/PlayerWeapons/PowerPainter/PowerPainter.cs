@@ -14,6 +14,14 @@ public class PowerPainter : Weapon
     private GameObject m_player;
     private float damageAccumulator = 0f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;      
+    public AudioClip loopFireSound; 
+    [Range(0f, 1f)]
+    public float fireSoundVolume = 0.7f;
+
+    private bool wasFirePressedLastFrame = false;
+
     new void Start()
     {
         base.Start(); // call Weapon.Start()
@@ -23,13 +31,38 @@ public class PowerPainter : Weapon
         painter = new RayCastPainter();
 
         m_lineRender.enabled = false;
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f;
+            audioSource.loop = true;       // For continuous beam sound
+        }
     }
 
     new void Update()
     {
         base.Update();
+
+        bool isFiring = playerInputs.Attack.IsPressed();
         // Just handle player input here
-        if (playerInputs.Attack.IsPressed())
+         if (isFiring && !wasFirePressedLastFrame)
+        {
+            // Start firing
+            if (loopFireSound != null)
+            {
+                audioSource.clip = loopFireSound;
+                audioSource.volume = fireSoundVolume;
+                audioSource.Play();
+            }
+        }
+        else if (!isFiring && wasFirePressedLastFrame)
+        {
+            // Stop firing
+            audioSource.Stop();
+        }
+        if (isFiring)
         {
             Fire();
         }
@@ -37,6 +70,7 @@ public class PowerPainter : Weapon
         {
             m_lineRender.enabled = false;
         }
+        wasFirePressedLastFrame = isFiring;
     }
 
     public override void Fire()
@@ -92,5 +126,10 @@ public class PowerPainter : Weapon
     public void DestroyGun()
     {
         Destroy(gameObject);
+
+        if (audioSource != null)
+        {
+            audioSource.Stop();
+        }
     }
 }
