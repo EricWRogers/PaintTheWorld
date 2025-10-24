@@ -20,7 +20,7 @@ public class GetPaintColor : MonoBehaviour
     {
         //Debug.Log("Check paint");
         Ray ray = new Ray(transform.position, -transform.up);
-        if (Physics.Raycast(ray, out RaycastHit hit, 3f, ~ignoreMask))
+        if (Physics.Raycast(ray, out RaycastHit hit, 4f, ~ignoreMask))
         {
             Paintable temp = hit.transform.gameObject.GetComponent<Paintable>();
             if (temp == null) return;
@@ -41,5 +41,9 @@ public class GetPaintColor : MonoBehaviour
 
     }
 
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(transform.position, -transform.up);
+    }
 
 }

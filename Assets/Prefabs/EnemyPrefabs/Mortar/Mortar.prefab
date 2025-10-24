@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 5871883160704102206}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.007, y: 1.384, z: 1.56}
+  m_LocalPosition: {x: 0.007, y: 0.625, z: 1.207}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -123,6 +123,9 @@ MonoBehaviour:
   coinOffset: {x: 0, y: 0.5, z: 0}
   damageText: {fileID: 1392177967193643494, guid: 7ade7531bc2feef43ab3b1654ec19ae6, type: 3}
   damageTextSpawn: {fileID: 5179512397239169985}
+  modelMeshRenderer: {fileID: 293534031029460202}
+  hurtColor: {r: 1, g: 1, b: 1, a: 0.49019608}
+  flashTime: 0.25
   aimDelay: 1.5
   flightTime: 0.5
   fireCooldown: 4
@@ -135,7 +138,7 @@ MonoBehaviour:
     m_Bits: 257
   hitRadius: 3
   targetIndicatorPrefab: {fileID: 2607087561047387261, guid: 0d733d8c65755e945a2e271d55cbf2ee, type: 3}
-  offset: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 0, z: -1.5}
   hasTarget: 0
 --- !u!114 &5472731473974361928
 MonoBehaviour:
@@ -157,7 +160,19 @@ MonoBehaviour:
       m_Calls: []
   hurt:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7962096642784740953}
+        m_TargetAssemblyTypeName: Mortar, Assembly-CSharp
+        m_MethodName: FlashRed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   outOfHealth:
     m_PersistentCalls:
       m_Calls:
@@ -207,10 +222,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.2
-  m_Height: 3.53
+  m_Radius: 0.5
+  m_Height: 2.99
   m_Direction: 2
-  m_Center: {x: 0, y: 0.4, z: 0}
+  m_Center: {x: 0, y: 0.25, z: 0}
 --- !u!114 &3350387822346316004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,7 +241,7 @@ MonoBehaviour:
   standingColor: {r: 0, g: 0, b: 0, a: 0}
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 72
+    m_Bits: 3455
   dOTRate: 1
   paintDamage: 2
 --- !u!1 &8895213193469594128
@@ -254,7 +269,7 @@ Transform:
   m_GameObject: {fileID: 8895213193469594128}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.4, z: 0}
+  m_LocalPosition: {x: 0, y: 1.096, z: -0.276}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -272,6 +287,14 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5761250097479416333, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5761250097479416333, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f57490f52d0a68347a67ee81a15135ed, type: 2}
     - target: {fileID: 6121779478426180568, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
       propertyPath: m_Name
       value: Beetle_Enemy
@@ -282,7 +305,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6899302066341937506, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.13
+      value: -0.3239999
       objectReference: {fileID: 0}
     - target: {fileID: 6899302066341937506, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
       propertyPath: m_LocalPosition.z
@@ -321,6 +344,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
+--- !u!23 &293534031029460202 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5761250097479416333, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
+  m_PrefabInstance: {fileID: 5469276316418057959}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1466479654232663941 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6899302066341937506, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
