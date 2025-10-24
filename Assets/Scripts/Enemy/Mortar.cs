@@ -24,8 +24,9 @@ public class Mortar : Enemy
     [HideInInspector] public bool hasTarget;
 
 
-    void Update()
+    new void Update()
     {
+        base.Update();
         if (player == null) return;
 
         m_attackTimer -= Time.deltaTime;

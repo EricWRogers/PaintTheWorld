@@ -17,8 +17,13 @@ public abstract class  Enemy : MonoBehaviour
     protected Rigidbody p_rb;
     public GameObject coin;
     public Vector3 coinOffset;
+    [Header("Hurt FX")]
     public GameObject damageText;
     public Transform damageTextSpawn;
+    public MeshRenderer modelMeshRenderer;
+    public Color hurtColor;
+    public float flashTime;
+    private float m_flashTimer;
 
     private int m_tempHealth;
     private Health m_health;
@@ -37,18 +42,32 @@ public abstract class  Enemy : MonoBehaviour
         player = PlayerManager.instance.player;
     }
 
+    public void Update()
+    {
+        m_flashTimer -= Time.deltaTime;
+        if(m_flashTimer <= 0)
+        {
+            modelMeshRenderer.materials[1].color = Color.clear;
+        }
+    }
+
     public abstract void Attack();
 
     public void SpawnDamageText()
     {
         int damageAmount = m_tempHealth - m_health.currentHealth;
-        if(damageAmount > 0)
+        if (damageAmount > 0)
         {
             FloatingDamageNumbers damageNumbers = Instantiate(damageText, damageTextSpawn.position, Quaternion.identity).GetComponent<FloatingDamageNumbers>();
             damageNumbers.SetDamageText(damageAmount);
             m_tempHealth = m_health.currentHealth;
         }
-        
+
+    }
+    public void FlashRed()
+    {
+        modelMeshRenderer.materials[1].color = hurtColor;
+        m_flashTimer = flashTime;
     }
 
     public void Dead()
