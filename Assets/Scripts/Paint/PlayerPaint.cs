@@ -11,7 +11,7 @@ public class PlayerPaint : GetPaintColor
     }
     void Update()
     {
-        selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+        
         CheckOnPaint();
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
@@ -20,6 +20,7 @@ public class PlayerPaint : GetPaintColor
             {
                 colorKey = 0;
             }
+            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
         }
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0f)
@@ -29,19 +30,9 @@ public class PlayerPaint : GetPaintColor
             {
                 colorKey = 2;
             }
+            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
         }
 
-        // if (Input.GetKeyDown(KeyCode.Alpha1))
-        // {
-        //     selectedPaint = PaintManager.instance.GetComponent<PaintColors>().damagePaint;
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha2))
-        // {
-        //     selectedPaint = PaintManager.instance.GetComponent<PaintColors>().jumpPaint;
-        // }
-        // if (Input.GetKeyDown(KeyCode.Alpha3))
-        // {
-        //     selectedPaint = PaintManager.instance.GetComponent<PaintColors>().movementPaint;
-        // }
+        
     }
 }
