@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PaintColors : MonoBehaviour
@@ -8,4 +9,6 @@ public class PaintColors : MonoBehaviour
     public Color jumpPaint;
     [Tooltip("color three Movement speed. Enemy up attack speed")]
     public Color movementPaint;
+
+    public List<Color> colorDict;
 }
