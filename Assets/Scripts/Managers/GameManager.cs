@@ -37,10 +37,14 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        currentWave = 0;
-        inWave = false;
-        timer.StartTimer(firstWaveTimer);
-        RecalculateScaling();
+        if(EnemyManager.instance.spawnerAreas.Count != 0)
+        {
+            currentWave = 0;
+            inWave = false;
+            timer.StartTimer(firstWaveTimer);
+            RecalculateScaling();
+        }
+        
         gameplayStarted = false;
         IsReady = true;
     }
@@ -55,7 +59,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void StartWave()
     {
-        Debug.Log(Mathf.RoundToInt(enemyAmount * EnemyCountModifier));
+        Debug.Log("start wave " +Mathf.RoundToInt(enemyAmount * EnemyCountModifier));
         inWave = true;
         currentWave++;
         EnemyManager.instance.spawnAmount = Mathf.RoundToInt(enemyAmount * EnemyCountModifier);
