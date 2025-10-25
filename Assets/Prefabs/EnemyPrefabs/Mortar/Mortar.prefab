@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 5472731473974361928}
   - component: {fileID: 8319573050973202509}
   - component: {fileID: 3350387822346316004}
-  - component: {fileID: 4144073682088916934}
+  - component: {fileID: 598520343130500951}
   m_Layer: 6
   m_Name: Mortar
   m_TagString: Enemy
@@ -222,11 +222,11 @@ MonoBehaviour:
   standingColor: {r: 0, g: 0, b: 0, a: 0}
   ignoreMask:
     serializedVersion: 2
-    m_Bits: 3455
+    m_Bits: 73
   dOTRate: 1
   paintDamage: 2
---- !u!64 &4144073682088916934
-MeshCollider:
+--- !u!65 &598520343130500951
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -243,10 +243,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1.2102603, z: 1.5783483}
+  m_Center: {x: 0, y: 0.037094187, z: -0.32770878}
 --- !u!1 &8895213193469594128
 GameObject:
   m_ObjectHideFlags: 0
