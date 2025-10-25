@@ -4,8 +4,8 @@ using System;
 [System.Serializable]
 public class Sound
 {
-    public string name;        
-    public AudioClip clip;     
+    public string name;
+    public AudioClip clip; 
 }
 
 public class AudioManager : MonoBehaviour
@@ -13,8 +13,8 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance;
 
     [Header("Audio Sources")]
-    public AudioSource musicSource;
-    public AudioSource sfxSource;   
+    public AudioSource musicSource;  // AudioSource for background music
+    public AudioSource sfxSource;    // AudioSource for sound effects
 
     [Header("Audio Clip Lists")]
     public Sound[] musicList;
@@ -24,19 +24,17 @@ public class AudioManager : MonoBehaviour
     {
         if (instance == null)
         {
+            // This is the first and only instance
             instance = this;
             DontDestroyOnLoad(gameObject); // Persist across scenes
         }
         else
         {
+            // If another instance already exists, destroy this one
             Destroy(gameObject);
             return;
         }
-    }
 
-    void Start()
-    {
-        PlayMusic("BackgroundTheme"); // Change "BackgroundTheme" to the music's name
     }
 
 
@@ -68,6 +66,7 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
+        // Play the clip as a one-shot (allows overlapping sounds)
         sfxSource.PlayOneShot(s.clip);
     }
 }
