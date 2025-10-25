@@ -321,7 +321,7 @@ public class PlayerMovement : PlayerMovmentEngine
         if (m_inputActions.Attack.IsPressed())
             transform.forward = Vector3.Slerp(transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
     }
-
+    #region Wall Running
     bool WallRun()
     {
         // Exit wall run with jump
@@ -337,38 +337,25 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 inputDir = new Vector3(moveInput.x, 0, moveInput.y);
 
         // Try to start wall riding
-        if (inputDir.z > 0 && !m_isWallRiding && !groundedState.isGrounded)
+        if (!m_isWallRiding && !groundedState.isGrounded)
         {
-            RaycastHit leftHit, rightHit;
-            bool left = Physics.Raycast(transform.position, -transform.right, out leftHit, wallCheckDistance, wallLayers);
-            bool right = Physics.Raycast(transform.position, transform.right, out rightHit, wallCheckDistance, wallLayers);
-        
-            leftWall = left;
-            rightWall = right;
 
-            if (left || right)
-            {
-                m_isWallRiding = true;
-                if (left && right)
+                if(WallCheck(out RaycastHit hit))
                 {
-                    float distL = Vector3.Distance(transform.position, leftHit.point);
-                    float distR = Vector3.Distance(transform.position, rightHit.point);
-                    m_wallNormal = distL <= distR ? leftHit.normal : rightHit.normal;
-                }
-                else if (left)
-                {
-                    m_wallNormal = leftHit.normal;
-                    paintRotation -= 90;
-                }
-                else
-                {
-                    m_wallNormal = rightHit.normal;
-                    paintRotation += 90f;
-                   
+                    m_isWallRiding = true;
+                    m_wallNormal = hit.normal;
+                    if (leftWall)
+                    {
+                        paintRotation -= 90;
+                    }
+                    else if(rightWall)
+                    {
+                        paintRotation += 90;
+                    }
                 }
                 paintPoint.Rotate(0, 0f, paintRotation);
-            }
-        
+            
+
         }
 
 
@@ -390,11 +377,11 @@ public class PlayerMovement : PlayerMovmentEngine
                 }
                 else
                 {
-                    m_velocity =  m_wallRunDir * currSpeed + -Vector3.up * wallGravity;   
-                }                    
+                    m_velocity = m_wallRunDir * currSpeed + -Vector3.up * wallGravity;
+                }
 
-                
-                
+
+
                 return true;
             }
             else
@@ -403,7 +390,7 @@ public class PlayerMovement : PlayerMovmentEngine
                 m_isWallRiding = false;
                 m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
                 paintPoint.Rotate(0, 0, -paintRotation);
-                paintRotation = 0f;                
+                paintRotation = 0f;
                 return false;
             }
         }
@@ -411,6 +398,32 @@ public class PlayerMovement : PlayerMovmentEngine
         m_isWallRiding = false;
         return false;
     }
+
+    public bool WallCheck(out RaycastHit hit)
+    {
+        hit = new RaycastHit();
+
+        for (int i = -20; i <= 20; i += 5)
+        {
+            if (Physics.Raycast(transform.position, -transform.right, out hit, wallCheckDistance, wallLayers))
+            {
+                leftWall = true;
+                return true;
+            }
+        }
+        for(int i = -20; i <= 20; i+=5)
+        {
+            if(Physics.Raycast(transform.position, transform.right, out hit, wallCheckDistance, wallLayers))
+            {
+                rightWall = true;
+                return true;
+            }
+        }
+        
+
+        return false;
+    }
+    #endregion
 
     #region Rail Grinding
     bool TryStartGrinding()
