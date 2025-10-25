@@ -19,7 +19,7 @@ public class GetPaintColor : MonoBehaviour
     public void CheckOnPaint()
     {
         //Debug.Log("Check paint");
-        Ray ray = new Ray(transform.position, -transform.up);
+        Ray ray = new Ray(transform.position + Vector3.up, -transform.up);
         if (Physics.Raycast(ray, out RaycastHit hit, 4f, ~ignoreMask))
         {
             Paintable temp = hit.transform.gameObject.GetComponent<Paintable>();
