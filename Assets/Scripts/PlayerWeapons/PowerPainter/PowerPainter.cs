@@ -83,7 +83,7 @@ public class PowerPainter : Weapon
 
         Color paintColor = playerPaint.selectedPaint;
         int dmg = playerWeapon.damage;
-        float radius = playerWeapon.paintRadius;
+        painter.radius = playerWeapon.paintRadius * PlayerManager.instance.stats.skills[2].currentMult;
 
         m_lineRender.startColor = paintColor;
         m_lineRender.endColor = paintColor;
@@ -105,7 +105,7 @@ public class PowerPainter : Weapon
             // Enemy damage
             if (hit.transform.CompareTag("Enemy"))
             {
-                damageAccumulator += dmg * Time.deltaTime;
+                damageAccumulator += dmg * PlayerManager.instance.stats.skills[1].currentMult * Time.deltaTime;
                 if (damageAccumulator >= 1f)
                 {
                     int applyDamage = Mathf.FloorToInt(damageAccumulator);

@@ -6,6 +6,6 @@ public class WaveCounter : MonoBehaviour
     public TextMeshProUGUI counterText;
     void Update()
     {
-        counterText.text = GameManager.instance.currentWave.ToString();
+        counterText.text = "wave " + GameManager.instance.currentWave.ToString() + "/" + GameManager.instance.totalWave.ToString();
     }
 }

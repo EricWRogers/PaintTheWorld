@@ -19,6 +19,10 @@ public class EnemySpawning : MonoBehaviour
         {
             SimpleObjectPool.instance.SpawnFromPool(_enemy, spawnPosition, Quaternion.identity);
         }
+        else
+        {
+            SpawnEnemy(_enemy);
+        }
             
     }
 

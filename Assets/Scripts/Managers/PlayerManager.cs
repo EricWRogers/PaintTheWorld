@@ -53,7 +53,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public Inventory inventory;
     public PlayerStats stats;
 
-    private float m_healthMult => PlayerManager.instance.stats.skills[0].currentMult;
+    private float m_healthMult => stats.skills[0].currentMult;
     public int startingHealth;
 
     public PlayerInputActions.PlayerActions playerInputs;
@@ -115,6 +115,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     void Update()
     {
+        health.maxHealth = Mathf.RoundToInt(startingHealth * m_healthMult);
         if (playerInputs.Pause.IsPressed())
         {
             GameManager.instance.PauseGame();

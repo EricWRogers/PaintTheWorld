@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : SceneAwareSingleton<GameManager>
 {
     public int currentWave;
+    public int totalWave;
     public int enemyAmount = 30;
     public int totalEnemyKills;
     public int currKilledInWave;
@@ -46,7 +47,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
-        if(currKilledInWave >= EnemyManager.instance.spawnAmount && inWave)
+        if(currKilledInWave >= Mathf.RoundToInt(enemyAmount * EnemyCountModifier) && inWave)
         {
             WaveComplete();
         }
@@ -62,9 +63,15 @@ public class GameManager : SceneAwareSingleton<GameManager>
     
     public void WaveComplete()
     {
+        if(currentWave == totalWave)
+        {
+            ResetGame();
+            SceneManager.LoadScene("MainMenu");
+        }
         timer.StartTimer(prepTimer);
         inWave = false;
         currKilledInWave = 0;
+        RecalculateScaling();
         EnemyManager.instance.ResetWave();
         EnemyManager.instance.ChooseSpawnArea();
     }
@@ -118,6 +125,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         coinGainModifier = 0;
         currentWave = 0;
         totalEnemyKills = 0;
+        PlayerManager.instance.ResetData();
     }
 
     // Public accessors for modifiers
