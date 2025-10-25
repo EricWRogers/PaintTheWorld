@@ -44,8 +44,8 @@ GameObject:
   - component: {fileID: 7962096642784740953}
   - component: {fileID: 5472731473974361928}
   - component: {fileID: 8319573050973202509}
-  - component: {fileID: 1232969938417925257}
   - component: {fileID: 3350387822346316004}
+  - component: {fileID: 4144073682088916934}
   m_Layer: 6
   m_Name: Mortar
   m_TagString: Enemy
@@ -140,6 +140,10 @@ MonoBehaviour:
   targetIndicatorPrefab: {fileID: 2607087561047387261, guid: 0d733d8c65755e945a2e271d55cbf2ee, type: 3}
   offset: {x: 0, y: 0, z: -1.5}
   hasTarget: 0
+  audioSource: {fileID: 0}
+  fireSound: {fileID: 0}
+  fireSoundVolume: 0.9
+  randomPitchRange: 1.02
 --- !u!114 &5472731473974361928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,29 +207,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b77607d151a433b46a32e54a8598041d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!136 &1232969938417925257
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6371524131278298181}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2.99
-  m_Direction: 2
-  m_Center: {x: 0, y: 0.25, z: 0}
 --- !u!114 &3350387822346316004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,6 +225,28 @@ MonoBehaviour:
     m_Bits: 3455
   dOTRate: 1
   paintDamage: 2
+--- !u!64 &4144073682088916934
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6371524131278298181}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &8895213193469594128
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,18 +286,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1466289999841150659}
     m_Modifications:
-    - target: {fileID: 873665221701991375, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5761250097479416333, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
-      propertyPath: m_Materials.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5761250097479416333, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: f57490f52d0a68347a67ee81a15135ed, type: 2}
     - target: {fileID: 6121779478426180568, guid: 4ab703865b037bd4a86f5ce78db72ffc, type: 3}
       propertyPath: m_Name
       value: Beetle_Enemy
