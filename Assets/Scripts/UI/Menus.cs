@@ -14,7 +14,7 @@ public class Menus : MonoBehaviour
         GameManager.instance.ResumeGame();
         SceneManager.LoadScene(sceneToLoad);
     }
-    public void Options()
+    public void VolumeScroller(GameObject _pauseHud)
     {
 
     }
