@@ -2,20 +2,145 @@ using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
 
+#region Custom Edtior for Unity
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(PlayerMovement))]
+public class PlayerMOvmentEditor : Editor
+{
+    private bool showMovement = true;
+    private bool showMomentum = false;
+    private bool showDashing = false;
+    private bool showJump = false;
+    private bool showWall = false;
+    private bool showRail = false;
+    private bool showPaint = false;
+    private bool showEngine = false;
+
+    public override void OnInspectorGUI()
+    {
+        serializedObject.Update();
+        
+        showEngine = EditorGUILayout.Foldout(showEngine, "Engine Stuff/ Gravity/ Collsion");
+        if(showEngine)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("capsule"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("collisionLayers"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("skinWidth"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxBounces"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSlopeAngle"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultGroundCheck"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultGroundedDistance"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("snapDownDistance"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("shouldSnapDown"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("gravity"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("DefaultPhysicsMat"));
+            EditorGUILayout.Space();
+        }
+
+        // Movement
+        showMovement = EditorGUILayout.Foldout(showMovement, "Movement");
+        if (showMovement)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("cam"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("speed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSpeed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("rotationSpeed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("movementColorMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("lockCursor"));
+        }
+
+        // Momentum
+        showMomentum = EditorGUILayout.Foldout(showMomentum, "Momentum");
+        if (showMomentum)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("groundAccelMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("airAccelMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("airDrag"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("groundDrag"));
+        }
+
+        // Dashing
+        showDashing = EditorGUILayout.Foldout(showDashing, "Dashing");
+        if (showDashing)
+        {
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("dashSpeedCurve"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("dashSpeed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("dashDuration"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("dashCooldown"));
+        }
+
+        // Jump
+        showJump = EditorGUILayout.Foldout(showJump, "Jump");
+        if (showJump)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpForce"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxJumpAngle"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpCooldown"));
+        }
+
+        // Wall Riding
+        showWall = EditorGUILayout.Foldout(showWall, "Wall Riding");
+        if (showWall)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("wallCheckDist"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("wallCheckDistance"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("climbMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("wallGravity"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("wallLayers"));
+        }
+
+        // Rail Grinding
+        showRail = EditorGUILayout.Foldout(showRail, "Rail Grinding");
+        if (showRail)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("railLayer"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("splineContainer"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("railDetectionRadius"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("railSnapDistance"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("minGrindSpeed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("grindExitForce"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("m_railDetectionPoint"));
+        }
+
+        // Paint
+        showPaint = EditorGUILayout.Foldout(showPaint, "Paint");
+        if (showPaint)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("standPaintColor"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("paintPoint"));
+        }
+
+        // Apply changes
+        serializedObject.ApplyModifiedProperties();
+    }
+}
+#endif
+#endregion
+
 public class PlayerMovement : PlayerMovmentEngine
 {
     private PlayerInputActions.PlayerActions m_inputActions;
 
     [Header("Movement")]
+    [Tooltip("Base Movment Speed")]
     public float speed = 5f;
+
+    [Tooltip("Max Movment Speed if not on Movment Paint")]
     public float maxSpeed = 20f; 
 
+    [Tooltip("How fast the Player Rotates direction")]
     public float rotationSpeed = 5f;
-    public float maxWalkAngle = 60f;
+
+    [Tooltip("How much Speed Paint effects Movment Speed: This is a multiplier")]
+    public float movementColorMult = 2f;
     private float currSpeed;
     private Transform m_orientation;
+
     public Transform cam;
-    public float movementColorMult = 2f;
+    
     private float m_currColorMult = 1f;
     private float m_shopMoveMult => PlayerManager.instance.stats.skills[3].currentMult;
     private float m_maxSpeed;
@@ -23,15 +148,23 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool lockCursor = true;
 
     [Header("Momentum")]
+    [Tooltip("How fast you can Aceelerate towards a direction on the ground")]
     public float groundAccelMult = 1f;
+
+    [Tooltip("How fast you can Aceelerate towards a direction in The Air")]
     public float airAccelMult = 0.8f;
+
+    [Tooltip("Friction while in the air")]
     public float airDrag = 0.2f;
+
+    [Tooltip("Friction while on the Ground")]
     public float groundDrag = 0.4f;
 
     [Header("Dashing")]
+    [Tooltip("Shows the rate of acerleration over the time of the dash")]
     public AnimationCurve dashSpeedCurve;
     public float dashSpeed = 20f;
-    public KeyCode dashKey = KeyCode.LeftShift;
+
     public bool isDashing = false;
     public float dashDuration = 0.5f;
     public float dashCooldown = 2f;
@@ -52,13 +185,15 @@ public class PlayerMovement : PlayerMovmentEngine
     private bool wasGrounded = false;
 
     [Header("Wall Riding")]
-    [SerializeField] private bool m_isWallRiding = false;
+    [ReadOnly] public bool m_isWallRiding = false;
+    [ReadOnly] public bool leftWall;
+    [ReadOnly] public bool rightWall;
+
     public float wallCheckDist = 1f;
     public float climbMult = 0.5f;
     public float wallGravity = 1f;
     public LayerMask wallLayers;
-    public bool leftWall;
-    public bool rightWall;
+
     private bool m_wallPaint = false;
     private Vector3 m_wallNormal;
     private Vector3 m_wallRunDir;
@@ -149,7 +284,7 @@ public class PlayerMovement : PlayerMovmentEngine
         m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? movementColorMult : 1f;
         if(groundedState.isGrounded)
         {
-            m_maxSpeed = standPaintColor.standingColor == colors.movementPaint ? maxSpeed : maxSpeed * 1.5f;
+            m_maxSpeed = standPaintColor.standingColor == colors.movementPaint ? maxSpeed : maxSpeed * 4;
         }
         m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
@@ -190,7 +325,7 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
         bool onGround = CheckIfGrounded(out RaycastHit groundHit);
-        bool canWalk = onGround && maxWalkAngle >= Vector3.Angle(Vector3.up, groundHit.normal);
+        bool canWalk = onGround && maxSlopeAngle >= Vector3.Angle(Vector3.up, groundHit.normal);
 
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
 
@@ -218,7 +353,7 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         // Clamp horizontal speed
-        if (horizontalVel.magnitude > m_maxSpeed && !isDashing)
+        if (horizontalVel.magnitude > m_maxSpeed && !isDashing )
             horizontalVel = horizontalVel.normalized * m_maxSpeed;
 
         m_velocity.x = horizontalVel.x;
