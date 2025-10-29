@@ -29,7 +29,9 @@ public class PlayerMOvmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("collisionLayers"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("skinWidth"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("maxBounces"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSlopeAngle"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSlopeAngle")); 
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("downSlopeMult")); 
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("upSlopeMult")); 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultGroundCheck"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultGroundedDistance"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("snapDownDistance"));

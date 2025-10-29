@@ -23,6 +23,8 @@ namespace KinematicCharacterControler
 
         [Tooltip("Max Slope you can walk up")]
         public float maxSlopeAngle = 55f;
+        public float downSlopeMult = 1.01f;
+        public float upSlopeMult = 0.99f;
 
         private float m_anglePower = 0.5f;
 
@@ -79,7 +81,7 @@ namespace KinematicCharacterControler
                 // If we are overlapping with something, just exit.
                 if (hit.distance == 0)
                 {
-                    position += hit.normal * skinWidth * 2;  // Push out
+                    position += hit.normal * (skinWidth * 2);  // Push out
                     remaining *= 0.5f;  // Reduce remaining movement
                     bounces++;
                     continue;
@@ -111,6 +113,13 @@ namespace KinematicCharacterControler
 
                 // Rotate the remaining movement to be projected along the plane of the hit surface
                 Vector3 projected = Vector3.ProjectOnPlane(remaining, planeNormal).normalized * remaining.magnitude;
+
+                if (projected.y < movement.y)
+                    m_velocity *= downSlopeMult;
+
+                else if (projected.y > movement.y)
+                    m_velocity *= upSlopeMult;
+                    
 
                 // If projected remaining movement is less than original remaining movement (broke from floating point),
                 // then change this to just project along the vertical.
