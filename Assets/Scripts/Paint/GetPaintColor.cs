@@ -22,7 +22,6 @@ public class GetPaintColor : MonoBehaviour
         Ray ray = new Ray(transform.position, -transform.up);
         if (Physics.Raycast(ray, out RaycastHit hit, 5f, ~ignoreMask))
         {
-            Debug.Log(hit.transform.name);
             Paintable temp = hit.transform.gameObject.GetComponent<Paintable>();
             if (temp == null) return;
             activeMask = null;

@@ -245,6 +245,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void FixedUpdate()
     {
+        CheckIfGrounded(out RaycastHit _); 
         HandleRotation();
 
 
@@ -456,13 +457,21 @@ public class PlayerMovement : PlayerMovmentEngine
         if (m_inputActions.Attack.IsPressed())
             transform.forward = Vector3.Slerp(transform.forward, m_orientation.forward, Time.deltaTime * rotationSpeed);
     }
+    
     #region Wall Running
     bool WallRun()
     {
         // Exit wall run with jump
-        if (m_isWallRiding && m_jumpInputPressed)
+        if (m_isWallRiding && (m_jumpInputPressed || Physics.Raycast(transform.position, m_velocity.normalized, wallCheckDist, collisionLayers)))
         {
             m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
+            m_isWallRiding = false;
+            paintPoint.Rotate(0, 0, -paintRotation);
+            paintRotation = 0f;
+            return false;
+        }
+        if(groundedState.isGrounded && m_isWallRiding){
+            m_velocity += m_wallNormal * 2;
             m_isWallRiding = false;
             paintPoint.Rotate(0, 0, -paintRotation);
             paintRotation = 0f;
@@ -538,7 +547,7 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         hit = new RaycastHit();
 
-        for (int i = -20; i <= 20; i += 5)
+        for (int i = -60; i <= 60; i += 5)
         {
             if (Physics.Raycast(transform.position, -transform.right, out hit, wallCheckDistance, wallLayers))
             {
