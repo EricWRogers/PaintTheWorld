@@ -5,7 +5,7 @@ using UnityEngine.Splines;
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
 using UnityEditor;
-//file change
+
 [CustomEditor(typeof(PlayerMovement))]
 public class PlayerMOvmentEditor : Editor
 {
@@ -629,8 +629,11 @@ public class PlayerMovement : PlayerMovmentEngine
 
         Vector3 snapDelta = worldSplinePos - transform.position;
         transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
-
-      m_velocity = tangent.normalized * grindSpeed * m_railDir;
+        if (m_velocity.magnitude < minGrindSpeed)
+        {
+            m_velocity = m_velocity.normalized * minGrindSpeed;
+        }
+        m_velocity = tangent.normalized * grindSpeed * m_railDir;
 
 
     }
@@ -654,17 +657,16 @@ public class PlayerMovement : PlayerMovmentEngine
 
         var splineRef2 = splineContainer.Splines[0];
 
-        // Full 3D tangent at current progress (respecting slope)
+        
         Vector3 tangentHere = GetSplineTangentAt(splineRef2, railProgress).normalized * m_railDir;
 
-        // Use full velocity (including vertical) to get how fast we're moving along tangent
+
         float speedAlongTangent = Vector3.Dot(m_velocity, tangentHere);
 
-        // If speed is tiny or reversed, fall back to stored grindSpeed to keep motion consistent
         if (speedAlongTangent < 0.01f)
             speedAlongTangent = grindSpeed;
 
-        // Advance progress based on actual distance along spline (convert world speed to t-space)
+
         float splineLen = splineRef2.GetLength();
         if (splineLen <= 0.001f) splineLen = 1f;
         railProgress += (speedAlongTangent * Time.deltaTime) / splineLen * m_railDir;
