@@ -44,7 +44,7 @@ namespace KinematicCharacterControler
         public PhysicsMaterial DefaultPhysicsMat;
         private PhysicsMaterial currPhysicsMat;
 
-        protected Vector3 m_velocity;
+        [SerializeField, ReadOnly] protected Vector3 m_velocity;
 
         private Bounds bounds;
 

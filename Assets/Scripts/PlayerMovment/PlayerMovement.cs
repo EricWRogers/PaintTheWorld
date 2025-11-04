@@ -37,6 +37,7 @@ public class PlayerMOvmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("snapDownDistance"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("shouldSnapDown"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("gravity"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("m_velocity"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("DefaultPhysicsMat"));
             EditorGUILayout.Space();
         }
@@ -209,13 +210,13 @@ public class PlayerMovement : PlayerMovmentEngine
     private float betweenRailTime = 0.5f;
     public float railDetectionRadius = 1.5f;
     public float railSnapDistance = 2f;
-    public float minGrindSpeed = 3f;
+    public float minGrindSpeed = 20f;
     public float grindExitForce = 8f;
     [ReadOnly] public bool isGrinding;
     public Rail currentRail;
     private bool wasGrinding = false;
     public float railProgress;
-    public float grindSpeed;
+    public float grindSpeed = 10f;
     public float m_railDir = 1f;
     [SerializeField] private Transform m_railDetectionPoint;
     [Header("Paint Things")]
@@ -549,7 +550,7 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         hit = new RaycastHit();
 
-        for (int i = -60; i <= 60; i += 5)
+        for (int i = -80; i <= 80; i += 5)
         {
             if (Physics.Raycast(transform.position, -transform.right, out hit, wallCheckDistance, wallLayers))
             {
@@ -557,7 +558,7 @@ public class PlayerMovement : PlayerMovmentEngine
                 return true;
             }
         }
-        for(int i = -20; i <= 20; i+=5)
+        for(int i = -80; i <= 80; i+=5)
         {
             if(Physics.Raycast(transform.position, transform.right, out hit, wallCheckDistance, wallLayers))
             {
@@ -613,8 +614,6 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 closest = FindClosestPointOnSpline(out float progress);
         railProgress = progress;
 
-        grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
-
 
         Vector3 tangent = GetSplineTangentAt(splineRef, railProgress);
         if (tangent.sqrMagnitude < 0.0001f) tangent = Vector3.forward;
@@ -633,7 +632,16 @@ public class PlayerMovement : PlayerMovmentEngine
         {
             m_velocity = m_velocity.normalized * minGrindSpeed;
         }
-        m_velocity = tangent.normalized * grindSpeed * m_railDir;
+
+        if (m_velocity.magnitude < minGrindSpeed)
+        {
+            m_velocity = m_velocity.normalized * minGrindSpeed;
+        }
+        else
+        {
+            m_velocity += m_velocity.normalized * grindSpeed;
+        }
+        m_velocity = tangent.normalized * m_velocity.magnitude  * m_railDir;
 
 
     }
@@ -650,7 +658,7 @@ public class PlayerMovement : PlayerMovmentEngine
         {
             var splineRef = splineContainer.Splines[0];
             Vector3 tangent = GetSplineTangentAt(splineRef, railProgress).normalized * m_railDir;
-            m_velocity = tangent * grindExitForce + Vector3.up * jumpForce;
+            m_velocity = tangent * m_velocity.magnitude + Vector3.up * jumpForce;
             ExitGrinding();
             return;
         }
@@ -716,7 +724,6 @@ public class PlayerMovement : PlayerMovmentEngine
         m_timer = 0f;
         splineContainer = null;
         railProgress = 0f;
-        grindSpeed = 0f;
         wasGrinding = false;
 
 
