@@ -107,6 +107,7 @@ public class PlayerMOvmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("minGrindSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("bonusGrindSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_railDetectionPoint"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("grindJumpForce"));
         }
 
         // Paint
@@ -139,7 +140,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float rotationSpeed = 5f;
 
     [Tooltip("How much Speed Paint effects Movment Speed: This is a multiplier")]
-    public float movementColorMult = 2f;
+    public float movementColorMult = 3f;
     private float currSpeed;
     private Transform m_orientation;
 
@@ -211,6 +212,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float railDetectionRadius = 1.5f;
     public float railSnapDistance = 2f;
     public float minGrindSpeed = 20f;
+    public float grindJumpForce = 12f;
     [ReadOnly] public bool isGrinding;
     public Rail currentRail;
     private bool wasGrinding = false;
@@ -703,17 +705,15 @@ public class PlayerMovement : PlayerMovmentEngine
         // Give exit velocity
         if (splineContainer != null)
         {
-            transform.position += new Vector3(0.0f, 0.1f, 0.0f); // Slight bump to avoid ground snap issues
+            transform.position += new Vector3(0.0f, 1f, 0.0f); // Slight bump to avoid ground snap issues
             float mag = m_velocity.magnitude;
 
-            m_velocity += ((Vector3.up * 5.0f) + m_velocity.normalized).normalized * Mathf.Max(jumpForce, mag);
-
+            //m_velocity += ((Vector3.up) + m_velocity.normalized).normalized * Mathf.Max(grindJumpForce, mag);
+            m_velocity += (Vector3.up) * grindJumpForce;
         }
         m_timer = 0f;
         splineContainer = null;
         railProgress = 0f;
-        
-
 
     }
     
