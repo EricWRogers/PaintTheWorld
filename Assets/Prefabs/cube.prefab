@@ -70,18 +70,32 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 463d7e2160e1e726b82b68a444c4fbf7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -5112523163720480191}
+      addedObject: {fileID: 3483185900304386462}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 463d7e2160e1e726b82b68a444c4fbf7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3483185900304386462}
+      addedObject: {fileID: 3240986485568729610}
   m_SourcePrefab: {fileID: 100100000, guid: 463d7e2160e1e726b82b68a444c4fbf7, type: 3}
 --- !u!1 &4950218453555432640 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 463d7e2160e1e726b82b68a444c4fbf7, type: 3}
   m_PrefabInstance: {fileID: 5220758994830520721}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &-5112523163720480191
-BoxCollider:
+--- !u!114 &3483185900304386462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4950218453555432640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TEXTURE_SIZE: 256
+  extendsIslandOffset: 1
+--- !u!64 &3240986485568729610
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -98,20 +112,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1.0000002, z: 1.0000002}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3483185900304386462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4950218453555432640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TEXTURE_SIZE: 256
-  extendsIslandOffset: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5495902117074765545, guid: 463d7e2160e1e726b82b68a444c4fbf7, type: 3}

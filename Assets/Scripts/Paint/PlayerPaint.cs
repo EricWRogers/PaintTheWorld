@@ -9,7 +9,7 @@ public class PlayerPaint : GetPaintColor
     void Start()
     {
         selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-        playerModel.color = selectedPaint;
+        //playerModel.color = selectedPaint;
     }
     void Update()
     {

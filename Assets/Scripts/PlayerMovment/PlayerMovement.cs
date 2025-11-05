@@ -286,6 +286,8 @@ public class PlayerMovement : PlayerMovmentEngine
     public void HandlePaintColor()
     {
         m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? movementColorMult : 1f;
+        Debug.Log(standPaintColor.standingColor);
+
         if(groundedState.isGrounded)
         {
             m_maxSpeed = standPaintColor.standingColor == colors.movementPaint ? maxSpeed : maxSpeed * 4;
@@ -705,7 +707,7 @@ public class PlayerMovement : PlayerMovmentEngine
         // Give exit velocity
         if (splineContainer != null)
         {
-            transform.position += new Vector3(0.0f, 1f, 0.0f); // Slight bump to avoid ground snap issues
+            transform.position += new Vector3(0.0f, 0.8f, 0.0f); // Slight bump to avoid ground snap issues
             float mag = m_velocity.magnitude;
 
             //m_velocity += ((Vector3.up) + m_velocity.normalized).normalized * Mathf.Max(grindJumpForce, mag);
