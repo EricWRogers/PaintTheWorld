@@ -23,7 +23,8 @@ public class PlayerPaint : GetPaintColor
                 colorKey = 0;
             }
             selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-            playerModel.color = selectedPaint;
+            if(playerModel != null)
+                playerModel.color = selectedPaint;
         }
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0f)
@@ -34,7 +35,13 @@ public class PlayerPaint : GetPaintColor
                 colorKey = 2;
             }
             selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-            playerModel.color = selectedPaint;
+            if (playerModel != null)
+            {
+                playerModel.color = selectedPaint;
+            }
+            else Debug.LogWarning("Player model is not assigned to PlayerPaint script.");
+            
+
         }
 
         

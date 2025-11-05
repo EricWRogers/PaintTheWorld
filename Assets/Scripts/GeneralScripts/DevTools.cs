@@ -84,7 +84,6 @@ public class DevTools : MonoBehaviour
             Time.timeScale = 0;
             devToolUI.SetActive(true);
             PlayerManager.instance.player.GetComponent<PlayerMovement>().lockCursor = false;
-            PlayerManager.instance.player.GetComponent<PlayerMovement>().HandleCursor();
             m_toolsActive = true;
         }
         else
@@ -92,7 +91,6 @@ public class DevTools : MonoBehaviour
             Time.timeScale = 1;
             devToolUI.SetActive(false);
             PlayerManager.instance.player.GetComponent<PlayerMovement>().lockCursor = true;
-            PlayerManager.instance.player.GetComponent<PlayerMovement>().HandleCursor();
             m_toolsActive = false;
         }
     }
