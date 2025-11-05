@@ -39,6 +39,7 @@ public class PlayerMOvmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("gravity"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_velocity"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("DefaultPhysicsMat"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("groundedState"));
             EditorGUILayout.Space();
         }
 
@@ -206,7 +207,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public LayerMask railLayer;
     public SplineContainer splineContainer;
     private float m_timer;
-    private float betweenRailTime = 0.1f;
+    private float betweenRailTime = 0.5f;
     public float railDetectionRadius = 1.5f;
     public float railSnapDistance = 2f;
     public float minGrindSpeed = 20f;
@@ -702,7 +703,10 @@ public class PlayerMovement : PlayerMovmentEngine
         // Give exit velocity
         if (splineContainer != null)
         {
-            m_velocity += Vector3.up * jumpForce;
+            transform.position += new Vector3(0.0f, 0.1f, 0.0f); // Slight bump to avoid ground snap issues
+            float mag = m_velocity.magnitude;
+
+            m_velocity += ((Vector3.up * 5.0f) + m_velocity.normalized).normalized * Mathf.Max(jumpForce, mag);
 
         }
         m_timer = 0f;
