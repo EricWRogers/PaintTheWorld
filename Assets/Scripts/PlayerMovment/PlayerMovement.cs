@@ -491,14 +491,16 @@ public class PlayerMovement : PlayerMovmentEngine
                 {
                     m_isWallRiding = true;
                     m_wallNormal = hit.normal;
-                    if (leftWall)
-                    {
-                        paintRotation -= 90;
-                    }
-                    else if(rightWall)
-                    {
-                        paintRotation += 90;
-                    }
+                if (leftWall)
+                {
+                    paintRotation -= 90;
+                }
+                else if (rightWall)
+                {
+                    paintRotation += 90;
+                }
+                    
+                GameEvents.RaiseWallRunStarted();
                 }
                 paintPoint.Rotate(0, 0f, paintRotation);
             
@@ -527,7 +529,7 @@ public class PlayerMovement : PlayerMovmentEngine
                     m_velocity = m_wallRunDir * currSpeed + -Vector3.up * wallGravity;
                 }
 
-
+                GameEvents.RaiseWallRunTick();
 
                 return true;
             }
