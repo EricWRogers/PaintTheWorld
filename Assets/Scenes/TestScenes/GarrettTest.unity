@@ -4335,7 +4335,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6895654265053703445, guid: cae808cb820be7946956ac66876a3cdd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bfc9a7da29af6ea4081270b835bcbcf9, type: 2}
+    m_RemovedComponents:
+    - {fileID: 5900040937828855164, guid: cae808cb820be7946956ac66876a3cdd, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -12764,10 +12769,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1696714884}
     m_Modifications:
-    - target: {fileID: 3483185900304386462, guid: cae808cb820be7946956ac66876a3cdd, type: 3}
-      propertyPath: TEXTURE_SIZE
-      value: 256
-      objectReference: {fileID: 0}
     - target: {fileID: 4950218453555432640, guid: cae808cb820be7946956ac66876a3cdd, type: 3}
       propertyPath: m_Name
       value: cube
