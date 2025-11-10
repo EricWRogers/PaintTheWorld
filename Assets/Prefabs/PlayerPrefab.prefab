@@ -147,8 +147,8 @@ GameObject:
   - component: {fileID: 6208220107138550641}
   - component: {fileID: 7155521859917543831}
   - component: {fileID: 2377718336949678157}
-  - component: {fileID: 5765820872755269932}
   - component: {fileID: 8181337445994354394}
+  - component: {fileID: 25554990982498507}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -249,18 +249,25 @@ MonoBehaviour:
   skinWidth: 0.015
   maxBounces: 5
   maxSlopeAngle: 55
+  downSlopeMult: 1.01
+  upSlopeMult: 0.99
   defaultGroundCheck: 0.1
   defaultGroundedDistance: 0.05
   snapDownDistance: 0.45
   shouldSnapDown: 1
   gravity: {x: 0, y: -13, z: 0}
+  groundedState:
+    distToGround: 0
+    isGrounded: 0
+    angle: 0
+    groundNormal: {x: 0, y: 0, z: 0}
+    groundHitPosition: {x: 0, y: 0, z: 0}
   DefaultPhysicsMat: {fileID: 13400000, guid: c938007490e861b8f96f9117fbb7a36b, type: 2}
   speed: 15
   maxSpeed: 20
   rotationSpeed: 10
-  maxWalkAngle: 60
-  cam: {fileID: 2558197743922652643}
   movementColorMult: 2
+  cam: {fileID: 2558197743922652643}
   lockCursor: 1
   groundAccelMult: 3
   airAccelMult: 1.5
@@ -291,7 +298,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   dashSpeed: 40
-  dashKey: 304
   isDashing: 0
   dashDuration: 0.5
   dashCooldown: 2
@@ -303,14 +309,14 @@ MonoBehaviour:
   jumpInputElapsed: Infinity
   m_jumpInputPressed: 0
   m_isWallRiding: 0
+  leftWall: 0
+  rightWall: 0
   wallCheckDist: 1
   climbMult: 4
   wallGravity: 3
   wallLayers:
     serializedVersion: 2
     m_Bits: 640
-  leftWall: 0
-  rightWall: 0
   wallCheckDistance: 1
   railLayer:
     serializedVersion: 2
@@ -431,19 +437,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grindTickInterval: 0.6
---- !u!114 &5765820872755269932
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69e8a0e0d36150246a69e1c8ff1a90d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  extraJumpsGranted: 0
 --- !u!114 &8181337445994354394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,6 +450,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   widthMultiplier: 1
+--- !u!114 &25554990982498507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 705e7cae3307fc44badafe88a9a57ebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseRadius: 0.6
+  radiusPerStack: 0.2
+  hardness: 1
+  strength: 1
+  tickInterval: 0.06
+  rayStartOffset: 0.6
+  rayDistance: 2
+  paintMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &989597325184863637
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,7 +603,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761042, y: 0.00057755486, z: -0.000080240956, w: 0.99048626}
+  m_LocalRotation: {x: 0.1376104, y: 0.00041928169, z: -0.00005825631, w: 0.9904864}
   m_LocalPosition: {x: 0, y: -0.49000013, z: -44.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -672,8 +687,8 @@ MonoBehaviour:
     SplineCurvature: 0.345
   RecenteringTarget: 2
   HorizontalAxis:
-    Value: 90.00001
-    Center: 90.00001
+    Value: 0
+    Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
     Recentering:
@@ -937,7 +952,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761044, y: 0.0005775549, z: -0.00008024096, w: 0.99048626}
+  m_LocalRotation: {x: 0.13761044, y: 0.00041928107, z: -0.000058251637, w: 0.9904864}
   m_LocalPosition: {x: 0, y: -0.49000013, z: -44.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

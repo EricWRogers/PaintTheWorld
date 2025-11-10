@@ -1,6 +1,8 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
+using Unity.VisualScripting;
+
 
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
@@ -37,9 +39,7 @@ public class PlayerMOvmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("snapDownDistance"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("shouldSnapDown"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("gravity"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("m_velocity"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("DefaultPhysicsMat"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("groundedState"));
             EditorGUILayout.Space();
         }
 
@@ -105,9 +105,8 @@ public class PlayerMOvmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("railDetectionRadius"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("railSnapDistance"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("minGrindSpeed"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("bonusGrindSpeed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("grindExitForce"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_railDetectionPoint"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("grindJumpForce"));
         }
 
         // Paint
@@ -140,7 +139,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float rotationSpeed = 5f;
 
     [Tooltip("How much Speed Paint effects Movment Speed: This is a multiplier")]
-    public float movementColorMult = 3f;
+    public float movementColorMult = 2f;
     private float currSpeed;
     private Transform m_orientation;
 
@@ -164,6 +163,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     [Tooltip("Friction while on the Ground")]
     public float groundDrag = 0.4f;
+    private Vector3 m_lasPos;
 
     [Header("Dashing")]
     [Tooltip("Shows the rate of acerleration over the time of the dash")]
@@ -188,6 +188,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool m_jumpInputPressed = false;
     private float m_jumpBufferTime = 0.25f;
     private bool wasGrounded = false;
+
     [Header("Wall Riding")]
     [ReadOnly] public bool m_isWallRiding = false;
     [ReadOnly] public bool leftWall;
@@ -211,13 +212,13 @@ public class PlayerMovement : PlayerMovmentEngine
     private float betweenRailTime = 0.5f;
     public float railDetectionRadius = 1.5f;
     public float railSnapDistance = 2f;
-    public float minGrindSpeed = 20f;
-    public float grindJumpForce = 12f;
+    public float minGrindSpeed = 3f;
+    public float grindExitForce = 8f;
     [ReadOnly] public bool isGrinding;
     public Rail currentRail;
     private bool wasGrinding = false;
     public float railProgress;
-    public float bonusGrindSpeed = 10f;
+    public float grindSpeed;
     public float m_railDir = 1f;
     [SerializeField] private Transform m_railDetectionPoint;
     [Header("Paint Things")]
@@ -235,11 +236,13 @@ public class PlayerMovement : PlayerMovmentEngine
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        m_lasPos = transform.position;
         
     }
 
     void Update()
     {
+        HandleCursor();
         HandleInput();
         HandlePaintColor();
         HandleFOV();
@@ -293,6 +296,19 @@ public class PlayerMovement : PlayerMovmentEngine
         m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
 
+    public void HandleCursor()
+    {
+        // if (lockCursor)
+        // {
+        //     Cursor.lockState = CursorLockMode.Locked;
+        //     Cursor.visible = false;
+        // }
+        // else
+        // {
+        //     Cursor.lockState = CursorLockMode.None;
+        //     Cursor.visible = true;
+        // }
+    }
 
     void HandleInput()
     {
@@ -384,6 +400,9 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (onGround && !attemptingJump && groundedState.angle < 10)
             SnapPlayerDown();
+        //if(transform.position.y > m_lasPos.y)
+            m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
+        m_lasPos = transform.position;
 
     }
 
@@ -478,16 +497,14 @@ public class PlayerMovement : PlayerMovmentEngine
                 {
                     m_isWallRiding = true;
                     m_wallNormal = hit.normal;
-                if (leftWall)
-                {
-                    paintRotation -= 90;
-                }
-                else if (rightWall)
-                {
-                    paintRotation += 90;
-                }
-                    
-                GameEvents.RaiseWallRunStarted();
+                    if (leftWall)
+                    {
+                        paintRotation -= 90;
+                    }
+                    else if(rightWall)
+                    {
+                        paintRotation += 90;
+                    }
                 }
                 paintPoint.Rotate(0, 0f, paintRotation);
             
@@ -516,7 +533,7 @@ public class PlayerMovement : PlayerMovmentEngine
                     m_velocity = m_wallRunDir * currSpeed + -Vector3.up * wallGravity;
                 }
 
-                GameEvents.RaiseWallRunTick();
+
 
                 return true;
             }
@@ -539,7 +556,7 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         hit = new RaycastHit();
 
-        for (int i = -80; i <= 80; i += 5)
+        for (int i = -60; i <= 60; i += 5)
         {
             if (Physics.Raycast(transform.position, -transform.right, out hit, wallCheckDistance, wallLayers))
             {
@@ -547,7 +564,7 @@ public class PlayerMovement : PlayerMovmentEngine
                 return true;
             }
         }
-        for(int i = -80; i <= 80; i+=5)
+        for(int i = -20; i <= 20; i+=5)
         {
             if(Physics.Raycast(transform.position, transform.right, out hit, wallCheckDistance, wallLayers))
             {
@@ -597,12 +614,13 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void StartGrinding()
     {
-        wasGrounded = true;
         isGrinding = true;
         var splineRef = splineContainer.Splines[0];
 
         Vector3 closest = FindClosestPointOnSpline(out float progress);
         railProgress = progress;
+
+        grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
 
 
         Vector3 tangent = GetSplineTangentAt(splineRef, railProgress);
@@ -619,17 +637,7 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 snapDelta = worldSplinePos - transform.position;
         transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
 
-
-        if (m_velocity.magnitude < minGrindSpeed)
-        {
-            m_velocity = m_velocity.normalized * minGrindSpeed;
-        }
-        else
-        {
-            m_velocity += m_velocity.normalized * bonusGrindSpeed;
-        }
-        m_velocity = Vector3.ClampMagnitude(m_velocity, maxSpeed + bonusGrindSpeed);
-        m_velocity = tangent.normalized * m_velocity.magnitude  * m_railDir;
+      m_velocity = tangent.normalized * grindSpeed * m_railDir;
 
 
     }
@@ -646,23 +654,24 @@ public class PlayerMovement : PlayerMovmentEngine
         {
             var splineRef = splineContainer.Splines[0];
             Vector3 tangent = GetSplineTangentAt(splineRef, railProgress).normalized * m_railDir;
-            //m_velocity = tangent * m_velocity.magnitude + Vector3.up * jumpForce ;
+            m_velocity = tangent * grindExitForce + Vector3.up * jumpForce;
             ExitGrinding();
             return;
         }
 
         var splineRef2 = splineContainer.Splines[0];
 
-        
-        Vector3 tangentHere = GetSplineTangentAt(splineRef2, railProgress) * m_railDir;
+        // Full 3D tangent at current progress (respecting slope)
+        Vector3 tangentHere = GetSplineTangentAt(splineRef2, railProgress).normalized * m_railDir;
 
-
+        // Use full velocity (including vertical) to get how fast we're moving along tangent
         float speedAlongTangent = Vector3.Dot(m_velocity, tangentHere);
 
+        // If speed is tiny or reversed, fall back to stored grindSpeed to keep motion consistent
         if (speedAlongTangent < 0.01f)
-            speedAlongTangent = bonusGrindSpeed;
+            speedAlongTangent = grindSpeed;
 
-
+        // Advance progress based on actual distance along spline (convert world speed to t-space)
         float splineLen = splineRef2.GetLength();
         if (splineLen <= 0.001f) splineLen = 1f;
         railProgress += (speedAlongTangent * Time.deltaTime) / splineLen * m_railDir;
@@ -705,15 +714,16 @@ public class PlayerMovement : PlayerMovmentEngine
         // Give exit velocity
         if (splineContainer != null)
         {
-            transform.position += new Vector3(0.0f, 1f, 0.0f); // Slight bump to avoid ground snap issues
-            float mag = m_velocity.magnitude;
+            m_velocity += Vector3.up * jumpForce;
 
-            //m_velocity += ((Vector3.up) + m_velocity.normalized).normalized * Mathf.Max(grindJumpForce, mag);
-            m_velocity += (Vector3.up) * grindJumpForce;
         }
+        //transform.position = MovePlayer(m_velocity * Time.deltaTime);
         m_timer = 0f;
         splineContainer = null;
         railProgress = 0f;
+        grindSpeed = 0f;
+        wasGrinding = false;
+
 
     }
     
