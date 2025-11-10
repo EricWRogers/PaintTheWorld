@@ -11,9 +11,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerDodged         += OnDodged;
         GameEvents.PlayerStartedGrinding+= OnGrindStart;
         GameEvents.PlayerGrindingTick   += OnGrindTick;
-        GameEvents.PaintApplied += OnPaintApplied;
-        GameEvents.WallRunStarted += OnGrindStart;
-        GameEvents.WallRunTick    += OnGrindTick;
+        GameEvents.PaintApplied         += OnPaintApplied;
     }
     void OnDisable()
     {
@@ -24,9 +22,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerDodged          -= OnDodged;
         GameEvents.PlayerStartedGrinding -= OnGrindStart;
         GameEvents.PlayerGrindingTick    -= OnGrindTick;
-        GameEvents.PaintApplied -= OnPaintApplied;
-        GameEvents.WallRunStarted -= OnGrindStart;
-        GameEvents.WallRunTick    -= OnGrindTick;
+        GameEvents.PaintApplied          -= OnPaintApplied;
     }
 
 
@@ -55,8 +51,6 @@ public class ItemRuntimeDispatcher : MonoBehaviour
     void OnDodged()                 => ForEachItem((it,c)=> it.OnDodged(Ctx, c));
     void OnGrindStart()             => ForEachItem((it,c)=> it.OnGrindStart(Ctx, c));
     void OnGrindTick()              => ForEachItem((it,c)=> it.OnGrindTick(Ctx, c));
-    void OnPaintApplied(float amt) => ForEachItem((it, c) => it.OnPaintApplied(Ctx, amt, c));
-    
-
+    void OnPaintApplied(float amt)  => ForEachItem((it,c)=> it.OnPaintApplied(Ctx, amt, c));
 }
 

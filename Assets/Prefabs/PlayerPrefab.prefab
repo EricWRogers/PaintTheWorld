@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 7155521859917543831}
   - component: {fileID: 2377718336949678157}
   - component: {fileID: 8181337445994354394}
-  - component: {fileID: 2442638158082401947}
+  - component: {fileID: 25554990982498507}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -263,7 +263,6 @@ MonoBehaviour:
     groundNormal: {x: 0, y: 0, z: 0}
     groundHitPosition: {x: 0, y: 0, z: 0}
   DefaultPhysicsMat: {fileID: 13400000, guid: c938007490e861b8f96f9117fbb7a36b, type: 2}
-  m_velocity: {x: 0, y: 0, z: 0}
   speed: 15
   maxSpeed: 20
   rotationSpeed: 10
@@ -326,11 +325,11 @@ MonoBehaviour:
   railDetectionRadius: 0.7
   railSnapDistance: 2
   minGrindSpeed: 10
-  grindJumpForce: 12
+  grindExitForce: 8
   isGrinding: 0
   currentRail: {fileID: 0}
   railProgress: 0
-  bonusGrindSpeed: 10
+  grindSpeed: 5
   m_railDir: 1
   m_railDetectionPoint: {fileID: 3256202762024098186}
   standPaintColor: {fileID: 261299125623734721}
@@ -451,7 +450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   widthMultiplier: 1
---- !u!114 &2442638158082401947
+--- !u!114 &25554990982498507
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -460,9 +459,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 987569071003229930}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fa411228a5d61f4c8ba6a2be7444595, type: 3}
+  m_Script: {fileID: 11500000, guid: 705e7cae3307fc44badafe88a9a57ebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseRadius: 0.6
+  radiusPerStack: 0.2
+  hardness: 1
+  strength: 1
+  tickInterval: 0.06
+  rayStartOffset: 0.6
+  rayDistance: 2
+  paintMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &989597325184863637
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,8 +603,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761044, y: 0.00044674365, z: -0.00006206712, w: 0.9904863}
-  m_LocalPosition: {x: 0, y: -0.49, z: -44.800003}
+  m_LocalRotation: {x: 0.1376104, y: 0.00041928169, z: -0.00005825631, w: 0.9904864}
+  m_LocalPosition: {x: 0, y: -0.49000013, z: -44.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -943,8 +952,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761044, y: 0.00044674365, z: -0.000062067076, w: 0.9904863}
-  m_LocalPosition: {x: 0, y: -0.49, z: -44.800003}
+  m_LocalRotation: {x: 0.13761044, y: 0.00041928107, z: -0.000058251637, w: 0.9904864}
+  m_LocalPosition: {x: 0, y: -0.49000013, z: -44.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
