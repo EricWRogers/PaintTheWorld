@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c77edb7c409e0c4c9092e3d7f09443c, type: 3}
+  m_Name: PaintTrail
+  m_EditorClassIdentifier: 
+  id: paint_trail
+  displayName: Paint Trail
+  description: Gives the player a paint trail on the ground below them.
+  icon: {fileID: 0}
+  rarity: 0
+  basePrice: 100
+  stackable: 1
+  maxStack: 99
+  initialStock: -1
+  baseRadius: 0.6
+  radiusPerStack: 0.2
+  hardness: 1
+  strength: 1
+  tickInterval: 0.06
