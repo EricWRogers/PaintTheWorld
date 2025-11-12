@@ -1,6 +1,8 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
+using Unity.VisualScripting;
+
 
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
@@ -161,6 +163,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     [Tooltip("Friction while on the Ground")]
     public float groundDrag = 0.4f;
+    private Vector3 m_lasPos;
 
     [Header("Dashing")]
     [Tooltip("Shows the rate of acerleration over the time of the dash")]
@@ -233,6 +236,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        m_lasPos = transform.position;
         
     }
 
@@ -396,6 +400,9 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (onGround && !attemptingJump && groundedState.angle < 10)
             SnapPlayerDown();
+        //if(transform.position.y > m_lasPos.y)
+            m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
+        m_lasPos = transform.position;
 
     }
 
