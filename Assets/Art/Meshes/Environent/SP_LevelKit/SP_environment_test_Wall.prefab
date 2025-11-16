@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4334444455837080178}
   - component: {fileID: 3095720968198756300}
   - component: {fileID: 2145502895820068164}
-  - component: {fileID: 7567806898575276752}
+  - component: {fileID: 3627069150138054241}
   m_Layer: 0
   m_Name: SP_environment_test_Wall
   m_TagString: Paintable
@@ -102,8 +102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
---- !u!65 &7567806898575276752
-BoxCollider:
+--- !u!64 &3627069150138054241
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -120,6 +120,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.1629683, y: 4, z: 4}
-  m_Center: {x: 2.5735157, y: 2, z: -0.0000035762785}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1487383039659329554, guid: f2545d3fa4c732946b1bc9800556bff6, type: 3}
