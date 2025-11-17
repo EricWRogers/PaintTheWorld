@@ -165,7 +165,7 @@ Transform:
   m_GameObject: {fileID: 987569071003229930}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.6, z: -38.8}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 462528753415464062}
 --- !u!114 &9104941373587113884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,7 +245,7 @@ MonoBehaviour:
   capsule: {fileID: 7236730804248690065}
   collisionLayers:
     serializedVersion: 2
-    m_Bits: 1015
+    m_Bits: 2039
   skinWidth: 0.015
   maxBounces: 5
   maxSlopeAngle: 55
@@ -253,9 +253,9 @@ MonoBehaviour:
   upSlopeMult: 0.99
   defaultGroundCheck: 0.1
   defaultGroundedDistance: 0.05
-  snapDownDistance: 0.45
+  snapDownDistance: 0.5
   shouldSnapDown: 1
-  gravity: {x: 0, y: -13, z: 0}
+  gravity: {x: 0, y: -15, z: 0}
   groundedState:
     distToGround: 0
     isGrounded: 0
@@ -264,7 +264,7 @@ MonoBehaviour:
     groundHitPosition: {x: 0, y: 0, z: 0}
   DefaultPhysicsMat: {fileID: 13400000, guid: c938007490e861b8f96f9117fbb7a36b, type: 2}
   speed: 15
-  maxSpeed: 20
+  maxSpeed: 50
   rotationSpeed: 10
   movementColorMult: 2
   cam: {fileID: 2558197743922652643}
@@ -316,7 +316,7 @@ MonoBehaviour:
   wallGravity: 3
   wallLayers:
     serializedVersion: 2
-    m_Bits: 640
+    m_Bits: 512
   wallCheckDistance: 1
   railLayer:
     serializedVersion: 2
@@ -603,8 +603,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1376104, y: 0.00041928169, z: -0.00005825631, w: 0.9904864}
-  m_LocalPosition: {x: 0, y: -0.49000013, z: -44.8}
+  m_LocalRotation: {x: 0.1376105, y: 0.00042759426, z: -0.000059406757, w: 0.9904863}
+  m_LocalPosition: {x: 0, y: 0.110000014, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -682,7 +682,7 @@ MonoBehaviour:
       Radius: 6
       Height: 2
     Bottom:
-      Radius: 5
+      Radius: 3
       Height: -1
     SplineCurvature: 0.345
   RecenteringTarget: 2
@@ -952,8 +952,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761044, y: 0.00041928107, z: -0.000058251637, w: 0.9904864}
-  m_LocalPosition: {x: 0, y: -0.49000013, z: -44.8}
+  m_LocalRotation: {x: 0.13761044, y: 0.00042764252, z: -0.000059413313, w: 0.9904863}
+  m_LocalPosition: {x: 0, y: 0.110000014, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -977,12 +977,12 @@ Camera:
   m_ShutterSpeed: 0.005
   m_Aperture: 16
   m_FocusDistance: 10
-  m_FocalLength: 50
+  m_FocalLength: 17.158201
   m_BladeCount: 5
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
   m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
+  m_SensorSize: {x: 21.946, y: 16.002}
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
