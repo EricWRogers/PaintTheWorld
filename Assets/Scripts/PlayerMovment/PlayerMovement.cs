@@ -398,10 +398,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
-        if (onGround && !attemptingJump && groundedState.angle < 10)
+        if (onGround && !attemptingJump && groundedState.angle > 10 && transform.position.y - m_lasPos.y < 0.001f )
             SnapPlayerDown();
         //if(transform.position.y > m_lasPos.y)
-            m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
+        m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
         m_lasPos = transform.position;
 
     }
@@ -556,7 +556,7 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         hit = new RaycastHit();
 
-        for (int i = -60; i <= 60; i += 5)
+        for (int i = -40; i <= 40; i += 5)
         {
             if (Physics.Raycast(transform.position, -transform.right, out hit, wallCheckDistance, wallLayers))
             {
@@ -564,7 +564,7 @@ public class PlayerMovement : PlayerMovmentEngine
                 return true;
             }
         }
-        for(int i = -20; i <= 20; i+=5)
+        for(int i = -40; i <= 40; i+=5)
         {
             if(Physics.Raycast(transform.position, transform.right, out hit, wallCheckDistance, wallLayers))
             {
@@ -714,7 +714,7 @@ public class PlayerMovement : PlayerMovmentEngine
         // Give exit velocity
         if (splineContainer != null)
         {
-            m_velocity += Vector3.up * jumpForce;
+            m_velocity += Vector3.up * grindExitForce;
 
         }
         //transform.position = MovePlayer(m_velocity * Time.deltaTime);

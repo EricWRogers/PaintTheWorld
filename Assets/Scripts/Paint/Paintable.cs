@@ -8,7 +8,7 @@ public class Paintable : MonoBehaviour {
         BIG = 1024,
         MEDIUM = 512,
         SMALL = 256,
-        MINI = 124,
+        MINI = 128,
     }
     //const int TEXTURE_SIZE = 256;
     public TextureQuality TEXTURE_SIZE = TextureQuality.MINI;
