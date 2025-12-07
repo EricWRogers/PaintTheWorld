@@ -53,8 +53,11 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public Inventory inventory;
     public PlayerStats stats;
 
-    private float m_healthMult => PlayerManager.instance.stats.skills[0].currentMult;
+    private float m_healthMult => stats.skills[0].currentMult;
     public int startingHealth;
+
+    public PlayerInputActions.PlayerActions playerInputs;
+    public PlayerInputActions.UIActions uIInputs;
 
     private SaveData saveData;
     private const string SAVE_KEY = "PlayerSaveData";
@@ -68,7 +71,8 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public float globSpeed = 18f;
     public int maxJumpCount = 1;
 
-    public PlayerContext GetContext() => new PlayerContext {
+    public PlayerContext GetContext() => new PlayerContext
+    {
         player = player ? player.transform : null,
         playerHealth = health,
         enemyLayer = enemyLayer,
@@ -77,6 +81,15 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         healAuraPrefab = healAuraPrefab,
         globSpeed = globSpeed
     };
+
+    new void Awake()
+    {
+        base.Awake();
+        playerInputs = new PlayerInputActions().Player;
+        uIInputs = new PlayerInputActions().UI;
+        uIInputs.Disable();
+        playerInputs.Enable();
+    }
 
     void Start()
     {
@@ -96,6 +109,22 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             IsReady = true;
             health.maxHealth = Mathf.RoundToInt(startingHealth * m_healthMult);
             health.currentHealth = health.maxHealth;
+
+        }
+    }
+
+    void Update()
+    {
+        health.maxHealth = Mathf.RoundToInt(startingHealth * m_healthMult);
+        if (playerInputs.Pause.IsPressed())
+        {
+            GameManager.instance.PauseGame();
+            GameManager.instance.pauseMenu.SetActive(true);
+        }
+        if (uIInputs.Resume.IsPressed())
+        {
+            GameManager.instance.ResumeGame();
+            GameManager.instance.pauseMenu.SetActive(false);
         }
     }
 
@@ -178,6 +207,12 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             RegisterPlayer(player);
 
         IsReady = true;
+    }
+
+    new void OnDestroy()
+    {
+        base.OnDestroy();
+        playerInputs.Disable();
     }
 }
 

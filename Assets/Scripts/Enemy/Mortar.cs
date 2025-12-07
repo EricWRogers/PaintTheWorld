@@ -16,15 +16,35 @@ public class Mortar : Enemy
 
     [Header("Indicator Settings")]
     public GameObject targetIndicatorPrefab;
+    public Vector3 offset;
 
     private float m_attackTimer = 0f;
     private Vector3 m_targetPos;
     private GameObject m_currentIndicator;
     [HideInInspector] public bool hasTarget;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip fireSound;
+    [Range(0f, 1f)]
+    public float fireSoundVolume = 0.9f;
+    [Range(0.95f, 1.05f)]
+    public float randomPitchRange = 1.02f;
 
-    void Update()
+    new void Start()
     {
+        base.Start();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f; // 3D sound
+        }
+    }
+
+    new void Update()
+    {
+        base.Update();
         if (player == null) return;
 
         m_attackTimer -= Time.deltaTime;
@@ -57,7 +77,7 @@ public class Mortar : Enemy
             m_targetPos = GetPlayerTargetPos();
             hasTarget = true;
 
-            ShowTargetIndicator(m_targetPos);
+            ShowTargetIndicator(m_targetPos + offset);
             Invoke(nameof(FireShell), aimDelay);
         }
     }
@@ -65,6 +85,14 @@ public class Mortar : Enemy
     private void FireShell()
     {
         if (bulletPrefab == null || firePoint == null) return;
+
+        if (audioSource != null && fireSound != null)
+        {
+            float delta = randomPitchRange - 1f;
+            float pitch = Random.Range(1f - delta, 1f + delta);
+            audioSource.pitch = pitch;
+            audioSource.PlayOneShot(fireSound, fireSoundVolume);
+        }
 
         MortarShell shell = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity).GetComponent<MortarShell>();
         shell.mortar = this;

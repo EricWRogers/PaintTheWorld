@@ -12,7 +12,6 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public int selectedArea;
     public List<GameObject> listOfEnemyPrefabs;
 
-    private int m_spawnCount;
     private float m_timer;
 
     void Start()
@@ -34,23 +33,39 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     void Update()
     {
         m_timer -= Time.deltaTime;
-        if (spawnAmount > m_spawnCount && m_timer <= 0)
+        if (spawnAmount > 0 && m_timer <= 0)
         {
             GameObject prefab = listOfEnemyPrefabs[Random.Range(0, listOfEnemyPrefabs.Count)];
             spawnerAreas[selectedArea].SpawnEnemy(prefab.name);
-            m_spawnCount++;
+            spawnAmount--;
             m_timer = spawnDelay;
         }
+
+        foreach(EnemySpawning spawner in spawnerAreas)
+        {
+            if (spawner == spawnerAreas[selectedArea])
+            {
+                spawner.indicator.SetActive(true);
+            }
+            else
+            {
+                spawner.indicator.SetActive(false);
+            }
+        }
+
     }
     
     public void ResetWave()
     {
         spawnAmount = 0;
-        m_spawnCount = 0;
     }
 
     public void ChooseSpawnArea()
     {
+        if(spawnerAreas.Count == 0)
+        {
+            return;
+        }
         spawnerAreas[selectedArea].indicator.SetActive(false);
         selectedArea = Random.Range(0, spawnerAreas.Count);
         spawnerAreas[selectedArea].indicator.SetActive(true);

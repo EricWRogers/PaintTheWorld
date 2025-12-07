@@ -1,8 +1,17 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Paintable : MonoBehaviour {
-    const int TEXTURE_SIZE = 1024;
 
+    public enum TextureQuality
+    {
+        BIG = 1024,
+        MEDIUM = 512,
+        SMALL = 256,
+        MINI = 128,
+    }
+    //const int TEXTURE_SIZE = 256;
+    public TextureQuality TEXTURE_SIZE = TextureQuality.MINI;
     public float extendsIslandOffset = 1;
 
     private RenderTexture m_extendIslandsRenderTexture;
@@ -21,16 +30,16 @@ public class Paintable : MonoBehaviour {
     public Renderer getRenderer() => m_rend;
 
     void Start() {
-        m_maskRenderTexture = new RenderTexture(TEXTURE_SIZE, TEXTURE_SIZE, 0);
+        m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_maskRenderTexture.filterMode = FilterMode.Bilinear;
 
-        m_extendIslandsRenderTexture = new RenderTexture(TEXTURE_SIZE, TEXTURE_SIZE, 0);
+        m_extendIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_extendIslandsRenderTexture.filterMode = FilterMode.Bilinear;
 
-        m_uvIslandsRenderTexture = new RenderTexture(TEXTURE_SIZE, TEXTURE_SIZE, 0);
-        m_uvIslandsRenderTexture.filterMode = FilterMode.Bilinear;
+        // m_uvIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
+        // m_uvIslandsRenderTexture.filterMode = FilterMode.Bilinear;
 
-        m_supportTexture = new RenderTexture(TEXTURE_SIZE, TEXTURE_SIZE, 0);
+        m_supportTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_supportTexture.filterMode =  FilterMode.Bilinear;
 
         m_rend = GetComponent<Renderer>();
@@ -41,7 +50,7 @@ public class Paintable : MonoBehaviour {
 
     void OnDisable(){
         m_maskRenderTexture.Release();
-        m_uvIslandsRenderTexture.Release();
+        //m_uvIslandsRenderTexture.Release();
         m_extendIslandsRenderTexture.Release();
         m_supportTexture.Release();
     }

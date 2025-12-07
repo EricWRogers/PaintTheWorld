@@ -48,8 +48,7 @@ public class ItemEffectsManager : MonoBehaviour
         var scaler = pm.player.GetComponentInChildren<PlayerPaintWidthScaler>(true);
         if (scaler) { scaler.widthMultiplier = 1f; Debug.Log($"[ItemEffectsManager] Reset widthMultiplier on {scaler.gameObject.name}"); }
 
-        var jumps = pm.player.GetComponentInChildren<ExtraJumpController>(true);
-        if (jumps) { jumps.extraJumpsGranted = 0; }
+
 
         // Re-apply every owned item’s OnEquipped
         if (pm.inventory == null || pm.inventory.items == null) return;

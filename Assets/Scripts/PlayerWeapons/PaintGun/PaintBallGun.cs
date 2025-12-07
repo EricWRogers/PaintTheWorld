@@ -28,10 +28,23 @@ public class PaintBallGun : Weapon
 
     private float shotInterval => 60f / Mathf.Max(1f, roundsPerMinute * attackSpeedMult);
 
+        [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip fireSound;
+    [Range(0f, 1f)]
+    public float fireSoundVolume = 0.7f;
+    [Range(0.9f, 1.1f)]
+    public float randomPitchRange = 1.05f;
+
     // Add an Awake method to cache the component
     void Awake()
     {
-
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 1f; // Full 3D sound
+        }
     }
 
     // Use the base class Start() to get the player
@@ -100,13 +113,17 @@ public class PaintBallGun : Weapon
                 }
             }
         }
-        
+
         if (autoFire)
         {
             if (m_currentTarget != null && m_autoFireTimer < 0 && !m_isFiringBurst && Time.time >= m_nextBurstAvailableTime)
             {
                 StartBurst();
                 m_autoFireTimer = autoFireRate;
+            }
+            else if (m_currentTarget == null)
+            {
+                CancelBurst();
             }
         }
     }
@@ -147,6 +164,14 @@ public class PaintBallGun : Weapon
         m_shotTimer = 0f;
         Shoot(); // Fire the first bullet immediately
         m_bulletsFiredThisBurst++;
+        if (audioSource != null && fireSound != null)
+    {
+        audioSource.clip = fireSound;
+        audioSource.loop = true;
+        audioSource.pitch = Random.Range(1f, randomPitchRange);
+        audioSource.volume = fireSoundVolume;
+        audioSource.Play();
+    }
     }
     private void Shoot()
     {
@@ -184,5 +209,10 @@ public class PaintBallGun : Weapon
         m_bulletsFiredThisBurst = 0;
         m_shotTimer = 0f;
         // m_currentTarget = null;
+        if (audioSource != null)
+        {
+            audioSource.Stop();
+            audioSource.loop = false;
+        }
     }
 }

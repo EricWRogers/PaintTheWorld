@@ -3,32 +3,43 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 
 namespace KinematicCharacterControler
 {
+    
     [RequireComponent(typeof(CapsuleCollider))]
+    [RequireComponent(typeof(Rigidbody))]
     public class PlayerMovmentEngine : MonoBehaviour
     {
-          public CapsuleCollider capsule;
+        public CapsuleCollider capsule;
+        [Tooltip("What layers the Player should collide with")]
         public LayerMask collisionLayers;
 
         [Header("Collision & Slope")]
         public float skinWidth = 0.015f;
         public int maxBounces = 5;
+
+        [Tooltip("Max Slope you can walk up")]
         public float maxSlopeAngle = 55f;
+        public float downSlopeMult = 1.01f;
+        public float upSlopeMult = 0.99f;
+
         private float m_anglePower = 0.5f;
 
         [Header("Ground Checks")]
+        [Tooltip("")]
         public float defaultGroundCheck = 0.25f;
         public float defaultGroundedDistance = 0.05f;
         public float snapDownDistance = 0.45f; 
         public bool shouldSnapDown = true; // Should snap to ground
 
-        [Header("Gravity (used only if not snapped)")]
+        [Header("Gravity")]
+        [Tooltip("Direction Gravity pulls the player towards:")]
         public Vector3 gravity = new Vector3(0f, -9.81f, 0f);
 
-        public GroundedState groundedState { get; protected set; }
+        [SerializeField, ReadOnly] protected GroundedState groundedState;
 
         public PhysicsMaterial DefaultPhysicsMat;
         private PhysicsMaterial currPhysicsMat;
@@ -42,20 +53,7 @@ namespace KinematicCharacterControler
         {
             capsule = gameObject.GetComponent<CapsuleCollider>(); 
         }
-        /*
-        public void Move(Vector3 inputMove)
-        {
-
-            bool onGround = CheckIfGrounded();
-
-            Vector3 horizDelta = CollideAndSlide(inputMove, transform.position, 0, false, inputMove);
-
-            Vector3 newPos = transform.position + horizDelta;
-            SnapPlayerDown();
-
-            transform.position = newPos;
-        }
-        */
+ 
         public Vector3 MovePlayer(Vector3 movement)
         {
         
@@ -83,7 +81,7 @@ namespace KinematicCharacterControler
                 // If we are overlapping with something, just exit.
                 if (hit.distance == 0)
                 {
-                    position += hit.normal * skinWidth * 2;  // Push out
+                    position += hit.normal * (skinWidth * 2);  // Push out
                     remaining *= 0.5f;  // Reduce remaining movement
                     bounces++;
                     continue;
@@ -115,6 +113,13 @@ namespace KinematicCharacterControler
 
                 // Rotate the remaining movement to be projected along the plane of the hit surface
                 Vector3 projected = Vector3.ProjectOnPlane(remaining, planeNormal).normalized * remaining.magnitude;
+
+                if (projected.y < movement.y)
+                    m_velocity *= downSlopeMult;
+
+                else if (projected.y > movement.y)
+                    m_velocity *= upSlopeMult;
+                    
 
                 // If projected remaining movement is less than original remaining movement (broke from floating point),
                 // then change this to just project along the vertical.
@@ -136,84 +141,7 @@ namespace KinematicCharacterControler
         }
 
 
-            public Vector3 MovePlayerVelocity(Vector3 movement)
-        {
-            m_velocity += movement;
-            Vector3 position = transform.position;
-            Quaternion rotation = transform.rotation;
-
-            Vector3 remaining = m_velocity;
-
-            int bounces = 0;
-
-            while (bounces < maxBounces && remaining.magnitude > 0.001f)
-            {
-                // Do a cast of the collider to see if an object is hit during this
-                // movement bounce
-                float distance = remaining.magnitude;
-                if (!CastSelf(position, rotation, remaining.normalized, distance, out RaycastHit hit))
-                {
-                    // If there is no hit, move to desired position
-                    position += remaining;
-
-                    // Exit as we are done bouncing
-                    break;
-                }
-
-                // If we are overlapping with something, just exit.
-                if (hit.distance == 0)
-                {
-                    position += hit.normal * skinWidth * 2;  // Push out
-                    remaining *= 0.5f;  // Reduce remaining movement
-                    bounces++;
-                    continue;
-                }
-
-                float fraction = hit.distance / distance;
-
-                // Set the fraction of remaining movement (minus some small value)
-                position += remaining * (fraction);
-                // Push slightly along normal to stop from getting caught in walls
-                position += hit.normal * 0.001f * 2;
-                // Decrease remaining movement by fraction of movement remaining
-                remaining *= (1 - fraction);
-
-                // Plane to project rest of movement onto
-                Vector3 planeNormal = hit.normal;
-
-                // Only apply angular change if hitting something
-                // Get angle between surface normal and remaining movement
-                float angleBetween = Vector3.Angle(hit.normal, remaining) - 90.0f;
-
-                // Normalize angle between to be between 0 and 1
-                // 0 means no angle, 1 means 90 degree angle
-                angleBetween = Mathf.Min(60f, Mathf.Abs(angleBetween));
-                float normalizedAngle = angleBetween / 60f;
-
-                // Reduce the remaining movement by the remaining movement that ocurred
-                remaining *= Mathf.Pow(1 - normalizedAngle, m_anglePower) * 0.9f + 0.1f;
-
-                // Rotate the remaining movement to be projected along the plane of the hit surface
-                Vector3 projected = Vector3.ProjectOnPlane(remaining, planeNormal).normalized * remaining.magnitude;
-
-                // If projected remaining movement is less than original remaining movement (broke from floating point),
-                // then change this to just project along the vertical.
-                if (projected.magnitude + 0.001f < remaining.magnitude)
-                {
-                    remaining = Vector3.ProjectOnPlane(remaining, Vector3.up).normalized * remaining.magnitude;
-                }
-                else
-                {
-                    remaining = projected;
-                }
-
-                // Track number of times the character has bounced
-                bounces++;
-            }
-
-            m_velocity *= currPhysicsMat == null ? DefaultPhysicsMat.dynamicFriction : currPhysicsMat.dynamicFriction;
-            return position;
-        }
+ 
 
         public Vector3 CollideAndSlide(Vector3 _vel, Vector3 _pos, int _depth, bool _gravityPass, Vector3 _velInit)
         {
@@ -342,7 +270,9 @@ namespace KinematicCharacterControler
                 transform.position += Vector3.down * (groundHit.distance - 0.001f);
             }
         }
-       [System.Serializable]
+
+    }
+        [Serializable]
         public struct GroundedState
         {
             public float distToGround;
@@ -361,5 +291,4 @@ namespace KinematicCharacterControler
             }
 
         }
-    }
 }

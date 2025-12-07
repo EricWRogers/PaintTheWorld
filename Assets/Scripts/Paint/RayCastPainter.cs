@@ -3,7 +3,7 @@ using UnityEngine;
 public class RayCastPainter : MonoBehaviour
 {
     public Color paintColor;
-    public float radius = 1;
+    public float radius = 2;
     public float strength = 1;
     public float hardness = 1;
 

@@ -9,15 +9,17 @@ using UnityEngine.SceneManagement;
 public class GameManager : SceneAwareSingleton<GameManager>
 {
     public int currentWave;
+    public int totalWave;
     public int enemyAmount = 30;
     public int totalEnemyKills;
     public int currKilledInWave;
+    public GameObject pauseMenu;
 
     [Header("CombatCycle")]
     public float firstWaveTimer;
     public float prepTimer;
     public bool inWave;
-    public float timer;
+    public Timer timer;
     
 
     [Header("Scaling Settings")]
@@ -35,26 +37,21 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        currentWave = 0;
-        inWave = false;
-        timer = firstWaveTimer;
-        RecalculateScaling();
+        if(EnemyManager.instance.spawnerAreas.Count != 0)
+        {
+            currentWave = 0;
+            inWave = false;
+            timer.StartTimer(firstWaveTimer);
+            RecalculateScaling();
+        }
+        
         gameplayStarted = false;
         IsReady = true;
     }
 
     void Update()
     {
-        if (!inWave)
-        {
-            timer -= Time.deltaTime;
-            if (timer < 0)
-            {
-                StartWave();
-            }
-        }
-
-        if(currKilledInWave >= EnemyManager.instance.spawnAmount && inWave)
+        if(currKilledInWave >= Mathf.RoundToInt(enemyAmount * EnemyCountModifier) && inWave)
         {
             WaveComplete();
         }
@@ -62,7 +59,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void StartWave()
     {
-        Debug.Log(Mathf.RoundToInt(enemyAmount * EnemyCountModifier));
+        Debug.Log("start wave " +Mathf.RoundToInt(enemyAmount * EnemyCountModifier));
         inWave = true;
         currentWave++;
         EnemyManager.instance.spawnAmount = Mathf.RoundToInt(enemyAmount * EnemyCountModifier);
@@ -70,10 +67,15 @@ public class GameManager : SceneAwareSingleton<GameManager>
     
     public void WaveComplete()
     {
-        Debug.Log("wave complete");
-        timer = prepTimer;
+        if(currentWave == totalWave)
+        {
+            ResetGame();
+            SceneManager.LoadScene("MainMenu");
+        }
+        timer.StartTimer(prepTimer);
         inWave = false;
         currKilledInWave = 0;
+        RecalculateScaling();
         EnemyManager.instance.ResetWave();
         EnemyManager.instance.ChooseSpawnArea();
     }
@@ -89,13 +91,17 @@ public class GameManager : SceneAwareSingleton<GameManager>
         Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        PlayerManager.instance.playerInputs.Disable();
+        PlayerManager.instance.uIInputs.Enable();
     }
     
     public void ResumeGame()
     {
-         Time.timeScale = 1;
+        Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        PlayerManager.instance.playerInputs.Enable();
+        PlayerManager.instance.uIInputs.Disable();
     }
 
     private void RecalculateScaling()
@@ -123,6 +129,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         coinGainModifier = 0;
         currentWave = 0;
         totalEnemyKills = 0;
+        PlayerManager.instance.ResetData();
     }
 
     // Public accessors for modifiers

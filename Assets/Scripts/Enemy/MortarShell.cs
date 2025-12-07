@@ -14,6 +14,14 @@ public class MortarShell : MonoBehaviour
     private float timer = 0f;
     private bool isFlying = false;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip fireSound;
+    [Range(0f, 1f)]
+    public float fireSoundVolume = 0.9f;
+    [Range(0.95f, 1.05f)]
+    public float randomPitchRange = 1.02f;
+
     public void Launch(Vector3 _start, Vector3 _end, float _time, float _height, float _radius)
     {
         startPos = _start;
@@ -25,6 +33,7 @@ public class MortarShell : MonoBehaviour
         transform.position = startPos;
         radius = _radius;
     }
+
 
     void Update()
     {
@@ -46,6 +55,25 @@ public class MortarShell : MonoBehaviour
 
     private void OnImpact()
     {
+        
+        if (fireSound != null)
+        {
+            float delta = randomPitchRange - 1f;
+            float pitch = Random.Range(1f - delta, 1f + delta);
+
+            // create temporary audio source so sound persists after shell is destroyed
+            GameObject sgo = new GameObject("MortarImpactSound");
+            sgo.transform.position = transform.position;
+            var src = sgo.AddComponent<AudioSource>();
+            src.spatialBlend = 1f;
+            src.playOnAwake = false;
+            src.clip = fireSound;
+            src.volume = fireSoundVolume;
+            src.pitch = pitch;
+            src.Play();
+            Destroy(sgo, fireSound.length / Mathf.Max(0.01f, Mathf.Abs(src.pitch)));
+        }
+        
         var hits = Physics.OverlapSphere(transform.position, radius, layerMask);
         if (hits.Length > 0)
         {

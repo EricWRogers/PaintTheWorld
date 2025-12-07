@@ -3,25 +3,45 @@ using UnityEngine;
 public class PlayerPaint : GetPaintColor
 {
     public Color selectedPaint;
+    public int colorKey = 0;
+    public Material playerModel;
 
     void Start()
     {
-        selectedPaint = PaintManager.instance.GetComponent<PaintColors>().damagePaint;
+        selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+        if(playerModel != null)
+            playerModel.color = selectedPaint;
     }
     void Update()
     {
+        
         CheckOnPaint();
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().damagePaint;
+            colorKey++;
+            if (colorKey > 2)
+            {
+                colorKey = 0;
+            }
+            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+            
+            if(playerModel != null)
+                playerModel.color = selectedPaint;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().jumpPaint;
+            colorKey--;
+            if (colorKey < 0)
+            {
+                colorKey = 2;
+            }
+            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+
+            if(playerModel != null)
+                playerModel.color = selectedPaint;
         }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().movementPaint;
-        }
+
+        
     }
 }

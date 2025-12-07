@@ -6,8 +6,8 @@ using UnityEngine.Events;
 
 public class ParticlePainter : MonoBehaviour
 {
-    public Color paintColor;
-    
+    public Color selectedPaint;  
+    public int colorKey = 0;
     public float minRadius = 0.05f;
     public float maxRadius = 0.2f;
     public float strength = 1;
@@ -23,9 +23,7 @@ public class ParticlePainter : MonoBehaviour
     {
         part = GetComponent<ParticleSystem>();
         collisionEvents = new List<ParticleCollisionEvent>();
-        //var pr = part.GetComponent<ParticleSystemRenderer>();
-        //Color c = new Color(pr.material.color.r, pr.material.color.g, pr.material.color.b, .8f);
-        //paintColor = c;
+        selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
     }
 
     void OnParticleCollision(GameObject other)
@@ -33,8 +31,9 @@ public class ParticlePainter : MonoBehaviour
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
 
         Paintable p = other.GetComponent<Paintable>();
-        if(p != null){
-            for  (int i = 0; i< numCollisionEvents; i++)
+        if (p != null)
+        {
+            for (int i = 0; i < numCollisionEvents; i++)
             {
                 if (other.tag == tagToHit)
                 {
@@ -43,8 +42,34 @@ public class ParticlePainter : MonoBehaviour
                 }
                 Vector3 pos = collisionEvents[i].intersection;
                 float radius = Random.Range(minRadius, maxRadius);
-                PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);
+                PaintManager.instance.paint(p, pos, radius, hardness, strength, selectedPaint);
             }
         }
+    }
+    
+       void Update()
+    {
+        
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            colorKey++;
+            if (colorKey > 2)
+            {
+                colorKey = 0;
+            }
+            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            colorKey--;
+            if (colorKey < 0)
+            {
+                colorKey = 2;
+            }
+            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+        }
+
+        
     }
 }

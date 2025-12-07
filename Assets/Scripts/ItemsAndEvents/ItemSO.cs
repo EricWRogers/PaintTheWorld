@@ -16,6 +16,9 @@ public abstract class ItemSO : ScriptableObject
     public bool stackable = true;
     public int maxStack = 99;
 
+    [Header("Shop")]
+    public int initialStock = -1; 
+
     public virtual int GetPriceForNext(int currentCount) => basePrice;
 
     // Trigger hooks 
