@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 90.10966
       objectReference: {fileID: 0}
@@ -48,6 +60,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -56,6 +72,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: walls
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+      propertyPath: m_TagString
+      value: Paintable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -63,6 +87,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6279665003514388431}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6585350525359261617}
   m_SourcePrefab: {fileID: 100100000, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
 --- !u!1 &3067509185037225425 stripped
 GameObject:
@@ -90,3 +117,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 100.00006, y: 400, z: 400}
   m_Center: {x: 50.000015, y: 200, z: 200}
+--- !u!114 &6585350525359261617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3067509185037225425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TEXTURE_SIZE: 128
+  extendsIslandOffset: 1
