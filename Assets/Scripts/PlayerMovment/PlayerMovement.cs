@@ -20,6 +20,9 @@ public class PlayerMOvmentEditor : Editor
     private bool showPaint = false;
     private bool showEngine = false;
 
+    // hi there sorry for touching your script without asking, was trying to tie our animations to the info in here. 
+    // feel free to delete everything to do with the animations in here
+
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
@@ -126,6 +129,11 @@ public class PlayerMOvmentEditor : Editor
 
 public class PlayerMovement : PlayerMovmentEngine
 {
+    // animator variables
+    //private Animator animator;
+    //private bool Grounded;
+   // private bool Moving;
+
     private PlayerInputActions.PlayerActions m_inputActions;
 
     [Header("Movement")]
@@ -229,6 +237,11 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void Start()
     {
+        //to find animator
+       // animator = gameObject.GetComponent<Animator>();
+       // Moving = false;
+       // Grounded = true;
+
         m_orientation = cam;
         colors = PaintManager.instance.GetComponent<PaintColors>();
         m_inputActions = new PlayerInputActions().Player;
@@ -241,7 +254,9 @@ public class PlayerMovement : PlayerMovmentEngine
     }
 
     void Update()
+        
     {
+      //  HandleAnimations();
         HandleCursor();
         HandleInput();
         HandlePaintColor();
@@ -277,6 +292,29 @@ public class PlayerMovement : PlayerMovmentEngine
         }
         m_timer += Time.deltaTime;
     }
+
+    // programing animations -- by cleo
+   // public void HandleAnimations()
+  //  {
+  //      if (currSpeed > 0)
+  //      {
+  //          Moving = true;
+  //      }
+  //      else
+  //      {
+  //          Moving = false;
+  //      }
+
+  //      if (groundedState.isGrounded)
+   //     {
+   //         Grounded = true;
+   //     }
+   //     else
+   //     {
+   //         Grounded = false;
+   //     }
+
+    //}
 
     public void HandleFOV()
     {
