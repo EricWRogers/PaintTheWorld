@@ -235,6 +235,18 @@ public class PlayerMovement : PlayerMovmentEngine
     private float paintRotation;
     [SerializeField] private Transform paintPoint;
 
+    private enum MoveState
+    {
+        Grounded,
+        Air,
+        Dash,
+        WallRide,
+        Grind
+    };
+
+    [SerializeField] private MoveState state;
+    private MoveState prevState;
+
     void Start()
     {
         //to find animator
@@ -257,40 +269,84 @@ public class PlayerMovement : PlayerMovmentEngine
         
     {
       //  HandleAnimations();
-        HandleCursor();
         HandleInput();
         HandlePaintColor();
         HandleFOV();
         m_timeSinceLastDash += Time.deltaTime;
     }
 
+
     void FixedUpdate()
     {
-        CheckIfGrounded(out RaycastHit _); 
+   
+        bool onGround = CheckIfGrounded(out RaycastHit _);
         HandleRotation();
 
+        // Decide state ONCE (and only call WallRun/HandleDashing/TryStartGrinding once)
+        EvaluateTransitions(onGround);
 
+        // Tick current state
+        switch (state)
+        {
+            case MoveState.Grind:
+                // grinding handles its own movement inside ContinueGrinding()
+                ContinueGrinding();
+                break;
+
+            case MoveState.WallRide:
+                splineContainer = null;
+                transform.position = MovePlayer(m_velocity * Time.deltaTime);
+                break;
+
+            case MoveState.Dash:
+                splineContainer = null;
+                // Dashing handles its own momentum
+                transform.position = MovePlayer(m_velocity * Time.deltaTime);
+                break;
+
+            case MoveState.Grounded:
+            case MoveState.Air:
+            default:
+                splineContainer = null;
+                HandleRegularMovement();
+                break;
+        }
+
+        m_timer += Time.deltaTime;
+    }
+        // Grind > WallRide > Dash > Regular (Grounded/Air)
+    private void EvaluateTransitions(bool onGround)
+    {
+        // Grind
         if ((TryStartGrinding() || isGrinding) && m_timer > betweenRailTime)
         {
-            ContinueGrinding();
+            SetState(MoveState.Grind);
+            return;
         }
-        else if (WallRun())
+
+        // Wall ride
+        if (WallRun())
         {
-            splineContainer = null;
-            transform.position = MovePlayer(m_velocity * Time.deltaTime);
+            SetState(MoveState.WallRide);
+            return;
         }
-        else if (HandleDashing())
+
+        // Dash
+        if (HandleDashing())
         {
-            splineContainer = null;
-            // Dashing handles its own momentum
-            transform.position = MovePlayer(m_velocity * Time.deltaTime);
+            SetState(MoveState.Dash);
+            return;
         }
-        else
-        {
-            splineContainer = null;
-            HandleRegularMovement();
-        }
-        m_timer += Time.deltaTime;
+
+        // Regular base locomotion
+        SetState(onGround ? MoveState.Grounded : MoveState.Air);
+    }
+
+    private void SetState(MoveState next)
+    {
+        if (state == next) return;
+        prevState = state;
+        state = next;
     }
 
     // programing animations -- by cleo
@@ -334,19 +390,7 @@ public class PlayerMovement : PlayerMovmentEngine
         m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
 
-    public void HandleCursor()
-    {
-        // if (lockCursor)
-        // {
-        //     Cursor.lockState = CursorLockMode.Locked;
-        //     Cursor.visible = false;
-        // }
-        // else
-        // {
-        //     Cursor.lockState = CursorLockMode.None;
-        //     Cursor.visible = true;
-        // }
-    }
+
 
     void HandleInput()
     {
@@ -364,9 +408,9 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void HandleRegularMovement()
     {
-        
         currSpeed = speed * m_currColorMult * m_shopMoveMult;
 
+        // Raw input direction (we’ll re-project it onto the slope when grounded)
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
         bool onGround = CheckIfGrounded(out RaycastHit groundHit);
@@ -374,7 +418,42 @@ public class PlayerMovement : PlayerMovmentEngine
 
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
 
-        Vector3 horizontalVel = new Vector3(m_velocity.x, 0, m_velocity.z);
+      
+        // If we’re on a walkable surface, build a surface-aligned movement direction
+        // and keep velocity on the surface tangent plane (this is the “banking”).
+        Vector3 groundNormal = canWalk ? groundHit.normal : Vector3.up;
+
+        if (canWalk)
+        {
+            Vector3 slopeForward = Vector3.ProjectOnPlane(m_orientation.forward, groundNormal);
+            Vector3 slopeRight   = Vector3.ProjectOnPlane(m_orientation.right, groundNormal);
+
+            // Prevent NaNs if forward/right are almost parallel to the normal
+            if (slopeForward.sqrMagnitude > 0.0001f) slopeForward.Normalize();
+            if (slopeRight.sqrMagnitude > 0.0001f) slopeRight.Normalize();
+
+            Vector3 slopeInputDir = (slopeForward * moveInput.y + slopeRight * moveInput.x);
+            if (slopeInputDir.sqrMagnitude > 0.0001f) slopeInputDir.Normalize();
+
+            inputDir = slopeInputDir;
+        }
+
+        // Instead of flattening to XZ, keep it tangent to the current ground plane
+        Vector3 rawVel = m_velocity;
+        Vector3 horizontalVel = canWalk
+            ? Vector3.ProjectOnPlane(rawVel, groundNormal)
+            : new Vector3(m_velocity.x, 0, m_velocity.z);
+
+        // Slowdown based on how much we had to “bend” velocity to stay on the surface.
+        // (No extra fields needed; uses rawVel from previous frame vs new tangent plane)
+        if (canWalk && rawVel.sqrMagnitude > 0.0001f && horizontalVel.sqrMagnitude > 0.0001f)
+        {
+            float bankAngle = Vector3.Angle(rawVel, horizontalVel);     // 0..180
+            float t = Mathf.Clamp01(bankAngle / 45f);                   // 45° = strong banking (tune)
+            float bankMult = Mathf.Lerp(1f, 0.85f, t);                  // lose up to 15% on hard banking
+            horizontalVel *= bankMult;
+        }
+        // -----------------------------------------
 
         if (inputDir.sqrMagnitude > 0.01f && !isDashing)
         {
@@ -389,7 +468,6 @@ public class PlayerMovement : PlayerMovmentEngine
             float dragFactor = Mathf.Exp(-baseDrag * Time.deltaTime);
             horizontalVel *= dragFactor;
 
-            
             if (canWalk)
             {
                 float frictionBoost = Mathf.InverseLerp(0, currSpeed, horizontalVel.magnitude);
@@ -397,12 +475,21 @@ public class PlayerMovement : PlayerMovmentEngine
             }
         }
 
-        // Clamp horizontal speed
-        if (horizontalVel.magnitude > m_maxSpeed && !isDashing )
+        // Clamp “surface speed” (this now clamps along the ramp, not just flat XZ)
+        if (horizontalVel.magnitude > m_maxSpeed && !isDashing)
             horizontalVel = horizontalVel.normalized * m_maxSpeed;
 
-        m_velocity.x = horizontalVel.x;
-        m_velocity.z = horizontalVel.z;
+        // On walkable ground, velocity should live on the surface plane (includes vertical on ramps).
+        // In air, keep your original pattern (preserve Y separately).
+        if (canWalk)
+        {
+            m_velocity = horizontalVel;
+        }
+        else
+        {
+            m_velocity.x = horizontalVel.x;
+            m_velocity.z = horizontalVel.z;
+        }
 
         if (!canWalk)
         {
@@ -416,10 +503,10 @@ public class PlayerMovement : PlayerMovmentEngine
                 m_velocity.y = 0f;
                 wasGrounded = true;
             }
-        }        
+        }
 
-        // === Jump handling ===
-        bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount >0) && m_timeSinceLastJump >= jumpCooldown;
+        // Jump handling
+        bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount > 0) && m_timeSinceLastJump >= jumpCooldown;
         bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
         if (canJump && m_jumpInputPressed)
@@ -436,12 +523,11 @@ public class PlayerMovement : PlayerMovmentEngine
 
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
-        if (onGround && !attemptingJump && groundedState.angle > 10 && transform.position.y - m_lasPos.y < 0.001f )
+        if (onGround && !attemptingJump && groundedState.angle > 10 && transform.position.y - m_lasPos.y < 0.001f)
             SnapPlayerDown();
-        //if(transform.position.y > m_lasPos.y)
+
         m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
         m_lasPos = transform.position;
-
     }
 
     bool HandleDashing()
@@ -702,7 +788,7 @@ public class PlayerMovement : PlayerMovmentEngine
         // Full 3D tangent at current progress (respecting slope)
         Vector3 tangentHere = GetSplineTangentAt(splineRef2, railProgress).normalized * m_railDir;
 
-        // Use full velocity (including vertical) to get how fast we're moving along tangent
+        // Use full velocity to get how fast we're moving along tangent
         float speedAlongTangent = Vector3.Dot(m_velocity, tangentHere);
 
         // If speed is tiny or reversed, fall back to stored grindSpeed to keep motion consistent

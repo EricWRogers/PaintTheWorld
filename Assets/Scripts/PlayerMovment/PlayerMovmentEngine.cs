@@ -114,11 +114,33 @@ namespace KinematicCharacterControler
                 // Rotate the remaining movement to be projected along the plane of the hit surface
                 Vector3 projected = Vector3.ProjectOnPlane(remaining, planeNormal).normalized * remaining.magnitude;
 
-                if (projected.y < movement.y)
-                    m_velocity *= downSlopeMult;
+                // --- Angle-based slope momentum (per-contact) ---
+                float slopeAngle = Vector3.Angle(Vector3.up, hit.normal);
+                float slopeT = Mathf.InverseLerp(0f, maxSlopeAngle, slopeAngle); // 0 flat -> 1 at maxSlopeAngle
 
-                else if (projected.y > movement.y)
-                    m_velocity *= upSlopeMult;
+                
+                if (hit.normal.y > 0.01f && slopeAngle <= maxSlopeAngle && projected.sqrMagnitude > 0.000001f)
+                {
+                    // Direction you'd slide if you let gravity pull you down this surface
+                    Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, hit.normal);
+                    if (downhill.sqrMagnitude > 0.000001f)
+                    {
+                        downhill.Normalize();
+
+                        // >0 means moving downhill along the surface, <0 means uphill
+                        float alongDownhill = Vector3.Dot(projected.normalized, downhill);
+
+                        float target = (alongDownhill > 0f) ? downSlopeMult : upSlopeMult;
+
+                        // Apply angle-scaled multiplier (at flat: 1, at maxSlopeAngle: target)
+                        float mult = Mathf.Lerp(1f, target, slopeT);
+
+                        float weight = Mathf.Clamp01(remaining.magnitude / (movement.magnitude + 0.0001f));
+                        m_velocity *= Mathf.Pow(mult, weight);
+                    }
+                }
+
+
                     
 
                 // If projected remaining movement is less than original remaining movement (broke from floating point),
