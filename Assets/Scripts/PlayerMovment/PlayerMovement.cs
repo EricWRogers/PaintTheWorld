@@ -4,6 +4,9 @@ using UnityEngine.Splines;
 using Unity.VisualScripting;
 
 
+
+
+
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
 using UnityEditor;
@@ -19,6 +22,7 @@ public class PlayerMOvmentEditor : Editor
     private bool showRail = false;
     private bool showPaint = false;
     private bool showEngine = false;
+    private bool showAnimations = false;
 
     // hi there sorry for touching your script without asking, was trying to tie our animations to the info in here. 
     // feel free to delete everything to do with the animations in here
@@ -121,6 +125,12 @@ public class PlayerMOvmentEditor : Editor
         }
 
         // Apply changes
+
+        showAnimations = EditorGUILayout.Foldout(showAnimations, "Animations");
+        if (showAnimations)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("animator"));
+        }
         serializedObject.ApplyModifiedProperties();
     }
 }
@@ -130,7 +140,7 @@ public class PlayerMOvmentEditor : Editor
 public class PlayerMovement : PlayerMovmentEngine
 {
     // animator variables
-    //private Animator animator;
+    [SerializeField] private Animator animator;
     //private bool Grounded;
    // private bool Moving;
 
@@ -284,6 +294,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         // Decide state ONCE (and only call WallRun/HandleDashing/TryStartGrinding once)
         EvaluateTransitions(onGround);
+        HandleAnimations();
 
         // Tick current state
         switch (state)
@@ -350,27 +361,22 @@ public class PlayerMovement : PlayerMovmentEngine
     }
 
     // programing animations -- by cleo
-   // public void HandleAnimations()
-  //  {
-  //      if (currSpeed > 0)
-  //      {
-  //          Moving = true;
-  //      }
-  //      else
-  //      {
-  //          Moving = false;
-  //      }
+    public void HandleAnimations()
+   {
+        Vector2 horzVelocity = new Vector2(m_velocity.x, m_velocity.z);
+       if (horzVelocity.magnitude > 0.01f)
+           animator.SetBool("Moving", true);
 
-  //      if (groundedState.isGrounded)
-   //     {
-   //         Grounded = true;
-   //     }
-   //     else
-   //     {
-   //         Grounded = false;
-   //     }
+        else
+            animator.SetBool("Moving", false);
 
-    //}
+        if (groundedState.isGrounded)
+            animator.SetBool("Grounded", true);
+    
+        else
+            animator.SetBool("Grounded", false);
+
+    }
 
     public void HandleFOV()
     {
@@ -419,8 +425,7 @@ public class PlayerMovement : PlayerMovmentEngine
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
 
       
-        // If we’re on a walkable surface, build a surface-aligned movement direction
-        // and keep velocity on the surface tangent plane (this is the “banking”).
+        // banking/slope math (might not)
         Vector3 groundNormal = canWalk ? groundHit.normal : Vector3.up;
 
         if (canWalk)
@@ -428,11 +433,11 @@ public class PlayerMovement : PlayerMovmentEngine
             Vector3 slopeForward = Vector3.ProjectOnPlane(m_orientation.forward, groundNormal);
             Vector3 slopeRight   = Vector3.ProjectOnPlane(m_orientation.right, groundNormal);
 
-            // Prevent NaNs if forward/right are almost parallel to the normal
+
             if (slopeForward.sqrMagnitude > 0.0001f) slopeForward.Normalize();
             if (slopeRight.sqrMagnitude > 0.0001f) slopeRight.Normalize();
 
-            Vector3 slopeInputDir = (slopeForward * moveInput.y + slopeRight * moveInput.x);
+            Vector3 slopeInputDir = slopeForward * moveInput.y + slopeRight * moveInput.x;
             if (slopeInputDir.sqrMagnitude > 0.0001f) slopeInputDir.Normalize();
 
             inputDir = slopeInputDir;
@@ -444,16 +449,13 @@ public class PlayerMovement : PlayerMovmentEngine
             ? Vector3.ProjectOnPlane(rawVel, groundNormal)
             : new Vector3(m_velocity.x, 0, m_velocity.z);
 
-        // Slowdown based on how much we had to “bend” velocity to stay on the surface.
-        // (No extra fields needed; uses rawVel from previous frame vs new tangent plane)
         if (canWalk && rawVel.sqrMagnitude > 0.0001f && horizontalVel.sqrMagnitude > 0.0001f)
         {
-            float bankAngle = Vector3.Angle(rawVel, horizontalVel);     // 0..180
-            float t = Mathf.Clamp01(bankAngle / 45f);                   // 45° = strong banking (tune)
-            float bankMult = Mathf.Lerp(1f, 0.85f, t);                  // lose up to 15% on hard banking
+            float bankAngle = Vector3.Angle(rawVel, horizontalVel);     
+            float t = Mathf.Clamp01(bankAngle / 45f);                   
+            float bankMult = Mathf.Lerp(1f, 0.85f, t);                  
             horizontalVel *= bankMult;
         }
-        // -----------------------------------------
 
         if (inputDir.sqrMagnitude > 0.01f && !isDashing)
         {
@@ -514,6 +516,7 @@ public class PlayerMovement : PlayerMovmentEngine
             m_velocity.y = jumpForce;
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
+            animator.SetBool("Grounded", false);
             currJumpCount--;
         }
         else
