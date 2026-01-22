@@ -28,9 +28,14 @@ public class Paintable : MonoBehaviour {
     public RenderTexture getExtend() => m_extendIslandsRenderTexture;
     public RenderTexture getSupport() => m_supportTexture;
     public Renderer getRenderer() => m_rend;
+    public float percentageCovered;
 
     void Start() {
-        m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
+        m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0, RenderTextureFormat.R8);
+        m_maskRenderTexture.useMipMap = true;
+        m_maskRenderTexture.autoGenerateMips = false;
+        m_maskRenderTexture.enableRandomWrite = false;
+        m_maskRenderTexture.Create();
         m_maskRenderTexture.filterMode = FilterMode.Bilinear;
 
         m_extendIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
@@ -53,5 +58,27 @@ public class Paintable : MonoBehaviour {
         //m_uvIslandsRenderTexture.Release();
         m_extendIslandsRenderTexture.Release();
         m_supportTexture.Release();
+    }
+    public float GetPaintCoverage(RenderTexture _mask)
+    {
+        int mip = _mask.mipmapCount - 1;
+
+        RenderTexture temp = RenderTexture.GetTemporary(
+            1, 1, 0, _mask.format
+        );
+
+        Graphics.CopyTexture(_mask, 0, mip, temp, 0, 0);
+
+        RenderTexture prev = RenderTexture.active;
+        RenderTexture.active = temp;
+
+        Texture2D tex = new Texture2D(1, 1, TextureFormat.R8, false);
+        tex.ReadPixels(new Rect(0, 0, 1, 1), 0, 0);
+        tex.Apply();
+
+        RenderTexture.active = prev;
+        RenderTexture.ReleaseTemporary(temp);
+
+        return tex.GetPixel(0, 0).r * 100; // 0–1 coverage
     }
 }
