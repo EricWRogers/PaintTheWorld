@@ -1,7 +1,7 @@
 using UnityEngine;
 using SuperPupSystems.Helper;
 using KinematicCharacterControler;
-using DG.Tweening;
+//using DG.Tweening;
 
 public class Mortar : Enemy
 {
@@ -129,7 +129,7 @@ public class Mortar : Enemy
         if (targetIndicatorPrefab == null) return;
         m_currentIndicator = Instantiate(targetIndicatorPrefab, position, Quaternion.identity, transform);
         m_currentIndicator.transform.localScale = Vector3.zero;
-        m_currentIndicator.transform.DOScale(new Vector3(hitRadius, hitRadius, hitRadius), aimDelay);
+       // m_currentIndicator.transform.DOScale(new Vector3(hitRadius, hitRadius, hitRadius), aimDelay);
         Destroy(m_currentIndicator, aimDelay + flightTime);
     }
 }
