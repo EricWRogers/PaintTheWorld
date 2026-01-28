@@ -1,6 +1,7 @@
 using UnityEngine;
 using SuperPupSystems.Helper;
 using KinematicCharacterControler;
+using UnityEngine.AI;
 //using DG.Tweening;
 
 public class Mortar : Enemy
@@ -21,6 +22,7 @@ public class Mortar : Enemy
     private float m_attackTimer = 0f;
     private Vector3 m_targetPos;
     private GameObject m_currentIndicator;
+
     [HideInInspector] public bool hasTarget;
 
     [Header("Audio")]
@@ -31,42 +33,63 @@ public class Mortar : Enemy
     [Range(0.95f, 1.05f)]
     public float randomPitchRange = 1.02f;
 
+    [Header("Movement")]
+    public LayerMask losMask;
+    private RaycastHit m_hitInfo;
+    private NavMeshAgent m_agent;
+    public Transform m_targetTransform;
+    private Vector3 m_direction;
+
     new void Start()
     {
         base.Start();
+        m_agent = GetComponent<NavMeshAgent>();
+        
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 1f; // 3D sound
         }
+        Move();
     }
 
     new void Update()
     {
         base.Update();
-        if (player == null) return;
-
-        m_attackTimer -= Time.deltaTime;
-
-        if (m_attackTimer <= 0)
+        m_direction = PlayerManager.instance.player.transform.position - transform.position;
+        //if has los of player shoot
+        if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 100, losMask))
         {
-            Attack();
-            m_attackTimer = fireCooldown;
-        }
-        if(!hasTarget)
-        {
-            Vector3 direction = PlayerManager.instance.player.transform.position - transform.position;
-            direction.y = 0;
+            Debug.Log(m_hitInfo.transform.gameObject.name);
+            if(m_hitInfo.transform.CompareTag("Player"))
+            {
+                m_attackTimer -= Time.deltaTime;
+                StopMoving();
+                if(m_attackTimer <= 0)
+                {
+                    Attack();
+                    m_attackTimer = fireCooldown;
+                }
+                if(!hasTarget)
+                {
+                    
+                    m_direction.y = 0;
 
-            if (direction == Vector3.zero)
-                return;
+                    if (m_direction == Vector3.zero)
+                        return;
 
-            direction = Vector3.Normalize(direction);
+                    m_direction = Vector3.Normalize(m_direction);
 
-            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            transform.localEulerAngles = new Vector3(0, angle, 0);
-            
+                    float angle = Mathf.Atan2(m_direction.x, m_direction.z) * Mathf.Rad2Deg;
+                    transform.localEulerAngles = new Vector3(0, angle, 0);
+                }
+            }
+            else
+            {
+                m_attackTimer = fireCooldown;
+                Move();
+            }
         }
     }
 
@@ -131,5 +154,20 @@ public class Mortar : Enemy
         m_currentIndicator.transform.localScale = Vector3.zero;
        // m_currentIndicator.transform.DOScale(new Vector3(hitRadius, hitRadius, hitRadius), aimDelay);
         Destroy(m_currentIndicator, aimDelay + flightTime);
+    }
+
+    public void Move()
+    {
+        m_agent.SetDestination(m_targetTransform.position);
+    }
+
+    public void StopMoving()
+    {
+        m_agent.SetDestination(transform.position);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(transform.position, m_direction);
     }
 }
