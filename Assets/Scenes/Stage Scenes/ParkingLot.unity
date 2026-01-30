@@ -601,6 +601,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &91524571
 GameObject:
   m_ObjectHideFlags: 0
@@ -1637,6 +1641,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &243556787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1777,6 +1785,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &279237978
 GameObject:
   m_ObjectHideFlags: 0
@@ -1995,6 +2007,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &309225482
 GameObject:
   m_ObjectHideFlags: 0
@@ -2989,6 +3005,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &509731458
 GameObject:
   m_ObjectHideFlags: 0
@@ -3196,41 +3216,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537436584}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &578548226
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 578548227}
-  m_Layer: 0
-  m_Name: EnemySpawners
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &578548227
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 578548226}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.900822, y: -4.36611, z: -42.828564}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1951927301}
-  - {fileID: 662691709}
-  - {fileID: 1020857058}
-  - {fileID: 991635519}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &600903500
 GameObject:
   m_ObjectHideFlags: 0
@@ -3418,11 +3403,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 218844765}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &662691709 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-  m_PrefabInstance: {fileID: 3558461978615217203}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &686540006
 GameObject:
   m_ObjectHideFlags: 0
@@ -3563,6 +3543,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &695785240
 GameObject:
   m_ObjectHideFlags: 0
@@ -3794,6 +3778,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &797523473
 GameObject:
   m_ObjectHideFlags: 0
@@ -3965,6 +3953,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &935437807
 GameObject:
   m_ObjectHideFlags: 0
@@ -4167,55 +4159,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
---- !u!1 &991635518
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 991635519}
-  - component: {fileID: 991635520}
-  m_Layer: 0
-  m_Name: EnemySpawner (3)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &991635519
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 991635518}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -62.9, y: 9.4, z: 54.7}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 578548227}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &991635520
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 991635518}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0efee06f242fdac4b9ed029889eea088, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnAreaSize: {x: 44.3, y: 0.3, z: 10}
-  layerToCheckForSpawning:
-    serializedVersion: 2
-    m_Bits: 0
-  indicator: {fileID: 0}
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &992350756
 GameObject:
   m_ObjectHideFlags: 0
@@ -4463,55 +4410,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1002507413}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1020857057
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1020857058}
-  - component: {fileID: 1020857059}
-  m_Layer: 0
-  m_Name: EnemySpawner (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1020857058
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020857057}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 37.1, y: 9.4, z: 54.7}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 578548227}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1020857059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1020857057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0efee06f242fdac4b9ed029889eea088, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnAreaSize: {x: 44.3, y: 0.3, z: 10}
-  layerToCheckForSpawning:
-    serializedVersion: 2
-    m_Bits: 0
-  indicator: {fileID: 0}
 --- !u!1 &1040331176
 GameObject:
   m_ObjectHideFlags: 0
@@ -4653,6 +4551,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1059463266
 GameObject:
   m_ObjectHideFlags: 0
@@ -4962,6 +4864,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1159631561
 GameObject:
   m_ObjectHideFlags: 0
@@ -5299,6 +5205,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1191663187
 GameObject:
   m_ObjectHideFlags: 0
@@ -5764,6 +5674,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1218260162
 GameObject:
   m_ObjectHideFlags: 0
@@ -6066,6 +5980,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1280195570
 GameObject:
   m_ObjectHideFlags: 0
@@ -6584,6 +6502,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1401180801
 GameObject:
   m_ObjectHideFlags: 0
@@ -7566,6 +7488,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1595934474
 GameObject:
   m_ObjectHideFlags: 0
@@ -7737,6 +7663,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1624033393
 GameObject:
   m_ObjectHideFlags: 0
@@ -8268,6 +8198,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1001 &1709760052
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8306,23 +8240,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.0737457
+      value: -5.4417076
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9995911
+      value: 0.99949086
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.02859202
+      value: 0.031903297
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00043157345
+      value: 0.0005403455
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000012344604
+      value: -0.000017247585
       objectReference: {fileID: 0}
     - target: {fileID: 4154529207948082809, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_Radius
@@ -8338,23 +8272,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.0737457
+      value: -5.4417076
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9995911
+      value: 0.99949086
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.02859202
+      value: 0.03190329
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00043157345
+      value: 0.0005403454
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000012344604
+      value: -0.000017247577
       objectReference: {fileID: 0}
     - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8569,6 +8503,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1723569387
 GameObject:
   m_ObjectHideFlags: 0
@@ -9107,6 +9045,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1847182520
 GameObject:
   m_ObjectHideFlags: 0
@@ -9248,6 +9190,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &1847774982
 GameObject:
   m_ObjectHideFlags: 0
@@ -9743,55 +9689,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 218844765}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1951927300
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1951927301}
-  - component: {fileID: 1951927302}
-  m_Layer: 0
-  m_Name: EnemySpawner (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1951927301
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1951927300}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.9, y: 3.52, z: 7.8}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 578548227}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1951927302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1951927300}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0efee06f242fdac4b9ed029889eea088, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnAreaSize: {x: 49.3, y: 0.3, z: 63.7}
-  layerToCheckForSpawning:
-    serializedVersion: 2
-    m_Bits: 0
-  indicator: {fileID: 0}
 --- !u!1 &1953845390
 GameObject:
   m_ObjectHideFlags: 0
@@ -10190,6 +10087,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &2073288132
 GameObject:
   m_ObjectHideFlags: 0
@@ -10500,63 +10401,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
   extendsIslandOffset: 1
---- !u!1001 &3558461978615217203
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 578548227}
-    m_Modifications:
-    - target: {fileID: 852661615770288309, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_Name
-      value: EnemySpawner
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 19.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.52
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 7.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1119664439060394954, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 29e60e9460b57f948977d4d3fa06d0d4, type: 3}
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -10566,7 +10414,6 @@ SceneRoots:
   - {fileID: 629867303}
   - {fileID: 1709760052}
   - {fileID: 1191663188}
-  - {fileID: 578548227}
   - {fileID: 1206136834}
   - {fileID: 1426711840}
   - {fileID: 317046368}

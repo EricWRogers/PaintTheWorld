@@ -2,6 +2,8 @@ using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
 using Unity.VisualScripting;
+using UnityEditor.EditorTools;
+
 
 
 
@@ -90,6 +92,8 @@ public class PlayerMOvmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpForce"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("maxJumpAngle"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpCooldown"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpHoldMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxJumpHoldTime"));
         }
 
         // Wall Riding
@@ -194,8 +198,12 @@ public class PlayerMovement : PlayerMovmentEngine
     private float m_dashTime = 0f;
     private float m_timeSinceLastDash = 0f;
     public bool m_dashInputPressed = false;
+    private bool m_dashBack = false;
+    private float m_dashStartSpeed;
+    private Vector3 dashDir;
 
     [Header("Jump Settings")]
+    [Tooltip("Default Upward force applied when jumping")]
     public float jumpForce = 5.0f;
     public float maxJumpAngle = 80f;
     public float jumpCooldown = 0.25f;
@@ -205,7 +213,21 @@ public class PlayerMovement : PlayerMovmentEngine
     private float m_timeSinceLastJump = 0.0f;
     public bool m_jumpInputPressed = false;
     private float m_jumpBufferTime = 0.25f;
+
     private bool wasGrounded = false;
+
+
+    [Tooltip("The max mult to jumping when Holding for jump")]
+    public float jumpHoldMult = 1.5f;
+
+    [Tooltip("Time till you get the full Jump Hold Mult to the jump")]
+    public float maxJumpHoldTime = 2f;
+
+    private bool m_jumpHoldActive = false;
+    private float m_jumpHoldTimer = 0f;
+
+
+
 
     [Header("Wall Riding")]
     [ReadOnly] public bool m_isWallRiding = false;
@@ -403,7 +425,8 @@ public class PlayerMovement : PlayerMovmentEngine
         moveInput = m_inputActions.Move.ReadValue<Vector2>();
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
-        if (m_jumpInputPressed)
+        // Buffer based on a *press*, not on being held (prevents auto-jumping / supports variable jump height cleanly)
+        if (m_inputActions.Jump.WasPressedThisFrame())
             jumpInputElapsed = 0.0f;
         else
             jumpInputElapsed += Time.deltaTime;
@@ -425,7 +448,7 @@ public class PlayerMovement : PlayerMovmentEngine
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
 
       
-        // banking/slope math (might not)
+        // banking/slope math (might not work)
         Vector3 groundNormal = canWalk ? groundHit.normal : Vector3.up;
 
         if (canWalk)
@@ -511,17 +534,37 @@ public class PlayerMovement : PlayerMovmentEngine
         bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount > 0) && m_timeSinceLastJump >= jumpCooldown;
         bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
-        if (canJump && m_jumpInputPressed)
+        if (canJump && attemptingJump)
         {
-            m_velocity.y = jumpForce;
+            if(m_jumpHoldActive == true)
+                return;
+            //m_velocity.y = jumpForce;
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
-            animator.SetBool("Grounded", false);
             currJumpCount--;
+
+            // Start variable jump hold window
+            m_jumpHoldActive = true;
+            m_jumpHoldTimer = 0f;
         }
         else
         {
             m_timeSinceLastJump += Time.deltaTime;
+        }
+
+        // Variable jump height: while holding jump shortly after jump start, add extra lift (capped)
+        if (m_jumpHoldActive)
+        {
+            if (!m_jumpInputPressed || m_jumpHoldTimer >= maxJumpHoldTime )
+            {
+                float finalJumpForce = Mathf.Lerp(jumpForce, jumpForce * jumpHoldMult, m_jumpHoldTimer / maxJumpHoldTime);
+                m_velocity.y = finalJumpForce;
+                m_jumpHoldActive = false;
+            }
+            else
+            {
+                m_jumpHoldTimer += Time.deltaTime;
+            }
         }
 
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
@@ -532,37 +575,76 @@ public class PlayerMovement : PlayerMovmentEngine
         m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
         m_lasPos = transform.position;
     }
-
+    #region Dashing/Dodge
     bool HandleDashing()
     {
         bool canDash = m_timeSinceLastDash >= dashCooldown;
-        
+        Vector3 dashDir =  GetDashDirection(out m_dashBack);
+
         if (m_dashInputPressed && canDash)
         {
             m_dashTime = 0f;
             m_timeSinceLastDash = 0f;
             m_dashInputPressed = false;
             isDashing = true;
+             
+
+            Vector3 planar = new Vector3(m_velocity.x, 0f, m_velocity.z);
+            m_dashStartSpeed = planar.magnitude;
         }
-        
+
         if (isDashing && m_dashTime < dashDuration)
         {
             float dashProgress = m_dashTime / dashDuration;
-            float currentDashSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress) * m_shopMoveMult;
+            // Treat dashSpeed as "dash strength" used for turning/braking, not a raw speed override
+            float dashStrength = dashSpeed * dashSpeedCurve.Evaluate(dashProgress) * m_shopMoveMult;
 
-            Vector3 dashDirection = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
-            if (dashDirection == Vector3.zero)
-                dashDirection = m_orientation.forward;
+            Vector3 planar = new Vector3(m_velocity.x, 0f, m_velocity.z);
 
-            // Preserve vertical momentum during dash, only override horizontal
-            Vector3 dashVelocity = dashDirection * currentDashSpeed;
-            dashVelocity.y = m_velocity.y;
+            const float turnMult = 10f;   
+            const float brakeMult = 8f;   
 
-            m_velocity = Vector3.MoveTowards(m_velocity, dashVelocity, currentDashSpeed * Time.deltaTime);
-            
+            if (m_dashBack)
+            {
+                // Back dash = strong braking (kills momentum)
+                float newSpeed = Mathf.MoveTowards(planar.magnitude, 0f, dashStrength * brakeMult * Time.deltaTime);
+                planar = (planar.sqrMagnitude > 0.0001f) ? planar.normalized * newSpeed : Vector3.zero;
+            }
+            else
+            {
+                // Side/forward dash = redirect momentum (keep speed, don't boost)
+                float targetSpeed = m_dashStartSpeed;
+
+                // If basically stopped, give a tiny nudge so a side dash still moves you
+                if (targetSpeed < 0.25f)
+                    targetSpeed = dashSpeed * 0.35f;
+
+                Vector3 target = dashDir * targetSpeed;
+
+                if (planar.sqrMagnitude < 0.0001f)
+                {
+                    planar = target;
+                }
+                else
+                {
+                    float speedNow = planar.magnitude;
+
+                    // Lateral accel approx -> angular rate: w ~= a / v
+                    float angularRate = (dashStrength * turnMult) / Mathf.Max(speedNow, 0.1f);
+                    planar = Vector3.RotateTowards(planar, target, angularRate * Time.deltaTime, 0f);
+
+                    // Keep same speed to avoid "dash = speed boost"
+                    planar = planar.normalized * speedNow;
+                }
+            }
+
+            // Apply back to velocity (preserve vertical momentum)
+            m_velocity.x = planar.x;
+            m_velocity.z = planar.z;
+
             // Still apply gravity during dash
             m_velocity += gravity * Time.deltaTime;
-            
+
             m_dashTime += Time.deltaTime;
             return true;
         }
@@ -570,9 +652,43 @@ public class PlayerMovement : PlayerMovmentEngine
         {
             isDashing = false;
         }
-        
+
         return isDashing;
     }
+
+    private Vector3 GetDashDirection(out bool isBrake)
+    {
+        if(moveInput.sqrMagnitude  < 0.01f)
+        {
+            isBrake = false;
+            return transform.forward;
+        }
+
+        if (moveInput.y < -0.2f && Mathf.Abs(moveInput.y) >= Mathf.Abs(moveInput.x))
+        {
+            isBrake = true;
+            Vector3 b = -m_orientation.forward; b.y = 0f;
+            return b.sqrMagnitude > 0.0001f ? b.normalized : -transform.forward;
+        }
+
+        isBrake = false;
+
+
+        if (Mathf.Abs(moveInput.x) > Mathf.Abs(moveInput.y))
+        {
+            Vector3 r = m_orientation.right * Mathf.Sign(moveInput.x); r.y = 0f;
+            return r.normalized;
+        }
+        else
+        {
+            float sign = Mathf.Sign(moveInput.y == 0f ? 1f : moveInput.y);
+            Vector3 f = m_orientation.forward * sign; f.y = 0f;
+            return f.normalized;
+        }
+
+    }
+    #endregion
+    
 
     void HandleRotation()
     {
