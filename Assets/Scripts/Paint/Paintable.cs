@@ -57,18 +57,17 @@ public class Paintable : MonoBehaviour {
     public float meshPercent;
 
     void Start() {
-        m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0, RenderTextureFormat.R8);
+        m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_maskRenderTexture.useMipMap = true;
         m_maskRenderTexture.autoGenerateMips = false;
         m_maskRenderTexture.enableRandomWrite = false;
-        m_maskRenderTexture.Create();
         m_maskRenderTexture.filterMode = FilterMode.Bilinear;
 
         m_extendIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_extendIslandsRenderTexture.filterMode = FilterMode.Bilinear;
 
-        // m_uvIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
-        // m_uvIslandsRenderTexture.filterMode = FilterMode.Bilinear;
+        m_uvIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
+        m_uvIslandsRenderTexture.filterMode = FilterMode.Bilinear;
 
         m_supportTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_supportTexture.filterMode =  FilterMode.Bilinear;
@@ -93,7 +92,7 @@ public class Paintable : MonoBehaviour {
 
     void OnDisable(){
         m_maskRenderTexture.Release();
-        //m_uvIslandsRenderTexture.Release();
+        m_uvIslandsRenderTexture.Release();
         m_extendIslandsRenderTexture.Release();
         m_supportTexture.Release();
     }
@@ -124,26 +123,9 @@ public void CalculateTextureCoverage()
     {
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         Renderer renderer = GetComponent<Renderer>();
-
-        if (meshFilter == null || renderer == null)
-        {
-            Debug.LogError("Missing MeshFilter or Renderer on this GameObject!");
-            return;
-        }
-
         Mesh mesh = meshFilter.sharedMesh;
-        if (mesh == null)
-        {
-            Debug.LogError("No mesh found!");
-            return;
-        }
 
         Vector2[] uvs = mesh.uv;
-        if (uvs == null || uvs.Length == 0)
-        {
-            Debug.LogError("Mesh has no UVs!");
-            return;
-        }
 
         int texWidth = (int)TEXTURE_SIZE;
         int texHeight = (int)TEXTURE_SIZE;
@@ -153,7 +135,6 @@ public void CalculateTextureCoverage()
 
         int[] triangles = mesh.triangles;
 
-        // Iterate through all triangles
         for (int i = 0; i < triangles.Length; i += 3)
         {
             Vector2 uv1 = uvs[triangles[i]] * (int)TEXTURE_SIZE;
@@ -164,12 +145,10 @@ public void CalculateTextureCoverage()
         }
 
         meshPercent = (float)coveredPixels.Count / totalPixels * 100f;
-        Debug.Log($"Estimated texture coverage: {meshPercent:F2}% ({coveredPixels.Count}/{totalPixels} pixels)");
     }
 
     private void RasterizeTriangle(Vector2 p0, Vector2 p1, Vector2 p2, HashSet<Vector2Int> coveredPixels, int texWidth, int texHeight)
     {
-        // Compute bounding box
         int minX = Mathf.Clamp(Mathf.FloorToInt(Mathf.Min(p0.x, Mathf.Min(p1.x, p2.x))), 0, texWidth - 1);
         int maxX = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(p0.x, Mathf.Max(p1.x, p2.x))), 0, texWidth - 1);
         int minY = Mathf.Clamp(Mathf.FloorToInt(Mathf.Min(p0.y, Mathf.Min(p1.y, p2.y))), 0, texHeight - 1);
@@ -185,7 +164,6 @@ public void CalculateTextureCoverage()
                 Vector2 p = new Vector2(x + 0.5f, y + 0.5f);
                 Vector2 v2 = p - p0;
 
-                // Barycentric coordinates
                 float dot00 = Vector2.Dot(v0, v0);
                 float dot01 = Vector2.Dot(v0, v1);
                 float dot02 = Vector2.Dot(v0, v2);
@@ -193,7 +171,7 @@ public void CalculateTextureCoverage()
                 float dot12 = Vector2.Dot(v1, v2);
 
                 float denom = dot00 * dot11 - dot01 * dot01;
-                if (Mathf.Approximately(denom, 0f)) continue; // Degenerate triangle
+                if (Mathf.Approximately(denom, 0f)) continue;
 
                 float invDenom = 1f / denom;
                 float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
