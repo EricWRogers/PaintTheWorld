@@ -56,109 +56,104 @@ namespace KinematicCharacterControler
  
         public Vector3 MovePlayer(Vector3 movement)
         {
-        
             Vector3 position = transform.position;
             Quaternion rotation = transform.rotation;
 
             Vector3 remaining = movement;
-
             int bounces = 0;
 
-            while (bounces < maxBounces && remaining.magnitude > 0.001f)
+            float maxMove = 20f;
+            if (remaining.magnitude > maxMove)
+                remaining = remaining.normalized * maxMove;
+
+            while (bounces < maxBounces && remaining.sqrMagnitude > 0.000001f)
             {
-                // Do a cast of the collider to see if an object is hit during this
-                // movement bounce
                 float distance = remaining.magnitude;
+
                 if (!CastSelf(position, rotation, remaining.normalized, distance, out RaycastHit hit))
                 {
-                    // If there is no hit, move to desired position
                     position += remaining;
-
-                    // Exit as we are done bouncing
                     break;
                 }
 
-                // If we are overlapping with something, just exit.
-                if (hit.distance == 0)
+                
+                float slopeAngle = Vector3.Angle(Vector3.up, hit.normal);
+                bool isGround = hit.normal.y > 0.01f && slopeAngle <= maxSlopeAngle;
+
+                /* //Wall Collision Stuff ot stop moemntum
+                bool isWallLike = hit.normal.y < 0.1f || slopeAngle > maxSlopeAngle;
+                float intoWall = Vector3.Dot(m_velocity, hit.normal);
+                if (isWallLike && intoWall < -0.5f)
                 {
-                    position += hit.normal * (skinWidth * 2);  // Push out
-                    remaining *= 0.5f;  // Reduce remaining movement
+                    Vector3 wallwardComponent = hit.normal * intoWall;
+                    m_velocity -= wallwardComponent;
+
+                    float headOnRatio = Mathf.Abs(intoWall) / (m_velocity.magnitude + 0.01f);
+                    float tangentialDamping = Mathf.Lerp(1.0f, 0.4f, headOnRatio);
+                    m_velocity *= tangentialDamping;
+                }
+                */
+                // Handle overlaps / penetration
+                if (hit.distance <= skinWidth * 0.5f)
+                {
+                    position += hit.normal * (skinWidth);
+                    float into = Vector3.Dot(remaining, hit.normal);
+                    if (into < 0f)
+                        remaining -= hit.normal * into;
+
                     bounces++;
                     continue;
                 }
 
-                float fraction = hit.distance / distance;
+                // Move to just before the impact
+                float safeDist = hit.distance - skinWidth;
+                if (safeDist > 0f)
+                    position += remaining.normalized * safeDist;
 
-                // Set the fraction of remaining movement (minus some small value)
-                position += remaining * (fraction);
-                // Push slightly along normal to stop from getting caught in walls
-                position += hit.normal * 0.001f * 2;
-                // Decrease remaining movement by fraction of movement remaining
-                remaining *= (1 - fraction);
+                float usedFraction = Mathf.Clamp01(hit.distance / distance);
+                remaining *= (1f - usedFraction);
 
-                // Plane to project rest of movement onto
-                Vector3 planeNormal = hit.normal;
+                position += hit.normal * skinWidth;
 
-                // Only apply angular change if hitting something
-                // Get angle between surface normal and remaining movement
-                float angleBetween = Vector3.Angle(hit.normal, remaining) - 90.0f;
+                // Basic slide: remove normal component
+                Vector3 n = hit.normal;
+                float vn = Vector3.Dot(remaining, n);
+                if (vn < 0f)
+                    remaining -= n * vn;
 
-                // Normalize angle between to be between 0 and 1
-                // 0 means no angle, 1 means 90 degree angle
-                angleBetween = Mathf.Min(60f, Mathf.Abs(angleBetween));
-                float normalizedAngle = angleBetween / 60f;
+                if (remaining.sqrMagnitude < 0.000001f)
+                    break;
 
-                // Reduce the remaining movement by the remaining movement that ocurred
-                remaining *= Mathf.Pow(1 - normalizedAngle, m_anglePower) * 0.9f + 0.1f;
-
-                // Rotate the remaining movement to be projected along the plane of the hit surface
-                Vector3 projected = Vector3.ProjectOnPlane(remaining, planeNormal).normalized * remaining.magnitude;
-
-                // --- Angle-based slope momentum (per-contact) ---
-                float slopeAngle = Vector3.Angle(Vector3.up, hit.normal);
-                float slopeT = Mathf.InverseLerp(0f, maxSlopeAngle, slopeAngle); // 0 flat -> 1 at maxSlopeAngle
-
-                
-                if (hit.normal.y > 0.01f && slopeAngle <= maxSlopeAngle && projected.sqrMagnitude > 0.000001f)
+                // -------- SLOPE / MOMENTUM LOGIC (only for ground) --------
+                Vector3 projected = Vector3.ProjectOnPlane(remaining, n);
+                if (projected.sqrMagnitude > 0.000001f)
                 {
-                    // Direction you'd slide if you let gravity pull you down this surface
-                    Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, hit.normal);
-                    if (downhill.sqrMagnitude > 0.000001f)
+                    if (isGround)
                     {
-                        downhill.Normalize();
+                        float slopeT = Mathf.InverseLerp(0f, maxSlopeAngle, slopeAngle);
+                        Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, n);
+                        if (downhill.sqrMagnitude > 0.000001f)
+                        {
+                            downhill.Normalize();
+                            float alongDownhill = Vector3.Dot(projected.normalized, downhill);
+                            float target = (alongDownhill > 0f) ? downSlopeMult : upSlopeMult;
+                            float mult = Mathf.Lerp(1f, target, slopeT);
 
-                        // >0 means moving downhill along the surface, <0 means uphill
-                        float alongDownhill = Vector3.Dot(projected.normalized, downhill);
-
-                        float target = (alongDownhill > 0f) ? downSlopeMult : upSlopeMult;
-
-                        // Apply angle-scaled multiplier (at flat: 1, at maxSlopeAngle: target)
-                        float mult = Mathf.Lerp(1f, target, slopeT);
-
-                        float weight = Mathf.Clamp01(remaining.magnitude / (movement.magnitude + 0.0001f));
-                        m_velocity *= Mathf.Pow(mult, weight);
+                            float weight = Mathf.Clamp01(remaining.magnitude / (movement.magnitude + 0.0001f));
+                            m_velocity *= Mathf.Pow(mult, weight);
+                        }
                     }
-                }
 
-
-                    
-
-                // If projected remaining movement is less than original remaining movement (broke from floating point),
-                // then change this to just project along the vertical.
-                if (projected.magnitude + 0.001f < remaining.magnitude)
-                {
-                    remaining = Vector3.ProjectOnPlane(remaining, Vector3.up).normalized * remaining.magnitude;
+                    remaining = projected;
                 }
                 else
                 {
-                    remaining = projected;
+                    remaining = Vector3.ProjectOnPlane(remaining, Vector3.up);
                 }
 
-                // Track number of times the character has bounced
                 bounces++;
             }
 
-             
             return position;
         }
 
