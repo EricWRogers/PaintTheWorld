@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PaintGlobs : CollisonPainter
 {
-    public int bulletDamage = 10;
     public float launchForce = 15f;
     private Rigidbody rb;
     [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;
@@ -29,11 +28,6 @@ public class PaintGlobs : CollisonPainter
             foreach (Collider hit in hits)
             {
                 Paint(other);
-                if (hit.transform.tag == "Enemy")
-                {
-                    hit.gameObject.GetComponent<Health>().Damage(Mathf.RoundToInt(bulletDamage * damageMult));
-                    GameEvents.PlayerHitEnemy.Invoke(hit.gameObject, bulletDamage, HitSource.PlayerWeapon);
-                }
             }
             Destroy(gameObject);
         }
