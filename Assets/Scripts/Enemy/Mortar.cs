@@ -125,23 +125,23 @@ public class Mortar : Enemy
 
     private Vector3 GetPlayerTargetPos()
     {
-        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+        // PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
 
-        RaycastHit hit;
+        // RaycastHit hit;
 
-        if (playerMovement.leftWall)
-        {
-            if (Physics.Raycast(player.transform.position, -player.transform.right, out hit, 5f, wallMask))
-                return hit.point;
-        }
-        else if (playerMovement.rightWall)
-        {
-            if (Physics.Raycast(player.transform.position, player.transform.right, out hit, 5f, wallMask))
-                return hit.point;
-        }
+        // if (playerMovement.leftWall)
+        // {
+        //     if (Physics.Raycast(player.transform.position, -player.transform.right, out hit, 5f, wallMask))
+        //         return hit.point;
+        // }
+        // else if (playerMovement.rightWall)
+        // {
+        //     if (Physics.Raycast(player.transform.position, player.transform.right, out hit, 5f, wallMask))
+        //         return hit.point;
+        // }
 
-        if (Physics.Raycast(player.transform.position + Vector3.up, Vector3.down, out hit, 100f, groundMask))
-            return hit.point;
+        // if (Physics.Raycast(player.transform.position + Vector3.up, Vector3.down, out hit, 100f, groundMask))
+        //     return hit.point;
 
         return player.transform.position;
     }

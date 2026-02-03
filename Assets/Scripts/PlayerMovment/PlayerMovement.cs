@@ -386,7 +386,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public void HandleAnimations()
    {
         Vector2 horzVelocity = new Vector2(m_velocity.x, m_velocity.z);
-       if (horzVelocity.magnitude > 0.01f)
+       if (horzVelocity.magnitude > 2f)
            animator.SetBool("Moving", true);
 
         else
