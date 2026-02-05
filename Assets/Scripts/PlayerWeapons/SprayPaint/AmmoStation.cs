@@ -44,7 +44,6 @@ public class AmmoStation : MonoBehaviour
         {
             // Search the player and all children for the SprayPaint script
             SprayPaint weapon = other.GetComponentInChildren<SprayPaint>();
-            SprayPaintLine lineWeapon = other.GetComponentInChildren<SprayPaintLine>();
 
             if (weapon != null)
             {
@@ -55,17 +54,6 @@ public class AmmoStation : MonoBehaviour
             {
                 // If this hits, the script isn't on the player or their held items
                 Debug.LogError("Found Player, but SprayPaint script is missing!");
-            }
-
-            if (lineWeapon != null)
-            {
-                lineWeapon.AddAmmo(refillAmount);
-                StartCoroutine(RespawnRoutine());
-            }
-            else
-            {
-                // If this hits, the script isn't on the player or their held items
-                Debug.LogError("Found Player, but SprayPaintLine script is missing!");
             }
         }
     }

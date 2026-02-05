@@ -5,20 +5,30 @@ public class SprayPaintLine : MonoBehaviour
     [Header("Ammo Settings")]
     public int currentAmmo = 100;
     public int maxAmmo = 200;
-    public float consumptionRate = 10f; // Ammo used per second of spraying
+    public float consumptionRate = 10f;
 
-    [Header("Effects")]
+    [Header("Effects & References")]
     public ParticleSystem sprayParticles;
-    
+    public Transform nozzleSpawnPoint; // The tip of the spray can
+    public Transform playerCamera;     // Drag "Main Camera" here
+
+    [Header("Aiming Settings")]
+    public float maxAimDistance = 20f;
+    public float rotationSmoothing = 20f; // Increased for snappier movement
+    public LayerMask playerMask;
+
     private float ammoRemainder = 0f;
     private bool isSpraying = false;
 
     private void Start()
     {
-        // Ensure particles are off at the start
-        if (sprayParticles != null && sprayParticles.isPlaying)
+        if (playerCamera == null) playerCamera = Camera.main.transform;
+
+        if (sprayParticles != null)
         {
-            sprayParticles.Stop();
+            var main = sprayParticles.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            if (sprayParticles.isPlaying) sprayParticles.Stop();
         }
     }
 
@@ -27,9 +37,52 @@ public class SprayPaintLine : MonoBehaviour
         HandleInput();
     }
 
+    // We use LateUpdate for aiming to ensure the Camera has finished moving
+    private void LateUpdate()
+    {
+        UpdateAimingAndPosition();
+    }
+
+    private void UpdateAimingAndPosition()
+    {
+        if (playerCamera == null || nozzleSpawnPoint == null || sprayParticles == null) return;
+
+        // 1. Position the particles at the nozzle
+        sprayParticles.transform.position = nozzleSpawnPoint.position;
+
+        // 2. Create a target point in the world based on camera center
+        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+        Vector3 targetPoint;
+
+        // We use a Raycast to see if there is a wall to aim at
+        if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, ~playerMask, QueryTriggerInteraction.Ignore))
+        {
+            targetPoint = hit.point;
+        }
+        else
+        {
+            // If hitting nothing, aim at a point 10 units away along the camera's gaze
+            targetPoint = ray.GetPoint(10f); 
+        }
+
+        // 3. Rotate the spray can towards the targetPoint
+        Vector3 direction = (targetPoint - transform.position).normalized;
+        
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            
+            // Apply rotation to the can (this script's object)
+            // If the can feels sluggish, increase rotationSmoothing
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
+            
+            // Match particles to the can't orientation
+            sprayParticles.transform.rotation = transform.rotation;
+        }
+    }
+
     private void HandleInput()
     {
-        // Check if Left Mouse is held down and we have ammo
         if (Input.GetMouseButton(0) && currentAmmo > 0)
         {
             StartSpraying();
@@ -46,10 +99,7 @@ public class SprayPaintLine : MonoBehaviour
         if (!isSpraying)
         {
             isSpraying = true;
-            if (sprayParticles != null && !sprayParticles.isPlaying)
-            {
-                sprayParticles.Play();
-            }
+            if (sprayParticles != null && !sprayParticles.isPlaying) sprayParticles.Play();
         }
     }
 
@@ -58,34 +108,23 @@ public class SprayPaintLine : MonoBehaviour
         if (isSpraying)
         {
             isSpraying = false;
-            if (sprayParticles != null && sprayParticles.isPlaying)
-            {
-                sprayParticles.Stop();
-            }
+            if (sprayParticles != null && sprayParticles.isPlaying) sprayParticles.Stop();
         }
     }
 
     private void ConsumeAmmo()
     {
-        // Using Time.deltaTime ensures ammo consumption is consistent regardless of frame rate
         ammoRemainder += consumptionRate * Time.deltaTime;
-
         if (ammoRemainder >= 1f)
         {
             int ammoToSubtract = Mathf.FloorToInt(ammoRemainder);
-            currentAmmo -= ammoToSubtract;
+            currentAmmo = Mathf.Max(0, currentAmmo - ammoToSubtract);
             ammoRemainder -= ammoToSubtract;
-
-            // Clamp ammo so it doesn't go below zero
-            currentAmmo = Mathf.Max(0, currentAmmo);
         }
     }
 
-    // This is the method called by your AmmoStation script
     public void AddAmmo(int amount)
     {
-        currentAmmo += amount;
-        currentAmmo = Mathf.Clamp(currentAmmo, 0, maxAmmo);
-        Debug.Log($"Ammo refilled! Current ammo: {currentAmmo}");
+        currentAmmo = Mathf.Clamp(currentAmmo + amount, 0, maxAmmo);
     }
 }
