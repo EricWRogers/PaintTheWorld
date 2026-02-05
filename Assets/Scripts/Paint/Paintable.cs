@@ -17,7 +17,7 @@ public class PaintableEditor : Editor
 
         if (GUILayout.Button("Calculate Material Percentage"))
         {
-            paintable.CalculateTextureCoverage();
+            //paintable.CalculateTextureCoverage();
         }
 
     }
@@ -74,7 +74,7 @@ public class Paintable : MonoBehaviour {
     }
     void Update()
     {
-        if(percentageCovered + meshPercent >= targetCoverPercent)
+        if(percentageCovered >= targetCoverPercent)
         {
             covered = true;
         }
@@ -111,68 +111,68 @@ public class Paintable : MonoBehaviour {
         return tex.GetPixel(0, 0).r * 100; // 0–1 coverage
     }
 
-public void CalculateTextureCoverage()
-    {
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
-        Mesh mesh = meshFilter.sharedMesh;
+// public void CalculateTextureCoverage()
+//     {
+//         MeshFilter meshFilter = GetComponent<MeshFilter>();
+//         Mesh mesh = meshFilter.sharedMesh;
 
-        Vector2[] uvs = mesh.uv;
+//         Vector2[] uvs = mesh.uv;
 
-        int texWidth = (int)TEXTURE_SIZE;
-        int texHeight = (int)TEXTURE_SIZE;
-        int totalPixels = texWidth * texHeight;
+//         int texWidth = (int)TEXTURE_SIZE;
+//         int texHeight = (int)TEXTURE_SIZE;
+//         int totalPixels = texWidth * texHeight;
 
-        HashSet<Vector2Int> coveredPixels = new HashSet<Vector2Int>();
+//         HashSet<Vector2Int> coveredPixels = new HashSet<Vector2Int>();
 
-        int[] triangles = mesh.triangles;
+//         int[] triangles = mesh.triangles;
 
-        for (int i = 0; i < triangles.Length; i += 3)
-        {
-            Vector2 uv1 = uvs[triangles[i]] * (int)TEXTURE_SIZE;
-            Vector2 uv2 = uvs[triangles[i + 1]] * (int)TEXTURE_SIZE;
-            Vector2 uv3 = uvs[triangles[i + 2]] * (int)TEXTURE_SIZE;
+//         for (int i = 0; i < triangles.Length; i += 3)
+//         {
+//             Vector2 uv1 = uvs[triangles[i]] * (int)TEXTURE_SIZE;
+//             Vector2 uv2 = uvs[triangles[i + 1]] * (int)TEXTURE_SIZE;
+//             Vector2 uv3 = uvs[triangles[i + 2]] * (int)TEXTURE_SIZE;
 
-            RasterizeTriangle(uv1, uv2, uv3, coveredPixels, texWidth, texHeight);
-        }
+//             RasterizeTriangle(uv1, uv2, uv3, coveredPixels, texWidth, texHeight);
+//         }
 
-        meshPercent = (float)coveredPixels.Count / totalPixels * 100f;
-    }
+//         meshPercent = (float)coveredPixels.Count / totalPixels * 100f;
+//     }
 
-    private void RasterizeTriangle(Vector2 p0, Vector2 p1, Vector2 p2, HashSet<Vector2Int> coveredPixels, int texWidth, int texHeight)
-    {
-        int minX = Mathf.Clamp(Mathf.FloorToInt(Mathf.Min(p0.x, Mathf.Min(p1.x, p2.x))), 0, texWidth - 1);
-        int maxX = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(p0.x, Mathf.Max(p1.x, p2.x))), 0, texWidth - 1);
-        int minY = Mathf.Clamp(Mathf.FloorToInt(Mathf.Min(p0.y, Mathf.Min(p1.y, p2.y))), 0, texHeight - 1);
-        int maxY = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(p0.y, Mathf.Max(p1.y, p2.y))), 0, texHeight - 1);
+//     private void RasterizeTriangle(Vector2 p0, Vector2 p1, Vector2 p2, HashSet<Vector2Int> coveredPixels, int texWidth, int texHeight)
+//     {
+//         int minX = Mathf.Clamp(Mathf.FloorToInt(Mathf.Min(p0.x, Mathf.Min(p1.x, p2.x))), 0, texWidth - 1);
+//         int maxX = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(p0.x, Mathf.Max(p1.x, p2.x))), 0, texWidth - 1);
+//         int minY = Mathf.Clamp(Mathf.FloorToInt(Mathf.Min(p0.y, Mathf.Min(p1.y, p2.y))), 0, texHeight - 1);
+//         int maxY = Mathf.Clamp(Mathf.CeilToInt(Mathf.Max(p0.y, Mathf.Max(p1.y, p2.y))), 0, texHeight - 1);
 
-        Vector2 v0 = p1 - p0;
-        Vector2 v1 = p2 - p0;
+//         Vector2 v0 = p1 - p0;
+//         Vector2 v1 = p2 - p0;
 
-        for (int y = minY; y <= maxY; y++)
-        {
-            for (int x = minX; x <= maxX; x++)
-            {
-                Vector2 p = new Vector2(x + 0.5f, y + 0.5f);
-                Vector2 v2 = p - p0;
+//         for (int y = minY; y <= maxY; y++)
+//         {
+//             for (int x = minX; x <= maxX; x++)
+//             {
+//                 Vector2 p = new Vector2(x + 0.5f, y + 0.5f);
+//                 Vector2 v2 = p - p0;
 
-                float dot00 = Vector2.Dot(v0, v0);
-                float dot01 = Vector2.Dot(v0, v1);
-                float dot02 = Vector2.Dot(v0, v2);
-                float dot11 = Vector2.Dot(v1, v1);
-                float dot12 = Vector2.Dot(v1, v2);
+//                 float dot00 = Vector2.Dot(v0, v0);
+//                 float dot01 = Vector2.Dot(v0, v1);
+//                 float dot02 = Vector2.Dot(v0, v2);
+//                 float dot11 = Vector2.Dot(v1, v1);
+//                 float dot12 = Vector2.Dot(v1, v2);
 
-                float denom = dot00 * dot11 - dot01 * dot01;
-                if (Mathf.Approximately(denom, 0f)) continue;
+//                 float denom = dot00 * dot11 - dot01 * dot01;
+//                 if (Mathf.Approximately(denom, 0f)) continue;
 
-                float invDenom = 1f / denom;
-                float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
-                float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+//                 float invDenom = 1f / denom;
+//                 float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+//                 float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
-                if (u >= 0 && v >= 0 && u + v <= 1)
-                {
-                    coveredPixels.Add(new Vector2Int(x, y));
-                }
-            }
-        }
-    }
+//                 if (u >= 0 && v >= 0 && u + v <= 1)
+//                 {
+//                     coveredPixels.Add(new Vector2Int(x, y));
+//                 }
+//             }
+//         }
+//     }
 }
