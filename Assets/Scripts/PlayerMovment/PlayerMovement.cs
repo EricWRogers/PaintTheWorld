@@ -204,6 +204,9 @@ public class PlayerMovement : PlayerMovmentEngine
     public float jumpInputElapsed = Mathf.Infinity;
     private float m_timeSinceLastJump = 0.0f;
     public bool m_jumpInputPressed = false;
+    // True only on the frame jump was pressed (latched until consumed).
+    private bool m_jumpPressedThisFrame = false;
+
     private float m_jumpBufferTime = 0.25f;
     private bool wasGrounded = false;
 
@@ -403,6 +406,11 @@ public class PlayerMovement : PlayerMovmentEngine
         moveInput = m_inputActions.Move.ReadValue<Vector2>();
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
+
+        // Latch a one-frame press so rail-jump triggers reliably (and only once).
+        if (m_inputActions.Jump.WasPressedThisFrame())
+            m_jumpPressedThisFrame = true;
+
         if (m_jumpInputPressed)
             jumpInputElapsed = 0.0f;
         else
@@ -477,9 +485,9 @@ public class PlayerMovement : PlayerMovmentEngine
             }
         }
 
-        // Clamp “surface speed” (this now clamps along the ramp, not just flat XZ)
-        if (horizontalVel.magnitude > m_maxSpeed && !isDashing)
-            horizontalVel = horizontalVel.normalized * m_maxSpeed;
+        //// Clamp “surface speed” (this now clamps along the ramp, not just flat XZ)
+        //if (horizontalVel.magnitude > m_maxSpeed && !isDashing)
+        //    horizontalVel = horizontalVel.normalized * m_maxSpeed;
 
         // On walkable ground, velocity should live on the surface plane (includes vertical on ramps).
         // In air, keep your original pattern (preserve Y separately).
@@ -716,80 +724,122 @@ public class PlayerMovement : PlayerMovmentEngine
             wasGrinding = false;
             return false;
         }
-        splineContainer = null;
+
+        if (m_railDetectionPoint == null) return false;
+
         // Detect rails nearby
         Collider[] railColliders = Physics.OverlapSphere(m_railDetectionPoint.position, railDetectionRadius, railLayer);
         if (railColliders.Length == 0) return false;
 
+        // Pick the closest rail (prevents snapping to a random rail when multiple overlap).
+        SplineContainer best = null;
+        float bestDistSqr = float.MaxValue;
 
-        // Search for the closest spline point
-        foreach (var collider in railColliders)
+        foreach (var col in railColliders)
         {
-            splineContainer = collider.GetComponent<SplineContainer>();
-            if (splineContainer == null || splineContainer.Splines.Count == 0)   continue;
+            var sc = col.GetComponent<SplineContainer>();
+            if (sc == null || sc.Splines == null || sc.Splines.Count == 0) continue;
+
+            FindClosestPointOnSpline(sc, transform.position, out float t, out float distSqr);
+            if (distSqr < bestDistSqr)
+            {
+                bestDistSqr = distSqr;
+                best = sc;
+            }
         }
 
-        // If a valid spline was found within snap distance, start grinding
-        if (splineContainer != null)
-        {
-            StartGrinding();
-            return true;
-        }
-    
-        return false;
+        if (best == null) return false;
+
+       
+        
+
+        splineContainer = best;
+        StartGrinding();
+        return true;
     }
 
     void StartGrinding()
     {
         isGrinding = true;
-        var splineRef = splineContainer.Splines[0];
 
-        Vector3 closest = FindClosestPointOnSpline(out float progress);
-        railProgress = progress;
-
-        grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
-
-
-        Vector3 tangent = GetSplineTangentAt(splineRef, railProgress);
-        if (tangent.sqrMagnitude < 0.0001f) tangent = Vector3.forward;
-
-
-        float dot = Vector3.Dot(m_velocity.normalized, tangent.normalized);
-        m_railDir = dot >= 0f ? 1f : -1f;
-
-        
-        Vector3 splinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
-
-        Vector3 snapDelta = worldSplinePos - transform.position;
-        transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
-
-      m_velocity = tangent.normalized * grindSpeed * m_railDir;
-
-
-    }
-
-     void ContinueGrinding()
-    {
-        if (splineContainer == null || splineContainer.Splines.Count == 0)
+        if (splineContainer == null || splineContainer.Splines == null || splineContainer.Splines.Count == 0)
         {
             ExitGrinding();
             return;
         }
 
-        if (m_jumpInputPressed)
+        var splineRef = splineContainer.Splines[0];
+
+        // Find closest point on spline in WORLD space (handles rotated rails).
+        FindClosestPointOnSpline(splineContainer, transform.position, out float progress, out _);
+        railProgress = progress;
+
+        grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
+
+        // Tangent from Spline.EvaluatePosition is in spline LOCAL space -> convert to world.
+        Vector3 localTangent = GetSplineTangentAt(splineRef, railProgress);
+        if (localTangent.sqrMagnitude < 0.0001f) localTangent = Vector3.forward;
+
+        Vector3 worldTangent = splineContainer.transform.TransformDirection(localTangent);
+        if (worldTangent.sqrMagnitude < 0.0001f) worldTangent = transform.forward;
+
+        // Choose rail direction using horizontal approach (prevents vertical velocity from flipping direction).
+        Vector3 approach = m_velocity;
+        approach.y = 0f;
+        Vector3 tH = worldTangent;
+        tH.y = 0f;
+
+        if (approach.sqrMagnitude < 0.0001f) approach = transform.forward;
+        if (tH.sqrMagnitude < 0.0001f) tH = transform.forward;
+
+        float dot = Vector3.Dot(approach.normalized, tH.normalized);
+        m_railDir = dot >= 0f ? 1f : -1f;
+
+        // Snap player to spline in WORLD space (TransformPoint handles rail rotation).
+        Vector3 localSplinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
+        Vector3 worldSplinePos = splineContainer.transform.TransformPoint(localSplinePos) + Vector3.up * 1.4f;
+
+        Vector3 snapDelta = worldSplinePos - transform.position;
+        transform.position = MovePlayer(snapDelta);
+
+        // Set velocity along world tangent
+        m_velocity = worldTangent.normalized * grindSpeed * m_railDir;
+    }
+
+    void ContinueGrinding()
+    {
+        if (splineContainer == null || splineContainer.Splines == null || splineContainer.Splines.Count == 0)
         {
+            ExitGrinding();
+            return;
+        }
+
+        // Jump off rail: use a one-shot press (not "held") so it fires reliably once.
+        if (m_jumpPressedThisFrame)
+        {
+            m_jumpPressedThisFrame = false;
+
             var splineRef = splineContainer.Splines[0];
-            Vector3 tangent = GetSplineTangentAt(splineRef, railProgress).normalized * m_railDir;
-            m_velocity = tangent * grindExitForce + Vector3.up * jumpForce;
+
+            Vector3 localTangent = GetSplineTangentAt(splineRef, railProgress);
+            if (localTangent.sqrMagnitude < 0.0001f) localTangent = Vector3.forward;
+
+            Vector3 worldTangent = splineContainer.transform.TransformDirection(localTangent).normalized * m_railDir;
+
+            // Keep your original jump math (tangent * grindExitForce + up * jumpForce)
+            m_velocity = worldTangent * grindExitForce + Vector3.up * jumpForce;
+
             ExitGrinding();
             return;
         }
 
         var splineRef2 = splineContainer.Splines[0];
 
-        // Full 3D tangent at current progress (respecting slope)
-        Vector3 tangentHere = GetSplineTangentAt(splineRef2, railProgress).normalized * m_railDir;
+        // Full 3D world tangent at current progress (respecting rail slope + container rotation)
+        Vector3 localTangentHere = GetSplineTangentAt(splineRef2, railProgress);
+        if (localTangentHere.sqrMagnitude < 0.0001f) localTangentHere = Vector3.forward;
+
+        Vector3 tangentHere = splineContainer.transform.TransformDirection(localTangentHere).normalized * m_railDir;
 
         // Use full velocity to get how fast we're moving along tangent
         float speedAlongTangent = Vector3.Dot(m_velocity, tangentHere);
@@ -817,12 +867,13 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         // Keep the player snapped close to the spline laterally to avoid drift:
-        Vector3 splinePos = (Vector3)splineRef2.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
-        // Only correct lateral offset (project delta onto plane perpendicular to tangent)
+        Vector3 localSplinePos2 = (Vector3)splineRef2.EvaluatePosition(railProgress);
+        Vector3 worldSplinePos = splineContainer.transform.TransformPoint(localSplinePos2) + Vector3.up * 1.4f;
+
         Vector3 delta = worldSplinePos - transform.position;
         Vector3 lateral = delta - Vector3.Project(delta, tangentHere);
-        // Apply a small correction to pull player onto spline smoothly (not teleport)
+
+        // Apply lateral correction gently (not teleport)
         float correctionStrength = Mathf.Clamp01(5f * Time.deltaTime); // tweak if needed
         transform.position = MovePlayer(lateral * correctionStrength);
 
@@ -831,54 +882,66 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void ExitGrinding()
     {
-
         if (!isGrinding || wasGrinding) return;
 
         isGrinding = false;
         wasGrinding = true;
 
-        
         // Give exit velocity
         if (splineContainer != null)
         {
             m_velocity += Vector3.up * grindExitForce;
-
         }
-        //transform.position = MovePlayer(m_velocity * Time.deltaTime);
+        transform.position = MovePlayer(m_velocity * Time.deltaTime);
+
         m_timer = 0f;
         splineContainer = null;
         railProgress = 0f;
         grindSpeed = 0f;
+
+        // Note: cooldown gating is handled elsewhere; clearing here prevents the flag from blocking indefinitely.
         wasGrinding = false;
-
-
     }
-    
 
-    Vector3 FindClosestPointOnSpline(out float bestT)
+    // Finds the closest point on a spline container in WORLD space (handles container rotation).
+    void FindClosestPointOnSpline(SplineContainer container, Vector3 worldPos, out float bestT, out float bestDistSqr)
     {
         int samples = 100;
-        float minDist = float.MaxValue;
+        bestDistSqr = float.MaxValue;
         bestT = 0f;
-        Vector3 bestPoint = Vector3.zero;
+
+        if (container == null || container.Splines == null || container.Splines.Count == 0)
+            return;
+
+        var spline = container.Splines[0];
 
         for (int i = 0; i <= samples; i++)
         {
             float t = (float)i / samples;
-            Vector3 p = splineContainer.EvaluatePosition(t);
-            float d = (transform.position - p).sqrMagnitude;
 
-            if (d < minDist)
+            Vector3 localP = (Vector3)spline.EvaluatePosition(t);
+            Vector3 p = container.transform.TransformPoint(localP);
+
+            float d = (worldPos - p).sqrMagnitude;
+
+            if (d < bestDistSqr)
             {
-                minDist = d;
+                bestDistSqr = d;
                 bestT = t;
-                bestPoint = p;
             }
         }
-
-        return bestPoint;
     }
-        Vector3 GetSplineTangentAt(Spline spline, float t, float deltaT = 0.001f)
+
+    // Legacy call site compatibility (kept).
+    Vector3 FindClosestPointOnSpline(out float bestT)
+    {
+        FindClosestPointOnSpline(splineContainer, transform.position, out bestT, out _);
+        var spline = splineContainer.Splines[0];
+        Vector3 localP = (Vector3)spline.EvaluatePosition(bestT);
+        return splineContainer.transform.TransformPoint(localP);
+    }
+
+    Vector3 GetSplineTangentAt(Spline spline, float t, float deltaT = 0.001f)
     {
         // Numerical tangent: sample a small step forward (clamp) to approximate derivative.
         float t2 = Mathf.Clamp01(t + deltaT);
@@ -895,7 +958,8 @@ public class PlayerMovement : PlayerMovmentEngine
         }
         return tangent;
     }
-    #endregion
+
+#endregion
 
     void OnDestroy()
     {
