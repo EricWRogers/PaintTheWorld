@@ -21,9 +21,18 @@ public class PaintingObj : MonoBehaviour
             ObjComplete();
             objComplete = true;
         }
+        else
+        {
+            ObjUncomplete();
+            objComplete = false;
+        }
     }
     public void ObjComplete()
     {
         GameManager.instance.amountOfObjComplete++;
+    }
+    public void ObjUncomplete()
+    {
+        GameManager.instance.amountOfObjComplete--;
     }
 }

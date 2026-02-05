@@ -1286,12 +1286,12 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &173065121
 MeshFilter:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 8
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 173065117}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: dade778ae298f984bba1f572d6865b6b, type: 2}
 --- !u!114 &173065122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1689,19 +1689,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9904864
+      value: 0.99048644
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.13761044
+      value: 0.13761045
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.0003489101
+      value: 0.00021680101
       objectReference: {fileID: 0}
     - target: {fileID: 2558197743922652643, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000048474834
+      value: -0.000030120631
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1713,11 +1713,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00034891017
+      value: 0.00021680097
       objectReference: {fileID: 0}
     - target: {fileID: 6093725058108005885, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.00004847549
+      value: -0.00003012062
       objectReference: {fileID: 0}
     - target: {fileID: 6931988930237852031, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2011,7 +2011,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -2154,7 +2153,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -2489,7 +2487,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -2891,24 +2888,13 @@ PrefabInstance:
       value: Mortar
       objectReference: {fileID: 0}
     - target: {fileID: 7962096642784740953, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
-      propertyPath: losOffset.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7962096642784740953, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
-      propertyPath: losMask.m_Bits
-      value: 648
-      objectReference: {fileID: 0}
-    - target: {fileID: 7962096642784740953, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
       propertyPath: m_targetTransform
       value: 
       objectReference: {fileID: 1117131317}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 687206138}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
 --- !u!4 &318967675 stripped
 Transform:
@@ -2964,7 +2950,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -3866,7 +3851,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -4437,7 +4421,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -4612,7 +4595,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -4988,7 +4970,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -5487,7 +5468,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -5823,7 +5803,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -5966,7 +5945,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -6777,38 +6755,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a9c9988d27a90d4e9fe05541b0541ff, type: 3}
---- !u!1 &687206136 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6371524131278298181, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
-  m_PrefabInstance: {fileID: 312230460}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &687206137 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1466289999841150659, guid: 8b4e044d83a3c3d4697319139c0f3ea0, type: 3}
   m_PrefabInstance: {fileID: 312230460}
   m_PrefabAsset: {fileID: 0}
---- !u!195 &687206138
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 687206136}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 0
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0.47
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!4 &688393604 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8426905217252641390, guid: 0a9c9988d27a90d4e9fe05541b0541ff, type: 3}
@@ -7097,7 +7048,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -7630,7 +7580,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -8263,7 +8212,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -8444,7 +8392,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -8948,7 +8895,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -9195,12 +9141,12 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &922899206
 MeshFilter:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 8
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 922899201}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: 4c32474d4d9def84680e03acdfc8ee04, type: 2}
 --- !u!114 &922899207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9410,7 +9356,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -10164,7 +10109,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -10417,12 +10361,12 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1089365874
 MeshFilter:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 8
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1089365870}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: e24caf7bede20c243b2291146a1d31ca, type: 2}
 --- !u!114 &1089365875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10939,12 +10883,12 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1103281723
 MeshFilter:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 8
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1103281719}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: 197c05a835bf999458ac2ccb1f21fbc4, type: 2}
 --- !u!114 &1103281724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11327,7 +11271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1125037537
 Transform:
   m_ObjectHideFlags: 0
@@ -13357,7 +13301,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1408970194
 Transform:
   m_ObjectHideFlags: 0
@@ -14740,7 +14684,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -15671,7 +15614,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -15804,7 +15746,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -16173,7 +16114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0
@@ -18438,7 +18378,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 124
-  extendsIslandOffset: 1
   covered: 0
   targetCoverPercent: 0
   percentageCovered: 0

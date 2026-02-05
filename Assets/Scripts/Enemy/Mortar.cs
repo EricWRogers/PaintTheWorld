@@ -39,12 +39,16 @@ public class Mortar : Enemy
     private NavMeshAgent m_agent;
     public Transform m_targetTransform;
     private Vector3 m_direction;
+    public bool stunned;
+    public float stunTime;
+    private float m_stunTimer;
 
     new void Start()
     {
         base.Start();
         m_agent = GetComponent<NavMeshAgent>();
-        
+        m_targetTransform = PlayerManager.instance.player.transform;
+        m_stunTimer = stunTime;
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -56,12 +60,22 @@ public class Mortar : Enemy
 
     new void Update()
     {
+        if (stunned)
+        {
+            m_stunTimer -= Time.deltaTime;
+            if(m_stunTimer <= 0)
+            {
+                modelMeshRenderer.materials[1].color = Color.clear;
+                Move();
+                stunned = false;
+            }
+            return;
+        }
         base.Update();
         m_direction = PlayerManager.instance.player.transform.position - transform.position;
         //if has los of player shoot
         if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 100, losMask))
         {
-            Debug.Log(m_hitInfo.transform.gameObject.name);
             if(m_hitInfo.transform.CompareTag("Player"))
             {
                 m_attackTimer -= Time.deltaTime;
@@ -154,6 +168,14 @@ public class Mortar : Enemy
         m_currentIndicator.transform.localScale = Vector3.zero;
        // m_currentIndicator.transform.DOScale(new Vector3(hitRadius, hitRadius, hitRadius), aimDelay);
         Destroy(m_currentIndicator, aimDelay + flightTime);
+    }
+
+    public void Stun()
+    {
+        StopMoving();
+        modelMeshRenderer.materials[1].color = hurtColor;
+        m_stunTimer = stunTime;
+        stunned = true;
     }
 
     public void Move()

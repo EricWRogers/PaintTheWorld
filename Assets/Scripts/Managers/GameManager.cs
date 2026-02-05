@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using KinematicCharacterControler;
 using SuperPupSystems.Helper;
@@ -10,7 +11,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : SceneAwareSingleton<GameManager>
 {
     public GameObject pauseMenu;
-    public Timer timer;
     
     public List<PaintingObj> objectives;
     public bool allObjComplete;
@@ -19,6 +19,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private bool gameplayStarted = false;
 
     public bool m_isPaused;
+    public String  shopScene;
+    public int coinsForEachObj;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -67,6 +69,13 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public void EditorInit()
     {
         IsReady = true;
+    }
+
+    public void ShopStage()
+    {
+        PlayerManager.instance.wallet.Add((int)coinsForEachObj * amountOfObjComplete);
+        SceneManager.LoadScene(shopScene);
+
     }
 
     
