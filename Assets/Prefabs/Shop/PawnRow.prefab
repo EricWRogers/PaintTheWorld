@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3237416408740184915}
   - component: {fileID: 6605016177687175417}
+  - component: {fileID: 3213940426309790967}
   m_Layer: 0
   m_Name: PawnRow
   m_TagString: Untagged
@@ -54,6 +55,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highlightBG: {fileID: 825379890747021311}
+--- !u!114 &3213940426309790967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634285943476188407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1b2705bbe7e0b746999722513ea28b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameText: {fileID: 1704425236056286264}
+  rarityText: {fileID: 3803714899494240950}
+  countText: {fileID: 2810421646914615483}
+  selectable: {fileID: 6605016177687175417}
 --- !u!1 &3171452540510271613
 GameObject:
   m_ObjectHideFlags: 0
