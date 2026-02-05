@@ -1224,18 +1224,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c17a339708289a468cf07b9350e4a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentWave: 0
-  totalWave: 8
-  enemyAmount: 10
-  totalEnemyKills: 0
-  currKilledInWave: 0
   pauseMenu: {fileID: 150948810358029021}
-  firstWaveTimer: 10
-  prepTimer: 40
-  inWave: 0
-  timer: {fileID: 5278923029807091084}
-  scalingData: {fileID: 11400000, guid: 6abab9b56d5299243ae8c5866198b36a, type: 2}
+  objectives: []
+  allObjComplete: 0
+  amountOfObjComplete: 0
   m_isPaused: 0
+  shopScene: PhysicalShop
+  coinsForEachObj: 100
 --- !u!114 &5278923029807091084
 MonoBehaviour:
   m_ObjectHideFlags: 0

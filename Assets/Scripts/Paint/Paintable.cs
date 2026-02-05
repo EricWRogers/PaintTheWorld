@@ -35,22 +35,18 @@ public class Paintable : MonoBehaviour {
     }
     //const int TEXTURE_SIZE = 256;
     public TextureQuality TEXTURE_SIZE = TextureQuality.MINI;
-    public float extendsIslandOffset = 1;
 
-    private RenderTexture m_extendIslandsRenderTexture;
-    private RenderTexture m_uvIslandsRenderTexture;
     private RenderTexture m_maskRenderTexture;
     private RenderTexture m_supportTexture;
-    
     private Renderer m_rend;
 
-    private int m_maskTextureID = Shader.PropertyToID("_MaskTexture");
+    int maskTextureID = Shader.PropertyToID("_MaskTexture");
 
     public RenderTexture getMask() => m_maskRenderTexture;
-    public RenderTexture getUVIslands() => m_uvIslandsRenderTexture;
-    public RenderTexture getExtend() => m_extendIslandsRenderTexture;
     public RenderTexture getSupport() => m_supportTexture;
     public Renderer getRenderer() => m_rend;
+
+
     public bool covered;
     public float targetCoverPercent;
     public float percentageCovered;
@@ -58,24 +54,22 @@ public class Paintable : MonoBehaviour {
 
     void Start() {
         m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
+        m_maskRenderTexture.filterMode = FilterMode.Bilinear;
+
         m_maskRenderTexture.useMipMap = true;
         m_maskRenderTexture.autoGenerateMips = false;
         m_maskRenderTexture.enableRandomWrite = false;
-        m_maskRenderTexture.filterMode = FilterMode.Bilinear;
-
-        m_extendIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
-        m_extendIslandsRenderTexture.filterMode = FilterMode.Bilinear;
-
-        m_uvIslandsRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
-        m_uvIslandsRenderTexture.filterMode = FilterMode.Bilinear;
+        m_maskRenderTexture.Create();
 
         m_supportTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_supportTexture.filterMode =  FilterMode.Bilinear;
 
         m_rend = GetComponent<Renderer>();
-        m_rend.material.SetTexture(m_maskTextureID, m_extendIslandsRenderTexture);
+        m_rend.material.SetTexture(maskTextureID, m_maskRenderTexture);
 
         PaintManager.instance.initTextures(this);
+
+
         percentageCovered = meshPercent;
     }
     void Update()
@@ -92,8 +86,6 @@ public class Paintable : MonoBehaviour {
 
     void OnDisable(){
         m_maskRenderTexture.Release();
-        m_uvIslandsRenderTexture.Release();
-        m_extendIslandsRenderTexture.Release();
         m_supportTexture.Release();
     }
     public float GetPaintCoverage(RenderTexture _mask)
@@ -122,7 +114,6 @@ public class Paintable : MonoBehaviour {
 public void CalculateTextureCoverage()
     {
         MeshFilter meshFilter = GetComponent<MeshFilter>();
-        Renderer renderer = GetComponent<Renderer>();
         Mesh mesh = meshFilter.sharedMesh;
 
         Vector2[] uvs = mesh.uv;
