@@ -308,11 +308,14 @@ public class PlayerMovement : PlayerMovmentEngine
         HandlePaintColor();
         HandleFOV();
         m_timeSinceLastDash += Time.deltaTime;
+        if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
+
     }
 
 
     void FixedUpdate()
     {
+        if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
    
         bool onGround = CheckIfGrounded(out RaycastHit _);
         HandleRotation();
