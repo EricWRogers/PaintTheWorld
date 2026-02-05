@@ -1,10 +1,19 @@
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class PawnShopRow : MonoBehaviour
 {
-    public Image icon;
     public TMP_Text nameText;
-    public Button swapButton;
+    public TMP_Text rarityText;
+    public TMP_Text countText;
+
+    public SelectableRow selectable; // assign in prefab
+
+    public void Bind(ItemSO item, int count)
+    {
+        if (nameText) nameText.text = item.displayName;
+        if (rarityText) rarityText.text = item.rarity.ToString();
+        if (countText) countText.text = $"x{count}";
+    }
 }

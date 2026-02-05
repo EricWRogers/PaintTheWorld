@@ -67,6 +67,7 @@ public class Mortar : Enemy
             {
                 modelMeshRenderer.materials[1].color = Color.clear;
                 Move();
+                GetComponent<Health>().Revive();
                 stunned = false;
             }
             return;

@@ -33,6 +33,7 @@ public abstract class Weapon : MonoBehaviour
 
     public void Update()
     {
+        if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
         if (canAim)
         {
             if (aimPoint.hit)
