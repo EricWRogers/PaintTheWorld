@@ -63,7 +63,7 @@ public class PaintManager : Singleton<PaintManager>
 
         // 1) Draw onto mask
         m_command.SetRenderTarget(mask);
-        m_command.ClearRenderTarget(false, true, Color.clear); // optional clear
+        //m_command.ClearRenderTarget(true, true, color ?? Color.red); // optional clear
         m_command.DrawRenderer(rend, m_paintMaterial, 0);
 
         // 2) Copy/accumulate mask into support

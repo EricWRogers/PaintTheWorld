@@ -47,6 +47,7 @@ public class Mortar : Enemy
     {
         base.Start();
         m_agent = GetComponent<NavMeshAgent>();
+        m_targetTransform = PlayerManager.instance.player.transform;
         m_stunTimer = stunTime;
         if (audioSource == null)
         {
@@ -75,7 +76,6 @@ public class Mortar : Enemy
         //if has los of player shoot
         if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 100, losMask))
         {
-            Debug.Log(m_hitInfo.transform.gameObject.name);
             if(m_hitInfo.transform.CompareTag("Player"))
             {
                 m_attackTimer -= Time.deltaTime;
