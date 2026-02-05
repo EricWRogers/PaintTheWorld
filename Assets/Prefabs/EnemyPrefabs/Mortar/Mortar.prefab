@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 8319573050973202509}
   - component: {fileID: 3350387822346316004}
   - component: {fileID: 598520343130500951}
+  - component: {fileID: 9015654528692600483}
   m_Layer: 6
   m_Name: Mortar
   m_TagString: Enemy
@@ -117,10 +118,7 @@ MonoBehaviour:
   attackSpeed: 3
   rotationSpeed: 10
   attackRange: 1000
-  moneyToAdd: {x: 15, y: 30}
   firePoint: {fileID: 8160938142129756026}
-  coin: {fileID: 8705164910154159958, guid: 211ce4a25405807479ed4857dcbf4821, type: 3}
-  coinOffset: {x: 0, y: 0.5, z: 0}
   damageText: {fileID: 1392177967193643494, guid: 7ade7531bc2feef43ab3b1654ec19ae6, type: 3}
   damageTextSpawn: {fileID: 5179512397239169985}
   modelMeshRenderer: {fileID: 293534031029460202}
@@ -144,6 +142,12 @@ MonoBehaviour:
   fireSound: {fileID: 0}
   fireSoundVolume: 0.9
   randomPitchRange: 1.02
+  losMask:
+    serializedVersion: 2
+    m_Bits: 648
+  m_targetTransform: {fileID: 0}
+  stunned: 0
+  stunTime: 0
 --- !u!114 &5472731473974361928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,8 +185,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7962096642784740953}
-        m_TargetAssemblyTypeName: TurretScript, Assembly-CSharp
-        m_MethodName: Dead
+        m_TargetAssemblyTypeName: Mortar, Assembly-CSharp
+        m_MethodName: Stun
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -192,7 +196,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  maxHealth: 20
+  maxHealth: 25
   currentHealth: 0
   defaultToMaxHealth: 1
 --- !u!114 &8319573050973202509
@@ -246,6 +250,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.2102603, z: 1.5783483}
   m_Center: {x: 0, y: 0.037094187, z: -0.32770878}
+--- !u!195 &9015654528692600483
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6371524131278298181}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 0
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0.47
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &8895213193469594128
 GameObject:
   m_ObjectHideFlags: 0

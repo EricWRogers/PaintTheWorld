@@ -309,6 +309,8 @@ MonoBehaviour:
   currJumpCount: 1
   jumpInputElapsed: Infinity
   m_jumpInputPressed: 0
+  jumpHoldMult: 1.5
+  maxJumpHoldTime: 2
   m_isWallRiding: 0
   leftWall: 0
   rightWall: 0
@@ -605,7 +607,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761052, y: 0.00042764246, z: -0.000059413334, w: 0.9904864}
+  m_LocalRotation: {x: 0.13761052, y: 0.00045632882, z: -0.0000633988, w: 0.9904864}
   m_LocalPosition: {x: 0, y: 0.110000014, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -954,7 +956,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13761055, y: 0.0004276425, z: -0.000059413353, w: 0.9904863}
+  m_LocalRotation: {x: 0.13761054, y: 0.00045632885, z: -0.00006339882, w: 0.9904863}
   m_LocalPosition: {x: 0, y: 0.110000014, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

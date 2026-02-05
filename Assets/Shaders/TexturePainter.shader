@@ -45,20 +45,24 @@
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
                 o.uv = v.uv;
 				float4 uv = float4(0, 0, 0, 1);
-                uv.xy = float2(1, _ProjectionParams.x) * (v.uv.xy * float2( 2, 2) - float2(1, 1));
+                uv.xy = float2(1, _ProjectionParams.x) * (v.uv.xy * float2(2, 2) - float2(1, 1));
 				o.vertex = uv; 
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target{   
-                if(_PrepareUV > 0 ){
-                    return float4(0, 0, 1, 1);
-                }         
+            fixed4 frag (v2f i) : SV_Target{
+                if(_PrepareUV > 0){
+                    // clear to transparent (or whatever base you want)
+                    return float4(0,0,0,0);
+                } 
+                float4 col = tex2D(_MainTex, i.uv);      // previous content
+                float m = mask(i.worldPos, _PainterPosition, _Radius, _Hardness);
+                float edge = m * _Strength;
 
-                float4 col = tex2D(_MainTex, i.uv);
-                float f = mask(i.worldPos, _PainterPosition, _Radius, _Hardness);
-                float edge = f * _Strength;
-                return lerp(col, _PainterColor, edge);
+                float4 brush = _PainterColor;
+                float4 result = lerp(col, brush, edge);  // paint over previous texture
+
+                return result;
             }
             ENDCG
         }
