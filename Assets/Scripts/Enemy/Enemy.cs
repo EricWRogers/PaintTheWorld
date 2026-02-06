@@ -7,7 +7,7 @@ public abstract class  Enemy : MonoBehaviour
 
     public GameObject bulletPrefab;
     public int baseDamage = 20;
-    public int health = 100;
+    public int startingHealth = 100;
     public float attackSpeed = 4;
     public float rotationSpeed = 10;
     public float attackRange;

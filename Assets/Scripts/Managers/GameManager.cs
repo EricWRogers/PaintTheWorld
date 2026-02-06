@@ -22,6 +22,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public String  shopScene;
     public int coinsForEachObj;
 
+
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         
