@@ -441,7 +441,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void HandleRegularMovement()
     {
-        currSpeed = speed * m_currColorMult * m_shopMoveMult;
+        currSpeed = speed * m_currColorMult;
 
         // Raw input direction (we’ll re-project it onto the slope when grounded)
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
