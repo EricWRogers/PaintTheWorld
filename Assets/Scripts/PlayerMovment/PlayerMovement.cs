@@ -2,7 +2,7 @@ using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
 using Unity.VisualScripting;
-using UnityEditor.EditorTools;
+
 
 
 
@@ -11,6 +11,7 @@ using UnityEditor.EditorTools;
 
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
+using UnityEditor.EditorTools;
 using UnityEditor;
 
 [CustomEditor(typeof(PlayerMovement))]
@@ -593,6 +594,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
             
             isDashing = false;
+            
             m_dashTime = 0f;
             m_timeSinceLastDash = 0f;
             m_dashStartSpeed = m_velocity.magnitude;
