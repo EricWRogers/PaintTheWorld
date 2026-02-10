@@ -33,11 +33,15 @@ public abstract class  Enemy : MonoBehaviour
     }
     public void Start()
     {
-        player = PlayerManager.instance.player;
     }
 
     public void Update()
     {
+        if(player == null)
+        {
+            player = PlayerManager.instance.player;
+            return;
+        }
         m_flashTimer -= Time.deltaTime;
         if(m_flashTimer <= 0)
         {

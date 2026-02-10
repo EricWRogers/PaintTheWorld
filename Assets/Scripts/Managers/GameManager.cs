@@ -61,7 +61,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
             pm = PlayerManager.instance;
         }
         if (startSaveData == null)
-            startSaveData = new SaveData(0, pm.startingHealth, pm.startingHealth, new(), new(), 1);
+            //startSaveData = new SaveData(0, pm.startingHealth, pm.startingHealth, new(), new(), 1);
         gameplayStarted = false;
         IsReady = true;
         
