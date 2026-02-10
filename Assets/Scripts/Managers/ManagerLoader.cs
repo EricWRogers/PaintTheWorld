@@ -20,7 +20,7 @@ public static class EditorBootstrap
         {
             // Force-initialize all managers
             PlayerManager.instance.EditorInit();
-            //EnemyManager.instance.EditorInit();
+            EnemyManager.instance.EditorInit();
             GameManager.instance.EditorInit();
 
             // Begin gameplay immediately if needed

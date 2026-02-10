@@ -2,7 +2,7 @@ using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
 using Unity.VisualScripting;
-using UnityEditor.EditorTools;
+
 
 
 
@@ -11,6 +11,7 @@ using UnityEditor.EditorTools;
 
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
+using UnityEditor.EditorTools;
 using UnityEditor;
 
 [CustomEditor(typeof(PlayerMovement))]
@@ -424,8 +425,6 @@ public class PlayerMovement : PlayerMovmentEngine
         m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
 
-
-
     void HandleInput()
     {
         moveInput = m_inputActions.Move.ReadValue<Vector2>();
@@ -437,13 +436,12 @@ public class PlayerMovement : PlayerMovmentEngine
         else
             jumpInputElapsed += Time.deltaTime;
         
-        if (m_inputActions.Dash.WasPressedThisFrame())
-            m_dashInputPressed = true;
+        m_dashInputPressed = m_inputActions.Dash.WasPressedThisFrame();
     }
 
     void HandleRegularMovement()
     {
-        currSpeed = speed * m_currColorMult * m_shopMoveMult;
+        currSpeed = speed * m_currColorMult;
 
         // Raw input direction (we’ll re-project it onto the slope when grounded)
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
@@ -585,114 +583,33 @@ public class PlayerMovement : PlayerMovmentEngine
     bool HandleDashing()
     {
         bool canDash = m_timeSinceLastDash >= dashCooldown;
-        Vector3 dashDir =  GetDashDirection(out m_dashBack);
+        
 
-        if (m_dashInputPressed && canDash)
+        if(canDash && m_dashInputPressed)
         {
+           if(moveInput.sqrMagnitude > 0.01f)
+            {
+                dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+            }
+
+            
+            isDashing = false;
+            
             m_dashTime = 0f;
             m_timeSinceLastDash = 0f;
-            m_dashInputPressed = false;
-            isDashing = true;
-             
+            m_dashStartSpeed = m_velocity.magnitude;
 
-            Vector3 planar = new Vector3(m_velocity.x, 0f, m_velocity.z);
-            m_dashStartSpeed = planar.magnitude;
+            m_velocity = dashDir * (dashSpeed + m_dashStartSpeed);
+
+            
+            
         }
-
-        if (isDashing && m_dashTime < dashDuration)
-        {
-            float dashProgress = m_dashTime / dashDuration;
-            // Treat dashSpeed as "dash strength" used for turning/braking, not a raw speed override
-            float dashStrength = dashSpeed * dashSpeedCurve.Evaluate(dashProgress) * m_shopMoveMult;
-
-            Vector3 planar = new Vector3(m_velocity.x, 0f, m_velocity.z);
-
-            const float turnMult = 10f;   
-            const float brakeMult = 8f;   
-
-            if (m_dashBack)
-            {
-                // Back dash = strong braking (kills momentum)
-                float newSpeed = Mathf.MoveTowards(planar.magnitude, 0f, dashStrength * brakeMult * Time.deltaTime);
-                planar = (planar.sqrMagnitude > 0.0001f) ? planar.normalized * newSpeed : Vector3.zero;
-            }
-            else
-            {
-                // Side/forward dash = redirect momentum (keep speed, don't boost)
-                float targetSpeed = m_dashStartSpeed;
-
-                // If basically stopped, give a tiny nudge so a side dash still moves you
-                if (targetSpeed < 0.25f)
-                    targetSpeed = dashSpeed * 0.35f;
-
-                Vector3 target = dashDir * targetSpeed;
-
-                if (planar.sqrMagnitude < 0.0001f)
-                {
-                    planar = target;
-                }
-                else
-                {
-                    float speedNow = planar.magnitude;
-
-                    // Lateral accel approx -> angular rate: w ~= a / v
-                    float angularRate = (dashStrength * turnMult) / Mathf.Max(speedNow, 0.1f);
-                    planar = Vector3.RotateTowards(planar, target, angularRate * Time.deltaTime, 0f);
-
-                    // Keep same speed to avoid "dash = speed boost"
-                    planar = planar.normalized * speedNow;
-                }
-            }
-
-            // Apply back to velocity (preserve vertical momentum)
-            m_velocity.x = planar.x;
-            m_velocity.z = planar.z;
-
-            // Still apply gravity during dash
-            m_velocity += gravity * Time.deltaTime;
-
-            m_dashTime += Time.deltaTime;
-            return true;
-        }
-        else if (isDashing)
-        {
-            isDashing = false;
-        }
-
+      
+        isDashing = false;
         return isDashing;
     }
 
-    private Vector3 GetDashDirection(out bool isBrake)
-    {
-        if(moveInput.sqrMagnitude  < 0.01f)
-        {
-            isBrake = false;
-            return transform.forward;
-        }
 
-        if (moveInput.y < -0.2f && Mathf.Abs(moveInput.y) >= Mathf.Abs(moveInput.x))
-        {
-            isBrake = true;
-            Vector3 b = -m_orientation.forward; b.y = 0f;
-            return b.sqrMagnitude > 0.0001f ? b.normalized : -transform.forward;
-        }
-
-        isBrake = false;
-
-
-        if (Mathf.Abs(moveInput.x) > Mathf.Abs(moveInput.y))
-        {
-            Vector3 r = m_orientation.right * Mathf.Sign(moveInput.x); r.y = 0f;
-            return r.normalized;
-        }
-        else
-        {
-            float sign = Mathf.Sign(moveInput.y == 0f ? 1f : moveInput.y);
-            Vector3 f = m_orientation.forward * sign; f.y = 0f;
-            return f.normalized;
-        }
-
-    }
     #endregion
     
 

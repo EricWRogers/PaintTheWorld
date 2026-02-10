@@ -1,86 +1,64 @@
-// using UnityEngine;
-// using UnityEngine.SceneManagement;
-// using System.Collections.Generic;
-// using SuperPupSystems.Helper;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+using SuperPupSystems.Helper;
 
-// public class EnemyManager : SceneAwareSingleton<EnemyManager>
-// {
-//     public List<EnemySpawning> spawnerAreas = new();
-//     public int spawnDelay = 1;
-//     public int scaledCount;
-//     public int spawnAmount = 1;
-//     public int selectedArea;
-//     public List<GameObject> listOfEnemyPrefabs;
+public class EnemyManager : SceneAwareSingleton<EnemyManager>
+{
+    public List<EnemySpawning> spawnerAreas = new();
+    public float spawnDelay = .5f;
+    public int selectedArea;
+    public List<GameObject> listOfEnemyPrefabs;
+    public AnimationCurve enemyHealthScaling;
+    public AnimationCurve enemyAmountScaling;
+    public int startingSpawnAmount;
+    private int m_spawnCounter;
+    private float m_timer;
 
-//     private float m_timer;
+    void Start()
+    {
+        
+    }
+    public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        spawnerAreas.Clear();
+        spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
 
-//     void Start()
-//     {
-//         foreach (EnemySpawning go in spawnerAreas)
-//         {
-//             go.GetComponentInChildren<EnemySpawning>().indicator.SetActive(false);
-//         }
-//         ChooseSpawnArea();
-//     }
-//     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-//     {
-//         spawnerAreas.Clear();
-//         spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+        IsReady = true;
+    }
 
-//         IsReady = true;
-//     }
+    void Update()
+    {
+        if(spawnerAreas.Count == 0)
+        {
+            spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+        }
+        m_timer -= Time.deltaTime;
+        if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter) + startingSpawnAmount) > m_spawnCounter && m_timer <= 0)
+        {
+            ChooseSpawnArea();
+            GameObject prefab = listOfEnemyPrefabs[Random.Range(0, listOfEnemyPrefabs.Count)];
+            prefab.GetComponent<Health>().maxHealth = (int)(prefab.GetComponent<Enemy>().startingHealth + enemyHealthScaling.Evaluate(GameManager.instance.stageCounter));
+            spawnerAreas[selectedArea].SpawnEnemy(prefab.name);
+            m_spawnCounter++;
+            m_timer = spawnDelay;
+        }
 
-//     void Update()
-//     {
-//         m_timer -= Time.deltaTime;
-//         if (spawnAmount > 0 && m_timer <= 0)
-//         {
-//             GameObject prefab = listOfEnemyPrefabs[Random.Range(0, listOfEnemyPrefabs.Count)];
-//             spawnerAreas[selectedArea].SpawnEnemy(prefab.name);
-//             spawnAmount--;
-//             m_timer = spawnDelay;
-//         }
+    }
 
-//         foreach(EnemySpawning spawner in spawnerAreas)
-//         {
-//             if (spawner == spawnerAreas[selectedArea])
-//             {
-//                 spawner.indicator.SetActive(true);
-//             }
-//             else
-//             {
-//                 spawner.indicator.SetActive(false);
-//             }
-//         }
+    public void ChooseSpawnArea()
+    {
+        if(spawnerAreas.Count == 0)
+        {
+            return;
+        }
+        selectedArea = Random.Range(0, spawnerAreas.Count);
+    }
+    public void EditorInit()
+    {
+        spawnerAreas.Clear();
+        spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
 
-//     }
-    
-//     public void ResetWave()
-//     {
-//         spawnAmount = 0;
-//     }
-
-//     public void ChooseSpawnArea()
-//     {
-//         if(spawnerAreas.Count == 0)
-//         {
-//             return;
-//         }
-//         spawnerAreas[selectedArea].indicator.SetActive(false);
-//         selectedArea = Random.Range(0, spawnerAreas.Count);
-//         spawnerAreas[selectedArea].indicator.SetActive(true);
-//     }
-
-//     public void EnemyKilled()
-//     {
-//         GameManager.instance.currKilledInWave++;
-//         GameManager.instance.totalEnemyKills++;
-//     }
-//     public void EditorInit()
-//     {
-//         spawnerAreas.Clear();
-//         spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
-
-//         IsReady = true;
-//     }
-// }
+        IsReady = true;
+    }
+}

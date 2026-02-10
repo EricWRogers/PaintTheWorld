@@ -5,7 +5,6 @@ public class EnemySpawning : MonoBehaviour
 {
     public Vector3 spawnAreaSize = new Vector3(50f, 20f, 50f);
     public LayerMask layerToCheckForSpawning;
-    public GameObject indicator;
 
     public void SpawnEnemy(string _enemy)
     {

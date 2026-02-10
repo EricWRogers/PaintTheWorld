@@ -7,7 +7,7 @@ public abstract class  Enemy : MonoBehaviour
 
     public GameObject bulletPrefab;
     public int baseDamage = 20;
-    public int health = 100;
+    public int startingHealth = 100;
     public float attackSpeed = 4;
     public float rotationSpeed = 10;
     public float attackRange;
@@ -33,11 +33,15 @@ public abstract class  Enemy : MonoBehaviour
     }
     public void Start()
     {
-        player = PlayerManager.instance.player;
     }
 
     public void Update()
     {
+        if(player == null)
+        {
+            player = PlayerManager.instance.player;
+            return;
+        }
         m_flashTimer -= Time.deltaTime;
         if(m_flashTimer <= 0)
         {

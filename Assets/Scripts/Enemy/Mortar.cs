@@ -46,8 +46,7 @@ public class Mortar : Enemy
     new void Start()
     {
         base.Start();
-        m_agent = GetComponent<NavMeshAgent>();
-        m_targetTransform = PlayerManager.instance.player.transform;
+        
         m_stunTimer = stunTime;
         if (audioSource == null)
         {
@@ -55,11 +54,20 @@ public class Mortar : Enemy
             audioSource.playOnAwake = false;
             audioSource.spatialBlend = 1f; // 3D sound
         }
-        Move();
     }
 
     new void Update()
     {
+        if(m_agent == null)
+        {
+            m_agent = GetComponent<NavMeshAgent>();
+            return;
+        }
+        if(m_targetTransform == null)
+        {
+            m_targetTransform = PlayerManager.instance.player.transform;
+            return;
+        }
         if (stunned)
         {
             m_stunTimer -= Time.deltaTime;
@@ -67,6 +75,7 @@ public class Mortar : Enemy
             {
                 modelMeshRenderer.materials[1].color = Color.clear;
                 Move();
+                GetComponent<Health>().Revive();
                 stunned = false;
             }
             return;
@@ -192,4 +201,5 @@ public class Mortar : Enemy
     {
         Gizmos.DrawRay(transform.position, m_direction);
     }
+    
 }
