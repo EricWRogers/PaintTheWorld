@@ -7785,7 +7785,6 @@ GameObject:
   - component: {fileID: 2003844201}
   - component: {fileID: 2003844200}
   - component: {fileID: 2003844199}
-  - component: {fileID: 2003844203}
   m_Layer: 5
   m_Name: PawnShopCanvas
   m_TagString: Untagged
@@ -7876,24 +7875,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &2003844203
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2003844198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f099e4fab0b9aa544ba0996d218dc467, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  listParent: {fileID: 1636789340}
-  rowPrefab: {fileID: 2909524209663003791, guid: 55b33aa7f8290294c8a5b1920b1ab5d7, type: 3}
-  hintLabel: {fileID: 1280888686}
-  closeButton: {fileID: 974293189}
-  pm: {fileID: 0}
-  db: {fileID: 0}
 --- !u!1 &2030296880
 GameObject:
   m_ObjectHideFlags: 0
