@@ -43,16 +43,11 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private PlayerManager pm;
 
     public GameObject pauseMenu;
-    
-    public List<PaintingObj> objectives;
-    public bool allObjComplete;
-    public int amountOfObjComplete;
 
     private bool gameplayStarted = false;
 
     public bool m_isPaused;
     public String  shopScene;
-    public int coinsForEachObj;
     public int stageCounter = 1;
 
     private SaveData saveData;
@@ -72,13 +67,6 @@ public class GameManager : SceneAwareSingleton<GameManager>
         
     }
 
-    void Update()
-    {
-        if(objectives.Count == amountOfObjComplete)
-        {
-            allObjComplete = true;
-        }
-    }
 
     public void BeginGameplay()
     {
@@ -116,7 +104,6 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public void ShopStage()
     {
-        PlayerManager.instance.wallet.Add((int)coinsForEachObj * amountOfObjComplete);
         SceneManager.LoadScene(shopScene);
 
     }
