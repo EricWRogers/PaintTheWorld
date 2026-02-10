@@ -1,28 +1,28 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class SelectableRow : MonoBehaviour
 {
     public Image highlightBG;
-    System.Action onSelect;
-    bool interactable = true;
+    private Action onConfirm;
+    private bool selectable = true;
 
-    public void Bind(System.Action onSelect, bool interactable)
+    public void Bind(Action confirmAction, bool canSelect = true)
     {
-        this.onSelect = onSelect;
-        this.interactable = interactable;
+        onConfirm = confirmAction;
+        selectable = canSelect;
         SetHighlighted(false);
     }
 
     public void SetHighlighted(bool on)
     {
-        if (!highlightBG) return;
-        highlightBG.color = on ? new Color(1f,1f,0.6f) : Color.white;
+        if (highlightBG) highlightBG.enabled = on;
     }
 
-    public void TrySelect()
+    public void Confirm()
     {
-        if (!interactable) return;
-        onSelect?.Invoke();
+        if (!selectable) return;
+        onConfirm?.Invoke();
     }
 }

@@ -1,40 +1,38 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class KioskListNavigator : MonoBehaviour
 {
-    public Color normal = Color.white;
-    public Color highlight = new Color(1f, 1f, 0.6f);
-
     public List<SelectableRow> rows = new();
-    int index = 0;
+    public int index = 0;
+    public bool active;
 
     public void SetRows(List<SelectableRow> newRows)
     {
         rows = newRows;
-        index = 0;
+        index = Mathf.Clamp(index, 0, rows.Count - 1);
         RefreshHighlight();
     }
 
     void Update()
     {
-        if (!KioskCameraController.I || !KioskCameraController.I.IsInKiosk) return;
+        if (!active) return;
+        if (rows == null || rows.Count == 0) return;
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) Move(-1);
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) Move(+1);
-
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            if (rows.Count > 0) rows[index].TrySelect();
+            index = (index - 1 + rows.Count) % rows.Count;
+            RefreshHighlight();
         }
-    }
-
-    void Move(int dir)
-    {
-        if (rows.Count == 0) return;
-        index = (index + dir + rows.Count) % rows.Count;
-        RefreshHighlight();
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            index = (index + 1) % rows.Count;
+            RefreshHighlight();
+        }
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            rows[index].Confirm();
+        }
     }
 
     void RefreshHighlight()
