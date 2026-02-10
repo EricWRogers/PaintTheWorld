@@ -13,7 +13,6 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public AnimationCurve enemyAmountScaling;
     public int startingSpawnAmount;
     private int m_spawnCounter;
-    public int stageCounter = 1;
     private float m_timer;
 
     void Start()
@@ -31,11 +30,11 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     void Update()
     {
         m_timer -= Time.deltaTime;
-        if ((int)(enemyAmountScaling.Evaluate(stageCounter) + startingSpawnAmount) > m_spawnCounter && m_timer <= 0)
+        if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter) + startingSpawnAmount) > m_spawnCounter && m_timer <= 0)
         {
             ChooseSpawnArea();
             GameObject prefab = listOfEnemyPrefabs[Random.Range(0, listOfEnemyPrefabs.Count)];
-            prefab.GetComponent<Health>().maxHealth = (int)(prefab.GetComponent<Enemy>().startingHealth + enemyHealthScaling.Evaluate(stageCounter));
+            prefab.GetComponent<Health>().maxHealth = (int)(prefab.GetComponent<Enemy>().startingHealth + enemyHealthScaling.Evaluate(GameManager.instance.stageCounter));
             spawnerAreas[selectedArea].SpawnEnemy(prefab.name);
             m_spawnCounter++;
             m_timer = spawnDelay;
