@@ -31,19 +31,21 @@ public class ParticlePainter : MonoBehaviour
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
 
         Paintable p = other.GetComponent<Paintable>();
-        if (p != null)
+        for (int i = 0; i < numCollisionEvents; i++)
         {
-            for (int i = 0; i < numCollisionEvents; i++)
+            Debug.Log("particle hit: " + other.name + " " + other.tag);
+            if (other.CompareTag("Enemy"))
             {
-                if (other.tag == tagToHit)
-                {
-                    Debug.Log("damaged enemy");
-                    other.GetComponent<Health>().Damage(particleDamage);
-                }
+                Debug.Log("damaged enemy");
+                other.GetComponent<Health>().Damage(particleDamage);
+            }
+            if(p != null)
+            {
                 Vector3 pos = collisionEvents[i].intersection;
                 float radius = Random.Range(minRadius, maxRadius);
                 PaintManager.instance.paint(p, pos, radius, hardness, strength, selectedPaint);
             }
+            
         }
     }
     

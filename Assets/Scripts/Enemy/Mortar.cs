@@ -194,7 +194,7 @@ public class Mortar : Enemy
     public void Stun()
     {
         StopMoving();
-        modelMeshRenderer.materials[1].color = hurtColor;
+        modelMeshRenderer.materials[1].color = stunColor;
         m_stunTimer = stunTime;
         stunned = true;
     }

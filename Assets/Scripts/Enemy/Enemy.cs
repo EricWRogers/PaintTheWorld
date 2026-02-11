@@ -17,6 +17,7 @@ public abstract class  Enemy : MonoBehaviour
     public Transform damageTextSpawn;
     public MeshRenderer modelMeshRenderer;
     public Color hurtColor;
+    public Color stunColor;
     public float flashTime;
     private float m_flashTimer;
 
