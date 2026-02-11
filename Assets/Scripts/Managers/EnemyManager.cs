@@ -32,6 +32,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         if(spawnerAreas.Count == 0)
         {
             spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+            return;
         }
         m_timer -= Time.deltaTime;
         if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter) + startingSpawnAmount) > m_spawnCounter && m_timer <= 0)

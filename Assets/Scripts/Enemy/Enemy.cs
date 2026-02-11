@@ -3,7 +3,6 @@ using UnityEngine;
 
 public abstract class  Enemy : MonoBehaviour
 {
-    public GameObject player;
 
     public GameObject bulletPrefab;
     public int baseDamage = 20;
@@ -37,11 +36,6 @@ public abstract class  Enemy : MonoBehaviour
 
     public void Update()
     {
-        if(player == null)
-        {
-            player = PlayerManager.instance.player;
-            return;
-        }
         m_flashTimer -= Time.deltaTime;
         if(m_flashTimer <= 0)
         {

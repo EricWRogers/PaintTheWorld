@@ -91,8 +91,6 @@ public class GameManager : SceneAwareSingleton<GameManager>
         PlayerManager.instance.uIInputs.Disable();
     }
 
-    
-
     public void ResetGame()
     {
         ResetData();

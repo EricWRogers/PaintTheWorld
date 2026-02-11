@@ -43,6 +43,11 @@ public class Mortar : Enemy
     public float stunTime;
     private float m_stunTimer;
 
+    public float refreshPathDelay = 1;
+    private float m_pathTimer;
+    public float checkForLosDelay = 1;
+    private float m_LosTimer;
+
     new void Start()
     {
         base.Start();
@@ -58,6 +63,8 @@ public class Mortar : Enemy
 
     new void Update()
     {
+        m_LosTimer -= Time.deltaTime;
+        m_pathTimer -= Time.deltaTime;
         if(m_agent == null)
         {
             m_agent = GetComponent<NavMeshAgent>();
@@ -83,7 +90,7 @@ public class Mortar : Enemy
         base.Update();
         m_direction = PlayerManager.instance.player.transform.position - transform.position;
         //if has los of player shoot
-        if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 100, losMask))
+        if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 100, losMask) && m_LosTimer < 0)
         {
             if(m_hitInfo.transform.CompareTag("Player"))
             {
@@ -111,8 +118,13 @@ public class Mortar : Enemy
             else
             {
                 m_attackTimer = fireCooldown;
-                Move();
             }
+            m_LosTimer = checkForLosDelay;
+        }
+        if(!m_hitInfo.transform.CompareTag("Player") && m_stunTimer <= 0 && m_pathTimer < 0)
+        {
+            Move();
+            m_pathTimer = refreshPathDelay;
         }
     }
 
@@ -120,7 +132,7 @@ public class Mortar : Enemy
     {
         if (!hasTarget)
         {
-            m_targetPos = GetPlayerTargetPos();
+            m_targetPos = PlayerManager.instance.player.transform.position;
             hasTarget = true;
 
             ShowTargetIndicator(m_targetPos + offset);
@@ -146,28 +158,28 @@ public class Mortar : Enemy
         
     }
 
-    private Vector3 GetPlayerTargetPos()
-    {
-        // PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
+    // private Vector3 GetPlayerTargetPos()
+    // {
+    //     PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
 
-        // RaycastHit hit;
+    //     RaycastHit hit;
 
-        // if (playerMovement.leftWall)
-        // {
-        //     if (Physics.Raycast(player.transform.position, -player.transform.right, out hit, 5f, wallMask))
-        //         return hit.point;
-        // }
-        // else if (playerMovement.rightWall)
-        // {
-        //     if (Physics.Raycast(player.transform.position, player.transform.right, out hit, 5f, wallMask))
-        //         return hit.point;
-        // }
+    //     if (playerMovement.leftWall)
+    //     {
+    //         if (Physics.Raycast(player.transform.position, -player.transform.right, out hit, 5f, wallMask))
+    //             return hit.point;
+    //     }
+    //     else if (playerMovement.rightWall)
+    //     {
+    //         if (Physics.Raycast(player.transform.position, player.transform.right, out hit, 5f, wallMask))
+    //             return hit.point;
+    //     }
 
-        // if (Physics.Raycast(player.transform.position + Vector3.up, Vector3.down, out hit, 100f, groundMask))
-        //     return hit.point;
+    //     if (Physics.Raycast(player.transform.position + Vector3.up, Vector3.down, out hit, 100f, groundMask))
+    //         return hit.point;
 
-        return player.transform.position;
-    }
+    //     return player.transform.position;
+    // }
 
     
     private void ShowTargetIndicator(Vector3 position)
