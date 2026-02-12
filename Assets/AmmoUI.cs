@@ -5,23 +5,29 @@ using TMPro;
 public class AmmoUI : MonoBehaviour
 {
     public SprayPaintLine sprayScript;
-    public Slider ammoSlider;
+    
+    [Header("UI Components")]
+    public Image ammoFillImage;
     public TextMeshProUGUI ammoText;
+
+    public Gradient ammoGradient;
 
     void Update()
     {
         if (sprayScript == null) return;
 
-        // Update the Slider (needs 0 to 1)
-        if (ammoSlider != null)
+        // Update the Fill Amount (expects a value between 0 and 1)
+        if (ammoFillImage != null)
         {
-            ammoSlider.value = sprayScript.GetNormalizedAmmo();
+            // Use the 0-1 normalized value from your spray script
+            ammoFillImage.fillAmount = sprayScript.GetNormalizedAmmo();
+            ammoFillImage.color = ammoGradient.Evaluate(sprayScript.GetNormalizedAmmo());
         }
 
-        // Update the Text (needs 0 to 100)
+        // Update the Text
         if (ammoText != null)
         {
-            ammoText.text = "Ammo: " + Mathf.CeilToInt(sprayScript.GetAmmoPercentage()) + "%";
+            ammoText.text = + Mathf.CeilToInt(sprayScript.GetAmmoPercentage()) + "%";
         }
     }
 }
