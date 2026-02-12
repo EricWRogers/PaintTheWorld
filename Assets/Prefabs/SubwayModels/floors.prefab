@@ -86,40 +86,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8844036162078759964}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
-      insertIndex: -1
       addedObject: {fileID: -8219023538682956726}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6839711745205204330}
+      addedObject: {fileID: -1677779990289428901}
   m_SourcePrefab: {fileID: 100100000, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
 --- !u!1 &1318270674486574600 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
   m_PrefabInstance: {fileID: 2200599818904732505}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &8844036162078759964
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1318270674486574600}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 400, y: 100, z: 400}
-  m_Center: {x: 200, y: -50, z: 200}
 --- !u!114 &-8219023538682956726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,8 +114,8 @@ MonoBehaviour:
   percentageCovered: 0
   meshPercent: 0
   checkInterval: 0.5
---- !u!64 &6839711745205204330
-MeshCollider:
+--- !u!65 &-1677779990289428901
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -156,7 +132,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 8733429697405204941, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 100.00006, y: 400, z: 400}
+  m_Center: {x: 50.000015, y: 200, z: 200}
