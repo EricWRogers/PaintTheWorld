@@ -1238,6 +1238,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1012839890602641465}
     m_Modifications:
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startSpeed.minScalar
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 1684102126831198128, guid: c277506d00b8a174388c66121ddb284f, type: 3}
       propertyPath: m_Name
       value: SprayCanLine
@@ -1281,6 +1293,14 @@ PrefabInstance:
     - target: {fileID: 3423111266358326725, guid: c277506d00b8a174388c66121ddb284f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3485189506363705043, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: maxRadius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3485189506363705043, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: minRadius
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7695641675345245908, guid: c277506d00b8a174388c66121ddb284f, type: 3}
       propertyPath: playerCamera
