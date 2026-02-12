@@ -321,7 +321,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 5.11, y: 0.65}
+  m_AnchoredPosition: {x: 5.11, y: 0.6500244}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &111708658
@@ -607,6 +607,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &267669392
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -734,6 +735,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &288003052
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1016,6 +1018,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &372636357
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1118,7 +1121,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 377532296}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -21.7}
+  m_LocalPosition: {x: 0, y: 0, z: -21.700003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1129,11 +1132,11 @@ RectTransform:
   - {fileID: 111708657}
   m_Father: {fileID: 2088063905}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -28.91, y: -432.94}
-  m_SizeDelta: {x: -1909.2365, y: -1070.392}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -28.91, y: -968.1359}
+  m_SizeDelta: {x: -1909.2365, y: -1045.6272}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &377532298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1239,6 +1242,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &387610397
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1366,6 +1370,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &449674443
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1498,6 +1503,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &474414093
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1630,6 +1636,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &507466042
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1757,6 +1764,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &510691341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1884,6 +1892,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &542800267
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2011,6 +2020,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &598581685
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2263,6 +2273,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &610423297
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2390,6 +2401,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &611927256
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2687,6 +2699,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &686858210
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3140,6 +3153,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &857402717
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4068,6 +4082,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1001916888
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4195,6 +4210,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1054058635
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4322,6 +4338,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1077540951
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4555,6 +4572,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!1 &1124371610 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6710773075408956385, guid: 5f5352362908aef45818ab4329930677, type: 3}
@@ -4625,7 +4643,7 @@ Transform:
   m_GameObject: {fileID: 1173975728}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -6.11, z: 0}
+  m_LocalPosition: {x: 0, y: 14, z: -36.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4683,6 +4701,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1197376049
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4810,6 +4829,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1209340612
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4937,6 +4957,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1225201189
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5186,6 +5207,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!1 &1280888684
 GameObject:
   m_ObjectHideFlags: 0
@@ -5374,6 +5396,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1282526455
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5483,7 +5506,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.34, y: -0.89}
+  m_AnchoredPosition: {x: 3.34, y: -0.89001465}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1334420173
@@ -5637,6 +5660,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1344150090
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5837,6 +5861,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1391074254
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6037,6 +6062,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1415680671
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6435,6 +6461,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1478550198
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6532,6 +6559,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!1 &1516016501
 GameObject:
   m_ObjectHideFlags: 0
@@ -6650,6 +6678,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1518189135
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6777,6 +6806,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1536502559
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7012,6 +7042,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1571510275
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7601,6 +7632,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!1 &1783317539
 GameObject:
   m_ObjectHideFlags: 0
@@ -7635,7 +7667,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.1713, y: 1.1401}
+  m_AnchoredPosition: {x: 0.1713, y: 1.1400757}
   m_SizeDelta: {x: 9.7176, y: 5.6448}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783317541
@@ -8188,6 +8220,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &1944780710
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8285,6 +8318,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!1 &2003844198
 GameObject:
   m_ObjectHideFlags: 0
@@ -8581,6 +8615,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &2078909986
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8831,6 +8866,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &2115976408
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9031,6 +9067,7 @@ MonoBehaviour:
   targetCoverPercent: 0
   percentageCovered: 0
   meshPercent: 0
+  checkInterval: 0.5
 --- !u!65 &2127450442
 BoxCollider:
   m_ObjectHideFlags: 0
