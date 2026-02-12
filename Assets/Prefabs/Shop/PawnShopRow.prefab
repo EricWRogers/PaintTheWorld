@@ -360,6 +360,7 @@ GameObject:
   - component: {fileID: 3045354596413218596}
   - component: {fileID: 2826032051213956124}
   - component: {fileID: 3870793456630739067}
+  - component: {fileID: 6933240282475740899}
   m_Layer: 0
   m_Name: PawnShopRow
   m_TagString: Untagged
@@ -457,6 +458,26 @@ MonoBehaviour:
   rarityText: {fileID: 1791037024622004612}
   countText: {fileID: 92345094276715729}
   selectable: {fileID: 2826032051213956124}
+--- !u!114 &6933240282475740899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6547215072965991614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 10
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: 0
+  m_LayoutPriority: 1
 --- !u!1 &7255551483305140232
 GameObject:
   m_ObjectHideFlags: 0

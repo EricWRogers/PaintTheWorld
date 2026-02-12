@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI; 
 
 public class PawnShopStation : MonoBehaviour
 {
@@ -69,13 +70,21 @@ public class PawnShopStation : MonoBehaviour
         ownedUnique.Clear();
         ShowToast("");
 
-        // build unique list from inventory
+        if (!pm || pm.inventory == null)
+        {
+            ShowToast("Inventory missing.");
+            navigator.SetRows(new List<SelectableRow>());
+            return;
+        }
+
+        
         foreach (var stack in pm.inventory.items)
         {
             if (stack == null || stack.item == null) continue;
             if (stack.count <= 0) continue;
 
-            bool exists = ownedUnique.Exists(x => x.id == stack.item.id);
+           
+            bool exists = ownedUnique.Exists(x => x && x.id == stack.item.id);
             if (!exists) ownedUnique.Add(stack.item);
         }
 
@@ -83,6 +92,7 @@ public class PawnShopStation : MonoBehaviour
         {
             ShowToast("No items in inventory to swap.");
             navigator.SetRows(new List<SelectableRow>());
+            ForceLayout();
             return;
         }
 
@@ -91,6 +101,8 @@ public class PawnShopStation : MonoBehaviour
         for (int i = 0; i < ownedUnique.Count; i++)
         {
             var item = ownedUnique[i];
+            if (!item) continue;
+
             int count = pm.inventory.GetCount(item.id);
 
             var row = Instantiate(rowPrefab, contentParent);
@@ -104,6 +116,21 @@ public class PawnShopStation : MonoBehaviour
         }
 
         navigator.SetRows(selectables);
+
+        
+        ForceLayout();
+    }
+
+    void ForceLayout()
+    {
+        if (!contentParent) return;
+
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
+
+        
+        var parent = contentParent.parent as RectTransform;
+        if (parent) LayoutRebuilder.ForceRebuildLayoutImmediate(parent);
     }
 
     void TrySwap(int index)
@@ -117,7 +144,7 @@ public class PawnShopStation : MonoBehaviour
         var db = ItemDatabase.Load();
         if (!db)
         {
-            ShowToast("ItemDatabase not found (Resources path issue).");
+            ShowToast("ItemDatabase not found.");
             return;
         }
 
@@ -126,7 +153,7 @@ public class PawnShopStation : MonoBehaviour
         {
             if (!it) continue;
             if (it.rarity != chosen.rarity) continue;
-            if (it.id == chosen.id) continue; // prevent same
+            if (it.id == chosen.id) continue;
             candidates.Add(it);
         }
 
@@ -141,7 +168,7 @@ public class PawnShopStation : MonoBehaviour
         bool removed = pm.inventory.Consume(chosen.id, 1);
         if (!removed)
         {
-            ShowToast("Could not remove item from inventory.");
+            ShowToast("Could not remove item.");
             return;
         }
 
@@ -150,6 +177,7 @@ public class PawnShopStation : MonoBehaviour
 
         usedThisVisit = true;
         ShowToast($"Swapped {chosen.displayName} → {replacement.displayName}");
+
         BuildList();
     }
 
