@@ -1,14 +1,12 @@
 using UnityEngine;
 using TMPro;
-using System.Collections.Generic;
 
 public class PawnShopRow : MonoBehaviour
 {
     public TMP_Text nameText;
     public TMP_Text rarityText;
     public TMP_Text countText;
-
-    public SelectableRow selectable; // assign in prefab
+    public SelectableRow selectable;
 
     public void Bind(ItemSO item, int count)
     {

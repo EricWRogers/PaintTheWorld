@@ -1,87 +1,49 @@
 using UnityEngine;
-using System.Collections;
+using System;
 
 public class KioskCameraController : MonoBehaviour
 {
     public static KioskCameraController I;
 
-    [Header("Camera")]
     public Camera cam;
-    public float moveTime = 0.35f;
+    private Transform originalParent;
+    private Vector3 originalPos;
+    private Quaternion originalRot;
 
-    Transform originalParent;
-    Vector3 originalPos;
-    Quaternion originalRot;
-
-    bool inKiosk;
+    public bool inKiosk;
 
     void Awake()
     {
-        if (I != null && I != this) { Destroy(gameObject); return; }
         I = this;
         if (!cam) cam = Camera.main;
+        originalPos = cam.transform.position;
+        originalRot = cam.transform.rotation;
     }
 
-    public bool IsInKiosk => inKiosk;
-
-    public void EnterKiosk(Transform cameraTarget, System.Action onArrived)
+    public void EnterKiosk(Transform target, Action onArrive = null)
     {
-        if (inKiosk) return;
-        StartCoroutine(EnterRoutine(cameraTarget, onArrived));
-    }
+        if (!cam || !target) { onArrive?.Invoke(); return; }
 
-    public void ExitKiosk(System.Action onExited)
-    {
-        if (!inKiosk) return;
-        StartCoroutine(ExitRoutine(onExited));
-    }
-
-    IEnumerator EnterRoutine(Transform target, System.Action onArrived)
-    {
         inKiosk = true;
 
         
-        originalParent = cam.transform.parent;
         originalPos = cam.transform.position;
         originalRot = cam.transform.rotation;
 
-        
-        PlayerInputLock.SetLocked(true);
+        cam.transform.position = target.position;
+        cam.transform.rotation = target.rotation;
 
-        float t = 0f;
-        Vector3 startPos = cam.transform.position;
-        Quaternion startRot = cam.transform.rotation;
-
-        while (t < 1f)
-        {
-            t += Time.deltaTime / Mathf.Max(0.01f, moveTime);
-            cam.transform.position = Vector3.Lerp(startPos, target.position, t);
-            cam.transform.rotation = Quaternion.Slerp(startRot, target.rotation, t);
-            yield return null;
-        }
-
-        onArrived?.Invoke();
+        onArrive?.Invoke();
     }
 
-    IEnumerator ExitRoutine(System.Action onExited)
+    public void ExitKiosk(Action onExit = null)
     {
-        float t = 0f;
-        Vector3 startPos = cam.transform.position;
-        Quaternion startRot = cam.transform.rotation;
+        if (!cam) { onExit?.Invoke(); return; }
 
-        while (t < 1f)
-        {
-            t += Time.deltaTime / Mathf.Max(0.01f, moveTime);
-            cam.transform.position = Vector3.Lerp(startPos, originalPos, t);
-            cam.transform.rotation = Quaternion.Slerp(startRot, originalRot, t);
-            yield return null;
-        }
-
-        cam.transform.SetParent(originalParent);
-
-        PlayerInputLock.SetLocked(false);
         inKiosk = false;
+        cam.transform.position = originalPos;
+        cam.transform.rotation = originalRot;
 
-        onExited?.Invoke();
+        onExit?.Invoke();
     }
 }

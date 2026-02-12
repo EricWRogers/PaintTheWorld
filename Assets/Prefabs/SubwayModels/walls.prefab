@@ -113,7 +113,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 128
-  extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
 --- !u!64 &5417059157357507612
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -135,4 +138,4 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: -7501501045779734932, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}
+  m_Mesh: {fileID: 8733429697405204941, guid: aca54eaebf5cc204f80d5678b5cdd57e, type: 3}

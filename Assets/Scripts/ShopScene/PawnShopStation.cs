@@ -4,40 +4,48 @@ using TMPro;
 
 public class PawnShopStation : MonoBehaviour
 {
-    [Header("World UI")]
-    public GameObject panelRoot;          // the panel to enable
-    public RectTransform contentParent;   // where rows spawn
-    public PawnShopRow rowPrefab;         // row prefab
-    public KioskListNavigator navigator;  
-    public KioskToast toast;              
-    public Transform cameraTarget;        // where camera moves
+    [Header("UI")]
+    public GameObject panelRoot;
+    public RectTransform contentParent;
+    public PawnShopRow rowPrefab;
+    public KioskListNavigator navigator;
+    public TMP_Text toastText;
+
+    [Header("Camera")]
+    public Transform cameraTarget;
 
     [Header("Rules")]
-    public bool usedThisVisit = false;
+    public bool usedThisVisit;
 
     private PlayerManager pm;
-    private readonly List<PawnShopRow> rows = new();
+    private readonly List<PawnShopRow> liveRows = new();
     private readonly List<ItemSO> ownedUnique = new();
 
     void Awake()
     {
         if (panelRoot) panelRoot.SetActive(false);
+        ShowToast("");
     }
 
     public void Open()
     {
         pm = PlayerManager.instance;
-        if (!pm || !pm.inventory) return;
+        if (!pm || pm.inventory == null)
+        {
+            ShowToast("PlayerManager/Inventory missing.");
+            return;
+        }
 
         if (usedThisVisit)
         {
-            toast?.Show("Pawn shop already used this visit.");
+            ShowToast("Pawn shop already used this visit.");
             return;
         }
 
         KioskCameraController.I.EnterKiosk(cameraTarget, () =>
         {
             panelRoot.SetActive(true);
+            navigator.active = true;
             BuildList();
         });
     }
@@ -50,89 +58,90 @@ public class PawnShopStation : MonoBehaviour
 
     public void Close()
     {
+        navigator.active = false;
         if (panelRoot) panelRoot.SetActive(false);
-        KioskCameraController.I.ExitKiosk(null);
+        KioskCameraController.I.ExitKiosk();
     }
 
     void BuildList()
     {
         ClearRows();
         ownedUnique.Clear();
+        ShowToast("");
 
-        
+        // build unique list from inventory
         foreach (var stack in pm.inventory.items)
         {
             if (stack == null || stack.item == null) continue;
             if (stack.count <= 0) continue;
 
-            // avoid duplicates by ID
-            bool already = ownedUnique.Exists(i => i.id == stack.item.id);
-            if (!already) ownedUnique.Add(stack.item);
+            bool exists = ownedUnique.Exists(x => x.id == stack.item.id);
+            if (!exists) ownedUnique.Add(stack.item);
         }
 
         if (ownedUnique.Count == 0)
         {
-            toast?.Show("No items to swap.");
+            ShowToast("No items in inventory to swap.");
+            navigator.SetRows(new List<SelectableRow>());
             return;
         }
 
-       
-        var selectable = new List<SelectableRow>();
+        var selectables = new List<SelectableRow>();
 
         for (int i = 0; i < ownedUnique.Count; i++)
         {
             var item = ownedUnique[i];
-            var row = Instantiate(rowPrefab, contentParent);
-            rows.Add(row);
-
             int count = pm.inventory.GetCount(item.id);
+
+            var row = Instantiate(rowPrefab, contentParent);
+            liveRows.Add(row);
+
             row.Bind(item, count);
 
-            int index = i;
-            row.selectable.Bind(() => TrySwap(index), true);
-            selectable.Add(row.selectable);
+            int idx = i;
+            row.selectable.Bind(() => TrySwap(idx), true);
+            selectables.Add(row.selectable);
         }
 
-        navigator.SetRows(selectable);
+        navigator.SetRows(selectables);
     }
 
     void TrySwap(int index)
     {
-        if (usedThisVisit) { toast?.Show("Already used."); return; }
+        if (usedThisVisit) { ShowToast("Already used."); return; }
         if (index < 0 || index >= ownedUnique.Count) return;
 
         var chosen = ownedUnique[index];
         if (!chosen) return;
 
-        // Roll replacement of same rarity
         var db = ItemDatabase.Load();
-        if (!db) { toast?.Show("ItemDatabase missing."); return; }
+        if (!db)
+        {
+            ShowToast("ItemDatabase not found (Resources path issue).");
+            return;
+        }
 
         var candidates = new List<ItemSO>();
         foreach (var it in db.items)
         {
             if (!it) continue;
             if (it.rarity != chosen.rarity) continue;
-
-            // prevent swapping into exact same item
-            if (it.id == chosen.id) continue;
-
+            if (it.id == chosen.id) continue; // prevent same
             candidates.Add(it);
         }
 
         if (candidates.Count == 0)
         {
-            toast?.Show("No swap candidates for this rarity.");
+            ShowToast("No candidates of same rarity.");
             return;
         }
 
         var replacement = candidates[Random.Range(0, candidates.Count)];
 
-        // Remove 1 of chosen and add 1 of replacement
         bool removed = pm.inventory.Consume(chosen.id, 1);
         if (!removed)
         {
-            toast?.Show("Could not remove item.");
+            ShowToast("Could not remove item from inventory.");
             return;
         }
 
@@ -140,14 +149,19 @@ public class PawnShopStation : MonoBehaviour
         replacement.OnPurchased(pm.GetContext(), pm.inventory.GetCount(replacement.id));
 
         usedThisVisit = true;
-        toast?.Show($"Swapped {chosen.displayName} → {replacement.displayName}");
+        ShowToast($"Swapped {chosen.displayName} → {replacement.displayName}");
         BuildList();
     }
 
     void ClearRows()
     {
-        for (int i = 0; i < rows.Count; i++)
-            if (rows[i]) Destroy(rows[i].gameObject);
-        rows.Clear();
+        foreach (var r in liveRows)
+            if (r) Destroy(r.gameObject);
+        liveRows.Clear();
+    }
+
+    void ShowToast(string msg)
+    {
+        if (toastText) toastText.text = msg;
     }
 }
