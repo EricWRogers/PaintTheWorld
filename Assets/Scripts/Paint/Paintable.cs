@@ -50,6 +50,8 @@ public class Paintable : MonoBehaviour {
     public float targetCoverPercent;
     public float percentageCovered;
     public float meshPercent;
+    private float checkTimer = 0f;
+    public float checkInterval = 0.5f;
     
 
     void Start() {
@@ -74,6 +76,15 @@ public class Paintable : MonoBehaviour {
     }
     void Update()
     {
+        checkTimer += Time.deltaTime;
+
+        if (checkTimer >= checkInterval)
+        {
+            // Update the actual percentage from the RenderTexture
+            percentageCovered = GetPaintCoverage(m_maskRenderTexture);
+            checkTimer = 0f;
+        }
+        
         if(percentageCovered >= targetCoverPercent)
         {
             covered = true;
