@@ -5,8 +5,8 @@ using SuperPupSystems.Helper;
 public class TimerUI : MonoBehaviour
 {
     [Header("References")]
-    public Timer timerLogic; // Drag the object with your Timer script here
-    public TextMeshProUGUI timerText; // Drag your UI Text here
+    public Timer timerLogic;
+    public TextMeshProUGUI timerText;
 
     [Header("Settings")]
     public string prefix = "Time: ";
