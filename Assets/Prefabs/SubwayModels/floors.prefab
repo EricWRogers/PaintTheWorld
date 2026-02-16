@@ -86,17 +86,35 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8844036162078759964}
+      addedObject: {fileID: -8219023538682956726}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -8219023538682956726}
+      addedObject: {fileID: -1677779990289428901}
   m_SourcePrefab: {fileID: 100100000, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
 --- !u!1 &1318270674486574600 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2fb66dd61cde65a44958bdb916439b0c, type: 3}
   m_PrefabInstance: {fileID: 2200599818904732505}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &8844036162078759964
+--- !u!114 &-8219023538682956726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1318270674486574600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TEXTURE_SIZE: 128
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
+  checkInterval: 0.5
+--- !u!65 &-1677779990289428901
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,19 +133,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 400, y: 100, z: 400}
-  m_Center: {x: 200, y: -50, z: 200}
---- !u!114 &-8219023538682956726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1318270674486574600}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5b65ae2b47b4114780c532286fffbd3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TEXTURE_SIZE: 128
-  extendsIslandOffset: 1
+  m_Size: {x: 100.00006, y: 400, z: 400}
+  m_Center: {x: 50.000015, y: 200, z: 200}

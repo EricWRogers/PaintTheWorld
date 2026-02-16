@@ -43,7 +43,7 @@ public class AmmoStation : MonoBehaviour
         if (isReady && other.CompareTag("Player"))
         {
             // Search the player and all children for the SprayPaint script
-            SprayPaint weapon = other.GetComponentInChildren<SprayPaint>();
+            SprayPaintLine weapon = other.GetComponentInChildren<SprayPaintLine>();
 
             if (weapon != null)
             {

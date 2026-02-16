@@ -9,12 +9,12 @@ public class SprayPaintLine : MonoBehaviour
 
     [Header("Effects & References")]
     public ParticleSystem sprayParticles;
-    public Transform nozzleSpawnPoint; // The tip of the spray can
-    public Transform playerCamera;     // Drag "Main Camera" here
+    public Transform nozzleSpawnPoint;
+    public Transform playerCamera;
 
     [Header("Aiming Settings")]
     public float maxAimDistance = 20f;
-    public float rotationSmoothing = 20f; // Increased for snappier movement
+    public float rotationSmoothing = 20f;
     public LayerMask playerMask;
 
     private float ammoRemainder = 0f;
@@ -37,7 +37,6 @@ public class SprayPaintLine : MonoBehaviour
         HandleInput();
     }
 
-    // We use LateUpdate for aiming to ensure the Camera has finished moving
     private void LateUpdate()
     {
         UpdateAimingAndPosition();
@@ -54,7 +53,6 @@ public class SprayPaintLine : MonoBehaviour
         Ray ray = new Ray(playerCamera.position, playerCamera.forward);
         Vector3 targetPoint;
 
-        // We use a Raycast to see if there is a wall to aim at
         if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, ~playerMask, QueryTriggerInteraction.Ignore))
         {
             targetPoint = hit.point;
@@ -73,7 +71,6 @@ public class SprayPaintLine : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             
             // Apply rotation to the can (this script's object)
-            // If the can feels sluggish, increase rotationSmoothing
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
             
             // Match particles to the can't orientation
@@ -126,5 +123,16 @@ public class SprayPaintLine : MonoBehaviour
     public void AddAmmo(int amount)
     {
         currentAmmo = Mathf.Clamp(currentAmmo + amount, 0, maxAmmo);
+    }
+
+    public float GetAmmoPercentage()
+    {
+        if (maxAmmo <= 0) return 0f;
+        return ((float)currentAmmo / maxAmmo) * 100f;
+    }
+    public float GetNormalizedAmmo()
+    {
+        if (maxAmmo <= 0) return 0f;
+        return (float)currentAmmo / (float)maxAmmo;
     }
 }

@@ -50,6 +50,9 @@ public class Paintable : MonoBehaviour {
     public float targetCoverPercent;
     public float percentageCovered;
     public float meshPercent;
+    private float checkTimer = 0f;
+    public float checkInterval = 0.5f;
+    public bool isObj;
     
 
     void Start() {
@@ -69,19 +72,34 @@ public class Paintable : MonoBehaviour {
 
         PaintManager.instance.initTextures(this);
 
-
+        
+        isObj = (GetComponent<PaintingObj>() != null);
+        
         percentageCovered = meshPercent;
     }
     void Update()
     {
-        if(percentageCovered >= targetCoverPercent)
+        if (isObj)
         {
-            covered = true;
+            checkTimer += Time.deltaTime;
+
+            if (checkTimer >= checkInterval)
+            {
+                // Update the actual percentage from the RenderTexture
+                percentageCovered = GetPaintCoverage(m_maskRenderTexture);
+                checkTimer = 0f;
+            }
+            
+            if(percentageCovered >= targetCoverPercent)
+            {
+                covered = true;
+            }
+            else
+            {
+                covered = false;
+            }
         }
-        else
-        {
-            covered = false;
-        }
+        
     }
 
     void OnDisable(){
