@@ -14,21 +14,7 @@ public class EnemySpawning : MonoBehaviour
             Random.Range(-spawnAreaSize.y / 2, spawnAreaSize.y / 2),
             Random.Range(-spawnAreaSize.z / 2, spawnAreaSize.z / 2)
         ) + transform.position;
-        if (IsSpawnPointClear(spawnPosition, 1.5f, layerToCheckForSpawning))
-        {
-            SimpleObjectPool.instance.SpawnFromPool(_enemy, spawnPosition, Quaternion.identity);
-        }
-        else
-        {
-            SpawnEnemy(_enemy);
-        }
-            
-    }
-
-    private bool IsSpawnPointClear(Vector3 spawnPosition, float radius, LayerMask obstacleLayer)
-    {
-        Collider[] colliders = Physics.OverlapSphere(spawnPosition, radius, obstacleLayer);
-        return colliders.Length == 0;
+        SimpleObjectPool.instance.SpawnFromPool(_enemy, spawnPosition, Quaternion.identity);
     }
 
     void OnDrawGizmos()

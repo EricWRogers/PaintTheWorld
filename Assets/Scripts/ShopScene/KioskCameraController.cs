@@ -1,49 +1,89 @@
 using UnityEngine;
-using System;
+using Unity.Cinemachine;
+using UnityEngine.InputSystem;
 
 public class KioskCameraController : MonoBehaviour
 {
     public static KioskCameraController I;
 
-    public Camera cam;
-    private Transform originalParent;
-    private Vector3 originalPos;
-    private Quaternion originalRot;
+    [Header("Cameras")]
+    public CinemachineCamera kioskCam;   
 
-    public bool inKiosk;
+    public CinemachineCamera freeLookCam;       
+
+     [Header("Player Lock")]
+    public MonoBehaviour playerMovementScript;   
+    public PlayerInput playerInput;              
+    public string gameplayActionMap = "Player"; 
+    public string kioskActionMap = "UI";         
+
+    [Header("HUD")]
+    public GameObject hudRoot;                   
+
+    int kioskDefaultPriority, freeLookDefaultPriority;
 
     void Awake()
     {
         I = this;
-        if (!cam) cam = Camera.main;
-        originalPos = cam.transform.position;
-        originalRot = cam.transform.rotation;
+        if (kioskCam) kioskDefaultPriority = kioskCam.Priority;
+        if (freeLookCam) freeLookDefaultPriority = freeLookCam.Priority;
     }
 
-    public void EnterKiosk(Transform target, Action onArrive = null)
+    public void EnterKiosk(Transform target, System.Action onEntered = null)
     {
-        if (!cam || !target) { onArrive?.Invoke(); return; }
+        if (hudRoot) hudRoot.SetActive(false);
 
-        inKiosk = true;
+        // Lock movement
+        if (playerMovementScript) playerMovementScript.enabled = false;
 
         
-        originalPos = cam.transform.position;
-        originalRot = cam.transform.rotation;
+        if (playerInput)
+        {
+            
+            playerInput.enabled = false;
+        }
 
-        cam.transform.position = target.position;
-        cam.transform.rotation = target.rotation;
+        
+        if (kioskCam)
+        {
+            kioskCam.Follow = target;
+            kioskCam.LookAt = target;
+            kioskCam.Priority = 50;
+            kioskCam.gameObject.SetActive(true);
+        }
+        if (freeLookCam)
+        {
+            freeLookCam.Priority = 0;
+        }
 
-        onArrive?.Invoke();
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        onEntered?.Invoke();
     }
 
-    public void ExitKiosk(Action onExit = null)
+    public void ExitKiosk()
     {
-        if (!cam) { onExit?.Invoke(); return; }
+        if (hudRoot) hudRoot.SetActive(true);
 
-        inKiosk = false;
-        cam.transform.position = originalPos;
-        cam.transform.rotation = originalRot;
+        if (playerMovementScript) playerMovementScript.enabled = true;
 
-        onExit?.Invoke();
+        if (playerInput)
+        {
+            playerInput.enabled = true;
+        }
+
+        if (kioskCam)
+        {
+            kioskCam.Priority = kioskDefaultPriority;
+            kioskCam.gameObject.SetActive(false); 
+        }
+        if (freeLookCam)
+        {
+            freeLookCam.Priority = freeLookDefaultPriority;
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
