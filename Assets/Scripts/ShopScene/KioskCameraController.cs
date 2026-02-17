@@ -1,49 +1,57 @@
 using UnityEngine;
-using System;
+using Unity.Cinemachine;
 
 public class KioskCameraController : MonoBehaviour
 {
     public static KioskCameraController I;
 
-    public Camera cam;
-    private Transform originalParent;
-    private Vector3 originalPos;
-    private Quaternion originalRot;
+    [Header("Cameras")]
+    public CinemachineCamera pawnShopCam;   
 
-    public bool inKiosk;
+    public CinemachineCamera freeLookCam;       
+
+    [Header("Player")]
+    public MonoBehaviour playerMovementScript;    
+
+    private int pawnCamDefaultPriority;
+    private int freeLookDefaultPriority;
 
     void Awake()
     {
         I = this;
-        if (!cam) cam = Camera.main;
-        originalPos = cam.transform.position;
-        originalRot = cam.transform.rotation;
+        if (pawnShopCam) pawnCamDefaultPriority = pawnShopCam.Priority;
+        if (freeLookCam) freeLookDefaultPriority = freeLookCam.Priority;
     }
 
-    public void EnterKiosk(Transform target, Action onArrive = null)
+    public void EnterKiosk(Transform target, System.Action onEntered = null)
     {
-        if (!cam || !target) { onArrive?.Invoke(); return; }
+        // lock movement
+        if (playerMovementScript) playerMovementScript.enabled = false;
 
-        inKiosk = true;
+      
+        if (pawnShopCam)
+        {
+            pawnShopCam.Follow = target;
+            pawnShopCam.LookAt = target;
+            pawnShopCam.Priority = 20;
+        }
 
-        
-        originalPos = cam.transform.position;
-        originalRot = cam.transform.rotation;
+        if (freeLookCam) freeLookCam.Priority = 0;
 
-        cam.transform.position = target.position;
-        cam.transform.rotation = target.rotation;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
-        onArrive?.Invoke();
+        onEntered?.Invoke();
     }
 
-    public void ExitKiosk(Action onExit = null)
+    public void ExitKiosk()
     {
-        if (!cam) { onExit?.Invoke(); return; }
+        if (playerMovementScript) playerMovementScript.enabled = true;
 
-        inKiosk = false;
-        cam.transform.position = originalPos;
-        cam.transform.rotation = originalRot;
+        if (pawnShopCam) pawnShopCam.Priority = pawnCamDefaultPriority;
+        if (freeLookCam) freeLookCam.Priority = freeLookDefaultPriority;
 
-        onExit?.Invoke();
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
