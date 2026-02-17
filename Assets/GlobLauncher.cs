@@ -30,7 +30,7 @@ public class GlobLauncher : MonoBehaviour
 
     }
 
-    void Shoot()
+    public void Shoot()
     {
         if (projectilePrefab == null || spawnPoint == null)
             return;
