@@ -1,42 +1,60 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.InputSystem;
 
 public class KioskCameraController : MonoBehaviour
 {
     public static KioskCameraController I;
 
     [Header("Cameras")]
-    public CinemachineCamera pawnShopCam;   
+    public CinemachineCamera kioskCam;   
 
     public CinemachineCamera freeLookCam;       
 
-    [Header("Player")]
-    public MonoBehaviour playerMovementScript;    
+     [Header("Player Lock")]
+    public MonoBehaviour playerMovementScript;   
+    public PlayerInput playerInput;              
+    public string gameplayActionMap = "Player"; 
+    public string kioskActionMap = "UI";         
 
-    private int pawnCamDefaultPriority;
-    private int freeLookDefaultPriority;
+    [Header("HUD")]
+    public GameObject hudRoot;                   
+
+    int kioskDefaultPriority, freeLookDefaultPriority;
 
     void Awake()
     {
         I = this;
-        if (pawnShopCam) pawnCamDefaultPriority = pawnShopCam.Priority;
+        if (kioskCam) kioskDefaultPriority = kioskCam.Priority;
         if (freeLookCam) freeLookDefaultPriority = freeLookCam.Priority;
     }
 
     public void EnterKiosk(Transform target, System.Action onEntered = null)
     {
-        // lock movement
+        if (hudRoot) hudRoot.SetActive(false);
+
+        // Lock movement
         if (playerMovementScript) playerMovementScript.enabled = false;
 
-      
-        if (pawnShopCam)
+        
+        if (playerInput)
         {
-            pawnShopCam.Follow = target;
-            pawnShopCam.LookAt = target;
-            pawnShopCam.Priority = 20;
+            
+            playerInput.enabled = false;
         }
 
-        if (freeLookCam) freeLookCam.Priority = 0;
+        
+        if (kioskCam)
+        {
+            kioskCam.Follow = target;
+            kioskCam.LookAt = target;
+            kioskCam.Priority = 50;
+            kioskCam.gameObject.SetActive(true);
+        }
+        if (freeLookCam)
+        {
+            freeLookCam.Priority = 0;
+        }
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -46,10 +64,24 @@ public class KioskCameraController : MonoBehaviour
 
     public void ExitKiosk()
     {
+        if (hudRoot) hudRoot.SetActive(true);
+
         if (playerMovementScript) playerMovementScript.enabled = true;
 
-        if (pawnShopCam) pawnShopCam.Priority = pawnCamDefaultPriority;
-        if (freeLookCam) freeLookCam.Priority = freeLookDefaultPriority;
+        if (playerInput)
+        {
+            playerInput.enabled = true;
+        }
+
+        if (kioskCam)
+        {
+            kioskCam.Priority = kioskDefaultPriority;
+            kioskCam.gameObject.SetActive(false); 
+        }
+        if (freeLookCam)
+        {
+            freeLookCam.Priority = freeLookDefaultPriority;
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
