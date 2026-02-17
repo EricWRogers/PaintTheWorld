@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 7962096642784740953}
   - component: {fileID: 5472731473974361928}
   - component: {fileID: 8319573050973202509}
-  - component: {fileID: 3350387822346316004}
   - component: {fileID: 598520343130500951}
   - component: {fileID: 9015654528692600483}
   m_Layer: 6
@@ -111,10 +110,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf90be57655cc88428d7d5be00b53915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
   bulletPrefab: {fileID: 7327330972339907486, guid: 36f33c96f92c7d24aa657bb824b386dd, type: 3}
   baseDamage: 10
-  health: 25
+  startingHealth: 100
   attackSpeed: 3
   rotationSpeed: 10
   attackRange: 1000
@@ -122,7 +120,8 @@ MonoBehaviour:
   damageText: {fileID: 1392177967193643494, guid: 7ade7531bc2feef43ab3b1654ec19ae6, type: 3}
   damageTextSpawn: {fileID: 5179512397239169985}
   modelMeshRenderer: {fileID: 293534031029460202}
-  hurtColor: {r: 1, g: 1, b: 1, a: 0.49019608}
+  hurtColor: {r: 1, g: 0, b: 0, a: 0.49019608}
+  stunColor: {r: 1, g: 1, b: 1, a: 0.49019608}
   flashTime: 0.25
   aimDelay: 1
   flightTime: 0.5
@@ -147,7 +146,9 @@ MonoBehaviour:
     m_Bits: 648
   m_targetTransform: {fileID: 0}
   stunned: 0
-  stunTime: 0
+  stunTime: 10
+  refreshPathDelay: 1
+  checkForLosDelay: 1
 --- !u!114 &5472731473974361928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,7 +197,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  maxHealth: 25
+  maxHealth: 101
   currentHealth: 0
   defaultToMaxHealth: 1
 --- !u!114 &8319573050973202509
@@ -211,24 +212,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b77607d151a433b46a32e54a8598041d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3350387822346316004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6371524131278298181}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7abed07b79c9e3b48ab94e463d91012e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standingColor: {r: 0, g: 0, b: 0, a: 0}
-  ignoreMask:
-    serializedVersion: 2
-    m_Bits: 73
-  dOTRate: 1
-  paintDamage: 2
 --- !u!65 &598520343130500951
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -3,11 +3,10 @@ using UnityEngine;
 
 public abstract class  Enemy : MonoBehaviour
 {
-    public GameObject player;
 
     public GameObject bulletPrefab;
     public int baseDamage = 20;
-    public int health = 100;
+    public int startingHealth = 100;
     public float attackSpeed = 4;
     public float rotationSpeed = 10;
     public float attackRange;
@@ -18,6 +17,7 @@ public abstract class  Enemy : MonoBehaviour
     public Transform damageTextSpawn;
     public MeshRenderer modelMeshRenderer;
     public Color hurtColor;
+    public Color stunColor;
     public float flashTime;
     private float m_flashTimer;
 
@@ -33,7 +33,6 @@ public abstract class  Enemy : MonoBehaviour
     }
     public void Start()
     {
-        player = PlayerManager.instance.player;
     }
 
     public void Update()

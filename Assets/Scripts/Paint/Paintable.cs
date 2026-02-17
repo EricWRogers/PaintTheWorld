@@ -1,4 +1,4 @@
-using UnityEngine;
+    using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
 
@@ -46,11 +46,14 @@ public class Paintable : MonoBehaviour {
     public RenderTexture getSupport() => m_supportTexture;
     public Renderer getRenderer() => m_rend;
 
-
     public bool covered;
     public float targetCoverPercent;
     public float percentageCovered;
     public float meshPercent;
+    private float checkTimer = 0f;
+    public float checkInterval = 0.5f;
+    public bool isObj;
+    
 
     void Start() {
         m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
@@ -69,19 +72,34 @@ public class Paintable : MonoBehaviour {
 
         PaintManager.instance.initTextures(this);
 
-
+        
+        isObj = (GetComponent<PaintingObj>() != null);
+        
         percentageCovered = meshPercent;
     }
     void Update()
     {
-        if(percentageCovered + meshPercent >= targetCoverPercent)
+        if (isObj)
         {
-            covered = true;
+            checkTimer += Time.deltaTime;
+
+            if (checkTimer >= checkInterval)
+            {
+                // Update the actual percentage from the RenderTexture
+                percentageCovered = GetPaintCoverage(m_maskRenderTexture);
+                checkTimer = 0f;
+            }
+            
+            if(percentageCovered >= targetCoverPercent)
+            {
+                covered = true;
+            }
+            else
+            {
+                covered = false;
+            }
         }
-        else
-        {
-            covered = false;
-        }
+        
     }
 
     void OnDisable(){
@@ -108,10 +126,10 @@ public class Paintable : MonoBehaviour {
         RenderTexture.active = prev;
         RenderTexture.ReleaseTemporary(temp);
 
-        return tex.GetPixel(0, 0).r * 100; // 0–1 coverage
+        return tex.GetPixel(0, 0).r * 100 + meshPercent; // 0–1 coverage
     }
 
-public void CalculateTextureCoverage()
+    public void CalculateTextureCoverage()
     {
         MeshFilter meshFilter = GetComponent<MeshFilter>();
         Mesh mesh = meshFilter.sharedMesh;
@@ -135,7 +153,7 @@ public void CalculateTextureCoverage()
             RasterizeTriangle(uv1, uv2, uv3, coveredPixels, texWidth, texHeight);
         }
 
-        meshPercent = (float)coveredPixels.Count / totalPixels * 100f;
+        meshPercent = 100 - ((float)coveredPixels.Count / totalPixels * 100f);
     }
 
     private void RasterizeTriangle(Vector2 p0, Vector2 p1, Vector2 p2, HashSet<Vector2Int> coveredPixels, int texWidth, int texHeight)

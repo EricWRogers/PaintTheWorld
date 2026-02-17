@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8700617353114198275, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.19
@@ -52,6 +56,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 78feda6671525b147bc2abadeacfd2ff, type: 2}
+    - target: {fileID: -671450622789340593, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
       propertyPath: m_Name
       value: Traffic_Cone_03
@@ -59,6 +67,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
       propertyPath: m_TagString
       value: Paintable
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5100068591777345685, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -120,8 +132,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 128
-  extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
   percentageCovered: 0
+  meshPercent: 0
 --- !u!1 &8481205407138679779 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8700617353114198275, guid: 2a4fe216c9ca9f24db60c6755904a8ae, type: 3}
@@ -161,5 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 128
-  extendsIslandOffset: 1
+  covered: 0
+  targetCoverPercent: 0
   percentageCovered: 0
+  meshPercent: 0

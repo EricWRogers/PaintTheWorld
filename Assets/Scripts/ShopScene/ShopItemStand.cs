@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
 
@@ -18,6 +19,7 @@ public class ShopItemStand : MonoBehaviour
 
     private Transform player;
     private bool sold = false;
+    private bool ready = false;
 
     public bool IsSold => sold;
 
@@ -26,21 +28,51 @@ public class ShopItemStand : MonoBehaviour
         item = newItem;
         priceOverride = overridePrice;
         sold = false;
-        RefreshUI();
+
+        // If no item, hide stand 
         gameObject.SetActive(item != null);
+
+       
+        if (ready) RefreshUI();
     }
 
     public void SetPriceMultiplier(float m) => priceMultiplier = Mathf.Max(0.1f, m);
 
-    void Start()
+    private void OnEnable()
     {
-        player = PlayerManager.instance ? PlayerManager.instance.player.transform : null;
+        
+        StartCoroutine(WaitForPlayerManager());
+    }
+
+    IEnumerator WaitForPlayerManager()
+    {
+        ready = false;
+
+       
+        if (promptUI) promptUI.SetActive(false);
+
+        
+        while (PlayerManager.instance == null ||
+               PlayerManager.instance.player == null ||
+               PlayerManager.instance.inventory == null ||
+               PlayerManager.instance.wallet == null)
+        {
+            yield return null;
+        }
+
+        player = PlayerManager.instance.player.transform;
+        ready = true;
+
         RefreshUI();
     }
 
     void Update()
     {
-        if (!player || sold || !item) { if (promptUI) promptUI.SetActive(false); return; }
+        if (!ready || !player || sold || !item)
+        {
+            if (promptUI) promptUI.SetActive(false);
+            return;
+        }
 
         bool close = Vector3.Distance(transform.position, player.position) <= interactRadius;
         if (promptUI) promptUI.SetActive(close);
@@ -51,15 +83,25 @@ public class ShopItemStand : MonoBehaviour
 
     public void RefreshUI()
     {
-        if (!item) return;
-        if (nameText)  nameText.SetText(item.displayName);
-        if (priceText) priceText.SetText($"$ {GetCurrentPrice()}");
+        if (!item)
+        {
+            if (nameText) nameText.SetText("");
+            if (priceText) priceText.SetText("");
+            return;
+        }
+
+        if (nameText) nameText.SetText(item.displayName);
+
+        // Only show price if PM is ready
+        int price = GetCurrentPrice();
+        if (priceText) priceText.SetText($"$ {price}");
     }
 
     int GetCurrentPrice()
     {
         var pm = PlayerManager.instance;
-        if (!pm || !item) return 0;
+        if (pm == null || item == null) return 0;
+        if (pm.inventory == null) return Mathf.RoundToInt(item.basePrice * priceMultiplier);
 
         int owned = pm.inventory.GetCount(item.id);
         int basePrice = (priceOverride >= 0) ? priceOverride : item.GetPriceForNext(owned);
@@ -69,9 +111,13 @@ public class ShopItemStand : MonoBehaviour
     void TryBuy()
     {
         var pm = PlayerManager.instance;
-        if (!pm || !item) return;
+        if (!pm || !item || pm.inventory == null || pm.wallet == null)
+        {
+            Debug.LogWarning("[ShopItemStand] Missing PlayerManager/wallet/inventory.");
+            return;
+        }
 
-        // Don’t let the player buy an item again if they already own it
+        // Don’t let the player buy again if they already own it
         if (pm.inventory.GetCount(item.id) > 0)
         {
             Debug.Log("Already owned.");
@@ -87,10 +133,9 @@ public class ShopItemStand : MonoBehaviour
 
         pm.inventory.Add(item, 1);
         item.OnPurchased(pm.GetContext(), pm.inventory.GetCount(item.id));
-        FindObjectOfType<ItemEffectsManager>()?.Reapply(); // optional if you use one
+        FindObjectOfType<ItemEffectsManager>()?.Reapply();
 
         sold = true;
         gameObject.SetActive(false);
     }
 }
-

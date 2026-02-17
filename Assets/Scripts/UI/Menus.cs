@@ -27,7 +27,8 @@ public class Menus : MonoBehaviour
     
     public void MainMenu(GameObject _pauseHud)
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("Start Menu");
+        GameManager.instance.ResumeGame();
         _pauseHud.SetActive(false);
     }
 

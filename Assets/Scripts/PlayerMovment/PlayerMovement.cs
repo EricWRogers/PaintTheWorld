@@ -2,7 +2,7 @@ using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
 using Unity.VisualScripting;
-using UnityEditor.EditorTools;
+
 
 
 
@@ -11,6 +11,7 @@ using UnityEditor.EditorTools;
 
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
+using UnityEditor.EditorTools;
 using UnityEditor;
 
 [CustomEditor(typeof(PlayerMovement))]
@@ -294,8 +295,8 @@ public class PlayerMovement : PlayerMovmentEngine
         m_inputActions = new PlayerInputActions().Player;
         m_inputActions.Enable();
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
         m_lasPos = transform.position;
         
     }
@@ -308,11 +309,14 @@ public class PlayerMovement : PlayerMovmentEngine
         HandlePaintColor();
         HandleFOV();
         m_timeSinceLastDash += Time.deltaTime;
+        if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
+
     }
 
 
     void FixedUpdate()
     {
+        if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
    
         bool onGround = CheckIfGrounded(out RaycastHit _);
         HandleRotation();
@@ -421,8 +425,6 @@ public class PlayerMovement : PlayerMovmentEngine
         m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
 
-
-
     void HandleInput()
     {
         moveInput = m_inputActions.Move.ReadValue<Vector2>();
@@ -434,13 +436,12 @@ public class PlayerMovement : PlayerMovmentEngine
         else
             jumpInputElapsed += Time.deltaTime;
         
-        if (m_inputActions.Dash.WasPressedThisFrame())
-            m_dashInputPressed = true;
+        m_dashInputPressed = m_inputActions.Dash.WasPressedThisFrame();
     }
 
     void HandleRegularMovement()
     {
-        currSpeed = speed * m_currColorMult * m_shopMoveMult;
+        currSpeed = speed * m_currColorMult;
 
         // Raw input direction (we’ll re-project it onto the slope when grounded)
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
@@ -582,114 +583,33 @@ public class PlayerMovement : PlayerMovmentEngine
     bool HandleDashing()
     {
         bool canDash = m_timeSinceLastDash >= dashCooldown;
-        Vector3 dashDir =  GetDashDirection(out m_dashBack);
+        
 
-        if (m_dashInputPressed && canDash)
+        if(canDash && m_dashInputPressed)
         {
+           if(moveInput.sqrMagnitude > 0.01f)
+            {
+                dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+            }
+
+            
+            isDashing = false;
+            
             m_dashTime = 0f;
             m_timeSinceLastDash = 0f;
-            m_dashInputPressed = false;
-            isDashing = true;
-             
+            m_dashStartSpeed = m_velocity.magnitude;
 
-            Vector3 planar = new Vector3(m_velocity.x, 0f, m_velocity.z);
-            m_dashStartSpeed = planar.magnitude;
+            m_velocity = dashDir * (dashSpeed + m_dashStartSpeed);
+
+            
+            
         }
-
-        if (isDashing && m_dashTime < dashDuration)
-        {
-            float dashProgress = m_dashTime / dashDuration;
-            // Treat dashSpeed as "dash strength" used for turning/braking, not a raw speed override
-            float dashStrength = dashSpeed * dashSpeedCurve.Evaluate(dashProgress) * m_shopMoveMult;
-
-            Vector3 planar = new Vector3(m_velocity.x, 0f, m_velocity.z);
-
-            const float turnMult = 10f;   
-            const float brakeMult = 8f;   
-
-            if (m_dashBack)
-            {
-                // Back dash = strong braking (kills momentum)
-                float newSpeed = Mathf.MoveTowards(planar.magnitude, 0f, dashStrength * brakeMult * Time.deltaTime);
-                planar = (planar.sqrMagnitude > 0.0001f) ? planar.normalized * newSpeed : Vector3.zero;
-            }
-            else
-            {
-                // Side/forward dash = redirect momentum (keep speed, don't boost)
-                float targetSpeed = m_dashStartSpeed;
-
-                // If basically stopped, give a tiny nudge so a side dash still moves you
-                if (targetSpeed < 0.25f)
-                    targetSpeed = dashSpeed * 0.35f;
-
-                Vector3 target = dashDir * targetSpeed;
-
-                if (planar.sqrMagnitude < 0.0001f)
-                {
-                    planar = target;
-                }
-                else
-                {
-                    float speedNow = planar.magnitude;
-
-                    // Lateral accel approx -> angular rate: w ~= a / v
-                    float angularRate = (dashStrength * turnMult) / Mathf.Max(speedNow, 0.1f);
-                    planar = Vector3.RotateTowards(planar, target, angularRate * Time.deltaTime, 0f);
-
-                    // Keep same speed to avoid "dash = speed boost"
-                    planar = planar.normalized * speedNow;
-                }
-            }
-
-            // Apply back to velocity (preserve vertical momentum)
-            m_velocity.x = planar.x;
-            m_velocity.z = planar.z;
-
-            // Still apply gravity during dash
-            m_velocity += gravity * Time.deltaTime;
-
-            m_dashTime += Time.deltaTime;
-            return true;
-        }
-        else if (isDashing)
-        {
-            isDashing = false;
-        }
-
+      
+        isDashing = false;
         return isDashing;
     }
 
-    private Vector3 GetDashDirection(out bool isBrake)
-    {
-        if(moveInput.sqrMagnitude  < 0.01f)
-        {
-            isBrake = false;
-            return transform.forward;
-        }
 
-        if (moveInput.y < -0.2f && Mathf.Abs(moveInput.y) >= Mathf.Abs(moveInput.x))
-        {
-            isBrake = true;
-            Vector3 b = -m_orientation.forward; b.y = 0f;
-            return b.sqrMagnitude > 0.0001f ? b.normalized : -transform.forward;
-        }
-
-        isBrake = false;
-
-
-        if (Mathf.Abs(moveInput.x) > Mathf.Abs(moveInput.y))
-        {
-            Vector3 r = m_orientation.right * Mathf.Sign(moveInput.x); r.y = 0f;
-            return r.normalized;
-        }
-        else
-        {
-            float sign = Mathf.Sign(moveInput.y == 0f ? 1f : moveInput.y);
-            Vector3 f = m_orientation.forward * sign; f.y = 0f;
-            return f.normalized;
-        }
-
-    }
     #endregion
     
 
@@ -835,122 +755,80 @@ public class PlayerMovement : PlayerMovmentEngine
             wasGrinding = false;
             return false;
         }
-
-        if (m_railDetectionPoint == null) return false;
-
+        splineContainer = null;
         // Detect rails nearby
         Collider[] railColliders = Physics.OverlapSphere(m_railDetectionPoint.position, railDetectionRadius, railLayer);
         if (railColliders.Length == 0) return false;
 
-        // Pick the closest rail (prevents snapping to a random rail when multiple overlap).
-        SplineContainer best = null;
-        float bestDistSqr = float.MaxValue;
 
-        foreach (var col in railColliders)
+        // Search for the closest spline point
+        foreach (var collider in railColliders)
         {
-            var sc = col.GetComponent<SplineContainer>();
-            if (sc == null || sc.Splines == null || sc.Splines.Count == 0) continue;
-
-            FindClosestPointOnSpline(sc, transform.position, out float t, out float distSqr);
-            if (distSqr < bestDistSqr)
-            {
-                bestDistSqr = distSqr;
-                best = sc;
-            }
+            splineContainer = collider.GetComponent<SplineContainer>();
+            if (splineContainer == null || splineContainer.Splines.Count == 0)   continue;
         }
 
-        if (best == null) return false;
-
-       
-        
-
-        splineContainer = best;
-        StartGrinding();
-        return true;
+        // If a valid spline was found within snap distance, start grinding
+        if (splineContainer != null)
+        {
+            StartGrinding();
+            return true;
+        }
+    
+        return false;
     }
 
     void StartGrinding()
     {
         isGrinding = true;
-
-        if (splineContainer == null || splineContainer.Splines == null || splineContainer.Splines.Count == 0)
-        {
-            ExitGrinding();
-            return;
-        }
-
         var splineRef = splineContainer.Splines[0];
 
-        // Find closest point on spline in WORLD space (handles rotated rails).
-        FindClosestPointOnSpline(splineContainer, transform.position, out float progress, out _);
+        Vector3 closest = FindClosestPointOnSpline(out float progress);
         railProgress = progress;
 
         grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
 
-        // Tangent from Spline.EvaluatePosition is in spline LOCAL space -> convert to world.
-        Vector3 localTangent = GetSplineTangentAt(splineRef, railProgress);
-        if (localTangent.sqrMagnitude < 0.0001f) localTangent = Vector3.forward;
 
-        Vector3 worldTangent = splineContainer.transform.TransformDirection(localTangent);
-        if (worldTangent.sqrMagnitude < 0.0001f) worldTangent = transform.forward;
+        Vector3 tangent = GetSplineTangentAt(splineRef, railProgress);
+        if (tangent.sqrMagnitude < 0.0001f) tangent = Vector3.forward;
 
-        // Choose rail direction using horizontal approach (prevents vertical velocity from flipping direction).
-        Vector3 approach = m_velocity;
-        approach.y = 0f;
-        Vector3 tH = worldTangent;
-        tH.y = 0f;
 
-        if (approach.sqrMagnitude < 0.0001f) approach = transform.forward;
-        if (tH.sqrMagnitude < 0.0001f) tH = transform.forward;
-
-        float dot = Vector3.Dot(approach.normalized, tH.normalized);
+        float dot = Vector3.Dot(m_velocity.normalized, tangent.normalized);
         m_railDir = dot >= 0f ? 1f : -1f;
 
-        // Snap player to spline in WORLD space (TransformPoint handles rail rotation).
-        Vector3 localSplinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.TransformPoint(localSplinePos) + Vector3.up * 1.4f;
+        
+        Vector3 splinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
 
         Vector3 snapDelta = worldSplinePos - transform.position;
-        transform.position = MovePlayer(snapDelta);
+        transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
 
-        // Set velocity along world tangent
-        m_velocity = worldTangent.normalized * grindSpeed * m_railDir;
+      m_velocity = tangent.normalized * grindSpeed * m_railDir;
+
+
     }
 
-    void ContinueGrinding()
+     void ContinueGrinding()
     {
-        if (splineContainer == null || splineContainer.Splines == null || splineContainer.Splines.Count == 0)
+        if (splineContainer == null || splineContainer.Splines.Count == 0)
         {
             ExitGrinding();
             return;
         }
 
-        // Jump off rail: use a one-shot press (not "held") so it fires reliably once.
-        if (m_jumpPressedThisFrame)
+        if (m_jumpInputPressed)
         {
-            m_jumpPressedThisFrame = false;
-
             var splineRef = splineContainer.Splines[0];
-
-            Vector3 localTangent = GetSplineTangentAt(splineRef, railProgress);
-            if (localTangent.sqrMagnitude < 0.0001f) localTangent = Vector3.forward;
-
-            Vector3 worldTangent = splineContainer.transform.TransformDirection(localTangent).normalized * m_railDir;
-
-            // Keep your original jump math (tangent * grindExitForce + up * jumpForce)
-            m_velocity = worldTangent * grindExitForce + Vector3.up * jumpForce;
-
+            Vector3 tangent = GetSplineTangentAt(splineRef, railProgress).normalized * m_railDir;
+            m_velocity = tangent * grindExitForce + Vector3.up * jumpForce;
             ExitGrinding();
             return;
         }
 
         var splineRef2 = splineContainer.Splines[0];
 
-        // Full 3D world tangent at current progress (respecting rail slope + container rotation)
-        Vector3 localTangentHere = GetSplineTangentAt(splineRef2, railProgress);
-        if (localTangentHere.sqrMagnitude < 0.0001f) localTangentHere = Vector3.forward;
-
-        Vector3 tangentHere = splineContainer.transform.TransformDirection(localTangentHere).normalized * m_railDir;
+        // Full 3D tangent at current progress (respecting slope)
+        Vector3 tangentHere = GetSplineTangentAt(splineRef2, railProgress).normalized * m_railDir;
 
         // Use full velocity to get how fast we're moving along tangent
         float speedAlongTangent = Vector3.Dot(m_velocity, tangentHere);
@@ -978,13 +856,12 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         // Keep the player snapped close to the spline laterally to avoid drift:
-        Vector3 localSplinePos2 = (Vector3)splineRef2.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.TransformPoint(localSplinePos2) + Vector3.up * 1.4f;
-
+        Vector3 splinePos = (Vector3)splineRef2.EvaluatePosition(railProgress);
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+        // Only correct lateral offset (project delta onto plane perpendicular to tangent)
         Vector3 delta = worldSplinePos - transform.position;
         Vector3 lateral = delta - Vector3.Project(delta, tangentHere);
-
-        // Apply lateral correction gently (not teleport)
+        // Apply a small correction to pull player onto spline smoothly (not teleport)
         float correctionStrength = Mathf.Clamp01(5f * Time.deltaTime); // tweak if needed
         transform.position = MovePlayer(lateral * correctionStrength);
 
@@ -1010,7 +887,6 @@ public class PlayerMovement : PlayerMovmentEngine
         railProgress = 0f;
         grindSpeed = 0f;
 
-        // Note: cooldown gating is handled elsewhere; clearing here prevents the flag from blocking indefinitely.
         wasGrinding = false;
     }
 
