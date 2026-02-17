@@ -2,6 +2,7 @@ using UnityEngine;
 using SuperPupSystems.Helper;
 using KinematicCharacterControler;
 using UnityEngine.AI;
+using Unity.VisualScripting;
 //using DG.Tweening;
 
 public class Mortar : Enemy
@@ -90,8 +91,9 @@ public class Mortar : Enemy
         base.Update();
         m_direction = PlayerManager.instance.player.transform.position - transform.position;
         //if has los of player shoot
-        if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 100, losMask) && m_LosTimer < 0)
+        if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 5, losMask))
         {
+            Debug.Log("" + m_hitInfo.transform.gameObject.name);
             if(m_hitInfo.transform.CompareTag("Player"))
             {
                 m_attackTimer -= Time.deltaTime;
@@ -121,7 +123,13 @@ public class Mortar : Enemy
             }
             m_LosTimer = checkForLosDelay;
         }
-        if(!m_hitInfo.transform.CompareTag("Player") && m_stunTimer <= 0 && m_pathTimer < 0)
+        if(m_hitInfo.transform == null)
+        {
+            Debug.Log("no transform hit");
+            Move();
+            return;
+        }
+        if(!m_hitInfo.transform.gameObject.CompareTag("Player") && m_stunTimer <= 0 && m_pathTimer < 0)
         {
             Move();
             m_pathTimer = refreshPathDelay;
