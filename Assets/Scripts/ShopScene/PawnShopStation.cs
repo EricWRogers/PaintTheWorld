@@ -12,6 +12,11 @@ public class PawnShopStation : MonoBehaviour
     public KioskListNavigator navigator;
     public TMP_Text toastText;
 
+    [Header("After Swap Result UI")]
+    public GameObject listRoot;      
+    public GameObject resultRoot;     
+    public TMP_Text resultText; 
+
     [Header("Camera")]
     public Transform cameraTarget;
 
@@ -26,6 +31,8 @@ public class PawnShopStation : MonoBehaviour
     {
         if (panelRoot) panelRoot.SetActive(false);
         ShowToast("");
+        if (resultRoot) resultRoot.SetActive(false);
+        if (listRoot) listRoot.SetActive(true);
     }
 
     public void Open()
@@ -176,9 +183,26 @@ public class PawnShopStation : MonoBehaviour
         replacement.OnPurchased(pm.GetContext(), pm.inventory.GetCount(replacement.id));
 
         usedThisVisit = true;
-        ShowToast($"Swapped {chosen.displayName} → {replacement.displayName}");
 
-        BuildList();
+        ShowSwapResult(chosen, replacement);
+
+
+        navigator.active = false;
+    }
+
+    void ShowSwapResult(ItemSO oldItem, ItemSO newItem)
+    {
+       
+        ClearRows();
+
+        if (listRoot) listRoot.SetActive(false);
+        if (resultRoot) resultRoot.SetActive(true);
+
+        if (resultText)
+            resultText.text =
+                $"Swap used this visit.\n\n" +
+                $"You traded:\n{oldItem.displayName}\n\n" +
+                $"You received:\n{newItem.displayName}\n\n";
     }
 
     void ClearRows()
