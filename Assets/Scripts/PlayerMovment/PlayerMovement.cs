@@ -295,8 +295,8 @@ public class PlayerMovement : PlayerMovmentEngine
         m_inputActions = new PlayerInputActions().Player;
         m_inputActions.Enable();
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
         m_lasPos = transform.position;
         
     }
