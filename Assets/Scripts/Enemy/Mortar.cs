@@ -49,6 +49,8 @@ public class Mortar : Enemy
     public float checkForLosDelay = 1;
     private float m_LosTimer;
 
+    [SerializeField] private float LOSrange = 15f;
+
     new void Start()
     {
         base.Start();
@@ -91,7 +93,7 @@ public class Mortar : Enemy
         base.Update();
         m_direction = PlayerManager.instance.player.transform.position - transform.position;
         //if has los of player shoot
-        if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, 5, losMask))
+        if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, LOSrange, losMask))
         {
             Debug.Log("" + m_hitInfo.transform.gameObject.name);
             if(m_hitInfo.transform.CompareTag("Player"))
