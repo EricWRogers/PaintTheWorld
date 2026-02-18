@@ -17,6 +17,10 @@ public class PawnShopStation : MonoBehaviour
     public GameObject resultRoot;     
     public TMP_Text resultText; 
 
+    [Header("Empty State UI")]
+
+    public TMP_Text emptyText; 
+
     [Header("Camera")]
     public Transform cameraTarget;
 
@@ -97,11 +101,23 @@ public class PawnShopStation : MonoBehaviour
 
         if (ownedUnique.Count == 0)
         {
+            if (listRoot) listRoot.SetActive(false);
+            if (emptyText)
+            {
+                emptyText.gameObject.SetActive(true);
+                emptyText.text = "No items in inventory.";
+            }
+
             ShowToast("No items in inventory to swap.");
             navigator.SetRows(new List<SelectableRow>());
-            ForceLayout();
             return;
         }
+        else
+        {
+            if (listRoot) listRoot.SetActive(true);
+            if (emptyText) emptyText.gameObject.SetActive(false);
+        }
+
 
         var selectables = new List<SelectableRow>();
 
