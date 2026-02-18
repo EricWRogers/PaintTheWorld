@@ -24,6 +24,10 @@ public abstract class  Enemy : MonoBehaviour
     private int m_tempHealth;
     private Health m_health;
 
+    public bool targetingPlayer;
+
+    public Transform target;
+
     void OnEnable()
     {
         m_health = GetComponent<Health>();
@@ -42,6 +46,22 @@ public abstract class  Enemy : MonoBehaviour
         {
             modelMeshRenderer.materials[1].color = Color.clear;
         }
+        if(target == null)
+        {
+            if (targetingPlayer)
+            {
+                target = PlayerManager.instance.player.transform;
+            }
+            else
+            {
+                if(GameManager.instance.objectives.Count == 0)
+                {
+                    return;
+                }
+                target = GameManager.instance.objectives[Random.Range(0, GameManager.instance.objectives.Count)].transform;
+            }
+        }
+        
     }
 
     public abstract void Attack();
