@@ -12,6 +12,9 @@ public class PawnShopStation : MonoBehaviour
     public KioskListNavigator navigator;
     public TMP_Text toastText;
 
+    [Header("Currency UI")]
+    public TMP_Text currencyText;
+
     [Header("After Swap Result UI")]
     public GameObject listRoot;      
     public GameObject resultRoot;     
@@ -42,6 +45,7 @@ public class PawnShopStation : MonoBehaviour
     public void Open()
     {
         pm = PlayerManager.instance;
+        RefreshCurrency();
         if (!pm || pm.inventory == null)
         {
             ShowToast("PlayerManager/Inventory missing.");
@@ -61,6 +65,22 @@ public class PawnShopStation : MonoBehaviour
             BuildList();
         });
     }
+
+    void OnEnable()
+    {
+        var pm = PlayerManager.instance;
+        if (pm && pm.wallet && pm.wallet.changed != null)
+            pm.wallet.changed.AddListener(OnWalletChanged);
+    }
+
+    void OnDisable()
+    {
+        var pm = PlayerManager.instance;
+        if (pm && pm.wallet && pm.wallet.changed != null)
+            pm.wallet.changed.RemoveListener(OnWalletChanged);
+    }
+
+    void OnWalletChanged(int _) => RefreshCurrency();
 
     void Update()
     {
@@ -142,6 +162,7 @@ public class PawnShopStation : MonoBehaviour
 
         
         ForceLayout();
+        RefreshCurrency();
     }
 
     void ForceLayout()
@@ -227,6 +248,16 @@ public class PawnShopStation : MonoBehaviour
             if (r) Destroy(r.gameObject);
         liveRows.Clear();
     }
+
+    void RefreshCurrency()
+    {
+        if (!currencyText) return;
+
+        var pm = PlayerManager.instance;
+        int amt = (pm && pm.wallet) ? pm.wallet.amount : 0;
+        currencyText.text = $"$ {amt}";
+    }
+
 
     void ShowToast(string msg)
     {
