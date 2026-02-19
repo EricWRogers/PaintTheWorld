@@ -5,7 +5,7 @@ using TMPro;
 public class PaintProgressUI : MonoBehaviour
 {
     [Header("References")]
-    public Paintable targetPaintable; 
+    public PaintingObj targetPaintable; 
     public Slider progressSlider;
     public TextMeshProUGUI percentText;
 

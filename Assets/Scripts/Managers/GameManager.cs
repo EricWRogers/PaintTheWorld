@@ -49,6 +49,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public bool m_isPaused;
     public String  shopScene;
     public int stageCounter = 1;
+    public List<PaintingObj> objectives;
 
     private SaveData saveData;
     private const string SAVE_KEY = "GameSaveData";
@@ -60,6 +61,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
         {
             pm = PlayerManager.instance;
         }
+        objectives.Clear();
+        objectives.AddRange(FindObjectsByType<PaintingObj>(FindObjectsSortMode.None));
         if (startSaveData == null)
             //startSaveData = new SaveData(0, pm.startingHealth, pm.startingHealth, new(), new(), 1);
         gameplayStarted = false;

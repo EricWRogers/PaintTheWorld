@@ -14,6 +14,8 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public int startingSpawnAmount;
     private int m_spawnCounter;
     private float m_timer;
+    public int enemiesTargetingPlayer;
+    public int enemiesProtectingObj;
 
     void Start()
     {
@@ -39,8 +41,17 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         {
             ChooseSpawnArea();
             GameObject prefab = listOfEnemyPrefabs[Random.Range(0, listOfEnemyPrefabs.Count)];
-            prefab.GetComponent<Health>().maxHealth = (int)(prefab.GetComponent<Enemy>().startingHealth + enemyHealthScaling.Evaluate(GameManager.instance.stageCounter));
-            spawnerAreas[selectedArea].SpawnEnemy(prefab.name);
+            
+            GameObject enemy = spawnerAreas[selectedArea].SpawnEnemy(prefab.name);
+            enemy.GetComponent<Health>().maxHealth = (int)(enemy.GetComponent<Enemy>().startingHealth + enemyHealthScaling.Evaluate(GameManager.instance.stageCounter));
+            if(m_spawnCounter % 2 == 0)
+            {
+                enemy.GetComponent<Enemy>().targetingPlayer = true;
+            }
+            else
+            {
+                enemy.GetComponent<Enemy>().targetingPlayer = false;
+            }
             m_spawnCounter++;
             m_timer = spawnDelay;
         }

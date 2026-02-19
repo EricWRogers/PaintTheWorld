@@ -12,6 +12,18 @@ public class PawnShopStation : MonoBehaviour
     public KioskListNavigator navigator;
     public TMP_Text toastText;
 
+    [Header("Currency UI")]
+    public TMP_Text currencyText;
+
+    [Header("After Swap Result UI")]
+    public GameObject listRoot;      
+    public GameObject resultRoot;     
+    public TMP_Text resultText; 
+
+    [Header("Empty State UI")]
+
+    public TMP_Text emptyText; 
+
     [Header("Camera")]
     public Transform cameraTarget;
 
@@ -26,11 +38,14 @@ public class PawnShopStation : MonoBehaviour
     {
         if (panelRoot) panelRoot.SetActive(false);
         ShowToast("");
+        if (resultRoot) resultRoot.SetActive(false);
+        if (listRoot) listRoot.SetActive(true);
     }
 
     public void Open()
     {
         pm = PlayerManager.instance;
+        RefreshCurrency();
         if (!pm || pm.inventory == null)
         {
             ShowToast("PlayerManager/Inventory missing.");
@@ -50,6 +65,22 @@ public class PawnShopStation : MonoBehaviour
             BuildList();
         });
     }
+
+    void OnEnable()
+    {
+        var pm = PlayerManager.instance;
+        if (pm && pm.wallet && pm.wallet.changed != null)
+            pm.wallet.changed.AddListener(OnWalletChanged);
+    }
+
+    void OnDisable()
+    {
+        var pm = PlayerManager.instance;
+        if (pm && pm.wallet && pm.wallet.changed != null)
+            pm.wallet.changed.RemoveListener(OnWalletChanged);
+    }
+
+    void OnWalletChanged(int _) => RefreshCurrency();
 
     void Update()
     {
@@ -90,11 +121,23 @@ public class PawnShopStation : MonoBehaviour
 
         if (ownedUnique.Count == 0)
         {
+            if (listRoot) listRoot.SetActive(false);
+            if (emptyText)
+            {
+                emptyText.gameObject.SetActive(true);
+                emptyText.text = "No items in inventory.";
+            }
+
             ShowToast("No items in inventory to swap.");
             navigator.SetRows(new List<SelectableRow>());
-            ForceLayout();
             return;
         }
+        else
+        {
+            if (listRoot) listRoot.SetActive(true);
+            if (emptyText) emptyText.gameObject.SetActive(false);
+        }
+
 
         var selectables = new List<SelectableRow>();
 
@@ -119,6 +162,7 @@ public class PawnShopStation : MonoBehaviour
 
         
         ForceLayout();
+        RefreshCurrency();
     }
 
     void ForceLayout()
@@ -176,9 +220,26 @@ public class PawnShopStation : MonoBehaviour
         replacement.OnPurchased(pm.GetContext(), pm.inventory.GetCount(replacement.id));
 
         usedThisVisit = true;
-        ShowToast($"Swapped {chosen.displayName} → {replacement.displayName}");
 
-        BuildList();
+        ShowSwapResult(chosen, replacement);
+
+
+        navigator.active = false;
+    }
+
+    void ShowSwapResult(ItemSO oldItem, ItemSO newItem)
+    {
+       
+        ClearRows();
+
+        if (listRoot) listRoot.SetActive(false);
+        if (resultRoot) resultRoot.SetActive(true);
+
+        if (resultText)
+            resultText.text =
+                $"Swap used this visit.\n\n" +
+                $"You traded:\n{oldItem.displayName}\n\n" +
+                $"You received:\n{newItem.displayName}\n\n";
     }
 
     void ClearRows()
@@ -187,6 +248,16 @@ public class PawnShopStation : MonoBehaviour
             if (r) Destroy(r.gameObject);
         liveRows.Clear();
     }
+
+    void RefreshCurrency()
+    {
+        if (!currencyText) return;
+
+        var pm = PlayerManager.instance;
+        int amt = (pm && pm.wallet) ? pm.wallet.amount : 0;
+        currencyText.text = $"$ {amt}";
+    }
+
 
     void ShowToast(string msg)
     {

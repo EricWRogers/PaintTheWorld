@@ -76,7 +76,11 @@ public class PaintManager : Singleton<PaintManager>
         float paintedAmount = Mathf.Max(0.01f, radius * radius * strength);
         GameEvents.PaintApplied?.Invoke(paintedAmount);
         mask.GenerateMips();
-        paintable.percentageCovered = paintable.GetPaintCoverage(mask);
+        if (paintable.GetComponent<PaintingObj>())
+        {
+            paintable.GetComponent<PaintingObj>().percentageCovered = paintable.GetComponent<PaintingObj>().GetPaintCoverage(mask);
+        }
+        
     }
 
 }
