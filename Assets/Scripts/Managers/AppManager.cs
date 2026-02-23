@@ -1,8 +1,10 @@
+using SuperPupSystems.Helper;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class AppManager : Singleton<AppManager>
 {
+    public string shopScene;
     public int currentSceneIndex;
 
     void OnEnable()
@@ -22,6 +24,8 @@ public class AppManager : Singleton<AppManager>
             for(int i = 0; i < transform.childCount; i++)
             {
                 transform.GetChild(i).gameObject.SetActive(false);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
             }
         }
         else
@@ -30,6 +34,11 @@ public class AppManager : Singleton<AppManager>
             {
                 transform.GetChild(i).gameObject.SetActive(true);
             }
+            if(_next.name != shopScene)
+            {
+                GameManager.instance.ResetTimer();
+            }
         }
+        
     }
 }
