@@ -74,7 +74,7 @@ public void UpdateColorFromManager()
 {
     if (PaintManager.instance == null) return;
 
-    selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+     selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
 
     if (part == null)
         part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SuperPupSystems.Helper;
 using UnityEngine.Events;
+using KinematicCharacterControler;
 
 public class ParticlePainter : MonoBehaviour
 {
@@ -74,7 +75,7 @@ public class ParticlePainter : MonoBehaviour
     {
         if (PaintManager.instance != null)
         {
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+            selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
         
             var main = part.main;
             main.startColor = selectedPaint;

@@ -5,6 +5,8 @@ public class PlayerPaint : GetPaintColor
     public Color selectedPaint;
     public int colorKey = 0;
     public Material playerModel;
+    public float waitTime = 0.2f;
+    private float timer = 0f;
 
     void Start()
     {
@@ -12,9 +14,14 @@ public class PlayerPaint : GetPaintColor
     }
     void Update()
     {
-        
-        CheckOnPaint();
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        timer += Time.deltaTime;
+        if(timer > waitTime)
+        {
+            CheckOnPaint();
+            timer = 0f;
+        }
+            
+        if (PlayerManager.instance.playerInputs.Next.triggered)
         {
             colorKey++;
             if (colorKey > 2)
@@ -27,7 +34,7 @@ public class PlayerPaint : GetPaintColor
                 playerModel.SetColor("_EmissionColor", selectedPaint);
         }
 
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        if (PlayerManager.instance.playerInputs.Previous.triggered)
         {
             colorKey--;
             if (colorKey < 0)
