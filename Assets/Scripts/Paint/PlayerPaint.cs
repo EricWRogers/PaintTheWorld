@@ -5,6 +5,8 @@ public class PlayerPaint : GetPaintColor
     public Color selectedPaint;
     public int colorKey = 0;
     public Material playerModel;
+    public float waitTime = 0.2f;
+    private float timer = 0f;
 
     void Start()
     {
@@ -12,8 +14,13 @@ public class PlayerPaint : GetPaintColor
     }
     void Update()
     {
-        
-        CheckOnPaint();
+        timer += Time.deltaTime;
+        if(timer > waitTime)
+        {
+            CheckOnPaint();
+            timer = 0f;
+        }
+            
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
             colorKey++;

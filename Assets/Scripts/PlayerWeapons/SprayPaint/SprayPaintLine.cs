@@ -93,7 +93,7 @@ public class SprayPaintLine : MonoBehaviour
     private void HandleInput()
     {
         // Hold left mouse to spray and start the projectile timer
-        if (Input.GetMouseButton(0) && currentAmmo > 0)
+        if (PlayerManager.instance.playerInputs.Attack.IsPressed() && currentAmmo > 0)
         {
             StartSpraying();
             ConsumeAmmo();
