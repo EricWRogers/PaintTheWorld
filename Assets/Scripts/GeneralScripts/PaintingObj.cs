@@ -4,7 +4,7 @@ using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 
-[CustomEditor(typeof(Paintable))]
+[CustomEditor(typeof(PaintingObj))]
 public class PaintableEditor : Editor
 {
     public override void OnInspectorGUI()

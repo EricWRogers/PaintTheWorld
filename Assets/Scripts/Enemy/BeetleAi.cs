@@ -8,6 +8,7 @@ public class BeetleAi : Enemy
     public bool stunned;
     public float stunTime;
     private float m_stunTimer;
+    public float spreadAngleForObj;
 
     [Header("Movement")]
     public LayerMask losMask;
@@ -25,7 +26,6 @@ public class BeetleAi : Enemy
     public float fireSoundVolume = 0.9f;
     [Range(0.95f, 1.05f)]
     public float randomPitchRange = 1.02f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     new void Start()
     {
         base.Start();
@@ -99,13 +99,23 @@ public class BeetleAi : Enemy
     {
         StopMoving();
         m_attackTimer -= Time.deltaTime;
-        if(m_attackTimer <= 0)
+
+        if (m_attackTimer > 0) return;
+        if (bulletPrefab == null || firePoint == null) return;
+
+        firePoint.transform.LookAt(target);
+
+        if (!targetingPlayer)
         {
-            if(bulletPrefab == null || firePoint == null) return;
-            firePoint.transform.LookAt(target);
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            m_attackTimer = attackSpeed;
+            float halfAngle = spreadAngleForObj * 0.5f;
+            float yaw = Random.Range(-halfAngle, halfAngle);
+            float pitch = Random.Range(-halfAngle, halfAngle);
+
+            firePoint.transform.rotation *= Quaternion.Euler(pitch, yaw, 0f);
         }
+
+        Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        m_attackTimer = attackSpeed;
     }
 
     public void Stun()

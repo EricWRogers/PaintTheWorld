@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using SuperPupSystems.Helper;
 
 public class ScenePortal : MonoBehaviour
 {
@@ -25,6 +26,7 @@ public class ScenePortal : MonoBehaviour
 
         if (Input.GetKeyDown(interactKey))
         {
+            GameManager.instance.GetComponent<Timer>().StartTimer();
             SceneManager.LoadScene(sceneToLoad);
         }
     }
