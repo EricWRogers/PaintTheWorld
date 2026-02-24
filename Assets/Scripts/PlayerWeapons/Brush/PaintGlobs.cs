@@ -35,9 +35,4 @@ public class PaintGlobs : CollisonPainter
         Destroy(gameObject);
 
     }
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, radius);
-    }
 }

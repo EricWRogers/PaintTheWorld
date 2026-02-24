@@ -947,7 +947,10 @@ public class PlayerMovement : PlayerMovmentEngine
     }
 
 #endregion
-
+    public bool GetGrounded()
+    {
+        return groundedState.isGrounded;
+    }
     void OnDestroy()
     {
         m_inputActions.Disable();
