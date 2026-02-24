@@ -21,7 +21,7 @@ public class PlayerPaint : GetPaintColor
             timer = 0f;
         }
             
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        if (PlayerManager.instance.playerInputs.Next.triggered)
         {
             colorKey++;
             if (colorKey > 2)
@@ -34,7 +34,7 @@ public class PlayerPaint : GetPaintColor
                 playerModel.SetColor("_EmissionColor", selectedPaint);
         }
 
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        if (PlayerManager.instance.playerInputs.Previous.triggered)
         {
             colorKey--;
             if (colorKey < 0)

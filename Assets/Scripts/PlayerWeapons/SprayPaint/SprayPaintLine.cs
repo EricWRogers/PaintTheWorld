@@ -28,8 +28,8 @@ public class SprayPaintLine : MonoBehaviour
     private float projectileTimer = 0f;
 
     [Header("Paint Settings")]
-    public int canColorKey = 0; // The ID for this can's color (e.g., 0 for Red, 1 for Blue)
-    private ParticlePainter2 painter;
+    public int canColorKey = 0; 
+    private ParticlePainter painter;
 
     private void Start()
     {
@@ -41,7 +41,7 @@ public class SprayPaintLine : MonoBehaviour
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             if (sprayParticles.isPlaying) sprayParticles.Stop();
 
-            painter = GetComponentInChildren<ParticlePainter2>();
+            painter = GetComponentInChildren<ParticlePainter>();
 
             UpdatePainterColor();
         }
@@ -167,7 +167,7 @@ public class SprayPaintLine : MonoBehaviour
     if (painter != null)
     {
         painter.colorKey = canColorKey;
-        painter.UpdateColorFromManager(); // We will create this method next
+        painter.UpdateColorFromManager(); 
     }
 }
     // UI and External Refill Support
