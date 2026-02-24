@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UI; 
 using TMPro;
 
 public class AmmoUI : MonoBehaviour
@@ -7,27 +7,28 @@ public class AmmoUI : MonoBehaviour
     public SprayPaintLine sprayScript;
     
     [Header("UI Components")]
-    public Image ammoFillImage;
-    public TextMeshProUGUI ammoText;
+    public Slider ammoSlider;
+    public Image sliderFillImage;
 
+    [Header("Visuals")]
     public Gradient ammoGradient;
 
     void Update()
     {
         if (sprayScript == null) return;
 
-        // Update the Fill Amount (expects a value between 0 and 1)
-        if (ammoFillImage != null)
+        float normalizedAmmo = sprayScript.GetNormalizedAmmo();
+
+        // Update the Slider Value (0 to 1)
+        if (ammoSlider != null)
         {
-            // Use the 0-1 normalized value from your spray script
-            ammoFillImage.fillAmount = sprayScript.GetNormalizedAmmo();
-            ammoFillImage.color = ammoGradient.Evaluate(sprayScript.GetNormalizedAmmo());
+            ammoSlider.value = normalizedAmmo;
         }
 
-        // Update the Text
-        if (ammoText != null)
+        // Update the Color of the Fill area
+        if (sliderFillImage != null)
         {
-            ammoText.text = + Mathf.CeilToInt(sprayScript.GetAmmoPercentage()) + "%";
+            sliderFillImage.color = ammoGradient.Evaluate(normalizedAmmo);
         }
     }
 }
