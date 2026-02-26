@@ -9,7 +9,7 @@ public class SprayPaintLine : MonoBehaviour
 
     [Header("Effects & References")]
     public ParticleSystem sprayParticles;
-    public Transform nozzleSpawnPoint; // Also serves as the projectile spawn point
+    public Transform nozzleSpawnPoint;
     public Transform playerCamera;
 
     [Header("Aiming Settings")]
@@ -21,7 +21,7 @@ public class SprayPaintLine : MonoBehaviour
     public GameObject projectilePrefab;
     public float launchForce = 800f;
     public float projectileLifetime = 5f;
-    public float projectileInterval = 2f; // Seconds between spawns while spraying
+    public float projectileInterval = 2f;
 
     private float ammoRemainder = 0f;
     private bool isSpraying = false;
@@ -92,7 +92,6 @@ public class SprayPaintLine : MonoBehaviour
 
     private void HandleInput()
     {
-        // Hold left mouse to spray and start the projectile timer
         if (PlayerManager.instance.playerInputs.Attack.IsPressed() && currentAmmo > 0)
         {
             StartSpraying();
@@ -121,7 +120,7 @@ public class SprayPaintLine : MonoBehaviour
         {
             isSpraying = false;
             if (sprayParticles != null && sprayParticles.isPlaying) sprayParticles.Stop();
-            projectileTimer = 0f; // Reset timer when stopping
+            projectileTimer = 0f;
         }
     }
 
@@ -140,7 +139,6 @@ public class SprayPaintLine : MonoBehaviour
     {
         if (projectilePrefab == null || nozzleSpawnPoint == null) return;
 
-        // Create the projectile at the nozzle position and rotation
         GameObject proj = Instantiate(projectilePrefab, nozzleSpawnPoint.position, nozzleSpawnPoint.rotation);
 
         Rigidbody rb = proj.GetComponent<Rigidbody>();
@@ -170,7 +168,7 @@ public class SprayPaintLine : MonoBehaviour
         painter.UpdateColorFromManager(); 
     }
 }
-    // UI and External Refill Support
+
     public void AddAmmo(int amount) => currentAmmo = Mathf.Clamp(currentAmmo + amount, 0, maxAmmo);
     public float GetAmmoPercentage() => maxAmmo <= 0 ? 0f : ((float)currentAmmo / maxAmmo) * 100f;
     public float GetNormalizedAmmo() => maxAmmo <= 0 ? 0f : (float)currentAmmo / (float)maxAmmo;

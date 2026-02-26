@@ -7,15 +7,26 @@ public class VendingMachineStation : MonoBehaviour
 {
     [Header("UI")]
     public GameObject panelRoot;
+
+    [Tooltip("List container root (the screen that shows rows).")]
+    public GameObject listRoot;
+
+    [Tooltip("Result container root (the screen shown after upgrade).")]
+    public GameObject resultRoot;
+
     public RectTransform contentParent;
     public VendingMachineRow rowPrefab;
     public KioskListNavigator navigator;
+
     public TMP_Text toastText;
     public TMP_Text currencyText;
 
+    [Tooltip("Text shown on resultRoot after upgrade.")]
+    public TMP_Text resultText;
+
     [Header("Camera")]
-    public CinemachineCamera kioskCam; 
-    public Transform cameraTarget;            
+    public CinemachineCamera kioskCam;
+    public Transform cameraTarget;
 
     [Header("Rules")]
     public bool usedThisVisit = false;
@@ -31,10 +42,13 @@ public class VendingMachineStation : MonoBehaviour
     private readonly List<VendingMachineRow> liveRows = new();
     private readonly List<int> offeredSkillIndices = new();
 
+    private string _lastResultMessage = "";
+
     void Awake()
     {
         if (panelRoot) panelRoot.SetActive(false);
         ShowToast("");
+        ShowResult(false);
         if (promptUI) promptUI.SetActive(false);
     }
 
@@ -49,7 +63,6 @@ public class VendingMachineStation : MonoBehaviour
         if (!pm) pm = PlayerManager.instance;
         if (!player && pm && pm.player) player = pm.player.transform;
 
-        // If open, only handle kiosk inputs
         if (panelRoot && panelRoot.activeSelf)
         {
             if (Input.GetKeyDown(KeyCode.Backspace))
@@ -59,7 +72,6 @@ public class VendingMachineStation : MonoBehaviour
             return;
         }
 
-        
         if (!player) return;
 
         bool close = Vector3.Distance(transform.position, player.position) <= interactRadius;
@@ -72,9 +84,9 @@ public class VendingMachineStation : MonoBehaviour
     public void Open()
     {
         pm = PlayerManager.instance;
-        if (!pm || pm.stats == null || pm.wallet == null)
+        if (!pm || pm.stats == null)
         {
-            ShowToast("PlayerManager missing Stats/Wallet.");
+            ShowToast("PlayerManager missing Stats.");
             return;
         }
 
@@ -84,14 +96,28 @@ public class VendingMachineStation : MonoBehaviour
             return;
         }
 
-        
         KioskCameraController.I.EnterKiosk(kioskCam, cameraTarget);
 
         if (panelRoot) panelRoot.SetActive(true);
         if (navigator) navigator.active = true;
 
-        BuildList();
         UpdateCurrencyLabel();
+
+        if (usedThisVisit)
+        {
+            // Stay in result state if already used this visit
+            ShowResult(true);
+            if (resultText)
+                resultText.text = string.IsNullOrEmpty(_lastResultMessage)
+                    ? "Upgrade already used this visit."
+                    : _lastResultMessage;
+
+            if (navigator) navigator.SetRows(new List<SelectableRow>());
+            return;
+        }
+
+        ShowResult(false);
+        BuildList();
     }
 
     public void Close()
@@ -115,33 +141,22 @@ public class VendingMachineStation : MonoBehaviour
 
         if (!pm || pm.stats == null) return;
 
-        if (usedThisVisit)
-        {
-            ShowToast("Vending machine already used this visit.");
-            navigator.SetRows(new List<SelectableRow>());
-            DarkenAllRows(true);
-            return;
-        }
-
-      
+        //pick any skill not maxed
         var candidates = new List<int>();
         for (int i = 0; i < pm.stats.skills.Count; i++)
         {
             var s = pm.stats.GetSkill(i);
             if (s == null) continue;
-
-            int cost = s.CostForNextLevel();
-            if (cost >= 0) candidates.Add(i);
+            if (s.level < s.maxLevel) candidates.Add(i);
         }
 
         if (candidates.Count == 0)
         {
             ShowToast("All stats are maxed.");
-            navigator.SetRows(new List<SelectableRow>());
+            if (navigator) navigator.SetRows(new List<SelectableRow>());
             return;
         }
 
-        // Pick random options
         int n = Mathf.Min(optionsToShow, candidates.Count);
         for (int k = 0; k < n; k++)
         {
@@ -150,7 +165,6 @@ public class VendingMachineStation : MonoBehaviour
             candidates.RemoveAt(r);
         }
 
-        // Build UI rows
         var selectables = new List<SelectableRow>();
         for (int i = 0; i < offeredSkillIndices.Count; i++)
         {
@@ -160,60 +174,56 @@ public class VendingMachineStation : MonoBehaviour
             var row = Instantiate(rowPrefab, contentParent);
             liveRows.Add(row);
 
+            
             row.Bind(s, skillIndex, pm.wallet);
 
             int localRowIndex = i;
-            row.selectable.Bind(() => TryBuy(localRowIndex), true);
+            row.selectable.Bind(() => TryFreeUpgrade(localRowIndex), true);
             selectables.Add(row.selectable);
         }
 
-        navigator.SetRows(selectables);
+        if (navigator) navigator.SetRows(selectables);
     }
 
-        void TryBuy(int rowIndex)
+    void TryFreeUpgrade(int rowIndex)
     {
-        if (usedThisVisit) { ShowToast("Already used this visit."); DarkenAllRows(true); return; }
-        if (!pm || pm.stats == null || pm.wallet == null) return;
+        if (usedThisVisit) return;
+        if (!pm || pm.stats == null) return;
         if (rowIndex < 0 || rowIndex >= offeredSkillIndices.Count) return;
 
         int skillIndex = offeredSkillIndices[rowIndex];
         var s = pm.stats.GetSkill(skillIndex);
         if (s == null) return;
 
-        int cost = s.CostForNextLevel();
-        if (cost < 0) { ShowToast("That stat is already maxed."); RefreshRows(); return; }
+        if (s.level >= s.maxLevel)
+        {
+            ShowToast("That stat is already maxed.");
+            return;
+        }
 
-        if (pm.wallet.amount < cost) { ShowToast("Not enough currency."); return; }
-
-        bool success = pm.stats.TryUpgradeSkill(skillIndex, pm.wallet);
-        if (!success) { ShowToast("Upgrade failed."); RefreshRows(); return; }
+        // Free upgrade 
+        s.currentMult += s.levelGrowth;
+        s.level++;
+        pm.stats.onSkillChanged?.Invoke(skillIndex, s);
 
         usedThisVisit = true;
-        ShowToast($"Upgraded: {s.displayName}!");
-        RefreshRows();
-        DarkenAllRows(true);
+        _lastResultMessage = $"Upgrade Used! Upgraded: {s.displayName} (Level {s.level}/{s.maxLevel})";
+        ShowToast("");
+
+        //swap to results
+        ShowResult(true);
+        if (resultText) resultText.text = _lastResultMessage;
+
+        if (navigator) navigator.SetRows(new List<SelectableRow>());
+        ClearRows();
 
         FindObjectOfType<ItemEffectsManager>()?.Reapply();
-
-        // AUTO EXIT AFTER PURCHASE:
-        Close();
     }
 
-    void RefreshRows()
+    void ShowResult(bool on)
     {
-        for (int i = 0; i < liveRows.Count; i++)
-        {
-            int skillIndex = offeredSkillIndices[i];
-            var s = pm.stats.GetSkill(skillIndex);
-            liveRows[i].Bind(s, skillIndex, pm.wallet);
-        }
-        UpdateCurrencyLabel();
-    }
-
-    void DarkenAllRows(bool darken)
-    {
-        foreach (var r in liveRows)
-            if (r) r.SetDimmed(darken);
+        if (listRoot) listRoot.SetActive(!on);
+        if (resultRoot) resultRoot.SetActive(on);
     }
 
     void ClearRows()
@@ -230,6 +240,7 @@ public class VendingMachineStation : MonoBehaviour
 
     void UpdateCurrencyLabel()
     {
+        
         if (!currencyText) return;
         var w = PlayerManager.instance ? PlayerManager.instance.wallet : null;
         currencyText.text = w ? $"$ {w.amount}" : "$ 0";
