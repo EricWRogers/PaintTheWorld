@@ -453,6 +453,13 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void HandleInput()
     {
+        if(isStunned){
+             moveInput = Vector2.zero;
+             m_jumpInputPressed = false;
+             m_dashInputPressed = false;
+             
+             return;
+        }
         moveInput = m_inputActions.Move.ReadValue<Vector2>();
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
@@ -510,7 +517,7 @@ public class PlayerMovement : PlayerMovmentEngine
             horizontalVel *= bankMult;
         }
 
-        if (inputDir.sqrMagnitude > 0.01f && !isDashing && state != MoveState.Stun)
+        if (inputDir.sqrMagnitude > 0.01f && !isDashing)
         {
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
@@ -529,13 +536,6 @@ public class PlayerMovement : PlayerMovmentEngine
                 horizontalVel = Vector3.Lerp(horizontalVel, Vector3.zero, (1f - frictionBoost) * baseDrag * Time.deltaTime);
             }
         }
-
-        //// Clamp “surface speed” (this now clamps along the ramp, not just flat XZ)
-        //if (horizontalVel.magnitude > m_maxSpeed && !isDashing)
-        //    horizontalVel = horizontalVel.normalized * m_maxSpeed;
-
-        // On walkable ground, velocity should live on the surface plane (includes vertical on ramps).
-        // In air, keep your original pattern (preserve Y separately).
 
         if (canWalk)
         {
