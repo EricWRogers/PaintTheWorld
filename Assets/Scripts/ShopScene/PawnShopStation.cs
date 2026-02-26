@@ -171,7 +171,7 @@ public class PawnShopStation : MonoBehaviour
         replacement.OnPurchased(pm.GetContext(), pm.inventory.GetCount(replacement.id));
 
         usedThisVisit = true;
-        _lastResultMessage = $"Swapped {chosen.displayName} → {replacement.displayName}";
+        _lastResultMessage = $"Swapped {chosen.displayName} for → {replacement.displayName}";
         ShowToast("");
 
         

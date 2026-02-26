@@ -25,6 +25,19 @@ public class KioskCameraController : MonoBehaviour
     {
         if (I != null && I != this) { Destroy(gameObject); return; }
         I = this;
+        ForceResetToPlayer();
+    }
+
+    void OnEnable()
+    {
+        ForceResetToPlayer();
+    }
+
+    public void ForceResetToPlayer()
+    {
+        if (gameplayCam) gameplayCam.Priority = gameplayPriority;
+        if (_activeKioskCam) _activeKioskCam.Priority = 0; 
+        _inKiosk = false;
     }
 
     public void EnterKiosk(CinemachineVirtualCameraBase kioskCam, Transform lookTarget, Action onEntered = null)
