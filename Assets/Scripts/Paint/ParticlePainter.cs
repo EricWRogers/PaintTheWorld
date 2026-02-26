@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SuperPupSystems.Helper;
 using UnityEngine.Events;
+using KinematicCharacterControler;
 
 public class ParticlePainter : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class ParticlePainter : MonoBehaviour
     {
         part = GetComponent<ParticleSystem>();
         collisionEvents = new List<ParticleCollisionEvent>();
-        selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+        UpdateColorFromManager();    
     }
 
     void OnParticleCollision(GameObject other)
@@ -52,26 +53,32 @@ public class ParticlePainter : MonoBehaviour
        void Update()
     {
         
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+       float scroll = Input.GetAxis("Mouse ScrollWheel");
+    
+        if (scroll != 0f)
         {
-            colorKey++;
-            if (colorKey > 2)
+            if (scroll > 0f)
             {
-                colorKey = 0;
+                colorKey++;
+                if (colorKey > 2) colorKey = 0;
             }
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-        }
+            else
+            {
+                colorKey--;
+                if (colorKey < 0) colorKey = 2;
+            }
+            UpdateColorFromManager();
+        }      
+    }
 
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+    public void UpdateColorFromManager()
+    {
+        if (PaintManager.instance != null)
         {
-            colorKey--;
-            if (colorKey < 0)
-            {
-                colorKey = 2;
-            }
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-        }
-
+            selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
         
+            var main = part.main;
+            main.startColor = selectedPaint;
+        }
     }
 }

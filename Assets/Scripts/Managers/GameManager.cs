@@ -43,7 +43,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private PlayerManager pm;
 
     public GameObject pauseMenu;
-
+    public float timePerStage;
     private bool gameplayStarted = false;
 
     public bool m_isPaused;
@@ -70,6 +70,14 @@ public class GameManager : SceneAwareSingleton<GameManager>
         
     }
 
+    void Update()
+    {
+        if (!m_isPaused && Cursor.lockState == CursorLockMode.None)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
 
     public void BeginGameplay()
     {
@@ -78,6 +86,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void PauseGame()
     {
+        m_isPaused = true;
         Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -87,6 +96,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     
     public void ResumeGame()
     {
+        m_isPaused = false;
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -107,6 +117,10 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         SceneManager.LoadScene(shopScene);
 
+    }
+    public void ResetTimer()
+    {
+        GetComponent<Timer>().StartTimer(timePerStage);
     }
 
     public void SaveGame()

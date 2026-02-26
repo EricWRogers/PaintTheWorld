@@ -266,7 +266,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float m_railDir = 1f;
     [SerializeField] private Transform m_railDetectionPoint;
     [Header("Paint Things")]
-    public GetPaintColor standPaintColor;
+    public PlayerPaint standPaintColor;
     private PaintColors colors;
     private float paintRotation;
     [SerializeField] private Transform paintPoint;
@@ -947,7 +947,10 @@ public class PlayerMovement : PlayerMovmentEngine
     }
 
 #endregion
-
+    public bool GetGrounded()
+    {
+        return groundedState.isGrounded;
+    }
     void OnDestroy()
     {
         m_inputActions.Disable();

@@ -34,11 +34,11 @@ public class TimerUI : MonoBehaviour
         if (showMilliseconds)
         {
             float fractional = (timeToDisplay * 100) % 100;
-            timerText.text = string.Format("{0}{1:00}:{2:00}:{3:00}", prefix, minutes, seconds, fractional);
+            timerText.text = string.Format("{1:00}:{2:00}:{3:00}", prefix, minutes, seconds, fractional);
         }
         else
         {
-            timerText.text = string.Format("{0}{1:00}:{2:00}", prefix, minutes, seconds);
+            timerText.text = string.Format("{1:00}:{2:00}", prefix, minutes, seconds);
         }
     }
 }

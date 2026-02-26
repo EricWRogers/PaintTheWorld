@@ -21,10 +21,10 @@ public class ParticlePainter2 : MonoBehaviour
 
     void Start()
     {
-        part = GetComponent<ParticleSystem>();
+        part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
         collisionEvents = new List<ParticleCollisionEvent>();
         UpdateColorFromManager();    
-        }
+    }
 
     void OnParticleCollision(GameObject other)
     {
@@ -72,10 +72,15 @@ void Update()
 
 public void UpdateColorFromManager()
 {
-    if (PaintManager.instance != null)
+    if (PaintManager.instance == null) return;
+
+     selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
+
+    if (part == null)
+        part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
+
+    if (part != null)
     {
-        selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-        
         var main = part.main;
         main.startColor = selectedPaint;
     }

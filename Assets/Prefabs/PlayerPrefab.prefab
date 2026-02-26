@@ -43,7 +43,6 @@ GameObject:
   - component: {fileID: 7236730804248690065}
   - component: {fileID: 7259321759212538560}
   - component: {fileID: 9104941373587113884}
-  - component: {fileID: 3895829346118088575}
   - component: {fileID: 2468560044189325215}
   - component: {fileID: 7293591459916750331}
   - component: {fileID: 6208220107138550641}
@@ -239,25 +238,6 @@ MonoBehaviour:
   standPaintColor: {fileID: 261299125623734721}
   paintPoint: {fileID: 6862090733697642947}
   state: 0
---- !u!114 &3895829346118088575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 045a2454fa5f7a44bbd4c27298c01826, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standingColor: {r: 0, g: 0, b: 0, a: 0}
-  ignoreMask:
-    serializedVersion: 2
-    m_Bits: 8
-  selectedPaint: {r: 0, g: 0, b: 0, a: 0}
-  colorKey: 0
-  playerModel: {fileID: 2100000, guid: ac75c23672e701d42a4a6611bb3be968, type: 2}
 --- !u!54 &2468560044189325215
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -477,6 +457,7 @@ MonoBehaviour:
   selectedPaint: {r: 0, g: 0, b: 0, a: 0}
   colorKey: 0
   playerModel: {fileID: 0}
+  waitTime: 0.2
 --- !u!1 &4681461756869485060
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,7 +488,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.20972613, y: -0.01586696, z: 0.003403876, w: 0.97762555}
+  m_LocalRotation: {x: 0.20972614, y: -0.015866783, z: 0.003403838, w: 0.9776255}
   m_LocalPosition: {x: 0.19999695, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -857,7 +838,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.20972614, y: -0.015866961, z: 0.0034038764, w: 0.9776255}
+  m_LocalRotation: {x: 0.20972614, y: -0.015866784, z: 0.0034038385, w: 0.9776255}
   m_LocalPosition: {x: 0.19999695, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
