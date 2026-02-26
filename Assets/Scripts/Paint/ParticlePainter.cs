@@ -22,7 +22,7 @@ public class ParticlePainter : MonoBehaviour
 
     void Start()
     {
-        part = GetComponent<ParticleSystem>();
+        part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
         collisionEvents = new List<ParticleCollisionEvent>();
         UpdateColorFromManager();    
     }
@@ -40,6 +40,7 @@ public class ParticlePainter : MonoBehaviour
                 Debug.Log("damaged enemy");
                 other.GetComponent<Health>().Damage(particleDamage);
             }
+
             if(p != null)
             {
                 Vector3 pos = collisionEvents[i].intersection;
@@ -49,27 +50,47 @@ public class ParticlePainter : MonoBehaviour
             
         }
     }
+
+void Update()
+{
+    float scroll = Input.GetAxis("Mouse ScrollWheel");
     
-       void Update()
+    if (scroll != 0f)
     {
-        if (PaintManager.instance != null)
+        if (scroll > 0f)
         {
-            selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
-        
-            var main = part.main;
-            main.startColor = selectedPaint;
+            colorKey++;
+            if (colorKey > 2) colorKey = 0;
         }
-          
+        else
+        {
+            colorKey--;
+            if (colorKey < 0) colorKey = 2;
+        }
+
+        UpdateColorFromManager();
+    }
+}
+
+public void UpdateColorFromManager()
+{
+    if (PaintManager.instance == null) return;
+
+     selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
+
+    if (part == null)
+        part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
+
+    if (part != null)
+    {
+        var main = part.main;
+        main.startColor = selectedPaint;
     }
 
-    public void UpdateColorFromManager()
-    {
-        if (PaintManager.instance != null)
+    ParticleSystemRenderer renderer = part.GetComponent<ParticleSystemRenderer>();
+    if (renderer != null)
         {
-            selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
-        
-            var main = part.main;
-            main.startColor = selectedPaint;
+        renderer.material.SetColor("_Paint_Color", selectedPaint);
         }
-    }
+}
 }

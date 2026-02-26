@@ -16,6 +16,10 @@ public class EnemyBullet : MonoBehaviour
                 {
                     PaintManager.instance.paint(tempPaintable, hit.ClosestPoint(transform.position), radius, 1f, 1f, Color.clear);
                 }
+                if(hit.transform.gameObject.TryGetComponent<PlayerMovement>(out PlayerMovement player))
+                {
+                    player.Stunned();
+                }
             }
         }
     }

@@ -21,7 +21,7 @@ public class PawnShopStation : MonoBehaviour
     public TMP_Text resultText;
 
     [Header("Camera")]
-    public CinemachineCamera kioskCam; 
+    public CinemachineCamera kioskCam;
     public Transform cameraTarget;
 
     [Header("Rules")]
@@ -31,7 +31,6 @@ public class PawnShopStation : MonoBehaviour
     private readonly List<PawnShopRow> liveRows = new();
     private readonly List<ItemSO> ownedUnique = new();
 
-  
     private string _lastResultMessage = "";
 
     void Awake()
@@ -50,22 +49,20 @@ public class PawnShopStation : MonoBehaviour
             return;
         }
 
-       
         KioskCameraController.I.EnterKiosk(kioskCam, cameraTarget);
 
-        panelRoot.SetActive(true);
-        navigator.active = true;
+        if (panelRoot) panelRoot.SetActive(true);
+        if (navigator) navigator.active = true;
 
         if (usedThisVisit)
         {
-            // Stay in result state 
             ShowResult(true);
             if (resultText) resultText.text = string.IsNullOrEmpty(_lastResultMessage)
                 ? "Swap already used this visit."
                 : _lastResultMessage;
 
-            
-            navigator.SetRows(new List<SelectableRow>());
+            ShowToast("");
+            if (navigator) navigator.SetRows(new List<SelectableRow>());
             return;
         }
 
@@ -81,7 +78,7 @@ public class PawnShopStation : MonoBehaviour
 
     public void Close()
     {
-        navigator.active = false;
+        if (navigator) navigator.active = false;
         if (panelRoot) panelRoot.SetActive(false);
         KioskCameraController.I.ExitKiosk();
     }
@@ -103,10 +100,14 @@ public class PawnShopStation : MonoBehaviour
 
         if (ownedUnique.Count == 0)
         {
+           
             ShowToast("No items in inventory to swap.");
-            navigator.SetRows(new List<SelectableRow>());
+            if (navigator) navigator.SetRows(new List<SelectableRow>());
             return;
         }
+
+       
+        ShowToast("");
 
         var selectables = new List<SelectableRow>();
 
@@ -125,7 +126,7 @@ public class PawnShopStation : MonoBehaviour
             selectables.Add(row.selectable);
         }
 
-        navigator.SetRows(selectables);
+        if (navigator) navigator.SetRows(selectables);
     }
 
     void TrySwap(int index)
@@ -171,13 +172,12 @@ public class PawnShopStation : MonoBehaviour
         replacement.OnPurchased(pm.GetContext(), pm.inventory.GetCount(replacement.id));
 
         usedThisVisit = true;
-        _lastResultMessage = $"Swapped {chosen.displayName} for → {replacement.displayName}";
+        _lastResultMessage = $"Swap Used! --- Swapped: {chosen.displayName} for {replacement.displayName}";
         ShowToast("");
 
-        
         ShowResult(true);
         if (resultText) resultText.text = _lastResultMessage;
-        navigator.SetRows(new List<SelectableRow>());
+        if (navigator) navigator.SetRows(new List<SelectableRow>());
     }
 
     void ShowResult(bool on)
