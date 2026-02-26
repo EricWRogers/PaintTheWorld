@@ -46,6 +46,7 @@ public class PawnShopStation : MonoBehaviour
     {
         pm = PlayerManager.instance;
         RefreshCurrency();
+        KioskCameraController.I.EnterKiosk(cameraTarget);
         if (!pm || pm.inventory == null)
         {
             ShowToast("PlayerManager/Inventory missing.");

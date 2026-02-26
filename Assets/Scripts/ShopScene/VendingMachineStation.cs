@@ -71,6 +71,7 @@ public class VendingMachineStation : MonoBehaviour
     public void Open()
     {
         pm = PlayerManager.instance;
+        KioskCameraController.I.EnterKiosk(cameraTarget);
         if (!pm || pm.stats == null || pm.wallet == null)
         {
             ShowToast("PlayerManager missing Stats/Wallet.");
