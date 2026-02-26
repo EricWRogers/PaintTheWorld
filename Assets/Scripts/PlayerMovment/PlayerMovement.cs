@@ -265,6 +265,12 @@ public class PlayerMovement : PlayerMovmentEngine
     public float grindSpeed;
     public float m_railDir = 1f;
     [SerializeField] private Transform m_railDetectionPoint;
+
+    [Header("Stun State")]
+    [ReadOnly] public bool isStunned = false;
+    public float stunDuration = 1f;
+    private float m_stunTimer = 0f;
+
     [Header("Paint Things")]
     public PlayerPaint standPaintColor;
     private PaintColors colors;
@@ -277,7 +283,8 @@ public class PlayerMovement : PlayerMovmentEngine
         Air,
         Dash,
         WallRide,
-        Grind
+        Grind,
+        Stun,
     };
 
     [SerializeField] private MoveState state;
@@ -321,9 +328,19 @@ public class PlayerMovement : PlayerMovmentEngine
         bool onGround = CheckIfGrounded(out RaycastHit _);
         HandleRotation();
 
-        // Decide state ONCE (and only call WallRun/HandleDashing/TryStartGrinding once)
         EvaluateTransitions(onGround);
         HandleAnimations();
+        if(state == MoveState.Stun)
+        {
+            m_stunTimer += Time.deltaTime;
+            if(m_stunTimer >= stunDuration)
+            {
+                m_stunTimer = 0f;
+                isStunned = false;
+                SetState(MoveState.Grounded);
+            }
+            return;
+        }
 
         // Tick current state
         switch (state)
@@ -346,6 +363,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
             case MoveState.Grounded:
             case MoveState.Air:
+            case MoveState.Stun:
+                HandleRegularMovement();
+                break;
+                
             default:
                 splineContainer = null;
                 HandleRegularMovement();
@@ -357,6 +378,11 @@ public class PlayerMovement : PlayerMovmentEngine
         // Grind > WallRide > Dash > Regular (Grounded/Air)
     private void EvaluateTransitions(bool onGround)
     {
+        if(isStunned)
+        {
+            SetState(MoveState.Stun);
+            return;
+        }
         // Grind
         if ((TryStartGrinding() || isGrinding) && m_timer > betweenRailTime)
         {
@@ -484,7 +510,7 @@ public class PlayerMovement : PlayerMovmentEngine
             horizontalVel *= bankMult;
         }
 
-        if (inputDir.sqrMagnitude > 0.01f && !isDashing)
+        if (inputDir.sqrMagnitude > 0.01f && !isDashing && state != MoveState.Stun)
         {
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
@@ -510,6 +536,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         // On walkable ground, velocity should live on the surface plane (includes vertical on ramps).
         // In air, keep your original pattern (preserve Y separately).
+
         if (canWalk)
         {
             m_velocity = horizontalVel;
@@ -890,6 +917,13 @@ public class PlayerMovement : PlayerMovmentEngine
         wasGrinding = false;
     }
 
+    public void Stunned()
+    {
+        isStunned = true;
+        m_stunTimer = 0f;
+
+    }
+
     // Finds the closest point on a spline container in WORLD space (handles container rotation).
     void FindClosestPointOnSpline(SplineContainer container, Vector3 worldPos, out float bestT, out float bestDistSqr)
     {
@@ -928,13 +962,7 @@ public class PlayerMovement : PlayerMovmentEngine
         return splineContainer.transform.TransformPoint(localP);
     }
 
-    public void ForceStop()
-    {
-        m_velocity = Vector3.zero;
-        moveInput = Vector2.zero;
-        isDashing = false;
-        isGrinding = false;
-    }
+
 
     Vector3 GetSplineTangentAt(Spline spline, float t, float deltaT = 0.001f)
     {
