@@ -21,28 +21,30 @@ public class PlayerPaint : GetPaintColor
             timer = 0f;
         }
             
-        if (PlayerManager.instance.playerInputs.Next.triggered)
+        if (PlayerManager.instance.playerInputs.Next.WasPressedThisFrame())
         {
+            Debug.Log("next color");
             colorKey++;
             if (colorKey > 2)
             {
                 colorKey = 0;
             }
             selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-            
+            Debug.Log("selected paint:  " + selectedPaint + " color key: " + colorKey);
             if(playerModel != null)
                 playerModel.SetColor("_EmissionColor", selectedPaint);
         }
 
-        if (PlayerManager.instance.playerInputs.Previous.triggered)
+        if (PlayerManager.instance.playerInputs.Previous.WasPressedThisFrame())
         {
+            Debug.Log("prev color");
             colorKey--;
             if (colorKey < 0)
             {
                 colorKey = 2;
             }
             selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
-
+            Debug.Log("selected paint:  " + selectedPaint + " color key: " + colorKey);
             if(playerModel != null)
                 playerModel.SetColor("_EmissionColor", selectedPaint);
         }
