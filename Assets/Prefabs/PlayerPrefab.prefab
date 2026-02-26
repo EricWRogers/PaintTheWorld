@@ -456,7 +456,7 @@ MonoBehaviour:
     m_Bits: 8
   selectedPaint: {r: 0, g: 0, b: 0, a: 0}
   colorKey: 0
-  playerModel: {fileID: 0}
+  playerModel: {fileID: 2100000, guid: ac75c23672e701d42a4a6611bb3be968, type: 2}
   waitTime: 0.2
 --- !u!1 &4681461756869485060
 GameObject:
@@ -488,8 +488,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.20972614, y: -0.015866783, z: 0.003403838, w: 0.9776255}
-  m_LocalPosition: {x: 0.19999695, y: 1.11, z: -6}
+  m_LocalRotation: {x: 0.13752022, y: -0.016073449, z: 0.0022319264, w: 0.99036604}
+  m_LocalPosition: {x: 0.19999695, y: 0.109999895, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -562,14 +562,14 @@ MonoBehaviour:
   Orbits:
     Top:
       Radius: 3
-      Height: 7
+      Height: 5
     Center:
       Radius: 6
-      Height: 3
+      Height: 2
     Bottom:
       Radius: 3
-      Height: 0
-    SplineCurvature: 0.58
+      Height: -0.5
+    SplineCurvature: 1
   RecenteringTarget: 2
   HorizontalAxis:
     Value: 0
@@ -838,8 +838,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.20972614, y: -0.015866784, z: 0.0034038385, w: 0.9776255}
-  m_LocalPosition: {x: 0.19999695, y: 1.11, z: -6}
+  m_LocalRotation: {x: 0.13752025, y: -0.01607345, z: 0.002231927, w: 0.99036604}
+  m_LocalPosition: {x: 0.19999695, y: 0.109999895, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
