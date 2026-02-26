@@ -52,23 +52,14 @@ public class ParticlePainter : MonoBehaviour
     
        void Update()
     {
-        
-       float scroll = Input.GetAxis("Mouse ScrollWheel");
-    
-        if (scroll != 0f)
+        if (PaintManager.instance != null)
         {
-            if (scroll > 0f)
-            {
-                colorKey++;
-                if (colorKey > 2) colorKey = 0;
-            }
-            else
-            {
-                colorKey--;
-                if (colorKey < 0) colorKey = 2;
-            }
-            UpdateColorFromManager();
-        }      
+            selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
+        
+            var main = part.main;
+            main.startColor = selectedPaint;
+        }
+          
     }
 
     public void UpdateColorFromManager()
