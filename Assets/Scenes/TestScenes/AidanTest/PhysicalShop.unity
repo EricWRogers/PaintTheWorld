@@ -362,6 +362,11 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &100663228 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+  m_PrefabInstance: {fileID: 370921210}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &110973403
 GameObject:
   m_ObjectHideFlags: 0
@@ -738,8 +743,11 @@ MonoBehaviour:
   gameplayCam: {fileID: 392887297}
   gameplayPriority: 10
   kioskPriority: 50
-  playerMovementScript: {fileID: 1411249269}
   hudRoot: {fileID: 514926860}
+  disableTheseScripts:
+  - {fileID: 1411249269}
+  disableTheseObjects:
+  - {fileID: 100663228}
 --- !u!4 &208755851
 Transform:
   m_ObjectHideFlags: 0
@@ -1721,7 +1729,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 987569071003229930, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1411249280}
   m_SourcePrefab: {fileID: 100100000, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
 --- !u!1 &372636354
 GameObject:
@@ -8235,12 +8246,33 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7259321759212538560, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
   m_PrefabInstance: {fileID: 370921210}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 100663228}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &1411249277 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 2468560044189325215, guid: aa843ef97c75ae2ba92d8ad3658af4f6, type: 3}
+  m_PrefabInstance: {fileID: 370921210}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1411249280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100663228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce50190b49ce63c45b75c47118b4c1e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  disableBehaviours: []
+  playerInput: {fileID: 1411249269}
+  rb: {fileID: 1411249277}
+  zeroVelocityOnLock: 1
 --- !u!1 &1415680668
 GameObject:
   m_ObjectHideFlags: 0
