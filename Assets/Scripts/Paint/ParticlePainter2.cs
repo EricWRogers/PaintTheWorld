@@ -39,12 +39,6 @@ public class ParticlePainter2 : MonoBehaviour
                 Debug.Log("damaged enemy");
                 other.GetComponent<Health>().Damage(particleDamage);
             }
-            if(p != null)
-            {
-                Vector3 pos = collisionEvents[i].intersection;
-                float radius = Random.Range(minRadius, maxRadius);
-                PaintManager.instance.paint(p, pos, radius, hardness, strength, selectedPaint);
-            }
             
         }
     }
@@ -84,5 +78,11 @@ public void UpdateColorFromManager()
         var main = part.main;
         main.startColor = selectedPaint;
     }
+
+    ParticleSystemRenderer renderer = part.GetComponent<ParticleSystemRenderer>();
+    if (renderer != null)
+        {
+        renderer.material.SetColor("_Paint_Color", selectedPaint);
+        }
 }
 }
