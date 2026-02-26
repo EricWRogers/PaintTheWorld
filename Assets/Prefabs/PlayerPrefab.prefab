@@ -235,6 +235,8 @@ MonoBehaviour:
   grindSpeed: 5
   m_railDir: 1
   m_railDetectionPoint: {fileID: 3256202762024098186}
+  isStunned: 0
+  stunDuration: 1
   standPaintColor: {fileID: 261299125623734721}
   paintPoint: {fileID: 6862090733697642947}
   state: 0
@@ -488,8 +490,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13752022, y: -0.016073449, z: 0.0022319264, w: 0.99036604}
-  m_LocalPosition: {x: 0.19999695, y: 0.109999895, z: -6}
+  m_LocalRotation: {x: 0.13787235, y: -0.03827614, z: 0.005332165, w: 0.9896958}
+  m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -550,7 +552,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetOffset: {x: 0.2, y: 0, z: 0}
+  TargetOffset: {x: 1.1, y: 0, z: 0}
   TrackerSettings:
     BindingMode: 4
     PositionDamping: {x: 0.5, y: 0.5, z: 0.5}
@@ -565,7 +567,7 @@ MonoBehaviour:
       Height: 5
     Center:
       Radius: 6
-      Height: 2
+      Height: 3
     Bottom:
       Radius: 3
       Height: -0.5
@@ -623,7 +625,7 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 0.3, z: 0}
+  TargetOffset: {x: 0.63, y: 1.29, z: 0}
   Damping: {x: 0.1, y: 0.1}
   Lookahead:
     Enabled: 0
@@ -838,8 +840,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13752025, y: -0.01607345, z: 0.002231927, w: 0.99036604}
-  m_LocalPosition: {x: 0.19999695, y: 0.109999895, z: -6}
+  m_LocalRotation: {x: 0.13787235, y: -0.038276136, z: 0.005332166, w: 0.9896958}
+  m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
