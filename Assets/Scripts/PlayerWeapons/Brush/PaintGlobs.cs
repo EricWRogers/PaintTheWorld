@@ -9,13 +9,17 @@ public class PaintGlobs : CollisonPainter
     [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;
 
 
-    public void Start()
+    public new void Start()
     {
         rb = GetComponent<Rigidbody>();
         if (rb != null) 
             rb.AddForce(transform.forward * launchForce, ForceMode.Impulse);
         Renderer blobRenderer = gameObject.GetComponent<Renderer>();
-        blobRenderer.material.SetColor("_BaseColor", PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint);
+        PlayerPaint paintComponent = PlayerManager.instance?.player?.GetComponent<PlayerPaint>();
+        if (blobRenderer != null && paintComponent != null)
+        {
+            blobRenderer.material.SetColor("_Paint_Color", paintComponent.selectedPaint);
+        }
     }
 
 
