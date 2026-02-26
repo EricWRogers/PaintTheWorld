@@ -735,12 +735,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb485bf7207269d408cab2cef53957c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kioskCam: {fileID: 281040197}
-  freeLookCam: {fileID: 392887297}
+  gameplayCam: {fileID: 392887297}
+  gameplayPriority: 10
+  kioskPriority: 50
   playerMovementScript: {fileID: 1411249269}
-  playerInput: {fileID: 1411249269}
-  gameplayActionMap: Player
-  kioskActionMap: UI
   hudRoot: {fileID: 514926860}
 --- !u!4 &208755851
 Transform:
@@ -2156,6 +2154,81 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cae808cb820be7946956ac66876a3cdd, type: 3}
+--- !u!1 &430941081
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 430941083}
+  - component: {fileID: 430941082}
+  m_Layer: 0
+  m_Name: Vending_Cam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &430941082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 430941081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Priority:
+    Enabled: 1
+    m_Value: 0
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 20241001
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 956827931}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 20
+    OrthographicSize: 5
+    NearClipPlane: 0.3
+    FarClipPlane: 1000
+    Dutch: 0
+    ModeOverride: 0
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
+--- !u!4 &430941083
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 430941081}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.067632005, y: 0.016256789, z: -0.0065021007, w: 0.9975567}
+  m_LocalPosition: {x: 17.87, y: 13.96, z: -32.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 7.767, y: 1.825, z: -0.623}
 --- !u!1 &449674440
 GameObject:
   m_ObjectHideFlags: 0
@@ -2570,9 +2643,9 @@ MonoBehaviour:
   rows: []
   index: 0
   active: 0
-  scrollRect: {fileID: 866287951}
-  content: {fileID: 1520334449}
-  viewport: {fileID: 971050492}
+  scrollRect: {fileID: 0}
+  content: {fileID: 0}
+  viewport: {fileID: 0}
 --- !u!114 &461238761
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3366,7 +3439,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 596933575}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 6.8}
+  m_LocalPosition: {x: 0, y: 0, z: 8.1}
   m_LocalScale: {x: 0.3703704, y: 0.26595742, z: 0.4366812}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3375,7 +3448,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -2.83, y: 13.285851}
+  m_AnchoredPosition: {x: -2.5, y: 12.88}
   m_SizeDelta: {x: 183.416, y: 125.1295}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &598581682
@@ -4392,6 +4465,7 @@ MonoBehaviour:
   navigator: {fileID: 461238760}
   toastText: {fileID: 1140294777}
   currencyText: {fileID: 0}
+  kioskCam: {fileID: 430941082}
   cameraTarget: {fileID: 956827931}
   usedThisVisit: 0
   optionsToShow: 3
@@ -4943,8 +5017,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.1511128, y: 1.873837, z: 2.1847625}
-  m_Center: {x: 8.029007, y: 0.43691733, z: -0.592383}
+  m_Size: {x: 3.1511126, y: 1.873837, z: 3.099981}
+  m_Center: {x: 8.029007, y: 0.43691733, z: -1.0499929}
 --- !u!114 &859159896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6457,7 +6531,7 @@ MonoBehaviour:
   m_text: Interaction Prompt
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6f7f7b737a0a055448f05025dad34c13, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 4377351051361614920, guid: 6f7f7b737a0a055448f05025dad34c13, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6522,7 +6596,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 7.7317734, z: 193.13583, w: 40.489754}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1090229733
@@ -8340,15 +8414,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelRoot: {fileID: 377532296}
+  listRoot: {fileID: 528806714}
+  resultRoot: {fileID: 776812184}
   contentParent: {fileID: 1934834058}
   rowPrefab: {fileID: 3870793456630739067, guid: ffc4f903341a3e8489e2a67c4fb2e6d0, type: 3}
   navigator: {fileID: 2088063909}
   toastText: {fileID: 111708658}
-  currencyText: {fileID: 157484147}
-  listRoot: {fileID: 528806714}
-  resultRoot: {fileID: 776812184}
   resultText: {fileID: 319501280}
-  emptyText: {fileID: 47555901}
+  kioskCam: {fileID: 281040197}
   cameraTarget: {fileID: 1259157633}
   usedThisVisit: 0
 --- !u!1 &1420119013
@@ -9289,7 +9362,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.77464867, y: -0.71650875}
+  m_AnchoredPosition: {x: -0.77464867, y: -1.2440939}
   m_SizeDelta: {x: 100, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1520334450
@@ -9324,7 +9397,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: 10
+  m_Spacing: 0.3
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -12297,3 +12370,4 @@ SceneRoots:
   - {fileID: 1278851008}
   - {fileID: 1399636784}
   - {fileID: 281040198}
+  - {fileID: 430941083}

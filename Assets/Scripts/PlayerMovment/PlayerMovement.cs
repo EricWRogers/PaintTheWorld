@@ -928,6 +928,14 @@ public class PlayerMovement : PlayerMovmentEngine
         return splineContainer.transform.TransformPoint(localP);
     }
 
+    public void ForceStop()
+    {
+        m_velocity = Vector3.zero;
+        moveInput = Vector2.zero;
+        isDashing = false;
+        isGrinding = false;
+    }
+
     Vector3 GetSplineTangentAt(Spline spline, float t, float deltaT = 0.001f)
     {
         // Numerical tangent: sample a small step forward (clamp) to approximate derivative.
