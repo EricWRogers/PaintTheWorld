@@ -23,8 +23,8 @@ namespace KinematicCharacterControler
 
         [Tooltip("Max Slope you can walk up")]
         public float maxSlopeAngle = 55f;
-        public float downSlopeMult = 1.01f;
-        public float upSlopeMult = 0.99f;
+        public float downSlopeMult = 1.1f;
+        public float upSlopeMult = 0.995f;
 
         private float m_anglePower = 0.5f;
 
@@ -80,19 +80,21 @@ namespace KinematicCharacterControler
                 float slopeAngle = Vector3.Angle(Vector3.up, hit.normal);
                 bool isGround = hit.normal.y > 0.01f && slopeAngle <= maxSlopeAngle;
 
-                /* //Wall Collision Stuff ot stop moemntum
+                 //Wall Collision Stuff ot stop moemntum
                 bool isWallLike = hit.normal.y < 0.1f || slopeAngle > maxSlopeAngle;
                 float intoWall = Vector3.Dot(m_velocity, hit.normal);
                 if (isWallLike && intoWall < -0.5f)
                 {
+                    float tempY = m_velocity.y;
                     Vector3 wallwardComponent = hit.normal * intoWall;
                     m_velocity -= wallwardComponent;
 
                     float headOnRatio = Mathf.Abs(intoWall) / (m_velocity.magnitude + 0.01f);
                     float tangentialDamping = Mathf.Lerp(1.0f, 0.4f, headOnRatio);
                     m_velocity *= tangentialDamping;
+                    m_velocity.y = tempY;
                 }
-                */
+                
                 // Handle overlaps / penetration
                 if (hit.distance <= skinWidth * 0.5f)
                 {

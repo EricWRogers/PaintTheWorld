@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SuperPupSystems.Helper;
 using UnityEngine.Events;
+using KinematicCharacterControler;
 
 public class ParticlePainter : MonoBehaviour
 {
@@ -21,9 +22,9 @@ public class ParticlePainter : MonoBehaviour
 
     void Start()
     {
-        part = GetComponent<ParticleSystem>();
+        part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
         collisionEvents = new List<ParticleCollisionEvent>();
-        selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+        UpdateColorFromManager();    
     }
 
     void OnParticleCollision(GameObject other)
@@ -39,6 +40,7 @@ public class ParticlePainter : MonoBehaviour
                 Debug.Log("damaged enemy");
                 other.GetComponent<Health>().Damage(particleDamage);
             }
+
             if(p != null)
             {
                 Vector3 pos = collisionEvents[i].intersection;
@@ -48,30 +50,47 @@ public class ParticlePainter : MonoBehaviour
             
         }
     }
+
+void Update()
+{
+    float scroll = Input.GetAxis("Mouse ScrollWheel");
     
-       void Update()
+    if (scroll != 0f)
     {
-        
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        if (scroll > 0f)
         {
             colorKey++;
-            if (colorKey > 2)
-            {
-                colorKey = 0;
-            }
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+            if (colorKey > 2) colorKey = 0;
         }
-
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        else
         {
             colorKey--;
-            if (colorKey < 0)
-            {
-                colorKey = 2;
-            }
-            selectedPaint = PaintManager.instance.GetComponent<PaintColors>().colorDict[colorKey];
+            if (colorKey < 0) colorKey = 2;
         }
 
-        
+        UpdateColorFromManager();
     }
+}
+
+public void UpdateColorFromManager()
+{
+    if (PaintManager.instance == null) return;
+
+     selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
+
+    if (part == null)
+        part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
+
+    if (part != null)
+    {
+        var main = part.main;
+        main.startColor = selectedPaint;
+    }
+
+    ParticleSystemRenderer renderer = part.GetComponent<ParticleSystemRenderer>();
+    if (renderer != null)
+        {
+        renderer.material.SetColor("_Paint_Color", selectedPaint);
+        }
+}
 }

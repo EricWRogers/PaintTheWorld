@@ -1,18 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI; 
+using Unity.Cinemachine;
 
 public class PawnShopStation : MonoBehaviour
 {
     [Header("UI")]
     public GameObject panelRoot;
+
+    [Tooltip("List container root (the screen that shows rows).")]
+    public GameObject listRoot;
+
+    [Tooltip("Result container root (the screen shown after swap).")]
+    public GameObject resultRoot;
+
     public RectTransform contentParent;
     public PawnShopRow rowPrefab;
     public KioskListNavigator navigator;
     public TMP_Text toastText;
+    public TMP_Text resultText;
 
     [Header("Camera")]
+    public CinemachineCamera kioskCam;
     public Transform cameraTarget;
 
     [Header("Rules")]
@@ -22,10 +31,13 @@ public class PawnShopStation : MonoBehaviour
     private readonly List<PawnShopRow> liveRows = new();
     private readonly List<ItemSO> ownedUnique = new();
 
+    private string _lastResultMessage = "";
+
     void Awake()
     {
         if (panelRoot) panelRoot.SetActive(false);
         ShowToast("");
+        ShowResult(false);
     }
 
     public void Open()
@@ -37,18 +49,25 @@ public class PawnShopStation : MonoBehaviour
             return;
         }
 
+        KioskCameraController.I.EnterKiosk(kioskCam, cameraTarget);
+
+        if (panelRoot) panelRoot.SetActive(true);
+        if (navigator) navigator.active = true;
+
         if (usedThisVisit)
         {
-            ShowToast("Pawn shop already used this visit.");
+            ShowResult(true);
+            if (resultText) resultText.text = string.IsNullOrEmpty(_lastResultMessage)
+                ? "Swap already used this visit."
+                : _lastResultMessage;
+
+            ShowToast("");
+            if (navigator) navigator.SetRows(new List<SelectableRow>());
             return;
         }
 
-        KioskCameraController.I.EnterKiosk(cameraTarget, () =>
-        {
-            panelRoot.SetActive(true);
-            navigator.active = true;
-            BuildList();
-        });
+        ShowResult(false);
+        BuildList();
     }
 
     void Update()
@@ -59,7 +78,7 @@ public class PawnShopStation : MonoBehaviour
 
     public void Close()
     {
-        navigator.active = false;
+        if (navigator) navigator.active = false;
         if (panelRoot) panelRoot.SetActive(false);
         KioskCameraController.I.ExitKiosk();
     }
@@ -70,39 +89,31 @@ public class PawnShopStation : MonoBehaviour
         ownedUnique.Clear();
         ShowToast("");
 
-        if (!pm || pm.inventory == null)
-        {
-            ShowToast("Inventory missing.");
-            navigator.SetRows(new List<SelectableRow>());
-            return;
-        }
-
-        
         foreach (var stack in pm.inventory.items)
         {
             if (stack == null || stack.item == null) continue;
             if (stack.count <= 0) continue;
 
-           
-            bool exists = ownedUnique.Exists(x => x && x.id == stack.item.id);
+            bool exists = ownedUnique.Exists(x => x.id == stack.item.id);
             if (!exists) ownedUnique.Add(stack.item);
         }
 
         if (ownedUnique.Count == 0)
         {
+           
             ShowToast("No items in inventory to swap.");
-            navigator.SetRows(new List<SelectableRow>());
-            ForceLayout();
+            if (navigator) navigator.SetRows(new List<SelectableRow>());
             return;
         }
+
+       
+        ShowToast("");
 
         var selectables = new List<SelectableRow>();
 
         for (int i = 0; i < ownedUnique.Count; i++)
         {
             var item = ownedUnique[i];
-            if (!item) continue;
-
             int count = pm.inventory.GetCount(item.id);
 
             var row = Instantiate(rowPrefab, contentParent);
@@ -115,22 +126,7 @@ public class PawnShopStation : MonoBehaviour
             selectables.Add(row.selectable);
         }
 
-        navigator.SetRows(selectables);
-
-        
-        ForceLayout();
-    }
-
-    void ForceLayout()
-    {
-        if (!contentParent) return;
-
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
-
-        
-        var parent = contentParent.parent as RectTransform;
-        if (parent) LayoutRebuilder.ForceRebuildLayoutImmediate(parent);
+        if (navigator) navigator.SetRows(selectables);
     }
 
     void TrySwap(int index)
@@ -144,7 +140,7 @@ public class PawnShopStation : MonoBehaviour
         var db = ItemDatabase.Load();
         if (!db)
         {
-            ShowToast("ItemDatabase not found.");
+            ShowToast("ItemDatabase not found (Resources path issue).");
             return;
         }
 
@@ -168,7 +164,7 @@ public class PawnShopStation : MonoBehaviour
         bool removed = pm.inventory.Consume(chosen.id, 1);
         if (!removed)
         {
-            ShowToast("Could not remove item.");
+            ShowToast("Could not remove item from inventory.");
             return;
         }
 
@@ -176,9 +172,18 @@ public class PawnShopStation : MonoBehaviour
         replacement.OnPurchased(pm.GetContext(), pm.inventory.GetCount(replacement.id));
 
         usedThisVisit = true;
-        ShowToast($"Swapped {chosen.displayName} → {replacement.displayName}");
+        _lastResultMessage = $"Swap Used! --- Swapped: {chosen.displayName} for {replacement.displayName}";
+        ShowToast("");
 
-        BuildList();
+        ShowResult(true);
+        if (resultText) resultText.text = _lastResultMessage;
+        if (navigator) navigator.SetRows(new List<SelectableRow>());
+    }
+
+    void ShowResult(bool on)
+    {
+        if (listRoot) listRoot.SetActive(!on);
+        if (resultRoot) resultRoot.SetActive(on);
     }
 
     void ClearRows()

@@ -15,11 +15,11 @@ public class SkillData
     public int level = 0;
     public int maxLevel = 5;
     public float levelGrowth = .5f;
-    public float currentMult = 1;
+    public float currentMult = 0;
 
     [Header("Cost Curve")]
-    public int baseCost = 50;               // cost at level 0 to 1
-    public float costGrowth = 1.5f;         // multiplicated growth per level
+    public int baseCost = 0;               // cost at level 0 to 1
+    public float costGrowth = 0;         // multiplicated growth per level
 
     public int CostForNextLevel()
     {
@@ -36,11 +36,11 @@ public class PlayerStats : MonoBehaviour
     [Header("Skills")]
     public List<SkillData> skills = new List<SkillData>()
     {
-        new SkillData{ id="Health", displayName="Health", description="Max HP up.", baseCost=50, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
-        new SkillData{ id="Damage", displayName="Damage", description="Attack power up.", baseCost=60, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
-        new SkillData{ id="Radius", displayName="Radius", description="Increase paint raddius", baseCost=55, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
-        new SkillData{ id="Move Speed", displayName="Move Speed", description="Move faster.", baseCost=45, costGrowth=1.6f, levelGrowth = .5f, maxLevel=6 },
-        new SkillData{ id="Attack Speed", displayName="Attack Speed", description="Attack faster.", baseCost=45, costGrowth=1.6f, levelGrowth = .5f, maxLevel=6 },
+        new SkillData{ id="Health", displayName="Health", description="Max HP up.", baseCost=0, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
+        new SkillData{ id="Damage", displayName="Damage", description="Attack power up.", baseCost=0, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
+        new SkillData{ id="Radius", displayName="Radius", description="Increase paint raddius", baseCost=0, costGrowth=1.5f, levelGrowth = .5f, maxLevel=5 },
+        new SkillData{ id="Move Speed", displayName="Move Speed", description="Move faster.", baseCost=0, costGrowth=1.6f, levelGrowth = .5f, maxLevel=6 },
+        new SkillData{ id="Attack Speed", displayName="Attack Speed", description="Attack faster.", baseCost=0, costGrowth=1.6f, levelGrowth = .5f, maxLevel=6 },
     };
 
     [Header("Events")]
