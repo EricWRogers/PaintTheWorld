@@ -6,37 +6,52 @@ public class PaintGlobs : CollisonPainter
 {
     public float launchForce = 15f;
     private Rigidbody rb;
-    [HideInInspector] public float damageMult => PlayerManager.instance.stats.skills[1].currentMult;
-
+    private Color blobColor = Color.magenta;
 
     public new void Start()
     {
         rb = GetComponent<Rigidbody>();
         if (rb != null) 
             rb.AddForce(transform.forward * launchForce, ForceMode.Impulse);
-        Renderer blobRenderer = gameObject.GetComponent<Renderer>();
-        PlayerPaint paintComponent = PlayerManager.instance?.player?.GetComponent<PlayerPaint>();
-        if (blobRenderer != null && paintComponent != null)
+
+        var player = PlayerManager.instance?.player;
+        if (player != null)
         {
-            blobRenderer.material.SetColor("_Paint_Color", paintComponent.selectedPaint);
+            var paintComp = player.GetComponent<PlayerPaint>();
+            if (paintComp != null)
+            {
+                InitializeGlob(paintComp.selectedPaint);
+            }
         }
     }
 
+    public void InitializeGlob(Color color)
+    {
+        blobColor = color;
+        Renderer blobRenderer = GetComponent<Renderer>();
+        if (blobRenderer != null)
+        {
+            blobRenderer.material.SetColor("_Paint_Color", blobColor);
+        }
+    }
 
     new void OnCollisionStay(Collision other)
     {
-        if (Physics.OverlapSphere(transform.position, radius).Length > 0)
+        Collider[] hits = Physics.OverlapSphere(transform.position, 0.5f);
+
+        foreach (var hit in hits)
         {
-           
-            Collider[] hits = Physics.OverlapSphere(transform.position, radius);
-            foreach (Collider hit in hits)
+            var p = hit.GetComponent<Paintable>();
+            if (!p) continue;
+
+            Vector3 pos = hit.ClosestPoint(transform.position);
+            
+            if (PaintManager.instance != null)
             {
-                Paint(other);
+                PaintManager.instance.paint(p, pos, 1f, hardness, strength, blobColor);
             }
-            Destroy(gameObject);
         }
 
         Destroy(gameObject);
-
     }
 }
