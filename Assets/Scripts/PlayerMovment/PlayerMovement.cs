@@ -749,7 +749,7 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         hit = new RaycastHit();
 
-        for (int i = -40; i <= 40; i += 5)
+        for (int i = -20; i <= 20; i += 5)
         {
             if (Physics.Raycast(transform.position, -transform.right, out hit, wallCheckDistance, wallLayers))
             {
@@ -757,7 +757,7 @@ public class PlayerMovement : PlayerMovmentEngine
                 return true;
             }
         }
-        for(int i = -40; i <= 40; i+=5)
+        for(int i = -20; i <= 20; i+=5)
         {
             if(Physics.Raycast(transform.position, transform.right, out hit, wallCheckDistance, wallLayers))
             {
