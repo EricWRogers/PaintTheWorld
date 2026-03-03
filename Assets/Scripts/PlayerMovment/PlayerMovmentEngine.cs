@@ -85,12 +85,14 @@ namespace KinematicCharacterControler
                 float intoWall = Vector3.Dot(m_velocity, hit.normal);
                 if (isWallLike && intoWall < -0.5f)
                 {
+                    float tempY = m_velocity.y;
                     Vector3 wallwardComponent = hit.normal * intoWall;
                     m_velocity -= wallwardComponent;
 
                     float headOnRatio = Mathf.Abs(intoWall) / (m_velocity.magnitude + 0.01f);
                     float tangentialDamping = Mathf.Lerp(1.0f, 0.4f, headOnRatio);
                     m_velocity *= tangentialDamping;
+                    m_velocity.y = tempY;
                 }
                 
                 // Handle overlaps / penetration

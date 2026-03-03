@@ -490,7 +490,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787235, y: -0.03827614, z: 0.005332165, w: 0.9896958}
+  m_LocalRotation: {x: 0.13787235, y: -0.03827588, z: 0.005332128, w: 0.9896958}
   m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -788,6 +788,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1012839890602641465}
+  - component: {fileID: 5602813722803604095}
   m_Layer: 3
   m_Name: WeaponSlot
   m_TagString: Untagged
@@ -812,6 +813,25 @@ Transform:
   - {fileID: 4345780061444179016}
   m_Father: {fileID: 1044665414035860105}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5602813722803604095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6164599180086905048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22cf3747b27e7ad44935faa538e6804d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentAmmo: 100
+  maxAmmo: 200
+  ammoPerAttack: 5
+  playerAnimator: {fileID: 1287085888650082145}
+  comboResetTime: 3
+  rightParticles: {fileID: 0}
+  leftParticles: {fileID: 0}
 --- !u!1 &6666069499506963668
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,8 +860,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787235, y: -0.038276136, z: 0.005332166, w: 0.9896958}
-  m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
+  m_LocalRotation: {x: 0.13787235, y: -0.03827588, z: 0.0053321286, w: 0.9896958}
+  m_LocalPosition: {x: 1.1000001, y: 1.1100003, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1233,6 +1253,30 @@ PrefabInstance:
       propertyPath: InitialModule.startSpeed.minScalar
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startColor.maxGradient.key0.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startColor.maxGradient.key0.g
+      value: 0.8696006
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startColor.maxGradient.key1.b
+      value: 0.9582996
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startColor.maxGradient.key1.g
+      value: 0.0056602955
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startColor.maxGradient.m_Mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1332959833948284176, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: InitialModule.startColor.maxGradient.m_ColorSpace
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1684102126831198128, guid: c277506d00b8a174388c66121ddb284f, type: 3}
       propertyPath: m_Name
       value: SprayCanLine
@@ -1285,15 +1329,51 @@ PrefabInstance:
       propertyPath: minRadius
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6318639734975404829, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.745
+      objectReference: {fileID: 0}
     - target: {fileID: 7695641675345245908, guid: c277506d00b8a174388c66121ddb284f, type: 3}
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 6093725058108005885}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3485189506363705043, guid: c277506d00b8a174388c66121ddb284f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 598399166834057390, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 541477066397960344}
   m_SourcePrefab: {fileID: 100100000, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+--- !u!1 &6554613635154884649 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 598399166834057390, guid: c277506d00b8a174388c66121ddb284f, type: 3}
+  m_PrefabInstance: {fileID: 5961458040751134855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &541477066397960344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6554613635154884649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c9398d938977c428c90e20abbc30f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectedPaint: {r: 0, g: 0, b: 0, a: 0}
+  colorKey: 0
+  minRadius: 0.05
+  maxRadius: 1
+  strength: 1
+  hardness: 1
+  particleDamage: 0
+  hitEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  tagToHit: 
 --- !u!4 &9023541363973745986 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3423111266358326725, guid: c277506d00b8a174388c66121ddb284f, type: 3}
