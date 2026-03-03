@@ -31,11 +31,9 @@ public class PaintGlobs : CollisonPainter
             Collider[] hits = Physics.OverlapSphere(transform.position, radius);
             foreach (Collider hit in hits)
             {
-               BillboardRenderer billboard = hit.GetComponent<BillboardRenderer>();
-               if (billboard != null)               {
-                   billboard.material.SetColor("_Paint_Color", PlayerManager.instance.player.GetComponent<PlayerPaint>().selectedPaint);
-               }
+                Paint(other);
             }
+            Destroy(gameObject);
         }
 
         Destroy(gameObject);
