@@ -83,14 +83,14 @@ namespace KinematicCharacterControler
                  //Wall Collision Stuff ot stop moemntum
                 bool isWallLike = hit.normal.y < 0.1f || slopeAngle > maxSlopeAngle;
                 float intoWall = Vector3.Dot(m_velocity, hit.normal);
-                if (isWallLike && intoWall < -0.5f)
+                if (isWallLike && intoWall < -0.6f)
                 {
                     float tempY = m_velocity.y;
                     Vector3 wallwardComponent = hit.normal * intoWall;
                     m_velocity -= wallwardComponent;
 
                     float headOnRatio = Mathf.Abs(intoWall) / (m_velocity.magnitude + 0.01f);
-                    float tangentialDamping = Mathf.Lerp(1.0f, 0.4f, headOnRatio);
+                    float tangentialDamping = Mathf.Lerp(1.0f, 0.6f, headOnRatio);
                     m_velocity *= tangentialDamping;
                     m_velocity.y = tempY;
                 }
@@ -126,7 +126,7 @@ namespace KinematicCharacterControler
                 if (remaining.sqrMagnitude < 0.000001f)
                     break;
 
-                // -------- SLOPE / MOMENTUM LOGIC (only for ground) --------
+                // Slope logic for ground
                 Vector3 projected = Vector3.ProjectOnPlane(remaining, n);
                 if (projected.sqrMagnitude > 0.000001f)
                 {

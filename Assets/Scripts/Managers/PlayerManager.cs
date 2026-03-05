@@ -29,7 +29,8 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public GameObject healAuraPrefab;
     public float globSpeed = 18f;
     public int maxJumpCount = 1;
-
+    public int timeToHeal = 5;
+    private float healTimer = 0f;
     public PlayerContext GetContext() => new PlayerContext
     {
         player = player ? player.transform : null,
@@ -52,7 +53,9 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     void Start()
     {
+        health.hurt.AddListener(TookDamage);
     }
+
 
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -82,6 +85,20 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             GameManager.instance.ResumeGame();
             GameManager.instance.pauseMenu.SetActive(false);
         }
+        
+        if(health.currentHealth < health.maxHealth)
+        {
+            healTimer += Time.deltaTime;
+            if(healTimer >= timeToHeal)
+            {
+                health.Heal(1);
+                healTimer = 0f;
+            }
+        }
+        else
+        {
+            healTimer = 0f;
+        }
     }
 
     public void RegisterPlayer(GameObject newPlayer)
@@ -110,6 +127,17 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             RegisterPlayer(player);
 
         IsReady = true;
+    }
+
+    public void Stunned()
+    {
+        player.GetComponent<PlayerMovement>().Stunned();
+        health.Heal(health.maxHealth);
+    }
+
+    private void TookDamage()
+    {
+        healTimer = 0f;
     }
 
     new void OnDestroy()

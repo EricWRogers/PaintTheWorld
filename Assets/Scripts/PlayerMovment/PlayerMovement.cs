@@ -1,13 +1,6 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
-using Unity.VisualScripting;
-
-
-
-
-
-
 
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
@@ -226,7 +219,6 @@ public class PlayerMovement : PlayerMovmentEngine
 
     [Tooltip("Time till you get the full Jump Hold Mult to the jump")]
     public float maxJumpHoldTime = 2f;
-
     private bool m_jumpHoldActive = false;
     private float m_jumpHoldTimer = 0f;
 
@@ -341,6 +333,7 @@ public class PlayerMovement : PlayerMovmentEngine
             }
             return;
         }
+        m_dashTime+= Time.deltaTime;
 
         // Tick current state
         switch (state)
@@ -813,7 +806,7 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 closest = FindClosestPointOnSpline(out float progress);
         railProgress = progress;
 
-        grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
+        grindSpeed = Mathf.Max(m_velocity.magnitude + grindExitForce, minGrindSpeed + grindExitForce);
 
 
         Vector3 tangent = GetSplineTangentAt(splineRef, railProgress);
@@ -830,7 +823,7 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 snapDelta = worldSplinePos - transform.position;
         transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
 
-      m_velocity = tangent.normalized * grindSpeed * m_railDir;
+      m_velocity = tangent.normalized * grindSpeed * m_railDir ;
 
 
     }
