@@ -188,7 +188,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     public bool isDashing = false;
     public float dashDuration = 0.5f;
-    public float dashCooldown = 2f;
+    public float dashCooldown = 1f;
     private float m_dashTime = 0f;
     private float m_timeSinceLastDash = 0f;
     public bool m_dashInputPressed = false;
@@ -325,6 +325,7 @@ public class PlayerMovement : PlayerMovmentEngine
         if(state == MoveState.Stun)
         {
             m_stunTimer += Time.deltaTime;
+            HandleRegularMovement();
             if(m_stunTimer >= stunDuration)
             {
                 m_stunTimer = 0f;
@@ -393,8 +394,7 @@ public class PlayerMovement : PlayerMovmentEngine
         // Dash
         if (HandleDashing())
         {
-            SetState(MoveState.Dash);
-            return;
+            
         }
 
         // Regular base locomotion
@@ -450,13 +450,13 @@ public class PlayerMovement : PlayerMovmentEngine
              moveInput = Vector2.zero;
              m_jumpInputPressed = false;
              m_dashInputPressed = false;
-             
-             return;
+            return;
         }
-        moveInput = m_inputActions.Move.ReadValue<Vector2>();
+        else
+            moveInput = m_inputActions.Move.ReadValue<Vector2>();
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
-        // Buffer based on a *press*, not on being held (prevents auto-jumping / supports variable jump height cleanly)
+        
         if (m_inputActions.Jump.WasPressedThisFrame())
             jumpInputElapsed = 0.0f;
         else
@@ -467,9 +467,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void HandleRegularMovement()
     {
+        
         currSpeed = speed * m_currColorMult;
 
-        // Raw input direction (we’ll re-project it onto the slope when grounded)
+        
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
         bool onGround = CheckIfGrounded(out RaycastHit groundHit);
@@ -478,7 +479,7 @@ public class PlayerMovement : PlayerMovmentEngine
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
 
       
-        // banking/slope math (might not work)
+        //Banking SLope Math
         Vector3 groundNormal = canWalk ? groundHit.normal : Vector3.up;
 
         if (canWalk)
@@ -510,7 +511,8 @@ public class PlayerMovement : PlayerMovmentEngine
             horizontalVel *= bankMult;
         }
 
-        if (inputDir.sqrMagnitude > 0.01f && !isDashing)
+
+        if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f)
         {
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
