@@ -617,6 +617,7 @@ public class PlayerMovement : PlayerMovmentEngine
            if(moveInput.sqrMagnitude > 0.01f)
             {
                 dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+                GameEvents.PlayerDodged?.Invoke();
             }
 
             
