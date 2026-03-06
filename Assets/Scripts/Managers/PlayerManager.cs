@@ -132,7 +132,8 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public void Stunned()
     {
         player.GetComponent<PlayerMovement>().Stunned();
-        health.Heal(health.maxHealth);
+        health.Revive(health.maxHealth);
+
     }
 
     private void TookDamage()
