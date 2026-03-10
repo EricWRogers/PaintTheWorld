@@ -547,6 +547,12 @@ public class PlayerMovement : PlayerMovmentEngine
             }
         }
 
+        // Enforce max speed cap
+        if (horizontalVel.magnitude > m_maxSpeed)
+        {
+            horizontalVel = horizontalVel.normalized * m_maxSpeed;
+        }
+
         if (canWalk)
         {
             m_velocity = horizontalVel;
