@@ -269,6 +269,8 @@ public class PlayerMovement : PlayerMovmentEngine
     private float paintRotation;
     [SerializeField] private Transform paintPoint;
 
+    private bool _wasGroundedLastFrame = true;
+
     private enum MoveState
     {
         Grounded,
@@ -368,6 +370,7 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         m_timer += Time.deltaTime;
+        CheckLandingEvent();
     }
         // Grind > WallRide > Dash > Regular (Grounded/Air)
     private void EvaluateTransitions(bool onGround)
@@ -1021,6 +1024,20 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool GetGrounded()
     {
         return groundedState.isGrounded;
+    }
+
+    void CheckLandingEvent()
+    {
+        bool groundedNow = groundedState.isGrounded;
+
+        
+        if (!_wasGroundedLastFrame && groundedNow)
+        {
+            GameEvents.PlayerLanded?.Invoke();
+            Debug.Log("[Landing] PlayerLanded invoked");
+        }
+
+        _wasGroundedLastFrame = groundedNow;
     }
     void OnDestroy()
     {
