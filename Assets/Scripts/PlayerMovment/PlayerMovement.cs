@@ -604,34 +604,42 @@ public class PlayerMovement : PlayerMovmentEngine
     #region Dashing/Dodge
     bool HandleDashing()
     {
-        bool canDash = m_timeSinceLastDash >= dashCooldown;
-        
-
-        if(canDash && m_dashInputPressed)
+        //I changed the logic here a little to fire a game event, but it should work the same, -Aidan
+        // keep dashing for duration
+        if (isDashing)
         {
-           if(moveInput.sqrMagnitude > 0.01f)
+            m_dashTime += Time.deltaTime;
+            if (m_dashTime >= dashDuration)
             {
-                dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
-                GameEvents.PlayerDodged?.Invoke();
+                isDashing = false;
             }
+            return isDashing;
+        }
 
-            
-            isDashing = false;
-            
+        bool canDash = m_timeSinceLastDash >= dashCooldown;
+
+        if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f)
+        {
+            dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+
+            // start dash
+            isDashing = true;
             m_dashTime = 0f;
             m_timeSinceLastDash = 0f;
-            m_dashStartSpeed = m_velocity.magnitude;
 
-            m_velocity = dashDir * (dashSpeed + m_dashStartSpeed);
+            float startSpeed = m_velocity.magnitude;
+            m_velocity = dashDir * (dashSpeed + startSpeed);
 
-            
-            
+            // fire dashing event
+            GameEvents.PlayerDodged?.Invoke();
+
+            return true;
         }
-      
-        isDashing = false;
-        return isDashing;
-    }
 
+        // not dashing 
+        m_timeSinceLastDash += Time.deltaTime;
+        return false;
+    }
 
     #endregion
     
