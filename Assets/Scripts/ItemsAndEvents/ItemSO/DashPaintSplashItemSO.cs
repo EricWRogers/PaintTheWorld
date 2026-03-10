@@ -3,41 +3,43 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Items/Dash Paint Splash")]
 public class DashPaintSplashItemSO : ItemSO
 {
-    [Header("Splash Tuning")]
-    public float baseRadius = 1.5f;
-    public float radiusPerStack = 0.75f;
+    [Header("Splash Settings")]
+    public float baseRadius = 1.2f;
+    public float radiusPerStack = 0.5f;
     public float hardness = 1f;
     public float strength = 1f;
 
-    [Header("Optional VFX")]
-    public GameObject splashVfxPrefab;
+    [Header("Ground Detection")]
+    public float rayStartOffset = 0.75f;
+    public float rayDistance = 3f;
+    public LayerMask paintMask = ~0;
+
+    [Header("Sampling")]
+    public int rings = 2;
+    public int samplesPerRing = 8;
+    public float minStampRadius = 0.45f;
+    public float stampRadiusMultiplier = 0.35f;
 
     public override void OnDodged(PlayerContext ctx, int count)
     {
-        if (ctx.player == null) return;
+        if (!ctx.player) return;
 
-        
-        float r = baseRadius + radiusPerStack * (Mathf.Max(1, count) - 1);
+        var emitter = ctx.player.GetComponent<DashSplashEmitter>();
+        if (!emitter)
+            emitter = ctx.player.gameObject.AddComponent<DashSplashEmitter>();
 
-        
-        Vector3 center = ctx.player.position;
+        emitter.baseRadius = baseRadius;
+        emitter.radiusPerStack = radiusPerStack;
+        emitter.hardness = hardness;
+        emitter.strength = strength;
+        emitter.rayStartOffset = rayStartOffset;
+        emitter.rayDistance = rayDistance;
+        emitter.paintMask = paintMask;
+        emitter.rings = rings;
+        emitter.samplesPerRing = samplesPerRing;
+        emitter.minStampRadius = minStampRadius;
+        emitter.stampRadiusMultiplier = stampRadiusMultiplier;
 
-        
-        Color color = PaintBurstUtil.CurrentPlayerPaintColor(ctx.player.gameObject);
-
-        // paint
-        PaintBurstUtil.PaintCircle(center, r, color, hardness, strength);
-
-        
-        if (splashVfxPrefab != null)
-        {
-            var vfx = GameObject.Instantiate(splashVfxPrefab, center, Quaternion.identity);
-
-            
-            var painter = vfx.GetComponentInChildren<ParticlePainter>();
-            if (painter != null) painter.UpdateColorFromManager();
-
-            GameObject.Destroy(vfx, 2.0f);
-        }
+        emitter.EmitBurst(count);
     }
 }
