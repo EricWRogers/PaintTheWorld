@@ -307,7 +307,7 @@ public class PlayerMovement : PlayerMovmentEngine
         HandleInput();
         HandlePaintColor();
         HandleFOV();
-        m_timeSinceLastDash += Time.deltaTime;
+        // Note: m_timeSinceLastDash is now only incremented in HandleDashing() to avoid double-incrementing
         if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
 
     }
@@ -334,7 +334,7 @@ public class PlayerMovement : PlayerMovmentEngine
             }
             return;
         }
-        m_dashTime+= Time.deltaTime;
+        
 
         // Tick current state
         switch (state)
@@ -406,6 +406,7 @@ public class PlayerMovement : PlayerMovmentEngine
         if (state == next) return;
         prevState = state;
         state = next;
+        Debug.Log($"[STATE] Transitioning from {prevState} to {next}, isDashing: {isDashing}");
     }
 
     // programing animations -- by cleo
@@ -454,6 +455,10 @@ public class PlayerMovement : PlayerMovmentEngine
         }
         else
             moveInput = m_inputActions.Move.ReadValue<Vector2>();
+
+        // Debug logging for diagonal movement issue
+        if (moveInput.sqrMagnitude > 0.1f)
+            Debug.Log($"[INPUT] moveInput: ({moveInput.x:F3}, {moveInput.y:F3}), magnitude: {moveInput.magnitude:F3}");
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
         
@@ -517,11 +522,21 @@ public class PlayerMovement : PlayerMovmentEngine
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
 
+            // Debug logging
+            Debug.Log($"[MOVEMENT] inputDir: ({inputDir.x:F3}, {inputDir.y:F3}, {inputDir.z:F3}), targetVel: ({targetVel.x:F3}, {targetVel.y:F3}, {targetVel.z:F3}), accelMult: {accelMult}");
+
             horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
         }
         else
         {
             float baseDrag = canWalk ? groundDrag : airDrag;
+            
+            // If over max speed, reduce drag to allow coasting down slowly
+            if (horizontalVel.magnitude > currSpeed)
+            {
+                baseDrag *= 0.3f; // Reduced drag when over max speed
+            }
+            
             float dragFactor = Mathf.Exp(-baseDrag * Time.deltaTime);
             horizontalVel *= dragFactor;
 
@@ -557,19 +572,24 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         // Jump handling
-        bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount > 0) && m_timeSinceLastJump >= jumpCooldown;
+        // Don't allow jump if wall ride going to wall ride.
+        bool isWallNearby = !groundedState.isGrounded && WallCheck(out _);
+        bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount > 0) && m_timeSinceLastJump >= jumpCooldown && !isWallNearby;
         bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
         if (canJump && attemptingJump)
         {
             if(m_jumpHoldActive == true)
                 return;
-            //m_velocity.y = jumpForce;
+            
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
             currJumpCount--;
 
-            // Start variable jump hold window
+            // Apply base jump force immediately
+            m_velocity.y = jumpForce;
+
+            // Start variable jump hold window for additional height
             m_jumpHoldActive = true;
             m_jumpHoldTimer = 0f;
         }
@@ -578,17 +598,18 @@ public class PlayerMovement : PlayerMovmentEngine
             m_timeSinceLastJump += Time.deltaTime;
         }
 
-        // Variable jump height: while holding jump shortly after jump start, add extra lift (capped)
+        // Variable jump height after jump 
         if (m_jumpHoldActive)
         {
             if (!m_jumpInputPressed || m_jumpHoldTimer >= maxJumpHoldTime )
             {
-                float finalJumpForce = Mathf.Lerp(jumpForce, jumpForce * jumpHoldMult, m_jumpHoldTimer / maxJumpHoldTime);
-                m_velocity.y = finalJumpForce;
                 m_jumpHoldActive = false;
             }
             else
             {
+                // Boost velocity upward while holding jump
+                float holdBoost = Mathf.Lerp(0, jumpForce * jumpHoldMult, m_jumpHoldTimer / maxJumpHoldTime);
+                m_velocity.y += holdBoost * Time.deltaTime;
                 m_jumpHoldTimer += Time.deltaTime;
             }
         }
@@ -611,7 +632,7 @@ public class PlayerMovement : PlayerMovmentEngine
             m_dashTime += Time.deltaTime;
             if (m_dashTime >= dashDuration)
             {
-                isDashing = false;
+                isDashing = false;   
             }
             return isDashing;
         }
@@ -630,6 +651,8 @@ public class PlayerMovement : PlayerMovmentEngine
             float startSpeed = m_velocity.magnitude;
             m_velocity = dashDir * (dashSpeed + startSpeed);
 
+            
+
             // fire dashing event
             GameEvents.PlayerDodged?.Invoke();
 
@@ -638,6 +661,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
         // not dashing 
         m_timeSinceLastDash += Time.deltaTime;
+        
+
         return false;
     }
 
@@ -667,8 +692,8 @@ public class PlayerMovement : PlayerMovmentEngine
     #region Wall Running
     bool WallRun()
     {
-        // Exit wall run with jump
-        if (m_isWallRiding && (m_jumpInputPressed || Physics.Raycast(transform.position, m_velocity.normalized, wallCheckDist, collisionLayers)))
+        // Exit wall run if jump is released or if hit by obstacle
+        if (m_isWallRiding && (!m_jumpInputPressed || Physics.Raycast(transform.position, m_velocity.normalized, wallCheckDist, collisionLayers)))
         {
             m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
             m_isWallRiding = false;
@@ -686,8 +711,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
         Vector3 inputDir = new Vector3(moveInput.x, 0, moveInput.y);
 
-        // Try to start wall riding
-        if (!m_isWallRiding && !groundedState.isGrounded)
+        // Try to start wall riding - only if jump is held
+        if (!m_isWallRiding && !groundedState.isGrounded && m_jumpInputPressed)
         {
 
                 if(WallCheck(out RaycastHit hit))
