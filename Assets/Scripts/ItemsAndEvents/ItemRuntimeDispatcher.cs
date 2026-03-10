@@ -12,6 +12,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerStartedGrinding+= OnGrindStart;
         GameEvents.PlayerGrindingTick   += OnGrindTick;
         GameEvents.PaintApplied         += OnPaintApplied;
+        GameEvents.PlayerLanded         += OnLanded;
     }
     void OnDisable()
     {
@@ -23,6 +24,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerStartedGrinding -= OnGrindStart;
         GameEvents.PlayerGrindingTick    -= OnGrindTick;
         GameEvents.PaintApplied          -= OnPaintApplied;
+        GameEvents.PlayerLanded         += OnLanded;
     }
 
 
@@ -44,6 +46,11 @@ public class ItemRuntimeDispatcher : MonoBehaviour
     {
         var hc = new HitContext { enemy = enemy, damage = damage, source = src, position = enemy ? enemy.transform.position : Vector3.zero };
         ForEachItem((it,c)=> it.OnPlayerHitEnemy(Ctx, hc, c));
+    }
+
+    void OnLanded()
+    {
+        ForEachItem((it, c) => it.OnLanded(Ctx, c));
     }
     void OnDamaged(int dmg)          => ForEachItem((it,c)=> it.OnPlayerDamaged(Ctx, dmg, c));
     void OnHealed(int heal)          => ForEachItem((it,c)=> it.OnPlayerHealed(Ctx, heal, c));
