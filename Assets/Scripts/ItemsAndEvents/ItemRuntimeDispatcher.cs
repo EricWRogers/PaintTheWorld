@@ -12,6 +12,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerStartedGrinding+= OnGrindStart;
         GameEvents.PlayerGrindingTick   += OnGrindTick;
         GameEvents.PaintApplied         += OnPaintApplied;
+        GameEvents.PlayerLanded         += OnLanded;
     }
     void OnDisable()
     {
@@ -23,6 +24,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerStartedGrinding -= OnGrindStart;
         GameEvents.PlayerGrindingTick    -= OnGrindTick;
         GameEvents.PaintApplied          -= OnPaintApplied;
+        GameEvents.PlayerLanded         += OnLanded;
     }
 
 
@@ -45,10 +47,19 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         var hc = new HitContext { enemy = enemy, damage = damage, source = src, position = enemy ? enemy.transform.position : Vector3.zero };
         ForEachItem((it,c)=> it.OnPlayerHitEnemy(Ctx, hc, c));
     }
+
+    void OnLanded()
+    {
+        ForEachItem((it, c) => it.OnLanded(Ctx, c));
+    }
     void OnDamaged(int dmg)          => ForEachItem((it,c)=> it.OnPlayerDamaged(Ctx, dmg, c));
     void OnHealed(int heal)          => ForEachItem((it,c)=> it.OnPlayerHealed(Ctx, heal, c));
     void OnKilled(GameObject enemy) => ForEachItem((it, c) => it.OnEnemyKilled(Ctx, enemy, c));
-    void OnDodged()                 => ForEachItem((it,c)=> it.OnDodged(Ctx, c));
+    void OnDodged()
+    {
+        Debug.Log("[Items] OnDodged received, forwarding to items");
+        ForEachItem((it,c)=> it.OnDodged(Ctx, c));
+    }
     void OnGrindStart()             => ForEachItem((it,c)=> it.OnGrindStart(Ctx, c));
     void OnGrindTick()              => ForEachItem((it,c)=> it.OnGrindTick(Ctx, c));
     void OnPaintApplied(float amt)  => ForEachItem((it,c)=> it.OnPaintApplied(Ctx, amt, c));

@@ -248,6 +248,7 @@ GameObject:
   - component: {fileID: 2200145148986895693}
   - component: {fileID: 453703056056577103}
   - component: {fileID: 5509363080549646222}
+  - component: {fileID: 2818684621356099637}
   m_Layer: 9
   m_Name: ObjGameObject
   m_TagString: Paintable
@@ -358,12 +359,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TEXTURE_SIZE: 128
-  covered: 0
-  targetCoverPercent: 95
-  percentageCovered: 0
-  meshPercent: 0
-  checkInterval: 0.5
-  isObj: 0
 --- !u!114 &5509363080549646222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,6 +373,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coinsGained: 0
   coinGainDelay: 3
+  covered: 0
+  targetCoverPercent: 0
+  percentageCovered: 0
+  meshPercent: 0
+  checkInterval: 0.5
+--- !u!114 &2818684621356099637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6240848812938129293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 3
+  outlineColor: {r: 1, g: 0.65459555, b: 0.042452812, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &7245638436945288584
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,7 +722,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3828aa43a94512f48b6eb65790572b57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetPaintable: {fileID: 453703056056577103}
+  targetPaintable: {fileID: 0}
   progressSlider: {fileID: 4586588904822324318}
   percentText: {fileID: 228893337694874112}
   hideWhenComplete: 0
