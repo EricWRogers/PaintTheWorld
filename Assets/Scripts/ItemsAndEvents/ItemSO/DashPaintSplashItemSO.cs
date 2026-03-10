@@ -3,22 +3,22 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Items/Dash Paint Splash")]
 public class DashPaintSplashItemSO : ItemSO
 {
-    [Header("Splash Settings")]
-    public float baseRadius = 1.2f;
-    public float radiusPerStack = 0.5f;
+    [Header("Trail Settings")]
+    public float baseRadius = 0.9f;
+    public float radiusPerStack = 0.3f;
     public float hardness = 1f;
     public float strength = 1f;
 
+    [Header("Timing")]
+    public float emitDuration = 0.5f; // match dash duration
+
     [Header("Ground Detection")]
-    public float rayStartOffset = 0.75f;
-    public float rayDistance = 3f;
+    public float rayStartOffset = 0.6f;
+    public float rayDistance = 2.5f;
     public LayerMask paintMask = ~0;
 
     [Header("Sampling")]
-    public int rings = 2;
-    public int samplesPerRing = 8;
-    public float minStampRadius = 0.45f;
-    public float stampRadiusMultiplier = 0.35f;
+    public float tickInterval = 0.05f;
 
     public override void OnDodged(PlayerContext ctx, int count)
     {
@@ -35,11 +35,8 @@ public class DashPaintSplashItemSO : ItemSO
         emitter.rayStartOffset = rayStartOffset;
         emitter.rayDistance = rayDistance;
         emitter.paintMask = paintMask;
-        emitter.rings = rings;
-        emitter.samplesPerRing = samplesPerRing;
-        emitter.minStampRadius = minStampRadius;
-        emitter.stampRadiusMultiplier = stampRadiusMultiplier;
+        emitter.tickInterval = tickInterval;
 
-        emitter.EmitBurst(count);
+        emitter.EmitForDuration(count, emitDuration);
     }
 }
