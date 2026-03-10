@@ -52,6 +52,7 @@ GameObject:
   - component: {fileID: 25554990982498507}
   - component: {fileID: 480039763104683511}
   - component: {fileID: 2475567122342020918}
+  - component: {fileID: 3231536744226286500}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -393,14 +394,36 @@ MonoBehaviour:
   radiusPerStack: 0.5
   hardness: 1
   strength: 1
+  tickInterval: 0.05
   rayStartOffset: 0.75
   rayDistance: 3
   paintMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  rings: 2
-  samplesPerRing: 8
-  minStampRadius: 0.45
+--- !u!114 &3231536744226286500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dd2c634038f74a49bdc7e4adbe8b99b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseRadius: 2
+  radiusPerStack: 0.75
+  hardness: 1
+  strength: 1
+  rayStartOffset: 0.75
+  rayDistance: 3
+  paintMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  rings: 3
+  samplesPerRing: 10
+  minStampRadius: 0.5
   stampRadiusMultiplier: 0.35
 --- !u!1 &989597325184863637
 GameObject:
