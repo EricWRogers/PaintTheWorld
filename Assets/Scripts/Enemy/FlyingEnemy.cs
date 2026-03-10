@@ -35,7 +35,7 @@ public class FlyingEnemy : MonoBehaviour
     {
         if (path.Count == 0)
         {
-            //GetNewPath();
+            RequestNewPath();
             return;
         }
 
