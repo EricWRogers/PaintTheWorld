@@ -5,10 +5,6 @@ using Unity.VisualScripting;
 
 
 
-
-
-
-
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
 using UnityEditor.EditorTools;
@@ -135,6 +131,9 @@ public class PlayerMOvmentEditor : Editor
         if (showAnimations)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("animator"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("playerModel"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("modelRotationSpeed"));
+            
         }
         serializedObject.ApplyModifiedProperties();
     }
@@ -195,7 +194,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     public bool isDashing = false;
     public float dashDuration = 0.5f;
-    public float dashCooldown = 2f;
+    public float dashCooldown = 1f;
     private float m_dashTime = 0f;
     private float m_timeSinceLastDash = 0f;
     public bool m_dashInputPressed = false;
@@ -226,7 +225,6 @@ public class PlayerMovement : PlayerMovmentEngine
 
     [Tooltip("Time till you get the full Jump Hold Mult to the jump")]
     public float maxJumpHoldTime = 2f;
-
     private bool m_jumpHoldActive = false;
     private float m_jumpHoldTimer = 0f;
 
@@ -277,6 +275,13 @@ public class PlayerMovement : PlayerMovmentEngine
     private float paintRotation;
     [SerializeField] private Transform paintPoint;
 
+    public GameObject playerModel;
+    private Vector3 smoothedNormal;
+    private Vector3 m_targetUp;
+    public float modelRotationSpeed =5f;
+
+    private bool _wasGroundedLastFrame = true;
+
     private enum MoveState
     {
         Grounded,
@@ -315,10 +320,51 @@ public class PlayerMovement : PlayerMovmentEngine
         HandleInput();
         HandlePaintColor();
         HandleFOV();
-        m_timeSinceLastDash += Time.deltaTime;
+        // Note: m_timeSinceLastDash is now only incremented in HandleDashing() to avoid double-incrementing
         if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
-
+        RotatePlayerModel();
     }
+
+    void RotatePlayerModel()
+    {
+        if (isGrinding) return;
+        
+        // Smooth slope normal
+        Vector3 targetUp = groundedState.isGrounded ? groundedState.groundNormal : Vector3.up;
+        smoothedNormal = Vector3.Slerp(smoothedNormal, targetUp, Time.deltaTime * 12f);
+
+        // Clamp max tilt
+        float maxTilt = 45f;
+        float angle = Vector3.Angle(Vector3.up, smoothedNormal);
+        if (angle > maxTilt)
+            smoothedNormal = Vector3.Slerp(Vector3.up, smoothedNormal, maxTilt / angle);
+
+        // transform.forward is up of model : as model is rotated 90 on the x
+        Vector3 modelUp = transform.forward;
+
+
+        Vector3 slopeForward = Vector3.ProjectOnPlane(modelUp, smoothedNormal).normalized;
+
+     
+        if (slopeForward.sqrMagnitude < 0.001f)
+            slopeForward = Vector3.ProjectOnPlane(transform.right, smoothedNormal).normalized;
+
+     
+        Quaternion worldTargetRot = Quaternion.LookRotation(slopeForward, smoothedNormal);
+
+       
+        Quaternion localTargetRot = Quaternion.Inverse(transform.rotation) * worldTargetRot;
+
+        Quaternion offset = Quaternion.Euler(90F, 0, 0);
+
+        playerModel.transform.localRotation = Quaternion.Slerp(
+            playerModel.transform.localRotation,
+            localTargetRot * offset,
+            Time.deltaTime * 10f
+        );
+    }
+
+    
 
 
     void FixedUpdate()
@@ -333,6 +379,7 @@ public class PlayerMovement : PlayerMovmentEngine
         if(state == MoveState.Stun)
         {
             m_stunTimer += Time.deltaTime;
+            HandleRegularMovement();
             if(m_stunTimer >= stunDuration)
             {
                 m_stunTimer = 0f;
@@ -341,6 +388,7 @@ public class PlayerMovement : PlayerMovmentEngine
             }
             return;
         }
+        
 
         // Tick current state
         switch (state)
@@ -374,6 +422,7 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         m_timer += Time.deltaTime;
+        CheckLandingEvent();
     }
         // Grind > WallRide > Dash > Regular (Grounded/Air)
     private void EvaluateTransitions(bool onGround)
@@ -400,8 +449,7 @@ public class PlayerMovement : PlayerMovmentEngine
         // Dash
         if (HandleDashing())
         {
-            SetState(MoveState.Dash);
-            return;
+            
         }
 
         // Regular base locomotion
@@ -420,10 +468,18 @@ public class PlayerMovement : PlayerMovmentEngine
    {
         Vector2 horzVelocity = new Vector2(m_velocity.x, m_velocity.z);
        if (horzVelocity.magnitude > 2f)
-           animator.SetBool("Moving", true);
+        {
+            animator.SetBool("Moving", true);
+           
+        }
+           
 
         else
+        {
+
             animator.SetBool("Moving", false);
+        }
+            
 
         if (groundedState.isGrounded)
             animator.SetBool("Grounded", true);
@@ -457,13 +513,16 @@ public class PlayerMovement : PlayerMovmentEngine
              moveInput = Vector2.zero;
              m_jumpInputPressed = false;
              m_dashInputPressed = false;
-             
-             return;
+            return;
         }
-        moveInput = m_inputActions.Move.ReadValue<Vector2>();
+        else
+            moveInput = m_inputActions.Move.ReadValue<Vector2>();
+
+        // Debug logging for diagonal movement issue
+        if (moveInput.sqrMagnitude > 0.1f)
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
-        // Buffer based on a *press*, not on being held (prevents auto-jumping / supports variable jump height cleanly)
+        
         if (m_inputActions.Jump.WasPressedThisFrame())
             jumpInputElapsed = 0.0f;
         else
@@ -474,9 +533,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void HandleRegularMovement()
     {
+        
         currSpeed = speed * m_currColorMult;
 
-        // Raw input direction (we’ll re-project it onto the slope when grounded)
+        
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
         bool onGround = CheckIfGrounded(out RaycastHit groundHit);
@@ -485,7 +545,7 @@ public class PlayerMovement : PlayerMovmentEngine
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
 
       
-        // banking/slope math (might not work)
+        //Banking SLope Math
         Vector3 groundNormal = canWalk ? groundHit.normal : Vector3.up;
 
         if (canWalk)
@@ -517,16 +577,29 @@ public class PlayerMovement : PlayerMovmentEngine
             horizontalVel *= bankMult;
         }
 
-        if (inputDir.sqrMagnitude > 0.01f && !isDashing)
+        
+
+
+        if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f)
         {
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
+
+            
+         
 
             horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
         }
         else
         {
             float baseDrag = canWalk ? groundDrag : airDrag;
+            
+            // If over max speed, reduce drag to allow coasting down slowly
+            if (horizontalVel.magnitude > currSpeed)
+            {
+                baseDrag *= 0.3f; // Reduced drag when over max speed
+            }
+            
             float dragFactor = Mathf.Exp(-baseDrag * Time.deltaTime);
             horizontalVel *= dragFactor;
 
@@ -535,6 +608,12 @@ public class PlayerMovement : PlayerMovmentEngine
                 float frictionBoost = Mathf.InverseLerp(0, currSpeed, horizontalVel.magnitude);
                 horizontalVel = Vector3.Lerp(horizontalVel, Vector3.zero, (1f - frictionBoost) * baseDrag * Time.deltaTime);
             }
+        }
+
+        // Enforce max speed cap
+        if (horizontalVel.magnitude > m_maxSpeed)
+        {
+            horizontalVel = horizontalVel.normalized * m_maxSpeed;
         }
 
         if (canWalk)
@@ -562,19 +641,24 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         // Jump handling
-        bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount > 0) && m_timeSinceLastJump >= jumpCooldown;
+        // Don't allow jump if wall ride going to wall ride.
+        bool isWallNearby = !groundedState.isGrounded && WallCheck(out _);
+        bool canJump = ((onGround && groundedState.angle <= maxJumpAngle) || currJumpCount > 0) && m_timeSinceLastJump >= jumpCooldown && !isWallNearby;
         bool attemptingJump = jumpInputElapsed <= m_jumpBufferTime;
 
         if (canJump && attemptingJump)
         {
             if(m_jumpHoldActive == true)
                 return;
-            //m_velocity.y = jumpForce;
+            
             m_timeSinceLastJump = 0.0f;
             jumpInputElapsed = Mathf.Infinity;
             currJumpCount--;
 
-            // Start variable jump hold window
+            // Apply base jump force immediately
+            m_velocity.y = jumpForce;
+
+            // Start variable jump hold window for additional height
             m_jumpHoldActive = true;
             m_jumpHoldTimer = 0f;
         }
@@ -583,17 +667,18 @@ public class PlayerMovement : PlayerMovmentEngine
             m_timeSinceLastJump += Time.deltaTime;
         }
 
-        // Variable jump height: while holding jump shortly after jump start, add extra lift (capped)
+        // Variable jump height after jump 
         if (m_jumpHoldActive)
         {
             if (!m_jumpInputPressed || m_jumpHoldTimer >= maxJumpHoldTime )
             {
-                float finalJumpForce = Mathf.Lerp(jumpForce, jumpForce * jumpHoldMult, m_jumpHoldTimer / maxJumpHoldTime);
-                m_velocity.y = finalJumpForce;
                 m_jumpHoldActive = false;
             }
             else
             {
+                // Boost velocity upward while holding jump
+                float holdBoost = Mathf.Lerp(0, jumpForce * jumpHoldMult, m_jumpHoldTimer / maxJumpHoldTime);
+                m_velocity.y += holdBoost * Time.deltaTime;
                 m_jumpHoldTimer += Time.deltaTime;
             }
         }
@@ -609,33 +694,46 @@ public class PlayerMovement : PlayerMovmentEngine
     #region Dashing/Dodge
     bool HandleDashing()
     {
-        bool canDash = m_timeSinceLastDash >= dashCooldown;
-        
-
-        if(canDash && m_dashInputPressed)
+        //I changed the logic here a little to fire a game event, but it should work the same, -Aidan
+        // keep dashing for duration
+        if (isDashing)
         {
-           if(moveInput.sqrMagnitude > 0.01f)
+            m_dashTime += Time.deltaTime;
+            if (m_dashTime >= dashDuration)
             {
-                dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+                isDashing = false;   
             }
+            return isDashing;
+        }
 
-            
-            isDashing = false;
-            
+        bool canDash = m_timeSinceLastDash >= dashCooldown;
+
+        if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f)
+        {
+            dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
+
+            // start dash
+            isDashing = true;
             m_dashTime = 0f;
             m_timeSinceLastDash = 0f;
-            m_dashStartSpeed = m_velocity.magnitude;
 
-            m_velocity = dashDir * (dashSpeed + m_dashStartSpeed);
+            float startSpeed = m_velocity.magnitude;
+            m_velocity = dashDir * (dashSpeed + startSpeed);
 
             
-            
+
+            // fire dashing event
+            GameEvents.PlayerDodged?.Invoke();
+
+            return true;
         }
-      
-        isDashing = false;
-        return isDashing;
-    }
 
+        // not dashing 
+        m_timeSinceLastDash += Time.deltaTime;
+        
+
+        return false;
+    }
 
     #endregion
     
@@ -663,8 +761,8 @@ public class PlayerMovement : PlayerMovmentEngine
     #region Wall Running
     bool WallRun()
     {
-        // Exit wall run with jump
-        if (m_isWallRiding && (m_jumpInputPressed || Physics.Raycast(transform.position, m_velocity.normalized, wallCheckDist, collisionLayers)))
+        // Exit wall run if jump is released or if hit by obstacle
+        if (m_isWallRiding && (!m_jumpInputPressed || Physics.Raycast(transform.position, m_velocity.normalized, wallCheckDist, collisionLayers)))
         {
             m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
             m_isWallRiding = false;
@@ -682,8 +780,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
         Vector3 inputDir = new Vector3(moveInput.x, 0, moveInput.y);
 
-        // Try to start wall riding
-        if (!m_isWallRiding && !groundedState.isGrounded)
+        // Try to start wall riding - only if jump is held
+        if (!m_isWallRiding && !groundedState.isGrounded && m_jumpInputPressed)
         {
 
                 if(WallCheck(out RaycastHit hit))
@@ -813,7 +911,7 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 closest = FindClosestPointOnSpline(out float progress);
         railProgress = progress;
 
-        grindSpeed = Mathf.Max(m_velocity.magnitude, minGrindSpeed);
+        grindSpeed = Mathf.Max(m_velocity.magnitude + grindExitForce, minGrindSpeed + grindExitForce);
 
 
         Vector3 tangent = GetSplineTangentAt(splineRef, railProgress);
@@ -830,7 +928,9 @@ public class PlayerMovement : PlayerMovmentEngine
         Vector3 snapDelta = worldSplinePos - transform.position;
         transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
 
-      m_velocity = tangent.normalized * grindSpeed * m_railDir;
+      m_velocity = tangent.normalized * grindSpeed * m_railDir ;
+
+      GameEvents.PlayerStartedGrinding?.Invoke();
 
 
     }
@@ -909,6 +1009,8 @@ public class PlayerMovement : PlayerMovmentEngine
         }
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
+        GameEvents.PlayerEndedGrinding?.Invoke();
+
         m_timer = 0f;
         splineContainer = null;
         railProgress = 0f;
@@ -923,6 +1025,8 @@ public class PlayerMovement : PlayerMovmentEngine
         m_stunTimer = 0f;
 
     }
+
+    
 
     // Finds the closest point on a spline container in WORLD space (handles container rotation).
     void FindClosestPointOnSpline(SplineContainer container, Vector3 worldPos, out float bestT, out float bestDistSqr)
@@ -986,6 +1090,25 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool GetGrounded()
     {
         return groundedState.isGrounded;
+    }
+
+    public Vector3 GetWallNormal()
+    {
+        return m_wallNormal;
+    }
+
+    void CheckLandingEvent()
+    {
+        bool groundedNow = groundedState.isGrounded;
+
+        
+        if (!_wasGroundedLastFrame && groundedNow)
+        {
+            GameEvents.PlayerLanded?.Invoke();
+            Debug.Log("[Landing] PlayerLanded invoked");
+        }
+
+        _wasGroundedLastFrame = groundedNow;
     }
     void OnDestroy()
     {
