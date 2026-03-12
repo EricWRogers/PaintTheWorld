@@ -1026,6 +1026,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
     }
 
+    
+
     // Finds the closest point on a spline container in WORLD space (handles container rotation).
     void FindClosestPointOnSpline(SplineContainer container, Vector3 worldPos, out float bestT, out float bestDistSqr)
     {
@@ -1088,6 +1090,11 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool GetGrounded()
     {
         return groundedState.isGrounded;
+    }
+
+    public Vector3 GetWallNormal()
+    {
+        return m_wallNormal;
     }
 
     void CheckLandingEvent()
