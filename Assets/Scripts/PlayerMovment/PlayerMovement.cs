@@ -930,6 +930,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
       m_velocity = tangent.normalized * grindSpeed * m_railDir ;
 
+      GameEvents.PlayerStartedGrinding?.Invoke();
+
 
     }
 
@@ -1006,6 +1008,8 @@ public class PlayerMovement : PlayerMovmentEngine
             m_velocity += Vector3.up * grindExitForce;
         }
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
+
+        GameEvents.PlayerEndedGrinding?.Invoke();
 
         m_timer = 0f;
         splineContainer = null;

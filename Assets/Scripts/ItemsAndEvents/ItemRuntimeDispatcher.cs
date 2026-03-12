@@ -11,6 +11,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerDodged         += OnDodged;
         GameEvents.PlayerStartedGrinding+= OnGrindStart;
         GameEvents.PlayerGrindingTick   += OnGrindTick;
+        GameEvents.PlayerEndedGrinding  += OnGrindEnd;
         GameEvents.PaintApplied         += OnPaintApplied;
         GameEvents.PlayerLanded         += OnLanded;
     }
@@ -23,8 +24,9 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerDodged          -= OnDodged;
         GameEvents.PlayerStartedGrinding -= OnGrindStart;
         GameEvents.PlayerGrindingTick    -= OnGrindTick;
+        GameEvents.PlayerEndedGrinding  = OnGrindEnd;
         GameEvents.PaintApplied          -= OnPaintApplied;
-        GameEvents.PlayerLanded         += OnLanded;
+        GameEvents.PlayerLanded         -= OnLanded;
     }
 
 
@@ -62,6 +64,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
     }
     void OnGrindStart()             => ForEachItem((it,c)=> it.OnGrindStart(Ctx, c));
     void OnGrindTick()              => ForEachItem((it,c)=> it.OnGrindTick(Ctx, c));
+    void OnGrindEnd()               => ForEachItem((it,c) => it.OnGrindEnd(Ctx, c));
     void OnPaintApplied(float amt)  => ForEachItem((it,c)=> it.OnPaintApplied(Ctx, amt, c));
 }
 

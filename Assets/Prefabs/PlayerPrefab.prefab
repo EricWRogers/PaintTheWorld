@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 480039763104683511}
   - component: {fileID: 2475567122342020918}
   - component: {fileID: 3231536744226286500}
+  - component: {fileID: 29573205706872260}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -242,6 +243,8 @@ MonoBehaviour:
   stunDuration: 1
   standPaintColor: {fileID: 261299125623734721}
   paintPoint: {fileID: 6862090733697642947}
+  playerModel: {fileID: 0}
+  modelRotationSpeed: 5
   state: 0
 --- !u!54 &2468560044189325215
 Rigidbody:
@@ -425,6 +428,27 @@ MonoBehaviour:
   samplesPerRing: 10
   minStampRadius: 0.5
   stampRadiusMultiplier: 0.35
+--- !u!114 &29573205706872260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 987569071003229930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 335e0ddf2877a4941a3245705134e6d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  basePaintRadius: 2
+  radiusPerStack: 0.75
+  hardness: 1
+  strength: 1
+  baseGlobCount: 8
+  globCountPerStack: 2
+  spawnHeight: 0.7
+  globRingRadius: 0.4
+  globForceMultiplier: 1
 --- !u!1 &989597325184863637
 GameObject:
   m_ObjectHideFlags: 0
