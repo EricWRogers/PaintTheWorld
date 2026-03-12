@@ -1,6 +1,9 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
+using Unity.VisualScripting;
+
+
 
 #region Custom Edtior for Unity
 #if UNITY_EDITOR
@@ -128,6 +131,9 @@ public class PlayerMOvmentEditor : Editor
         if (showAnimations)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("animator"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("playerModel"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("modelRotationSpeed"));
+            
         }
         serializedObject.ApplyModifiedProperties();
     }
@@ -269,6 +275,11 @@ public class PlayerMovement : PlayerMovmentEngine
     private float paintRotation;
     [SerializeField] private Transform paintPoint;
 
+    public GameObject playerModel;
+    private Vector3 smoothedNormal;
+    private Vector3 m_targetUp;
+    public float modelRotationSpeed =5f;
+
     private bool _wasGroundedLastFrame = true;
 
     private enum MoveState
@@ -311,8 +322,49 @@ public class PlayerMovement : PlayerMovmentEngine
         HandleFOV();
         // Note: m_timeSinceLastDash is now only incremented in HandleDashing() to avoid double-incrementing
         if (PlayerInputLock.Locked) return;  //this is for locking player movement on the kiosk camera for the shop
-
+        RotatePlayerModel();
     }
+
+    void RotatePlayerModel()
+    {
+        if (isGrinding) return;
+        
+        // Smooth slope normal
+        Vector3 targetUp = groundedState.isGrounded ? groundedState.groundNormal : Vector3.up;
+        smoothedNormal = Vector3.Slerp(smoothedNormal, targetUp, Time.deltaTime * 12f);
+
+        // Clamp max tilt
+        float maxTilt = 45f;
+        float angle = Vector3.Angle(Vector3.up, smoothedNormal);
+        if (angle > maxTilt)
+            smoothedNormal = Vector3.Slerp(Vector3.up, smoothedNormal, maxTilt / angle);
+
+        // transform.forward is up of model : as model is rotated 90 on the x
+        Vector3 modelUp = transform.forward;
+
+
+        Vector3 slopeForward = Vector3.ProjectOnPlane(modelUp, smoothedNormal).normalized;
+
+     
+        if (slopeForward.sqrMagnitude < 0.001f)
+            slopeForward = Vector3.ProjectOnPlane(transform.right, smoothedNormal).normalized;
+
+     
+        Quaternion worldTargetRot = Quaternion.LookRotation(slopeForward, smoothedNormal);
+
+       
+        Quaternion localTargetRot = Quaternion.Inverse(transform.rotation) * worldTargetRot;
+
+        Quaternion offset = Quaternion.Euler(90F, 0, 0);
+
+        playerModel.transform.localRotation = Quaternion.Slerp(
+            playerModel.transform.localRotation,
+            localTargetRot * offset,
+            Time.deltaTime * 10f
+        );
+    }
+
+    
 
 
     void FixedUpdate()
@@ -409,7 +461,6 @@ public class PlayerMovement : PlayerMovmentEngine
         if (state == next) return;
         prevState = state;
         state = next;
-        Debug.Log($"[STATE] Transitioning from {prevState} to {next}, isDashing: {isDashing}");
     }
 
     // programing animations -- by cleo
@@ -417,10 +468,18 @@ public class PlayerMovement : PlayerMovmentEngine
    {
         Vector2 horzVelocity = new Vector2(m_velocity.x, m_velocity.z);
        if (horzVelocity.magnitude > 2f)
-           animator.SetBool("Moving", true);
+        {
+            animator.SetBool("Moving", true);
+           
+        }
+           
 
         else
+        {
+
             animator.SetBool("Moving", false);
+        }
+            
 
         if (groundedState.isGrounded)
             animator.SetBool("Grounded", true);
@@ -461,7 +520,6 @@ public class PlayerMovement : PlayerMovmentEngine
 
         // Debug logging for diagonal movement issue
         if (moveInput.sqrMagnitude > 0.1f)
-            Debug.Log($"[INPUT] moveInput: ({moveInput.x:F3}, {moveInput.y:F3}), magnitude: {moveInput.magnitude:F3}");
 
         m_jumpInputPressed = m_inputActions.Jump.IsPressed();
         
@@ -519,14 +577,16 @@ public class PlayerMovement : PlayerMovmentEngine
             horizontalVel *= bankMult;
         }
 
+        
+
 
         if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f)
         {
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
 
-            // Debug logging
-            Debug.Log($"[MOVEMENT] inputDir: ({inputDir.x:F3}, {inputDir.y:F3}, {inputDir.z:F3}), targetVel: ({targetVel.x:F3}, {targetVel.y:F3}, {targetVel.z:F3}), accelMult: {accelMult}");
+            
+         
 
             horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
         }
