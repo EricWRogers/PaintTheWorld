@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6fdf0932eb24624c97cc4622f6b5b29, type: 3}
   m_Name: NewGrindStartEndSplash
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
-  description: 
+  id: grind_splash
+  displayName: Grind Splash
+  description: "Using a grind rail splashes paint after hopping on and hopping off.
+    Stacking makes the splash larger. \r\n"
   icon: {fileID: 0}
-  rarity: 0
+  rarity: 2
   basePrice: 100
   stackable: 1
   maxStack: 99
@@ -25,8 +26,13 @@ MonoBehaviour:
   radiusPerStack: 0.75
   hardness: 1
   strength: 1
-  baseGlobCount: 8
+  rayStartHeight: 3
+  rayDistance: 10
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  baseGlobCount: 6
   globCountPerStack: 2
   spawnHeight: 0.7
-  globRingRadius: 0.4
-  globForceMultiplier: 1
+  globRingRadius: 1.6
+  outwardForceMultiplier: 1

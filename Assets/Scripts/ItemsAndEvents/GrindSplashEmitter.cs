@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -22,9 +23,14 @@ public class GrindSplashEmitter : MonoBehaviour
     public int baseGlobCount = 8;
     public int globCountPerStack = 2;
     public float spawnHeight = 0.7f;
-    public float globRingRadius = 1.6f;   // farther out so it doesn't collide with player
+    public float globRingRadius = 1.6f;
     public float upwardForce = 1.25f;
     public float outwardForceMultiplier = 1f;
+
+    [Header("Projectile Safety")]
+    public string projectileLayerName = "PaintSplash";
+    public float colliderEnableDelay = 0.08f;
+    public float railIgnoreRadius = 2.5f;
 
     private PlayerPaint _playerPaint;
     private PlayerMovement _movement;
@@ -56,19 +62,19 @@ public class GrindSplashEmitter : MonoBehaviour
         float splashRadius = basePaintRadius + radiusPerStack * (clampedStacks - 1);
         Color color = GetCurrentPaintColor();
 
-        // 1) Paint the floor below
+        // 1) Paint the floor below 
         PaintGroundBurst(transform.position, splashRadius, color);
 
-        // 2) Spawn projectile ring 
+        // 2) Spawn spray projectiles in a ring
         SpawnSprayProjectileRing(transform.position, clampedStacks);
     }
 
     void PaintGroundBurst(Vector3 center, float splashRadius, Color color)
     {
-        // center stamp
+        // Center stamp
         StampGroundAt(center, splashRadius, color);
 
-        // ring stamps
+        // Ring stamps
         for (int ring = 1; ring <= rings; ring++)
         {
             float t = ring / (float)rings;
@@ -98,7 +104,7 @@ public class GrindSplashEmitter : MonoBehaviour
             }
         }
 
-        // fallback overlap
+        // Fallback overlap
         Collider[] cols = Physics.OverlapSphere(worldPoint, 0.75f, groundMask, QueryTriggerInteraction.Ignore);
         foreach (var c in cols)
         {
@@ -115,7 +121,7 @@ public class GrindSplashEmitter : MonoBehaviour
     {
         if (_sprayPaintLine == null)
         {
-            Debug.LogWarning("[GrindSplashEmitter] No SprayPaintLine found.");
+            Debug.LogWarning("[GrindSplashEmitter] No SprayPaintLine found on player.");
             return;
         }
 
@@ -127,7 +133,7 @@ public class GrindSplashEmitter : MonoBehaviour
 
         int count = baseGlobCount + globCountPerStack * (stacks - 1);
 
-        // Try to find ground below player so globs spawn near floor, not rail height
+        // Find ground beneath player so globs spawn near floor, not rail height
         Vector3 spawnCenter = centerWorld;
         if (Physics.Raycast(centerWorld + Vector3.up * rayStartHeight, Vector3.down, out RaycastHit hit, rayDistance, groundMask, QueryTriggerInteraction.Ignore))
         {
@@ -146,7 +152,14 @@ public class GrindSplashEmitter : MonoBehaviour
 
             GameObject proj = Instantiate(_sprayPaintLine.projectilePrefab, spawnPos, rot);
 
-            
+            // Put spawned projectile on dedicated safe layer
+            int splashLayer = LayerMask.NameToLayer(projectileLayerName);
+            if (splashLayer != -1)
+                SetLayerRecursively(proj, splashLayer);
+            else
+                Debug.LogWarning($"[GrindSplashEmitter] Layer '{projectileLayerName}' not found.");
+
+            // Ensure projectile has Rigidbody 
             Rigidbody rb = proj.GetComponent<Rigidbody>();
             if (rb == null) rb = proj.AddComponent<Rigidbody>();
 
@@ -159,11 +172,31 @@ public class GrindSplashEmitter : MonoBehaviour
             IgnorePlayerCollision(proj);
             IgnoreNearbyRailCollision(proj, spawnCenter);
 
-            // Launch outward, like the spray system logic
+            // Delay collider enable 
+            var projCols = proj.GetComponentsInChildren<Collider>(true);
+            StartCoroutine(EnableCollidersDelayed(projCols, colliderEnableDelay));
+
             float force = (_sprayPaintLine.launchForce * 0.01f) * outwardForceMultiplier;
             rb.AddForce(dir * force + Vector3.up * upwardForce, ForceMode.Impulse);
 
             Destroy(proj, _sprayPaintLine.projectileLifetime);
+        }
+    }
+
+    IEnumerator EnableCollidersDelayed(Collider[] cols, float delay)
+    {
+        if (cols != null)
+        {
+            foreach (var c in cols)
+                if (c) c.enabled = false;
+        }
+
+        yield return new WaitForSeconds(delay);
+
+        if (cols != null)
+        {
+            foreach (var c in cols)
+                if (c) c.enabled = true;
         }
     }
 
@@ -187,7 +220,7 @@ public class GrindSplashEmitter : MonoBehaviour
     {
         if (_movement == null) return;
 
-        Collider[] nearbyRails = Physics.OverlapSphere(center, globRingRadius + 1.0f, _movement.railLayer, QueryTriggerInteraction.Ignore);
+        Collider[] nearbyRails = Physics.OverlapSphere(center, railIgnoreRadius, _movement.railLayer, QueryTriggerInteraction.Ignore);
         if (nearbyRails == null || nearbyRails.Length == 0) return;
 
         var projCols = proj.GetComponentsInChildren<Collider>(true);
@@ -202,6 +235,13 @@ public class GrindSplashEmitter : MonoBehaviour
                 Physics.IgnoreCollision(pCol, railCol, true);
             }
         }
+    }
+
+    void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+            SetLayerRecursively(child.gameObject, layer);
     }
 
     Color GetCurrentPaintColor()
