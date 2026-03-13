@@ -355,11 +355,10 @@ public class PlayerMovement : PlayerMovmentEngine
        
         Quaternion localTargetRot = Quaternion.Inverse(transform.rotation) * worldTargetRot;
 
-        Quaternion offset = Quaternion.Euler(90F, 0, 0);
 
         playerModel.transform.localRotation = Quaternion.Slerp(
             playerModel.transform.localRotation,
-            localTargetRot * offset,
+            localTargetRot,
             Time.deltaTime * 10f
         );
     }
