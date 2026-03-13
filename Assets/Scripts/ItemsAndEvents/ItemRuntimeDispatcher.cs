@@ -14,6 +14,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerEndedGrinding  += OnGrindEnd;
         GameEvents.PaintApplied         += OnPaintApplied;
         GameEvents.PlayerLanded         += OnLanded;
+        GameEvents.EnemyRecoveredFromStun += OnEnemyRecoveredFromStun;
     }
     void OnDisable()
     {
@@ -27,6 +28,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerEndedGrinding  = OnGrindEnd;
         GameEvents.PaintApplied          -= OnPaintApplied;
         GameEvents.PlayerLanded         -= OnLanded;
+        GameEvents.EnemyRecoveredFromStun -= OnEnemyRecoveredFromStun;
     }
 
 
@@ -65,6 +67,10 @@ public class ItemRuntimeDispatcher : MonoBehaviour
     void OnGrindStart()             => ForEachItem((it,c)=> it.OnGrindStart(Ctx, c));
     void OnGrindTick()              => ForEachItem((it,c)=> it.OnGrindTick(Ctx, c));
     void OnGrindEnd()               => ForEachItem((it,c) => it.OnGrindEnd(Ctx, c));
+
+
+    void OnEnemyRecoveredFromStun(GameObject enemy)
+        => ForEachItem((it,c) => it.OnEnemyRecoveredFromStun(Ctx, enemy, c));
     void OnPaintApplied(float amt)  => ForEachItem((it,c)=> it.OnPaintApplied(Ctx, amt, c));
 }
 

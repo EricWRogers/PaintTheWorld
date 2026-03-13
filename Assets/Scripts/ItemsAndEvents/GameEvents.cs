@@ -27,6 +27,8 @@ public static class GameEvents
 
     public static System.Action PlayerEndedGrinding;
 
+    public static System.Action<GameObject> EnemyRecoveredFromStun;
+
     // Paint progress, call when we use paint
     public static System.Action<float> PaintApplied;              // amount added, add units later
 }

@@ -54,8 +54,6 @@ GameObject:
   - component: {fileID: 2475567122342020918}
   - component: {fileID: 3231536744226286500}
   - component: {fileID: 29573205706872260}
-  - component: {fileID: 2020614811507408838}
-  - component: {fileID: 2059629219602249910}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -465,43 +463,6 @@ MonoBehaviour:
   projectileLayerName: PaintSplash
   colliderEnableDelay: 0.08
   railIgnoreRadius: 2.5
---- !u!114 &2020614811507408838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28d495f9bb6726a44801866e981fd1e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  smearDuration: 1
-  tickInterval: 0.05
-  baseRadius: 0.9
-  radiusPerStack: 0.3
-  hardness: 1
-  strength: 1
-  forwardStampDistance: 0.5
-  sideStampOffset: 0.4
-  rayStartOffset: 0.7
-  rayDistance: 3
-  paintMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
---- !u!114 &2059629219602249910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 987569071003229930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4fb027c43abcec746881dbf768f693c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &989597325184863637
 GameObject:
   m_ObjectHideFlags: 0
