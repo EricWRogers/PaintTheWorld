@@ -1,15 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SuperPupSystems.Helper;
-public class FlyingEnemy : MonoBehaviour
+public class FlyingEnemy : Enemy
 {
     public CloudNav cloudNav;
-    public GameObject bulletPrefab;
-    public Transform firePoint;
-    public float fireRange;
     public float minStopDistance;
-    public int damage;
-    public float fireRate;
+    public float minHeightFromPLayerToShoot;
     private float m_curFireTime;
     private GameObject m_player;
     public List<Vector3> path;
@@ -18,6 +14,10 @@ public class FlyingEnemy : MonoBehaviour
     public int targetIndex;
     public float speed = 100.0f;
     public bool stopped = false;
+
+    public bool stunned;
+    public float stunTime;
+    private float m_stunTimer;
 
     Vector3 ZeroY(Vector3 _vector)
     {
@@ -33,6 +33,18 @@ public class FlyingEnemy : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (stunned)
+        {
+            m_stunTimer -= Time.deltaTime;
+            if(m_stunTimer <= 0)
+            {
+                modelMeshRenderer.materials[1].color = Color.clear;
+                stopped = false;
+                GetComponent<Health>().Revive();
+                stunned = false;
+            }
+            return;
+        }
         if (path.Count == 0)
         {
             RequestNewPath();
@@ -46,10 +58,10 @@ public class FlyingEnemy : MonoBehaviour
             stopped = true;
         }
 
-        if (distance <= fireRange && stopped)
+        if (distance <= attackRange && stopped)
         {
             transform.LookAt(m_player.transform.position);
-            Shoot();
+            Attack();
         }
         else
         {
@@ -79,25 +91,12 @@ public class FlyingEnemy : MonoBehaviour
 
     }
 
-    public void Shoot()
-    {
-        if (m_curFireTime > fireRate * 0.5f)
-            transform.LookAt(m_player.transform);
-        
-        m_curFireTime -= Time.fixedDeltaTime;
-        if (m_curFireTime <= 0)
-        {
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, transform.rotation);
-            bullet.GetComponent<Bullet>().damage = damage;
-            m_curFireTime = fireRate;
-        }
-
-    }
-
     void RequestNewPath()
     {
+        float heightDifference = transform.position.y - m_player.transform.position.y;
+        Vector3 offset = new Vector3(0, heightDifference, 0);
         startId = cloudNav.aStar.GetClosestPoint(transform.position);
-        endId = cloudNav.aStar.GetClosestPoint(m_player.transform.position);
+        endId = cloudNav.aStar.GetClosestPoint(m_player.transform.position - offset);
 
         cloudNav.aStar.RequestPath(GetNewPath, startId, endId);
     }
@@ -110,9 +109,25 @@ public class FlyingEnemy : MonoBehaviour
 
         path = _path;
     }
-    
-    public void Dead()
+    public void Stun()
     {
+        stopped = true;
+        modelMeshRenderer.materials[1].color = stunColor;
+        m_stunTimer = stunTime;
+        stunned = true;
+    }
+
+    public override void Attack()
+    {
+        if (m_curFireTime > attackSpeed * 0.5f)
+            transform.LookAt(m_player.transform);
         
+        m_curFireTime -= Time.fixedDeltaTime;
+        if (m_curFireTime <= 0)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, transform.rotation);
+            bullet.GetComponent<Bullet>().damage = baseDamage;
+            m_curFireTime = attackSpeed;
+        }
     }
 }

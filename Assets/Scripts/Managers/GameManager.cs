@@ -115,7 +115,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public void ShopStage()
     {
-        SceneManager.LoadScene(shopScene);
+        SceneManager.LoadSceneAsync(shopScene);
 
     }
     public void ResetTimer()
@@ -151,7 +151,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         pm.health.maxHealth = saveData.maxHealth;
         pm.wallet.amount = saveData.coins;
         stageCounter = saveData.stageCounter;
-        SceneManager.LoadScene(shopScene);
+        SceneManager.LoadSceneAsync(shopScene);
         
     }
     // public void OnDeath()
