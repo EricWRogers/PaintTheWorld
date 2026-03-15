@@ -25,6 +25,10 @@ public static class GameEvents
     public static System.Action PlayerLanded;
     public static System.Action PlayerGrindingTick;               // fires periodically while grinding
 
+    public static System.Action PlayerEndedGrinding;
+
+    public static System.Action<GameObject> EnemyRecoveredFromStun;
+
     // Paint progress, call when we use paint
     public static System.Action<float> PaintApplied;              // amount added, add units later
 }

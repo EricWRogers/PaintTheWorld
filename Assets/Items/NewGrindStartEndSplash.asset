@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6fdf0932eb24624c97cc4622f6b5b29, type: 3}
+  m_Name: NewGrindStartEndSplash
+  m_EditorClassIdentifier: 
+  id: grind_splash
+  displayName: Grind Splash
+  description: "Using a grind rail splashes paint after hopping on and hopping off.
+    Stacking makes the splash larger. \r\n"
+  icon: {fileID: 0}
+  rarity: 2
+  basePrice: 100
+  stackable: 1
+  maxStack: 99
+  initialStock: -1
+  basePaintRadius: 2
+  radiusPerStack: 0.75
+  hardness: 1
+  strength: 1
+  rayStartHeight: 3
+  rayDistance: 10
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  baseGlobCount: 6
+  globCountPerStack: 2
+  spawnHeight: 0.7
+  globRingRadius: 1.6
+  outwardForceMultiplier: 1

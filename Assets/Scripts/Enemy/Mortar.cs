@@ -87,6 +87,7 @@ public class Mortar : Enemy
                 Move();
                 GetComponent<Health>().Revive();
                 stunned = false;
+                GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
             }
             return;
         }
