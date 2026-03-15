@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb2151bdfc0e0c4c8c4902784bf9273, type: 3}
   m_Name: BonusHealthItem
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
-  description: 
+  id: bonus_health
+  displayName: Increase Health
+  description: 'Increase player health, max stack of 4. '
   icon: {fileID: 0}
   rarity: 0
   basePrice: 100
   stackable: 1
-  maxStack: 99
+  maxStack: 4
   initialStock: -1
   healthPerStack: 1

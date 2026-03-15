@@ -71,10 +71,15 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             RegisterPlayer(player);
             IsReady = true;
 
-            // refill on scene load but keep bonus health from owned items
-            RecalculateMaxHealth(true);
+            // Start from base health first
+            health.maxHealth = startingHealth;
+            health.currentHealth = health.maxHealth;
 
+            
             FindObjectOfType<ItemEffectsManager>()?.Reapply();
+
+            
+            RecalculateMaxHealth(true);
         }
     }
 
