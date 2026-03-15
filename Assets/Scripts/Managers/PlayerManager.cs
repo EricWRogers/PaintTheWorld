@@ -3,21 +3,25 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using SuperPupSystems.Helper;
 
+[System.Serializable]
+public class InvEntry
+{
+    public string id;
+    public int count;
+}
 
-
-
-[System.Serializable] public class InvEntry { public string id; public int count; }
 public class PlayerManager : SceneAwareSingleton<PlayerManager>
 {
-    
     public GameObject player;
     public Health health;
     public Currency wallet;
     public Inventory inventory;
     public PlayerStats stats;
 
-    //private float m_healthMult => stats.skills[0].currentMult;
-    public int startingHealth;
+    public int startingHealth = 4;
+
+    [Header("Bonus Health From Items")]
+    public int bonusHealthFromItems = 0;
 
     public PlayerInputActions.PlayerActions playerInputs;
     public PlayerInputActions.UIActions uIInputs;
@@ -31,6 +35,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public int maxJumpCount = 1;
     public int timeToHeal = 5;
     private float healTimer = 0f;
+
     public PlayerContext GetContext() => new PlayerContext
     {
         player = player ? player.transform : null,
@@ -53,10 +58,9 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     void Start()
     {
-        health.hurt.AddListener(TookDamage);
+        if (health != null)
+            health.hurt.AddListener(TookDamage);
     }
-
-
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -66,38 +70,59 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         {
             RegisterPlayer(player);
             IsReady = true;
-            health.maxHealth = Mathf.RoundToInt(startingHealth);
-            health.currentHealth = health.maxHealth;
 
+            // refill on scene load but keep bonus health from owned items
+            RecalculateMaxHealth(true);
+
+            FindObjectOfType<ItemEffectsManager>()?.Reapply();
         }
     }
 
     void Update()
     {
-        health.maxHealth = Mathf.RoundToInt(startingHealth);
+        if (health != null)
+        {
+            // keep max health synced to current bonus health
+            int desiredMax = startingHealth + bonusHealthFromItems;
+            if (health.maxHealth != desiredMax)
+            {
+                int oldMax = health.maxHealth;
+                health.maxHealth = desiredMax;
+
+                if (health.currentHealth > health.maxHealth)
+                    health.currentHealth = health.maxHealth;
+                else if (health.maxHealth > oldMax)
+                    health.currentHealth += (health.maxHealth - oldMax);
+            }
+        }
+
         if (playerInputs.Pause.IsPressed())
         {
             GameManager.instance.PauseGame();
             GameManager.instance.pauseMenu.SetActive(true);
         }
+
         if (uIInputs.Resume.IsPressed())
         {
             GameManager.instance.ResumeGame();
             GameManager.instance.pauseMenu.SetActive(false);
         }
-        
-        if(health.currentHealth < health.maxHealth)
+
+        if (health != null)
         {
-            healTimer += Time.deltaTime;
-            if(healTimer >= timeToHeal)
+            if (health.currentHealth < health.maxHealth)
             {
-                health.Heal(1);
+                healTimer += Time.deltaTime;
+                if (healTimer >= timeToHeal)
+                {
+                    health.Heal(1);
+                    healTimer = 0f;
+                }
+            }
+            else
+            {
                 healTimer = 0f;
             }
-        }
-        else
-        {
-            healTimer = 0f;
         }
     }
 
@@ -105,6 +130,12 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     {
         player = newPlayer;
         InitializeComponents();
+
+        if (health != null)
+        {
+            health.hurt.RemoveListener(TookDamage);
+            health.hurt.AddListener(TookDamage);
+        }
 
         Debug.Log("Player registered in PlayerManager");
     }
@@ -117,7 +148,24 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         stats = GetComponent<PlayerStats>() ?? gameObject.AddComponent<PlayerStats>();
     }
 
-    
+    public void RecalculateMaxHealth(bool refillToFull)
+    {
+        if (health == null) return;
+
+        health.maxHealth = startingHealth + bonusHealthFromItems;
+
+        if (refillToFull)
+            health.currentHealth = health.maxHealth;
+        else
+            health.currentHealth = Mathf.Clamp(health.currentHealth, 0, health.maxHealth);
+    }
+
+    public void SetBonusHealthFromItems(int bonus)
+    {
+        bonusHealthFromItems = Mathf.Clamp(bonus, 0, 4);
+        RecalculateMaxHealth(false);
+    }
+
     public void EditorInit()
     {
         Debug.Log("editorInit");
@@ -127,13 +175,13 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             RegisterPlayer(player);
 
         IsReady = true;
+        RecalculateMaxHealth(true);
     }
 
     public void Stunned()
     {
         player.GetComponent<PlayerMovement>().Stunned();
         health.Revive(health.maxHealth);
-
     }
 
     private void TookDamage()
@@ -147,5 +195,3 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         playerInputs.Disable();
     }
 }
-
-
