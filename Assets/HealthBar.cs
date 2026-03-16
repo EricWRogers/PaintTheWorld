@@ -7,77 +7,167 @@ using SuperPupSystems.Helper;
 [RequireComponent(typeof(CanvasGroup))]
 public class HealthBar : MonoBehaviour
 {
-    [Header("Segmented UI Images")]
-    [SerializeField] private List<Image> healthSegments = new List<Image>();
-    
+    [Header("Base Health Images")]
+    [SerializeField] private List<Image> baseHealthSegments = new List<Image>();
+
+    [Header("Bonus Health Images (max 4)")]
+    [SerializeField] private List<Image> bonusHealthSegments = new List<Image>();
+
     [Header("Pulse Settings")]
     [SerializeField] private float pulseScale = 1.2f;
     [SerializeField] private float pulseDuration = 0.15f;
     [SerializeField] private Color healColor = Color.green;
 
     private Health health;
-    private int lastHealth;
+    private PlayerManager pm;
+
+    private int displayedHealth;
+    private int lastBonusHealth;
+
+    private bool isAnimating = false;
 
     void Start()
     {
-        if (PlayerManager.instance != null)
-        {
-            health = PlayerManager.instance.health;
-            if (health != null)
-            {
-                lastHealth = health.currentHealth;
-            }
-        }
-
-        if (healthSegments.Count == 0)
-        {
-            healthSegments.Clear();
-            foreach (Transform child in transform)
-            {
-                Image img = child.GetComponent<Image>();
-                if (img != null) healthSegments.Add(img);
-            }
-        }
-            
-        RefreshUI();
+        Rebind();
+        ForceRefresh();
     }
 
     void Update()
     {
-        if (health == null) return;
-
-        if (health.currentHealth < lastHealth)
+        // Rebind if scene changed
+        if (PlayerManager.instance != pm || (PlayerManager.instance != null && PlayerManager.instance.health != health))
         {
-            OnDamageTaken();
-        }
-        else if (health.currentHealth > lastHealth)
-        {
-            OnHealed();
+            Rebind();
+            ForceRefresh();
+            return;
         }
 
-        lastHealth = health.currentHealth;
+        if (pm == null || health == null) return;
+
+        
+        if (pm.bonusHealthFromItems != lastBonusHealth)
+        {
+            ForceRefresh();
+            lastBonusHealth = pm.bonusHealthFromItems;
+            return;
+        }
+
+        if (isAnimating) return;
+
+        int targetHealth = Mathf.Clamp(health.currentHealth, 0, GetVisibleSegmentCount());
+
+        if (targetHealth < displayedHealth)
+        {
+            StartCoroutine(AnimateDamage(displayedHealth - targetHealth));
+        }
+        else if (targetHealth > displayedHealth)
+        {
+            StartCoroutine(AnimateHeal(targetHealth - displayedHealth));
+        }
     }
 
-    private void OnDamageTaken()
+    void Rebind()
     {
-        for (int i = healthSegments.Count - 1; i >= 0; i--)
-        {
-            if (i >= health.currentHealth && healthSegments[i].gameObject.activeSelf)
-            {
-                StartCoroutine(PulseAndHide(healthSegments[i]));
-            }
-        }
+        pm = PlayerManager.instance;
+        health = pm != null ? pm.health : null;
+        lastBonusHealth = pm != null ? pm.bonusHealthFromItems : 0;
     }
 
-    private void OnHealed()
+    int GetVisibleSegmentCount()
     {
-        for (int i = 0; i < healthSegments.Count; i++)
+        if (pm == null) return baseHealthSegments.Count;
+        return baseHealthSegments.Count + Mathf.Clamp(pm.bonusHealthFromItems, 0, bonusHealthSegments.Count);
+    }
+
+    List<Image> GetVisibleSegments()
+    {
+        List<Image> result = new List<Image>();
+
+        for (int i = 0; i < baseHealthSegments.Count; i++)
+            if (baseHealthSegments[i] != null)
+                result.Add(baseHealthSegments[i]);
+
+        int bonusCount = pm != null ? Mathf.Clamp(pm.bonusHealthFromItems, 0, bonusHealthSegments.Count) : 0;
+        for (int i = 0; i < bonusCount; i++)
+            if (bonusHealthSegments[i] != null)
+                result.Add(bonusHealthSegments[i]);
+
+        return result;
+    }
+
+    void ForceRefresh()
+    {
+        if (pm == null || health == null) return;
+
+        StopAllCoroutines();
+        isAnimating = false;
+
+        List<Image> visible = GetVisibleSegments();
+        int visibleCount = visible.Count;
+        int currentHealth = Mathf.Clamp(health.currentHealth, 0, visibleCount);
+
+        // Hide unused bonus hearts completely
+        for (int i = 0; i < bonusHealthSegments.Count; i++)
         {
-            if (i < health.currentHealth && !healthSegments[i].gameObject.activeSelf)
+            if (bonusHealthSegments[i] == null) continue;
+
+            bool shouldExist = i < Mathf.Clamp(pm.bonusHealthFromItems, 0, bonusHealthSegments.Count);
+            if (!shouldExist)
             {
-                StartCoroutine(PulseAndShow(healthSegments[i]));
+                bonusHealthSegments[i].gameObject.SetActive(false);
+                bonusHealthSegments[i].transform.localScale = Vector3.zero;
+                bonusHealthSegments[i].color = Color.white;
             }
         }
+
+        
+        for (int i = 0; i < visible.Count; i++)
+        {
+            bool filled = i < currentHealth;
+            visible[i].gameObject.SetActive(filled);
+            visible[i].transform.localScale = filled ? Vector3.one : Vector3.zero;
+            visible[i].color = Color.white;
+        }
+
+        displayedHealth = currentHealth;
+    }
+
+    IEnumerator AnimateDamage(int amount)
+    {
+        isAnimating = true;
+
+        List<Image> visible = GetVisibleSegments();
+
+        for (int n = 0; n < amount; n++)
+        {
+            int indexToHide = displayedHealth - 1;
+            if (indexToHide >= 0 && indexToHide < visible.Count)
+            {
+                yield return StartCoroutine(PulseAndHide(visible[indexToHide]));
+                displayedHealth--;
+            }
+        }
+
+        isAnimating = false;
+    }
+
+    IEnumerator AnimateHeal(int amount)
+    {
+        isAnimating = true;
+
+        List<Image> visible = GetVisibleSegments();
+
+        for (int n = 0; n < amount; n++)
+        {
+            int indexToShow = displayedHealth;
+            if (indexToShow >= 0 && indexToShow < visible.Count)
+            {
+                yield return StartCoroutine(PulseAndShow(visible[indexToShow]));
+                displayedHealth++;
+            }
+        }
+
+        isAnimating = false;
     }
 
     private IEnumerator PulseAndHide(Image segment)
@@ -97,6 +187,7 @@ public class HealthBar : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
         segment.gameObject.SetActive(false);
     }
 
@@ -104,9 +195,10 @@ public class HealthBar : MonoBehaviour
     {
         segment.gameObject.SetActive(true);
         segment.transform.localScale = Vector3.zero;
-        Color originalColor = Color.white;
 
+        Color originalColor = Color.white;
         float elapsed = 0f;
+
         while (elapsed < pulseDuration)
         {
             float t = elapsed / pulseDuration;
@@ -128,16 +220,5 @@ public class HealthBar : MonoBehaviour
 
         segment.transform.localScale = Vector3.one;
         segment.color = originalColor;
-    }
-
-    private void RefreshUI()
-    {
-        if (health == null) return;
-        for (int i = 0; i < healthSegments.Count; i++)
-        {
-            bool shouldBeActive = i < health.currentHealth;
-            healthSegments[i].gameObject.SetActive(shouldBeActive);
-            healthSegments[i].transform.localScale = shouldBeActive ? Vector3.one : Vector3.zero;
-        }
     }
 }
