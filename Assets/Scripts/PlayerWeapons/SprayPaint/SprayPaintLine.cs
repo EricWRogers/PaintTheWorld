@@ -12,6 +12,7 @@ public class SprayPaintLine : MonoBehaviour
     [Header("Runtime Bonuses")]
     public int bonusMaxAmmo = 0;
     public int bonusProjectileCount = 0;
+    public float bonusAttackSpeedMultiplier = 1f;
 
     [Header("Effects & References")]
     public ParticleSystem sprayParticles;
@@ -30,7 +31,7 @@ public class SprayPaintLine : MonoBehaviour
     public float projectileInterval = 2f;
 
     [Header("Extra Projectile Timing")]
-    public float extraProjectileDelay = 0.5f;
+    public float extraProjectileDelay = 0.4f;
 
     private float ammoRemainder = 0f;
     private bool isSpraying = false;
@@ -41,6 +42,15 @@ public class SprayPaintLine : MonoBehaviour
     private ParticlePainter painter;
 
     public int ProjectileCount => Mathf.Max(1, 1 + bonusProjectileCount);
+
+    public float CurrentProjectileInterval
+    {
+        get
+        {
+            float mult = Mathf.Max(0.1f, bonusAttackSpeedMultiplier);
+            return projectileInterval / mult;
+        }
+    }
 
     private void Start()
     {
@@ -96,6 +106,11 @@ public class SprayPaintLine : MonoBehaviour
     public void SetBonusProjectileCount(int amount)
     {
         bonusProjectileCount = Mathf.Max(0, amount);
+    }
+
+    public void SetAttackSpeedMultiplier(float multiplier)
+    {
+        bonusAttackSpeedMultiplier = Mathf.Max(1f, multiplier);
     }
 
     private void UpdateAimingAndPosition()
@@ -164,7 +179,7 @@ public class SprayPaintLine : MonoBehaviour
     {
         projectileTimer += Time.deltaTime;
 
-        if (projectileTimer >= projectileInterval)
+        if (projectileTimer >= CurrentProjectileInterval)
         {
             ShootProjectileBurst();
             projectileTimer = 0f;
@@ -175,15 +190,12 @@ public class SprayPaintLine : MonoBehaviour
     {
         if (projectilePrefab == null || nozzleSpawnPoint == null) return;
 
-        
         Vector3 spawnPosition = nozzleSpawnPoint.position;
         Quaternion spawnRotation = nozzleSpawnPoint.rotation;
         Vector3 launchDirection = nozzleSpawnPoint.forward;
 
-        
         SpawnProjectileOriginal(spawnPosition, spawnRotation, launchDirection);
 
-        
         int extraShots = ProjectileCount - 1;
         if (extraShots > 0)
         {
@@ -202,7 +214,6 @@ public class SprayPaintLine : MonoBehaviour
 
     private void SpawnProjectileOriginal(Vector3 spawnPosition, Quaternion spawnRotation, Vector3 launchDirection)
     {
-        
         GameObject proj = Instantiate(projectilePrefab, spawnPosition, spawnRotation);
 
         Rigidbody rb = proj.GetComponent<Rigidbody>();
