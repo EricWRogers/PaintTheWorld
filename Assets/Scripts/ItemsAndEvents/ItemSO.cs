@@ -35,6 +35,8 @@ public abstract class ItemSO : ScriptableObject
     public virtual void OnGrindTick(PlayerContext ctx, int count) {}
     public virtual void OnGrindEnd(PlayerContext ctx, int count) {}
     public virtual void OnPaintApplied(PlayerContext ctx, float amount, int count) {}
+
+    public virtual void OnEnemyRecoveredFromStun(PlayerContext ctx, GameObject enemy, int count) {}
 }
 
 // Contexts that item hooks can use

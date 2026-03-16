@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 using SuperPupSystems.Helper;
-
 public class BeetleAi : Enemy
 {
     private float m_attackTimer;
@@ -9,6 +8,8 @@ public class BeetleAi : Enemy
     public float stunTime;
     private float m_stunTimer;
     public float spreadAngleForObj;
+    private float m_recoveryGraceTimer;
+    private bool recoveringFromStun;
 
     [Header("Movement")]
     public LayerMask losMask;
@@ -49,6 +50,20 @@ public class BeetleAi : Enemy
                 Move();
                 GetComponent<Health>().Revive();
                 stunned = false;
+                GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
+                recoveringFromStun = true;
+                m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
+            }
+            return;
+        }
+
+        if (recoveringFromStun)
+        {
+            m_recoveryGraceTimer -= Time.deltaTime;
+            if (m_recoveryGraceTimer <= 0f)
+            {
+                recoveringFromStun = false;
+                Move();
             }
             return;
         }
@@ -122,8 +137,9 @@ public class BeetleAi : Enemy
     {
         StopMoving();
         modelMeshRenderer.materials[1].color = stunColor;
-        m_stunTimer = stunTime;
+        m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
         stunned = true;
+        recoveringFromStun = false;
     }
 
     public void Move()

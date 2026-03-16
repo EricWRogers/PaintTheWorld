@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06346127b26b2eb41bb64f0a8c500c24, type: 3}
+  m_Name: BonusMaxAmmo
+  m_EditorClassIdentifier: 
+  id: bonus_max_ammo
+  displayName: Increase Max Ammo
+  description: 'Increase your max ammo amount. Maximum stack of 5. '
+  icon: {fileID: 21300000, guid: 52e702b0789093a458906bacdc8a5c5f, type: 3}
+  rarity: 0
+  basePrice: 100
+  stackable: 1
+  maxStack: 5
+  initialStock: -1
+  ammoPerStack: 50

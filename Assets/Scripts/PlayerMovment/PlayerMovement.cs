@@ -187,6 +187,10 @@ public class PlayerMovement : PlayerMovmentEngine
     public float groundDrag = 0.4f;
     private Vector3 m_lasPos;
 
+    [Header("Runtime Bonuses")]
+    public float bonusMoveSpeed = 0f;
+    public float bonusMaxSpeed = 0f;
+
     [Header("Dashing")]
     [Tooltip("Shows the rate of acerleration over the time of the dash")]
     public AnimationCurve dashSpeedCurve;
@@ -355,11 +359,10 @@ public class PlayerMovement : PlayerMovmentEngine
        
         Quaternion localTargetRot = Quaternion.Inverse(transform.rotation) * worldTargetRot;
 
-        Quaternion offset = Quaternion.Euler(90F, 0, 0);
 
         playerModel.transform.localRotation = Quaternion.Slerp(
             playerModel.transform.localRotation,
-            localTargetRot * offset,
+            localTargetRot,
             Time.deltaTime * 10f
         );
     }
@@ -502,7 +505,8 @@ public class PlayerMovement : PlayerMovmentEngine
         m_currColorMult = standPaintColor.standingColor == colors.movementPaint ? movementColorMult : 1f;
         if(groundedState.isGrounded)
         {
-            m_maxSpeed = standPaintColor.standingColor == colors.movementPaint ? maxSpeed : maxSpeed * 4;
+            float effectiveMaxSpeed = maxSpeed + bonusMaxSpeed;
+            m_maxSpeed = standPaintColor.standingColor == colors.movementPaint ? effectiveMaxSpeed : effectiveMaxSpeed * 4;
         }
         m_wallPaint = standPaintColor.standingColor == colors.jumpPaint;
     }
@@ -534,7 +538,7 @@ public class PlayerMovement : PlayerMovmentEngine
     void HandleRegularMovement()
     {
         
-        currSpeed = speed * m_currColorMult;
+        currSpeed = (speed + bonusMoveSpeed) * m_currColorMult;
 
         
         Vector3 inputDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
@@ -690,6 +694,29 @@ public class PlayerMovement : PlayerMovmentEngine
 
         m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
         m_lasPos = transform.position;
+    }
+
+
+    public void SetMoveSpeedBonus(float moveBonus, float maxBonus)
+    {
+        bonusMoveSpeed = Mathf.Max(0f, moveBonus);
+        bonusMaxSpeed = Mathf.Max(0f, maxBonus);
+    }
+
+    public void AddForce(Vector3 force)
+    {
+        m_velocity += force;
+    }
+
+    public Vector3 Velocity
+    {
+        get { return m_velocity; }
+    }
+
+    public void ClearMoveSpeedBonus()
+    {
+        bonusMoveSpeed = 0f;
+        bonusMaxSpeed = 0f;
     }
     #region Dashing/Dodge
     bool HandleDashing()
@@ -1026,6 +1053,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
     }
 
+    
+
     // Finds the closest point on a spline container in WORLD space (handles container rotation).
     void FindClosestPointOnSpline(SplineContainer container, Vector3 worldPos, out float bestT, out float bestDistSqr)
     {
@@ -1088,6 +1117,11 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool GetGrounded()
     {
         return groundedState.isGrounded;
+    }
+
+    public Vector3 GetWallNormal()
+    {
+        return m_wallNormal;
     }
 
     void CheckLandingEvent()
