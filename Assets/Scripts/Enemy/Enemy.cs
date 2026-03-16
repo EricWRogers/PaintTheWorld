@@ -1,6 +1,29 @@
 using SuperPupSystems.Helper;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(Enemy), true)]
+[CanEditMultipleObjects]
+public class EnemyEditor : Editor
+{
+    public override void OnInspectorGUI()
+{
+    DrawDefaultInspector();
+
+    if (GUILayout.Button("Kill"))
+    {
+        foreach (Object obj in targets)
+        {
+            Enemy enemy = (Enemy)obj;
+            enemy.Kill();
+        }
+    }
+}
+}
+#endif
+
 public abstract class  Enemy : MonoBehaviour
 {
 
@@ -81,5 +104,10 @@ public abstract class  Enemy : MonoBehaviour
     {
         modelMeshRenderer.materials[1].color = hurtColor;
         m_flashTimer = flashTime;
+    }
+
+    public void Kill()
+    {
+        m_health.Kill();
     }
 }

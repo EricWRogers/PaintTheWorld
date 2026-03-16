@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 using SuperPupSystems.Helper;
-
 public class BeetleAi : Enemy
 {
     private float m_attackTimer;
