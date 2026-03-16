@@ -179,6 +179,8 @@ MonoBehaviour:
   airAccelMult: 1.5
   airDrag: 0.5
   groundDrag: 1.52
+  bonusMoveSpeed: 0
+  bonusMaxSpeed: 0
   dashSpeedCurve:
     serializedVersion: 2
     m_Curve:
@@ -594,7 +596,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787264, y: -0.038275957, z: 0.00533215, w: 0.9896958}
+  m_LocalRotation: {x: 0.13787235, y: -0.038275864, z: 0.0053321267, w: 0.9896958}
   m_LocalPosition: {x: 1.1000001, y: 1.1100003, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -964,8 +966,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13795666, y: -0.038278617, z: 0.005335835, w: 0.9896839}
-  m_LocalPosition: {x: 66.045006, y: 0.1353637, z: 106.69441}
+  m_LocalRotation: {x: 0.13787235, y: -0.038275864, z: 0.0053321267, w: 0.9896958}
+  m_LocalPosition: {x: 1.1, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1767,6 +1769,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 976d3f3c98167254dbd26e8084bce968, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 4ff3719c9dc53e74dba661ee401a3d84, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

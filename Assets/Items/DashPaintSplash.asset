@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Dash Paint Splash
   description: Creates a splash of paint around the player when dashing. Stacking
     increases the amount of paint.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: a140e3e20852d184194dec4be44000f5, type: 3}
   rarity: 0
   basePrice: 100
   stackable: 1
@@ -26,4 +26,10 @@ MonoBehaviour:
   radiusPerStack: 0.6
   hardness: 1
   strength: 1
-  splashVfxPrefab: {fileID: 8893670796704678082, guid: 6e55ef8cb3c336b469aab8323efaf31f, type: 3}
+  emitDuration: 0.5
+  rayStartOffset: 0.6
+  rayDistance: 2.5
+  paintMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  tickInterval: 0.05

@@ -703,6 +703,16 @@ public class PlayerMovement : PlayerMovmentEngine
         bonusMaxSpeed = Mathf.Max(0f, maxBonus);
     }
 
+    public void AddForce(Vector3 force)
+    {
+        m_velocity += force;
+    }
+
+    public Vector3 Velocity
+    {
+        get { return m_velocity; }
+    }
+
     public void ClearMoveSpeedBonus()
     {
         bonusMoveSpeed = 0f;
