@@ -30,12 +30,14 @@ public class BeetleAi : Enemy
     new void Start()
     {
         base.Start();
-        
+        anim.SetBool("Moving", true);
     }
 
     // Update is called once per frame
     new void Update()
     {
+
+        base.Update();
         if(m_agent == null)
         {
             m_agent = GetComponent<NavMeshAgent>();
@@ -50,6 +52,7 @@ public class BeetleAi : Enemy
                 Move();
                 GetComponent<Health>().Revive();
                 stunned = false;
+                anim.SetTrigger("Unstun");
                 GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
                 recoveringFromStun = true;
                 m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
@@ -67,7 +70,6 @@ public class BeetleAi : Enemy
             }
             return;
         }
-        base.Update();
 
         if (Vector3.Distance(target.position, m_lastTargetPosition) > repathDistanceThreshold)
         {
@@ -113,9 +115,38 @@ public class BeetleAi : Enemy
     public override void Attack()
     {
         StopMoving();
-        m_attackTimer -= Time.deltaTime;
+        anim.SetBool("Attacking", true);
+        // m_attackTimer -= Time.deltaTime;
 
-        if (m_attackTimer > 0) return;
+        // if (m_attackTimer > 0) return;
+        
+        // m_attackTimer = attackSpeed;
+    }
+
+    public void Stun()
+    {
+        StopMoving();
+        anim.SetTrigger("Stun");
+        modelMeshRenderer.materials[1].color = stunColor;
+        m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
+        stunned = true;
+        recoveringFromStun = false;
+    }
+
+    public void Move()
+    {
+        anim.SetBool("Moving", true);
+        m_agent.SetDestination(target.position);
+    }
+
+    public void StopMoving()
+    {
+        anim.SetBool("Moving", false);
+        m_agent.SetDestination(transform.position);
+    }
+    void Fire()
+    {
+        Debug.Log("fire");
         if (bulletPrefab == null || firePoint == null) return;
 
         firePoint.transform.LookAt(target);
@@ -130,26 +161,5 @@ public class BeetleAi : Enemy
         }
 
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        m_attackTimer = attackSpeed;
     }
-
-    public void Stun()
-    {
-        StopMoving();
-        modelMeshRenderer.materials[1].color = stunColor;
-        m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
-        stunned = true;
-        recoveringFromStun = false;
-    }
-
-    public void Move()
-    {
-        m_agent.SetDestination(target.position);
-    }
-
-    public void StopMoving()
-    {
-        m_agent.SetDestination(transform.position);
-    }
-
 }
