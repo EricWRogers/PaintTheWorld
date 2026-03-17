@@ -1,5 +1,5 @@
 using UnityEngine;
-using TMPro; // Remove if using standard Unity Text
+using TMPro; 
 using SuperPupSystems.Helper;
 
 public class TimerUI : MonoBehaviour
