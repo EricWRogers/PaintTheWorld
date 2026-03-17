@@ -113,7 +113,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 1255877168142571664, guid: 9d289cfb34d7549ab86e94c75332458c, type: 3}
   baseDamage: 20
-  startingHealth: 100
+  startingHealth: 10
   attackSpeed: 4
   rotationSpeed: 10
   attackRange: 50
@@ -158,8 +158,8 @@ MonoBehaviour:
   hurt:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Mortar, Assembly-CSharp
+      - m_Target: {fileID: 4403788977167812919}
+        m_TargetAssemblyTypeName: BeetleAi, Assembly-CSharp
         m_MethodName: FlashRed
         m_Mode: 1
         m_Arguments:
@@ -173,8 +173,8 @@ MonoBehaviour:
   outOfHealth:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Mortar, Assembly-CSharp
+      - m_Target: {fileID: 4403788977167812919}
+        m_TargetAssemblyTypeName: BeetleAi, Assembly-CSharp
         m_MethodName: Stun
         m_Mode: 1
         m_Arguments:
@@ -185,7 +185,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  maxHealth: 101
+  maxHealth: 10
   currentHealth: 0
   defaultToMaxHealth: 1
 --- !u!114 &8319573050973202509
