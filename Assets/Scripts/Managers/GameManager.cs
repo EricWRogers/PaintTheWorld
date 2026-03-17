@@ -78,6 +78,9 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.U)){
+            SceneManager.LoadSceneAsync(shopScene);
+        }
         if (!m_isPaused && Cursor.lockState == CursorLockMode.None)
         {
             Cursor.lockState = CursorLockMode.Locked;
