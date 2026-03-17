@@ -622,7 +622,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (canWalk)
         {
-            m_velocity = horizontalVel;
+            m_velocity = horizontalVel + new Vector3(0, m_velocity.y, 0);
         }
         else
         {
@@ -637,7 +637,7 @@ public class PlayerMovement : PlayerMovmentEngine
         }
         else
         {
-            if (!wasGrounded)
+            if (!wasGrounded && m_velocity.y <= 0f)
             {
                 m_velocity.y = 0f;
                 wasGrounded = true;
@@ -692,7 +692,7 @@ public class PlayerMovement : PlayerMovmentEngine
         if (onGround && !attemptingJump && groundedState.angle > 10 && transform.position.y - m_lasPos.y < 0.001f)
             SnapPlayerDown();
 
-        m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
+        //m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
         m_lasPos = transform.position;
     }
 
@@ -706,6 +706,10 @@ public class PlayerMovement : PlayerMovmentEngine
     public void AddForce(Vector3 force)
     {
         m_velocity += force;
+        if (force.y > 0 && groundedState.isGrounded)
+        {
+            wasGrounded = false;
+        }
     }
 
     public Vector3 Velocity
