@@ -25,6 +25,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     {
         spawnerAreas.Clear();
         spawnerAreas.AddRange(FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None));
+        m_spawnCounter = 0;
 
         IsReady = true;
     }
