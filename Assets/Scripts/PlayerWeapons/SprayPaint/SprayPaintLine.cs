@@ -28,7 +28,7 @@ public class SprayPaintLine : MonoBehaviour
     public GameObject projectilePrefab;
     public float launchForce = 800f;
     public float projectileLifetime = 5f;
-    public float projectileInterval = 2f;
+    public float projectileInterval = 1f;
 
     [Header("Extra Projectile Timing")]
     public float extraProjectileDelay = 0.4f;
