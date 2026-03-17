@@ -33,6 +33,7 @@ public class PaintGlobs : CollisonPainter
             if (enemy != null)
             {
                 enemy.GetComponent<Health>().Damage((int)damage);
+                Debug.Log($"Enemy hit! Dealt {damage} damage.");
             }
         }
     }
