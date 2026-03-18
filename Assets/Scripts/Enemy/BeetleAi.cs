@@ -127,7 +127,6 @@ public class BeetleAi : Enemy
     {
         StopMoving();
         anim.SetTrigger("Stun");
-        modelMeshRenderer.materials[1].color = stunColor;
         m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
         stunned = true;
         recoveringFromStun = false;

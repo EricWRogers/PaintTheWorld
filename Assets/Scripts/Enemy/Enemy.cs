@@ -39,10 +39,6 @@ public abstract class  Enemy : MonoBehaviour
     public GameObject damageText;
     public Transform damageTextSpawn;
     public MeshRenderer modelMeshRenderer;
-    public Color hurtColor;
-    public Color stunColor;
-    public float flashTime;
-    private float m_flashTimer;
 
     private int m_tempHealth;
     private Health m_health;
@@ -51,6 +47,10 @@ public abstract class  Enemy : MonoBehaviour
 
     public Transform target;
     public Animator anim;
+
+    public float timerToSwitchTargets;
+    private float m_switchTimer;
+
 
     void OnEnable()
     {
@@ -65,11 +65,6 @@ public abstract class  Enemy : MonoBehaviour
 
     public void Update()
     {
-        m_flashTimer -= Time.deltaTime;
-        if(m_flashTimer <= 0)
-        {
-            modelMeshRenderer.materials[1].color = Color.clear;
-        }
         if(target == null)
         {
             if (targetingPlayer)
@@ -82,10 +77,9 @@ public abstract class  Enemy : MonoBehaviour
                 {
                     return;
                 }
-                target = GameManager.instance.objectives[Random.Range(0, GameManager.instance.objectives.Count)].transform;
+                target = GameManager.instance.objectives[Random.Range(0, GameManager.instance.GetObjs().Count)].transform;
             }
         }
-        
     }
 
     public abstract void Attack();

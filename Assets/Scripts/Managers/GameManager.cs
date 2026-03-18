@@ -49,12 +49,15 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public string  shopScene;
     public int stageCounter = 1;
     public List<PaintingObj> objectives;
+    protected List<PaintingObj> p_activeObjectives;
     public int numberOfObjectives = 2;
     private int m_currNumberOfObjectives = 0;
 
     private SaveData saveData;
     private const string SAVE_KEY = "GameSaveData";
     private SaveData startSaveData;
+
+    public List<PaintingObj> GetObjs() => p_activeObjectives;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -90,6 +93,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         {
             int randInt = Random.Range(0, objectives.Count);
             objectives[randInt].transform.parent.gameObject.SetActive(true);
+            p_activeObjectives.Add(objectives[randInt]);
             m_currNumberOfObjectives++;
         }
     }

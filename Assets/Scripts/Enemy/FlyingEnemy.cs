@@ -31,8 +31,9 @@ public class FlyingEnemy : Enemy
         return new Vector3(_vector.x, 0.0f, _vector.z);
     }
 
-    void Start()
+    new void Start()
     {
+        base.Start();
         m_player = PlayerManager.instance.player;
         RequestNewPath();
     }
@@ -155,8 +156,6 @@ public class FlyingEnemy : Enemy
     {
         stopped = true;
         recoveringFromStun = false;
-
-        modelMeshRenderer.materials[1].color = stunColor;
 
         //grace period item
         m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
