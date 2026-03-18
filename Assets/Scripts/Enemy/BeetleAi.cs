@@ -30,6 +30,7 @@ public class BeetleAi : Enemy
     new void Start()
     {
         base.Start();
+        anim = GetComponent<Animator>();
         anim.SetBool("Moving", true);
     }
 
@@ -48,7 +49,6 @@ public class BeetleAi : Enemy
             m_stunTimer -= Time.deltaTime;
             if(m_stunTimer <= 0)
             {
-                modelMeshRenderer.materials[1].color = Color.clear;
                 Move();
                 GetComponent<Health>().Revive();
                 stunned = false;

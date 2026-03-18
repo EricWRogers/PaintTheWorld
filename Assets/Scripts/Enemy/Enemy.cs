@@ -38,7 +38,6 @@ public abstract class  Enemy : MonoBehaviour
     [Header("Hurt FX")]
     public GameObject damageText;
     public Transform damageTextSpawn;
-    public MeshRenderer modelMeshRenderer;
 
     private int m_tempHealth;
     private Health m_health;
@@ -61,24 +60,26 @@ public abstract class  Enemy : MonoBehaviour
     }
     public void Start()
     {
+        if (targetingPlayer)
+        {
+            target = PlayerManager.instance.player.transform;
+        }
+        else
+        {
+            PaintingObj obj = GameManager.instance.objectives[Random.Range(0, GameManager.instance.GetObjs().Count)];
+            target = obj.transform;
+            obj.currentEnemiesTarget++;
+        }
     }
 
     public void Update()
     {
         if(target == null)
         {
-            if (targetingPlayer)
-            {
-                target = PlayerManager.instance.player.transform;
-            }
-            else
-            {
-                if(GameManager.instance.objectives.Count == 0)
-                {
-                    return;
-                }
-                target = GameManager.instance.objectives[Random.Range(0, GameManager.instance.GetObjs().Count)].transform;
-            }
+            PaintingObj obj = GameManager.instance.objectives[Random.Range(0, GameManager.instance.GetObjs().Count)];
+            target = obj.transform;
+            obj.currentEnemiesTarget++;
+            return;
         }
     }
 
