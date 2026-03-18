@@ -57,8 +57,6 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private const string SAVE_KEY = "GameSaveData";
     private SaveData startSaveData;
 
-    public List<PaintingObj> GetObjs() => activeObjectives;
-
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if(pm = null)
@@ -71,13 +69,6 @@ public class GameManager : SceneAwareSingleton<GameManager>
         foreach(PaintingObj paint in objectives)
         {
             paint.transform.parent.gameObject.SetActive(false);
-        }
-        while(m_currNumberOfObjectives < numberOfObjectives)
-        {
-            int randInt = Random.Range(0, objectives.Count);
-            objectives[randInt].transform.parent.gameObject.SetActive(true);
-            activeObjectives.Add(objectives[randInt]);
-            m_currNumberOfObjectives++;
         }
         if (startSaveData == null)
             //startSaveData = new SaveData(0, pm.startingHealth, pm.startingHealth, new(), new(), 1);
@@ -96,7 +87,13 @@ public class GameManager : SceneAwareSingleton<GameManager>
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-        
+        if(m_currNumberOfObjectives < numberOfObjectives)
+        {
+            int randInt = Random.Range(0, objectives.Count);
+            objectives[randInt].transform.parent.gameObject.SetActive(true);
+            activeObjectives.Add(objectives[randInt]);
+            m_currNumberOfObjectives++;
+        }
     }
 
     public void BeginGameplay()
