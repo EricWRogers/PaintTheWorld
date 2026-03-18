@@ -50,6 +50,7 @@ public abstract class  Enemy : MonoBehaviour
     public bool targetingPlayer;
 
     public Transform target;
+    public Animator anim;
 
     void OnEnable()
     {
@@ -100,10 +101,9 @@ public abstract class  Enemy : MonoBehaviour
         }
 
     }
-    public void FlashRed()
+    public void Hurt()
     {
-        modelMeshRenderer.materials[1].color = hurtColor;
-        m_flashTimer = flashTime;
+        anim.SetTrigger("Hit");
     }
 
     public void Kill()
