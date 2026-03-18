@@ -70,17 +70,13 @@ public class BoostRamp : MonoBehaviour
 
         // Horizontal speed bonus: faster approach = bigger pop
         float horizontalSpeed = new Vector3(player.Velocity.x, 0f, player.Velocity.z).magnitude;
-        float totalBoost = boostForce + horizontalSpeed;
+        float totalBoost = boostForce + horizontalSpeed * speedToUpwardBonus;
         totalBoost = Mathf.Clamp(totalBoost, 0f, maxBoostForce);
 
         // Apply the boost by adding to the velocity
         Vector3 boostVector = Vector3.up * totalBoost;
         player.AddForce(boostVector);
-        Debug.DrawRay(player.transform.position, boostVector, Color.green, 2f);
-        Debug.DrawRay(player.transform.position, launchDir, Color.red, 2f);
 
-       Debug.Log("Vector for Boost: " + boostVector);
-        Debug.Log("Velocity after Launce: " + player.Velocity);
     }
 
 

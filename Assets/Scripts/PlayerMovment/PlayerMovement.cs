@@ -622,7 +622,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (canWalk)
         {
-            m_velocity = horizontalVel + new Vector3(0, m_velocity.y, 0);
+            if(m_velocity.y> 5f)
+                m_velocity = horizontalVel + new Vector3(0, m_velocity.y, 0);
+            else
+                m_velocity = horizontalVel;
         }
         else
         {
