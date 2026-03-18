@@ -66,18 +66,13 @@ public abstract class  Enemy : MonoBehaviour
         }
         else
         {
-            PaintingObj obj = GameManager.instance.objectives[Random.Range(0, GameManager.instance.activeObjectives.Count)];
+            PaintingObj obj = GameManager.instance.activeObjectives[Random.Range(0, GameManager.instance.activeObjectives.Count)];
             target = obj.transform;
         }
     }
 
     public void Update()
     {
-        if (!target.gameObject.activeInHierarchy)
-        {
-            PaintingObj obj = GameManager.instance.objectives[Random.Range(0, GameManager.instance.activeObjectives.Count)];
-            target = obj.transform;
-        }
     }
 
     public abstract void Attack();
