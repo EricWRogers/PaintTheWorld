@@ -52,6 +52,9 @@ public class SprayPaintLine : MonoBehaviour
         }
     }
 
+    [Header("Crosshair UI")]
+    public RectTransform crosshairUI;
+
     private void Start()
     {
         ApplyRuntimeStats();
@@ -119,16 +122,26 @@ public class SprayPaintLine : MonoBehaviour
 
         sprayParticles.transform.position = nozzleSpawnPoint.position;
 
-        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+        Vector3 rayOrigin = playerCamera.position + (playerCamera.forward * 0.5f);
+        Ray ray = new Ray(rayOrigin, playerCamera.forward);
         Vector3 targetPoint;
 
         if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, ~playerMask, QueryTriggerInteraction.Ignore))
         {
             targetPoint = hit.point;
+
+            if(crosshairUI != null && hit.collider.CompareTag("Enemy")) 
+            {
+                crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.red;
+            }
         }
         else
         {
             targetPoint = ray.GetPoint(10f);
+            if(crosshairUI != null) 
+            {
+                crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.black;
+            }
         }
 
         Vector3 direction = (targetPoint - transform.position).normalized;
@@ -138,6 +151,15 @@ public class SprayPaintLine : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
             sprayParticles.transform.rotation = transform.rotation;
+        }
+
+        if (crosshairUI != null)
+        {
+            Vector3 screenPoint = Camera.main.WorldToScreenPoint(targetPoint);
+            if (screenPoint.z < 0) {
+            screenPoint = new Vector3(-1000, -1000, 0);
+        }
+            crosshairUI.position = screenPoint;
         }
     }
 
