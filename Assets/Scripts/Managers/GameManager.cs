@@ -49,6 +49,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public string  shopScene;
     public int stageCounter = 1;
     public List<PaintingObj> objectives;
+    public List<PaintingObj> activeObjectives;
     public int numberOfObjectives = 2;
     private int m_currNumberOfObjectives = 0;
 
@@ -90,6 +91,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         {
             int randInt = Random.Range(0, objectives.Count);
             objectives[randInt].transform.parent.gameObject.SetActive(true);
+            activeObjectives.Add(objectives[randInt]);
             m_currNumberOfObjectives++;
         }
     }

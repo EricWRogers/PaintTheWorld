@@ -3,7 +3,7 @@ using KinematicCharacterControler;
 
 /// <summary>
 /// Place this on a ramp trigger volume.
-/// When the player walks through it, a strong upward force is added to the player's velocity
+/// When the player enters it, a strong upward force is added to the player's velocity
 /// so they launch cleanly off the ramp.
 /// </summary>
 [RequireComponent(typeof(Collider))]
@@ -74,13 +74,9 @@ public class BoostRamp : MonoBehaviour
         totalBoost = Mathf.Clamp(totalBoost, 0f, maxBoostForce);
 
         // Apply the boost by adding to the velocity
-        Vector3 boostVector = launchDir * totalBoost;
+        Vector3 boostVector = Vector3.up * totalBoost;
         player.AddForce(boostVector);
-        Debug.DrawRay(player.transform.position, boostVector, Color.green, 2f);
-        Debug.DrawRay(player.transform.position, launchDir, Color.red, 2f);
-        Debug.DrawRay(player.transform.position, transform.up, Color.blue, 2f);
-        Debug.Log($"Applying boost! Base: {boostForce:F1}, Speed Bonus: {horizontalSpeed * speedToUpwardBonus:F1}, Total: {totalBoost:F1}");
-     
+
     }
 
 
