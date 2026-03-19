@@ -263,6 +263,8 @@ public class PlayerMovement : PlayerMovmentEngine
     [ReadOnly] public bool isGrinding;
     public Rail currentRail;
     private bool wasGrinding = false;
+    private float m_grindExitCooldown = 0f;
+    private const float k_grindExitCooldownDuration = 0.4f;
     public float railProgress;
     public float grindSpeed;
     public float m_railDir = 1f;
@@ -469,21 +471,17 @@ public class PlayerMovement : PlayerMovmentEngine
     // programing animations -- by cleo
     public void HandleAnimations()
    {
+        animator.SetBool("Grinding", isGrinding);
+        animator.SetBool("Dashing", m_isWallRiding);
+
         Vector2 horzVelocity = new Vector2(m_velocity.x, m_velocity.z);
-       if (horzVelocity.magnitude > 2f)
-        {
+
+        if (horzVelocity.magnitude > 2f)
             animator.SetBool("Moving", true);
-           
-        }
-           
-
+        
         else
-        {
-
             animator.SetBool("Moving", false);
-        }
-            
-
+       
         if (groundedState.isGrounded)
             animator.SetBool("Grounded", true);
     
@@ -622,7 +620,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (canWalk)
         {
-            m_velocity = horizontalVel + new Vector3(0, m_velocity.y, 0);
+            if(m_velocity.y> 8f)
+                m_velocity = horizontalVel + new Vector3(0, m_velocity.y, 0);
+            else
+                m_velocity = horizontalVel;
         }
         else
         {
@@ -689,7 +690,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
-        if (onGround && !attemptingJump && groundedState.angle > 10 && transform.position.y - m_lasPos.y < 0.001f)
+        if (onGround && !attemptingJump && groundedState.angle > 7 && transform.position.y - m_lasPos.y < 0.001f)
             SnapPlayerDown();
 
         //m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
@@ -904,11 +905,11 @@ public class PlayerMovement : PlayerMovmentEngine
     bool TryStartGrinding()
     {
         if (isGrinding) return true;
-        // Already grinding? Continue.
 
-        if (wasGrinding)
+        // Tick and block re-entry while cooldown is active
+        if (m_grindExitCooldown > 0f)
         {
-            wasGrinding = false;
+            m_grindExitCooldown -= Time.deltaTime;
             return false;
         }
         splineContainer = null;
@@ -954,10 +955,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
         
         Vector3 splinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up;
 
         Vector3 snapDelta = worldSplinePos - transform.position;
-        transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
+        transform.position = MovePlayer(snapDelta);
 
       m_velocity = tangent.normalized * grindSpeed * m_railDir ;
 
@@ -974,8 +975,12 @@ public class PlayerMovement : PlayerMovmentEngine
             return;
         }
 
-        if (m_jumpInputPressed)
+        // Use the jump input buffer (jumpInputElapsed) instead of raw IsPressed so short taps
+        // between FixedUpdate frames are never missed when jumping off a rail.
+        bool jumpBuffered = jumpInputElapsed <= m_jumpBufferTime;
+        if (jumpBuffered)
         {
+            jumpInputElapsed = Mathf.Infinity; // consume the buffered input
             var splineRef = splineContainer.Splines[0];
             Vector3 tangent = GetSplineTangentAt(splineRef, railProgress).normalized * m_railDir;
             m_velocity = tangent * grindExitForce + Vector3.up * jumpForce;
@@ -1028,15 +1033,15 @@ public class PlayerMovement : PlayerMovmentEngine
 
     void ExitGrinding()
     {
-        if (!isGrinding || wasGrinding) return;
+        if (!isGrinding) return;
 
         isGrinding = false;
-        wasGrinding = true;
+        m_grindExitCooldown = k_grindExitCooldownDuration; // block re-snap for a moment
 
         // Give exit velocity
         if (splineContainer != null)
         {
-            m_velocity += Vector3.up * grindExitForce;
+            m_velocity += Vector3.up * grindExitForce * 0.5f;
         }
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 

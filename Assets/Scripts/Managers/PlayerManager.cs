@@ -85,6 +85,12 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     void Update()
     {
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            InitializeComponents();
+            return;
+        }
         if (health != null)
         {
             // keep max health synced to current bonus health

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SuperPupSystems.Helper;
+using Unity.Mathematics;
 
 public class FlyingEnemy : Enemy
 {
@@ -9,7 +10,6 @@ public class FlyingEnemy : Enemy
     public float minHeightFromPLayerToShoot;
 
     private float m_curFireTime;
-    private GameObject m_player;
 
     public List<Vector3> path;
     public int startId;
@@ -31,14 +31,20 @@ public class FlyingEnemy : Enemy
         return new Vector3(_vector.x, 0.0f, _vector.z);
     }
 
-    void Start()
+    new void Start()
     {
-        m_player = PlayerManager.instance.player;
+        base.Start();
+        targetingPlayer = true; 
+        cloudNav = EnemyManager.instance.cloudNav;
         RequestNewPath();
     }
 
     void FixedUpdate()
     {
+        if(cloudNav == null)
+        {
+            cloudNav = EnemyManager.instance.cloudNav;
+        }
         //stunning
         if (stunned)
         {
@@ -48,7 +54,6 @@ public class FlyingEnemy : Enemy
 
             if (m_stunTimer <= 0f)
             {
-                modelMeshRenderer.materials[1].color = Color.clear;
                 GetComponent<Health>().Revive();
 
                 stunned = false;
@@ -85,11 +90,12 @@ public class FlyingEnemy : Enemy
         
         if (path == null || path.Count == 0)
         {
+            Debug.Log("Find path");
             RequestNewPath();
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, m_player.transform.position);
+        float distance = Vector3.Distance(transform.position, target.transform.position);
 
         if (distance <= minStopDistance)
         {
@@ -98,7 +104,7 @@ public class FlyingEnemy : Enemy
 
         if (distance <= attackRange && stopped)
         {
-            transform.LookAt(m_player.transform.position);
+            //transform.LookAt(m_player.transform.position);
             Attack();
         }
         else
@@ -135,11 +141,8 @@ public class FlyingEnemy : Enemy
 
     void RequestNewPath()
     {
-        float heightDifference = transform.position.y - m_player.transform.position.y;
-        Vector3 offset = new Vector3(0, heightDifference, 0);
-
         startId = cloudNav.aStar.GetClosestPoint(transform.position);
-        endId = cloudNav.aStar.GetClosestPoint(m_player.transform.position - offset);
+        endId = cloudNav.aStar.GetClosestPoint(target.transform.position);
 
         cloudNav.aStar.RequestPath(GetNewPath, startId, endId);
     }
@@ -156,8 +159,6 @@ public class FlyingEnemy : Enemy
         stopped = true;
         recoveringFromStun = false;
 
-        modelMeshRenderer.materials[1].color = stunColor;
-
         //grace period item
         m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
         stunned = true;
@@ -168,7 +169,10 @@ public class FlyingEnemy : Enemy
     public override void Attack()
     {
         if (m_curFireTime > attackSpeed * 0.5f)
-            transform.LookAt(m_player.transform);
+        {
+            firePoint.LookAt(target.transform);
+        }
+            
 
         m_curFireTime -= Time.fixedDeltaTime;
         if (m_curFireTime <= 0)
