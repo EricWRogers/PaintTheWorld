@@ -620,7 +620,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (canWalk)
         {
-            if(m_velocity.y> 5f)
+            if(m_velocity.y> 8f)
                 m_velocity = horizontalVel + new Vector3(0, m_velocity.y, 0);
             else
                 m_velocity = horizontalVel;
@@ -955,10 +955,10 @@ public class PlayerMovement : PlayerMovmentEngine
 
         
         Vector3 splinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up;
 
         Vector3 snapDelta = worldSplinePos - transform.position;
-        transform.position = MovePlayer(snapDelta); // MovePlayer returns new pos usually; keep consistent usage
+        transform.position = MovePlayer(snapDelta);
 
       m_velocity = tangent.normalized * grindSpeed * m_railDir ;
 
