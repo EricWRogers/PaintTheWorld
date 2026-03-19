@@ -690,7 +690,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
-        if (onGround && !attemptingJump && groundedState.angle > 10 && transform.position.y - m_lasPos.y < 0.001f)
+        if (onGround && !attemptingJump && groundedState.angle > 7 && transform.position.y - m_lasPos.y < 0.001f)
             SnapPlayerDown();
 
         //m_velocity = (transform.position - m_lasPos).normalized * m_velocity.magnitude;
