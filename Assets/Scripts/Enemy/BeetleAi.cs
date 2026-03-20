@@ -44,6 +44,10 @@ public class BeetleAi : Enemy
             m_agent = GetComponent<NavMeshAgent>();
             return;
         }
+        if(target == null)
+        {
+            return;
+        }
         if (stunned)
         {
             m_stunTimer -= Time.deltaTime;
