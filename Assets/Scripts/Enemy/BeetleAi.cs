@@ -48,18 +48,25 @@ public class BeetleAi : Enemy
         {
             return;
         }
+        
         if (stunned)
         {
             m_stunTimer -= Time.deltaTime;
-            if(m_stunTimer <= 0)
+            Debug.Log($"[BeetleAi] STUNNED | timer={m_stunTimer:F2}");
+
+            if (m_stunTimer <= 0)
             {
-                Move();
                 GetComponent<Health>().Revive();
                 stunned = false;
+
                 anim.SetTrigger("Unstun");
-                GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
+
                 recoveringFromStun = true;
                 m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
+
+                Debug.Log($"[BeetleAi] Recovered from stun, entering grace for {m_recoveryGraceTimer:F2}s");
+
+                GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
             }
             return;
         }
@@ -67,10 +74,12 @@ public class BeetleAi : Enemy
         if (recoveringFromStun)
         {
             m_recoveryGraceTimer -= Time.deltaTime;
+
             if (m_recoveryGraceTimer <= 0f)
             {
                 recoveringFromStun = false;
                 Move();
+                Debug.Log("[BeetleAi] Grace period ended, resuming movement.");
             }
             return;
         }
@@ -134,6 +143,7 @@ public class BeetleAi : Enemy
         m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
         stunned = true;
         recoveringFromStun = false;
+        Debug.Log($"[BeetleAi] STUN APPLIED | base={stunTime:F2}, bonus={EnemyStunModifier.extraStunTime:F2}, total={m_stunTimer:F2}");
     }
 
     public void Move()

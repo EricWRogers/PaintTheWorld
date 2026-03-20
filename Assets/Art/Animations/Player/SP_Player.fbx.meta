@@ -39,8 +39,12 @@ ModelImporter:
       that will be discarded.\n\t'pinky.R.001' has translation animation that will
       be discarded.\n\t'ring.R.001' has translation animation that will be discarded.\n\t'middle.R.001'
       has translation animation that will be discarded.\n\t'thumb.R.001' has translation
-      animation that will be discarded.\n\nClip 'metarig|FULL_RUN' has import animation
+      animation that will be discarded.\n\nClip 'metarig|DASH' has import animation
       warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'core' has translation animation
+      that will be discarded.\n\t'core' is inbetween humanoid transforms and has
+      rotation animation that will be discarded.\n\nClip 'metarig|FULL_RUN' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
       DOF on avatar to improve retargeting quality.\n\t'ROOT' has translation animation
       that will be discarded.\n\t'core' has translation animation that will be discarded.\n\t'core'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'hair.003'
@@ -55,7 +59,13 @@ ModelImporter:
       and has rotation animation that will be discarded.\n\nClip 'metarig|JUMP' has
       import animation warnings that might lower retargeting quality:\nNote: Activate
       translation DOF on avatar to improve retargeting quality.\n\t'ROOT' has translation
-      animation that will be discarded.\n"
+      animation that will be discarded.\n\t'core' has translation animation that
+      will be discarded.\n\t'core' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\nClip 'metarig|JUMP2' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'core' has translation animation
+      that will be discarded.\n\t'core' is inbetween humanoid transforms and has
+      rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -109,7 +119,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -140,10 +150,10 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
-      keepOriginalOrientation: 1
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
@@ -160,7 +170,7 @@ ModelImporter:
       takeName: metarig|DASH
       internalID: 6013785589137985897
       firstFrame: 0
-      lastFrame: 0
+      lastFrame: 4
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -172,9 +182,9 @@ ModelImporter:
       loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
+      keepOriginalOrientation: 1
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
@@ -227,7 +237,7 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
@@ -247,7 +257,7 @@ ModelImporter:
       takeName: metarig|JUMP
       internalID: -551706309097897915
       firstFrame: 0
-      lastFrame: 4
+      lastFrame: 6
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -256,7 +266,36 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: metarig|JUMP (1)
+      takeName: metarig|JUMP
+      internalID: 216021269675430548
+      firstFrame: 6
+      lastFrame: 12
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0

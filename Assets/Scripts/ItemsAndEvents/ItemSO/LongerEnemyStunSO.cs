@@ -6,7 +6,6 @@ public class LongerEnemyStunSO : ItemSO
     [Header("Bonuses")]
     public float baseExtraStunTime = 0.4f;
     public float extraStunPerStack = 0.2f;
-
     public float baseExtraGrace = 0.25f;
     public float extraGracePerStack = 0.1f;
 
@@ -18,10 +17,13 @@ public class LongerEnemyStunSO : ItemSO
         float graceBonus = baseExtraGrace + extraGracePerStack * (stacks - 1);
 
         EnemyStunModifier.Configure(stunBonus, graceBonus);
+
+        Debug.Log($"[LongerEnemyStunSO] Equipped | stacks={stacks}, extraStun={stunBonus:F2}, extraGrace={graceBonus:F2}");
     }
 
     public override void OnUnequipped(PlayerContext ctx, int count)
     {
         EnemyStunModifier.ResetModifiers();
+        Debug.Log("[LongerEnemyStunSO] Unequipped | reset stun modifiers");
     }
 }
