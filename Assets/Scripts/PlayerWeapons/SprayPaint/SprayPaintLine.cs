@@ -29,7 +29,7 @@ public class SprayPaintLine : MonoBehaviour
     public GameObject projectilePrefab;
     public float launchForce = 800f;
     public float projectileLifetime = 5f;
-    public float projectileInterval = 1f;
+    public float projectileInterval = 0.5f;
 
     [Header("Extra Projectile Timing")]
     public float extraProjectileDelay = 0.4f;
@@ -47,6 +47,7 @@ public class SprayPaintLine : MonoBehaviour
     [Header("Animation Settings")]
     public Animator weaponAnimator;
     private string attackTriggerName = "AttackTrigger";
+    private bool canCombo = false;
 
     public float CurrentProjectileInterval
     {
@@ -57,8 +58,8 @@ public class SprayPaintLine : MonoBehaviour
         }
     }
 
-    [Header("Crosshair UI")]
-    public RectTransform crosshairUI;
+   // [Header("Crosshair UI")]
+   // public RectTransform crosshairUI;
 
     private void Start()
     {
@@ -136,18 +137,18 @@ public class SprayPaintLine : MonoBehaviour
         {
             targetPoint = hit.point;
 
-            if(crosshairUI != null && hit.collider.CompareTag("Enemy")) 
-            {
-                crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.red;
-            }
+      //      if(crosshairUI != null && hit.collider.CompareTag("Enemy")) 
+    //        {
+    //            crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.red;
+    //        }
         }
         else
         {
             targetPoint = ray.GetPoint(10f);
-            if(crosshairUI != null) 
-            {
-                crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.black;
-            }
+    //        if(crosshairUI != null) 
+    //        {
+    //            crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.black;
+    //        }
         }
 
         Vector3 direction = (targetPoint - transform.position).normalized;
@@ -159,22 +160,31 @@ public class SprayPaintLine : MonoBehaviour
             sprayParticles.transform.rotation = transform.rotation;
         }
 
-        if (crosshairUI != null)
-        {
-            Vector3 screenPoint = Camera.main.WorldToScreenPoint(targetPoint);
-            if (screenPoint.z < 0) {
-            screenPoint = new Vector3(-1000, -1000, 0);
-        }
-            crosshairUI.position = screenPoint;
-        }
+    //    if (crosshairUI != null)
+  //      {
+  //          Vector3 screenPoint = Camera.main.WorldToScreenPoint(targetPoint);
+  //          if (screenPoint.z < 0) {
+  //          screenPoint = new Vector3(-1000, -1000, 0);
+  //      }
+  //          crosshairUI.position = screenPoint;
+  //      }
     }
 
     private void HandleInput()
     {
         if (PlayerManager.instance.playerInputs.Attack.WasPressedThisFrame() && currentAmmo > 0)
         {
-            weaponAnimator.SetTrigger(attackTriggerName);
+            if (weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("metarig|ACTION_IDLE"))
+            {
+                weaponAnimator.SetTrigger(attackTriggerName);
+            }
+            else if (canCombo)
+            {
+                weaponAnimator.SetTrigger(attackTriggerName);
+                canCombo = false;
+            }
         }
+        
     }
 
     public void StartSprayEvent()
@@ -190,9 +200,22 @@ public class SprayPaintLine : MonoBehaviour
     public void StopSprayEvent()
     {
         isSpraying = false;
+        canCombo = false;
         if (sprayParticles != null) sprayParticles.Stop();
         projectileTimer = 0f;
     }
+
+
+    public void OpenComboWindow()
+    {
+        canCombo = true;
+    }
+
+    public void CloseComboWindow()
+    {
+        canCombo = false;
+    }
+
 
     private void HandleProjectileSpawning()
     {
