@@ -149,22 +149,32 @@ MonoBehaviour:
   startingHealth: 10
   attackSpeed: 4
   rotationSpeed: 10
-  attackRange: 8
+  attackRange: 10
   firePoint: {fileID: 3519808824711932938}
   damageText: {fileID: 0}
   damageTextSpawn: {fileID: 0}
-  targetingPlayer: 0
+  targetingPlayer: 1
   target: {fileID: 0}
   anim: {fileID: 5772691904600099017}
   timerToSwitchTargets: 0
   cloudNav: {fileID: 0}
   minStopDistance: 8
   minHeightFromPLayerToShoot: 7
+  minPitch: -20
+  maxPitch: 20
+  seperationDistance: 5
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 64
+  neighborDetectionRange: 10
+  curveSpeed: 5
+  bankAmount: 30
+  bankSpeed: 5
   path: []
   startId: 0
   endId: 0
   targetIndex: 0
-  speed: 3
+  speed: 5
   stopped: 0
   stunned: 0
   stunTime: 10

@@ -25,7 +25,7 @@ public class ItemRuntimeDispatcher : MonoBehaviour
         GameEvents.PlayerDodged          -= OnDodged;
         GameEvents.PlayerStartedGrinding -= OnGrindStart;
         GameEvents.PlayerGrindingTick    -= OnGrindTick;
-        GameEvents.PlayerEndedGrinding  = OnGrindEnd;
+        GameEvents.PlayerEndedGrinding  -= OnGrindEnd;
         GameEvents.PaintApplied          -= OnPaintApplied;
         GameEvents.PlayerLanded         -= OnLanded;
         GameEvents.EnemyRecoveredFromStun -= OnEnemyRecoveredFromStun;
