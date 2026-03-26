@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class SprayPaintLine : MonoBehaviour
 {
@@ -43,6 +44,10 @@ public class SprayPaintLine : MonoBehaviour
 
     public int ProjectileCount => Mathf.Max(1, 1 + bonusProjectileCount);
 
+    [Header("Animation Settings")]
+    public Animator weaponAnimator;
+    private string attackTriggerName = "AttackTrigger";
+
     public float CurrentProjectileInterval
     {
         get
@@ -77,8 +82,9 @@ public class SprayPaintLine : MonoBehaviour
         ApplyRuntimeStats();
         HandleInput();
 
-        if (isSpraying)
+        if (isSpraying && currentAmmo > 0)
         {
+            ConsumeAmmo();
             HandleProjectileSpawning();
         }
     }
@@ -165,36 +171,27 @@ public class SprayPaintLine : MonoBehaviour
 
     private void HandleInput()
     {
-        if (PlayerManager.instance.playerInputs.Attack.IsPressed() && currentAmmo > 0)
+        if (PlayerManager.instance.playerInputs.Attack.WasPressedThisFrame() && currentAmmo > 0)
         {
-            StartSpraying();
-            ConsumeAmmo();
-        }
-        else
-        {
-            StopSpraying();
+            weaponAnimator.SetTrigger(attackTriggerName);
         }
     }
 
-    private void StartSpraying()
+    public void StartSprayEvent()
     {
-        if (!isSpraying)
-        {
-            isSpraying = true;
-            if (sprayParticles != null && !sprayParticles.isPlaying) sprayParticles.Play();
-
-            ShootProjectileBurst();
-        }
+        if (currentAmmo <= 0) return;
+        
+        isSpraying = true;
+        if (sprayParticles != null) sprayParticles.Play();
+        
+        ShootProjectileBurst();
     }
 
-    private void StopSpraying()
+    public void StopSprayEvent()
     {
-        if (isSpraying)
-        {
-            isSpraying = false;
-            if (sprayParticles != null && sprayParticles.isPlaying) sprayParticles.Stop();
-            projectileTimer = 0f;
-        }
+        isSpraying = false;
+        if (sprayParticles != null) sprayParticles.Stop();
+        projectileTimer = 0f;
     }
 
     private void HandleProjectileSpawning()
@@ -255,6 +252,8 @@ public class SprayPaintLine : MonoBehaviour
             currentAmmo = Mathf.Max(0, currentAmmo - ammoToSubtract);
             ammoRemainder -= ammoToSubtract;
         }
+        
+        if (currentAmmo <= 0) StopSprayEvent();
     }
 
     public void UpdatePainterColor()
