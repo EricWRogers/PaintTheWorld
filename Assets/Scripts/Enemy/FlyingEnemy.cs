@@ -1,118 +1,307 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SuperPupSystems.Helper;
-public class FlyingEnemy : MonoBehaviour
+
+public class FlyingEnemy : Enemy
 {
     public CloudNav cloudNav;
-    public GameObject bulletPrefab;
-    public Transform firePoint;
-    public float fireRange;
+
     public float minStopDistance;
-    public int damage;
-    public float fireRate;
+    public float minHeightFromPLayerToShoot;
+    public float minPitch = -30f;
+    public float maxPitch = 30f;
+
+    private float m_minPitch = -30;
+    private float m_maxPitch = 30;
+    private Quaternion lookRot;
     private float m_curFireTime;
-    private GameObject m_player;
+
+    [Header("Separation")]
+    public float seperationDistance;
+    public LayerMask enemyMask;
+    public int neighborDetectionRange;
+    private Collider[] m_neighbors = new Collider[20];
+
+    [Header("Bezier Movement")]
+    public float curveSpeed = 2f;
+    private float m_curveDistance = 0f;
+
+    private Vector3 m_curveStart;
+    private Vector3 m_curveEnd;
+    private Vector3 m_curveControl;
+    [Header("Tilt")]
+    public float bankAmount = 30f;
+    public float bankSpeed = 5f;
+    private Vector3 lastMoveDir;
+
+    [Header("Pathing")]
     public List<Vector3> path;
     public int startId;
     public int endId;
     public int targetIndex;
-    public float speed = 100.0f;
+
+    public float speed = 10.0f;
     public bool stopped = false;
+
+    [Header("Stun")]
+    public bool stunned;
+    public float stunTime;
+    private float m_stunTimer;
+
+    private bool recoveringFromStun;
+    private float m_recoveryGraceTimer;
 
     Vector3 ZeroY(Vector3 _vector)
     {
         return new Vector3(_vector.x, 0.0f, _vector.z);
     }
 
-    void Start()
+    new void Start()
     {
-        m_player = PlayerManager.instance.player;
+        base.Start();
+        m_minPitch = minPitch;
+        m_maxPitch = maxPitch;
+        lastMoveDir = transform.forward;
+        targetingPlayer = true; 
+        target = PlayerManager.instance.player.transform;
+        cloudNav = EnemyManager.instance.cloudNav;
         RequestNewPath();
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
-        if (path.Count == 0)
+        if (cloudNav == null) cloudNav = EnemyManager.instance.cloudNav;
+        if (target == null) return;
+        
+        //stunning
+        if (stunned)
+        {
+            m_minPitch = -90;
+            m_maxPitch = 90;
+            m_stunTimer -= Time.deltaTime;
+
+            if (m_stunTimer <= 0f)
+            {
+                GetComponent<Health>().Revive();
+
+                stunned = false;
+                recoveringFromStun = true;
+                m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
+
+                // Trigger the stun-recovery splash item
+                GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
+            }
+
+            return;
+        }
+
+        //recovery grace
+        if (recoveringFromStun)
+        {
+            m_recoveryGraceTimer -= Time.deltaTime;
+
+
+            if (m_recoveryGraceTimer <= 0f)
+            {
+                recoveringFromStun = false;
+                stopped = false;
+
+            }
+
+            return;
+        }
+
+        
+        if (path == null || path.Count == 0)
         {
             RequestNewPath();
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, m_player.transform.position);
+        float distance = Vector3.Distance(transform.position, target.transform.position);
+        
+        stopped = distance <= minStopDistance;
+        bool inAttackRange = distance <= attackRange;
 
-        if (distance <= minStopDistance)
+        if (m_curveDistance == 0f && path.Count > 1 && targetIndex == 1) SetupCurve(path[0], path[1]);
+        
+        if (m_curveDistance >= 1f)
         {
-            stopped = true;
-        }
-
-        if (distance <= fireRange && stopped)
-        {
-            transform.LookAt(m_player.transform.position);
-            Shoot();
-        }
-        else
-        {
-            stopped = false;
-            if (transform.position == path[targetIndex])
+            targetIndex++;
+            if (targetIndex >= path.Count && !inAttackRange)
             {
-                targetIndex++;
-
                 RequestNewPath();
                 return;
             }
-
-            Vector3 direction = (path[targetIndex] - transform.position).normalized;
-            Vector3 movePosition = transform.position + (direction * speed * Time.fixedDeltaTime);
-
-            transform.LookAt(movePosition);
-
-            if (Vector3.Distance(transform.position, path[targetIndex]) < Vector3.Distance(transform.position, movePosition))
-            {
-                transform.position = path[targetIndex];
-                return;
-            }
-
-            transform.position = movePosition;
+            SetupCurve(transform.position, path[targetIndex]);
         }
 
+        float segmentDistance = Vector3.Distance(m_curveStart, m_curveEnd);
 
-    }
+        if (segmentDistance < 0.1f) m_curveDistance = 1f;
+        else m_curveDistance += (curveSpeed / segmentDistance) * Time.fixedDeltaTime;
 
-    public void Shoot()
-    {
-        if (m_curFireTime > fireRate * 0.5f)
-            transform.LookAt(m_player.transform);
+        Vector3 nextPos = GetBezierPoint(m_curveStart, m_curveControl, m_curveEnd, m_curveDistance);
+
+        Vector3 separation = Vector3.zero;
+        int count = Physics.OverlapSphereNonAlloc(transform.position, neighborDetectionRange, m_neighbors, enemyMask);
         
-        m_curFireTime -= Time.fixedDeltaTime;
-        if (m_curFireTime <= 0)
+        if (count > 0) separation = Separation(transform.position, m_neighbors);
+
+        Vector3 moveTarget = nextPos + separation * 5f;
+
+        float moveSpeed = inAttackRange ? speed * 0.2f : speed;
+
+        Quaternion targetRot;
+
+        if (inAttackRange)
         {
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, transform.rotation);
-            bullet.GetComponent<Bullet>().damage = damage;
-            m_curFireTime = fireRate;
+            Vector3 flatDir = target.position;
+            flatDir.y = transform.position.y;
+
+            Vector3 dir = (flatDir - transform.position).normalized;
+            if (dir.sqrMagnitude < 0.001f)
+                dir = transform.forward;
+
+            targetRot = Quaternion.LookRotation(dir);
+        }
+        else
+        {
+            targetRot = GetClampedLookRotation(target.position, m_minPitch, m_maxPitch);
         }
 
+        Vector3 moveDir = (nextPos - transform.position).normalized + separation * 3f;
+
+        lastMoveDir = Vector3.Lerp(lastMoveDir, moveDir, Time.fixedDeltaTime * 5f);
+
+        Quaternion bankRot = Quaternion.AngleAxis(
+            Mathf.Clamp(
+                -Vector3.SignedAngle(transform.forward, lastMoveDir, Vector3.up),
+                -bankAmount,
+                bankAmount
+            ),
+            Vector3.forward
+        );
+
+        Quaternion finalRot = targetRot * bankRot;
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            finalRot,
+            Time.fixedDeltaTime * bankSpeed
+        );
+
+        transform.position = Vector3.Lerp(
+            transform.position,
+            moveTarget,
+            Time.fixedDeltaTime * moveSpeed
+        );
+
+        if (inAttackRange)
+        {
+            Attack();
+        }
     }
 
     void RequestNewPath()
     {
         startId = cloudNav.aStar.GetClosestPoint(transform.position);
-        endId = cloudNav.aStar.GetClosestPoint(m_player.transform.position);
-
+        endId = cloudNav.aStar.GetClosestPoint(target.transform.position);
         cloudNav.aStar.RequestPath(GetNewPath, startId, endId);
     }
 
     void GetNewPath(List<Vector3> _path)
     {
-        path.Clear();
-
         targetIndex = 0;
-
         path = _path;
+        SetupCurve(path[0], path[1]);
+        Debug.Log("PATH RECEIVED: " + (_path != null ? _path.Count.ToString() : "NULL"));
     }
-    
-    public void Dead()
+
+    Vector3 Separation(Vector3 _agentPos, Collider[] _neighbors)
     {
-        
+        Vector3 separation = Vector3.zero;
+        int count = 0;
+
+        foreach (Collider neighbor in _neighbors)
+        {
+            if (neighbor == null) continue;
+            if (neighbor.gameObject == gameObject) continue;
+
+            Vector3 toNeighbor = _agentPos - neighbor.transform.position;
+            float distance = toNeighbor.magnitude;
+
+            if (distance < seperationDistance && distance > 0f)
+            {
+                float strength = (seperationDistance - distance) / seperationDistance;
+                separation += toNeighbor.normalized * strength;
+                count++;
+            }
+        }
+        if(count > 0)
+            separation /= count;
+
+        return separation;
+    }
+
+    Vector3 GetBezierPoint(Vector3 _startPoint, Vector3 _midPoint, Vector3 _endPoint, float _distance)
+    {
+        float u = 1 - _distance;
+        return u * u * _startPoint +
+            2 * u * _distance * _midPoint +
+            _distance * _distance * _endPoint;
+    }
+    void SetupCurve(Vector3 _start, Vector3 _end)
+    {
+        m_curveStart = _start;
+        m_curveEnd = _end;
+
+        Vector3 dir = (_end - _start).normalized;
+        Vector3 perp = Vector3.Cross(dir, Vector3.up);
+
+        m_curveControl = (_start + _end) / 2 + perp * 0f;//Random.Range(-1f, 1f);
+
+        m_curveDistance = 0f;
+    }
+    Quaternion GetClampedLookRotation(Vector3 _targetPos, float _minPitch, float _maxPitch)
+    {
+        Vector3 dir = (_targetPos - transform.position).normalized;
+
+        Vector3 flatDir = new Vector3(dir.x, 0f, dir.z);
+        if (flatDir.sqrMagnitude < 0.001f)
+            flatDir = transform.forward;
+
+        Quaternion yawRot = Quaternion.LookRotation(flatDir);
+
+        float pitch = Mathf.Asin(dir.y) * Mathf.Rad2Deg;
+
+        float clampedPitch = Mathf.Clamp(pitch, _minPitch, _maxPitch);
+
+        Quaternion pitchRot = Quaternion.Euler(-clampedPitch, 0f, 0f);
+
+        return yawRot * pitchRot;
+    }
+
+    public void Stun()
+    {
+        stopped = true;
+        recoveringFromStun = false;
+
+        //grace period item
+        m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
+        stunned = true;
+
+    }
+
+    public override void Attack()
+    {
+        firePoint.LookAt(target.transform);
+        m_curFireTime -= Time.fixedDeltaTime;
+        if (m_curFireTime <= 0)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, transform.rotation);
+            bullet.GetComponent<Bullet>().damage = baseDamage;
+            m_curFireTime = attackSpeed;
+        }
     }
 }

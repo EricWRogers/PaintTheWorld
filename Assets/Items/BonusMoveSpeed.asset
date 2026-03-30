@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86bc10595a4a1fa469992cd2b68db4a8, type: 3}
+  m_Name: BonusMoveSpeed
+  m_EditorClassIdentifier: 
+  id: bonus_move_speed
+  displayName: Increase Movement Speed
+  description: Increase the player movement speed. Max stack of 5.
+  icon: {fileID: 21300000, guid: 1a88bbb17d76c164fbd9fa0efec89da7, type: 3}
+  rarity: 0
+  basePrice: 100
+  stackable: 1
+  maxStack: 5
+  initialStock: -1
+  moveSpeedPerStack: 1
+  maxSpeedPerStack: 2

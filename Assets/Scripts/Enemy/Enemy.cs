@@ -1,6 +1,29 @@
 using SuperPupSystems.Helper;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+
+[CustomEditor(typeof(Enemy), true)]
+[CanEditMultipleObjects]
+public class EnemyEditor : Editor
+{
+    public override void OnInspectorGUI()
+{
+    DrawDefaultInspector();
+
+    if (GUILayout.Button("Kill"))
+    {
+        foreach (Object obj in targets)
+        {
+            Enemy enemy = (Enemy)obj;
+            enemy.Kill();
+        }
+    }
+}
+}
+#endif
+
 public abstract class  Enemy : MonoBehaviour
 {
 
@@ -15,11 +38,6 @@ public abstract class  Enemy : MonoBehaviour
     [Header("Hurt FX")]
     public GameObject damageText;
     public Transform damageTextSpawn;
-    public MeshRenderer modelMeshRenderer;
-    public Color hurtColor;
-    public Color stunColor;
-    public float flashTime;
-    private float m_flashTimer;
 
     private int m_tempHealth;
     private Health m_health;
@@ -27,6 +45,11 @@ public abstract class  Enemy : MonoBehaviour
     public bool targetingPlayer;
 
     public Transform target;
+    public Animator anim;
+
+    public float timerToSwitchTargets;
+    private float m_switchTimer;
+
 
     void OnEnable()
     {
@@ -37,31 +60,19 @@ public abstract class  Enemy : MonoBehaviour
     }
     public void Start()
     {
+        if (targetingPlayer)
+        {
+            target = PlayerManager.instance.player.transform;
+        }
+        else
+        {
+            PaintingObj obj = GameManager.instance.activeObjectives[Random.Range(0, GameManager.instance.activeObjectives.Count)];
+            target = obj.transform;
+        }
     }
 
     public void Update()
     {
-        m_flashTimer -= Time.deltaTime;
-        if(m_flashTimer <= 0)
-        {
-            modelMeshRenderer.materials[1].color = Color.clear;
-        }
-        if(target == null)
-        {
-            if (targetingPlayer)
-            {
-                target = PlayerManager.instance.player.transform;
-            }
-            else
-            {
-                if(GameManager.instance.objectives.Count == 0)
-                {
-                    return;
-                }
-                target = GameManager.instance.objectives[Random.Range(0, GameManager.instance.objectives.Count)].transform;
-            }
-        }
-        
     }
 
     public abstract void Attack();
@@ -77,9 +88,13 @@ public abstract class  Enemy : MonoBehaviour
         }
 
     }
-    public void FlashRed()
+    public void Hurt()
     {
-        modelMeshRenderer.materials[1].color = hurtColor;
-        m_flashTimer = flashTime;
+        anim.SetTrigger("Hit");
+    }
+
+    public void Kill()
+    {
+        m_health.Kill();
     }
 }

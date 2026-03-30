@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3809980903764055047}
   - component: {fileID: 7314184794083668984}
   - component: {fileID: 3566780939190112366}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: vfx_PaintBall_Base (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4852,7 +4852,7 @@ MonoBehaviour:
   maxRadius: 0.2
   strength: 1
   hardness: 1
-  particleDamage: 0
+  particleDamage: 2
   hitEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -4870,7 +4870,7 @@ GameObject:
   - component: {fileID: 3987297047033223856}
   - component: {fileID: 2528502531083986859}
   - component: {fileID: 5831201157367116473}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Blob
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4980,7 +4980,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paintColor: {r: 0, g: 0, b: 0, a: 0}
-  radius: 1
+  radius: 2
   strength: 1
   hardness: 1
   launchForce: 6

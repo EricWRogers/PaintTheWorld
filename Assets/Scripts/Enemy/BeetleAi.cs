@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 using SuperPupSystems.Helper;
-
 public class BeetleAi : Enemy
 {
     private float m_attackTimer;
@@ -9,6 +8,8 @@ public class BeetleAi : Enemy
     public float stunTime;
     private float m_stunTimer;
     public float spreadAngleForObj;
+    private float m_recoveryGraceTimer;
+    private bool recoveringFromStun;
 
     [Header("Movement")]
     public LayerMask losMask;
@@ -29,30 +30,59 @@ public class BeetleAi : Enemy
     new void Start()
     {
         base.Start();
-        
+        anim = GetComponent<Animator>();
+        anim.SetBool("Moving", true);
     }
 
     // Update is called once per frame
     new void Update()
     {
+
+        base.Update();
         if(m_agent == null)
         {
             m_agent = GetComponent<NavMeshAgent>();
             return;
         }
+        if(target == null)
+        {
+            return;
+        }
+        
         if (stunned)
         {
             m_stunTimer -= Time.deltaTime;
-            if(m_stunTimer <= 0)
+            Debug.Log($"[BeetleAi] STUNNED | timer={m_stunTimer:F2}");
+
+            if (m_stunTimer <= 0)
             {
-                modelMeshRenderer.materials[1].color = Color.clear;
-                Move();
                 GetComponent<Health>().Revive();
                 stunned = false;
+
+                anim.SetTrigger("Unstun");
+
+                recoveringFromStun = true;
+                m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
+
+                Debug.Log($"[BeetleAi] Recovered from stun, entering grace for {m_recoveryGraceTimer:F2}s");
+
+                GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
             }
             return;
         }
-        base.Update();
+
+        if (recoveringFromStun)
+        {
+            m_recoveryGraceTimer -= Time.deltaTime;
+
+            if (m_recoveryGraceTimer <= 0f)
+            {
+                recoveringFromStun = false;
+                Move();
+                Debug.Log("[BeetleAi] Grace period ended, resuming movement.");
+            }
+            return;
+        }
 
         if (Vector3.Distance(target.position, m_lastTargetPosition) > repathDistanceThreshold)
         {
@@ -98,9 +128,38 @@ public class BeetleAi : Enemy
     public override void Attack()
     {
         StopMoving();
-        m_attackTimer -= Time.deltaTime;
+        anim.SetBool("Attacking", true);
+        // m_attackTimer -= Time.deltaTime;
 
-        if (m_attackTimer > 0) return;
+        // if (m_attackTimer > 0) return;
+        
+        // m_attackTimer = attackSpeed;
+    }
+
+    public void Stun()
+    {
+        StopMoving();
+        anim.SetTrigger("Stun");
+        m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
+        stunned = true;
+        recoveringFromStun = false;
+        Debug.Log($"[BeetleAi] STUN APPLIED | base={stunTime:F2}, bonus={EnemyStunModifier.extraStunTime:F2}, total={m_stunTimer:F2}");
+    }
+
+    public void Move()
+    {
+        anim.SetBool("Moving", true);
+        m_agent.SetDestination(target.position);
+    }
+
+    public void StopMoving()
+    {
+        anim.SetBool("Moving", false);
+        m_agent.SetDestination(transform.position);
+    }
+    void Fire()
+    {
+        Debug.Log("fire");
         if (bulletPrefab == null || firePoint == null) return;
 
         firePoint.transform.LookAt(target);
@@ -115,25 +174,5 @@ public class BeetleAi : Enemy
         }
 
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        m_attackTimer = attackSpeed;
     }
-
-    public void Stun()
-    {
-        StopMoving();
-        modelMeshRenderer.materials[1].color = stunColor;
-        m_stunTimer = stunTime;
-        stunned = true;
-    }
-
-    public void Move()
-    {
-        m_agent.SetDestination(target.position);
-    }
-
-    public void StopMoving()
-    {
-        m_agent.SetDestination(transform.position);
-    }
-
 }

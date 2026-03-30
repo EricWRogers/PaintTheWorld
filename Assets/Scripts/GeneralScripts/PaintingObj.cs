@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -34,6 +36,7 @@ public class PaintingObj : MonoBehaviour
     public float meshPercent;
     private float checkTimer = 0f;
     public float checkInterval = 0.5f;
+    public int currentEnemiesTarget;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

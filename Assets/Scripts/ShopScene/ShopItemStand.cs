@@ -14,12 +14,21 @@ public class ShopItemStand : MonoBehaviour
     public TMP_Text priceText;
     public GameObject promptUI;
 
+    [Header("World Icon")]
+    public Transform iconPivot;
+    public SpriteRenderer iconRenderer;
+    public float iconRotateSpeed = 45f;
+    public float iconBobAmount = 0.1f;
+    public float iconBobSpeed = 2f;
+
     [Header("Interact")]
     public float interactRadius = 2.0f;
 
     private Transform player;
     private bool sold = false;
     private bool ready = false;
+
+    private Vector3 iconStartLocalPos;
 
     public bool IsSold => sold;
 
@@ -29,18 +38,24 @@ public class ShopItemStand : MonoBehaviour
         priceOverride = overridePrice;
         sold = false;
 
-        // If no item, hide stand 
+        // If no item, hide stand
         gameObject.SetActive(item != null);
 
-       
+        UpdateWorldIcon();
+
         if (ready) RefreshUI();
     }
 
     public void SetPriceMultiplier(float m) => priceMultiplier = Mathf.Max(0.1f, m);
 
+    private void Awake()
+    {
+        if (iconPivot != null)
+            iconStartLocalPos = iconPivot.localPosition;
+    }
+
     private void OnEnable()
     {
-        
         StartCoroutine(WaitForPlayerManager());
     }
 
@@ -48,10 +63,8 @@ public class ShopItemStand : MonoBehaviour
     {
         ready = false;
 
-       
         if (promptUI) promptUI.SetActive(false);
 
-        
         while (PlayerManager.instance == null ||
                PlayerManager.instance.player == null ||
                PlayerManager.instance.inventory == null ||
@@ -64,10 +77,13 @@ public class ShopItemStand : MonoBehaviour
         ready = true;
 
         RefreshUI();
+        UpdateWorldIcon();
     }
 
     void Update()
     {
+        RotateAndBobIcon();
+
         if (!ready || !player || sold || !item)
         {
             if (promptUI) promptUI.SetActive(false);
@@ -81,6 +97,36 @@ public class ShopItemStand : MonoBehaviour
             TryBuy();
     }
 
+    void RotateAndBobIcon()
+    {
+        if (iconPivot == null || iconRenderer == null) return;
+        if (item == null || sold || !iconRenderer.enabled) return;
+
+        // rotate around vertical axis
+        iconPivot.Rotate(0f, iconRotateSpeed * Time.deltaTime, 0f, Space.Self);
+
+        // small bobbing effect
+        Vector3 p = iconStartLocalPos;
+        p.y += Mathf.Sin(Time.time * iconBobSpeed) * iconBobAmount;
+        iconPivot.localPosition = p;
+    }
+
+    void UpdateWorldIcon()
+    {
+        if (iconRenderer == null) return;
+
+        if (item != null && item.icon != null && !sold)
+        {
+            iconRenderer.sprite = item.icon;
+            iconRenderer.enabled = true;
+        }
+        else
+        {
+            iconRenderer.sprite = null;
+            iconRenderer.enabled = false;
+        }
+    }
+
     public void RefreshUI()
     {
         if (!item)
@@ -92,7 +138,6 @@ public class ShopItemStand : MonoBehaviour
 
         if (nameText) nameText.SetText(item.displayName);
 
-        // Only show price if PM is ready
         int price = GetCurrentPrice();
         if (priceText) priceText.SetText($"$ {price}");
     }
@@ -136,6 +181,7 @@ public class ShopItemStand : MonoBehaviour
         FindObjectOfType<ItemEffectsManager>()?.Reapply();
 
         sold = true;
+        UpdateWorldIcon();
         gameObject.SetActive(false);
     }
 }

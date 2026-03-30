@@ -1,11 +1,10 @@
-
-using System;
 using System.Collections.Generic;
 using KinematicCharacterControler;
 using SuperPupSystems.Helper;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+
 
 
 #if UNITY_EDITOR
@@ -47,9 +46,12 @@ public class GameManager : SceneAwareSingleton<GameManager>
     private bool gameplayStarted = false;
 
     public bool m_isPaused;
-    public String  shopScene;
+    public string  shopScene;
     public int stageCounter = 1;
     public List<PaintingObj> objectives;
+    public List<PaintingObj> activeObjectives;
+    public int numberOfObjectives = 2;
+    private int m_currNumberOfObjectives = 0;
 
     private SaveData saveData;
     private const string SAVE_KEY = "GameSaveData";
@@ -61,8 +63,13 @@ public class GameManager : SceneAwareSingleton<GameManager>
         {
             pm = PlayerManager.instance;
         }
+        m_currNumberOfObjectives = 0;
         objectives.Clear();
         objectives.AddRange(FindObjectsByType<PaintingObj>(FindObjectsSortMode.None));
+        foreach(PaintingObj paint in objectives)
+        {
+            paint.transform.parent.gameObject.SetActive(false);
+        }
         if (startSaveData == null)
             //startSaveData = new SaveData(0, pm.startingHealth, pm.startingHealth, new(), new(), 1);
         gameplayStarted = false;
@@ -72,10 +79,20 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.U)){
+            SceneManager.LoadSceneAsync(shopScene);
+        }
         if (!m_isPaused && Cursor.lockState == CursorLockMode.None)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+        }
+        if(m_currNumberOfObjectives < numberOfObjectives)
+        {
+            int randInt = Random.Range(0, objectives.Count);
+            objectives[randInt].transform.parent.gameObject.SetActive(true);
+            activeObjectives.Add(objectives[randInt]);
+            m_currNumberOfObjectives++;
         }
     }
 
@@ -115,7 +132,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public void ShopStage()
     {
-        SceneManager.LoadScene(shopScene);
+        SceneManager.LoadSceneAsync(shopScene);
 
     }
     public void ResetTimer()
@@ -151,7 +168,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         pm.health.maxHealth = saveData.maxHealth;
         pm.wallet.amount = saveData.coins;
         stageCounter = saveData.stageCounter;
-        SceneManager.LoadScene(shopScene);
+        SceneManager.LoadSceneAsync(shopScene);
         
     }
     // public void OnDeath()

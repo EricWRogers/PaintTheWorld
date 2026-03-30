@@ -31,13 +31,10 @@ public class Paintable : MonoBehaviour {
         m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_maskRenderTexture.filterMode = FilterMode.Bilinear;
         
-        if (GetComponent<PaintingObj>())
-        {
-            m_maskRenderTexture.useMipMap = true;
-            m_maskRenderTexture.autoGenerateMips = false;
-            m_maskRenderTexture.enableRandomWrite = false;
-            m_maskRenderTexture.Create();
-        }
+        m_maskRenderTexture.useMipMap = true;
+        m_maskRenderTexture.autoGenerateMips = false;
+        m_maskRenderTexture.enableRandomWrite = false;
+        m_maskRenderTexture.Create();
 
 
         m_supportTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
