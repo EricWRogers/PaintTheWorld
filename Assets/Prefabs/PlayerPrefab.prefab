@@ -1115,7 +1115,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9048188295485450917}
-  - component: {fileID: 8579694046247564862}
   m_Layer: 0
   m_Name: SprayCanLine
   m_TagString: Untagged
@@ -1131,48 +1130,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7785518044740306116}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.67074984, y: -0, z: -0, w: 0.74168366}
-  m_LocalPosition: {x: -0.41000366, y: 0.844, z: 0.231}
+  m_LocalRotation: {x: 0.018267421, y: -0, z: -0, w: 0.99983317}
+  m_LocalPosition: {x: -0.046, y: 1.403, z: 1.265}
   m_LocalScale: {x: 100, y: 100.000015, z: 100.000015}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8832583477970841271}
   m_Father: {fileID: 6362620465247799993}
-  m_LocalEulerAnglesHint: {x: 174.25, y: 0, z: 0}
---- !u!114 &8579694046247564862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7785518044740306116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a163a01d3fab52c4f9bef687f78f0cbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentAmmo: 25
-  baseMaxAmmo: 200
-  maxAmmo: 200
-  consumptionRate: 10
-  bonusMaxAmmo: 0
-  bonusProjectileCount: 0
-  bonusAttackSpeedMultiplier: 1
-  sprayParticles: {fileID: 3494497179792454764}
-  nozzleSpawnPoint: {fileID: 9048188295485450917}
-  playerCamera: {fileID: 6093725058108005885}
-  maxAimDistance: 20
-  rotationSmoothing: 20
-  playerMask:
-    serializedVersion: 2
-    m_Bits: 4104
-  projectilePrefab: {fileID: 8893670796704678082, guid: 6e55ef8cb3c336b469aab8323efaf31f, type: 3}
-  launchForce: 800
-  projectileLifetime: 5
-  projectileInterval: 1
-  extraProjectileDelay: 0.4
-  canColorKey: 0
-  weaponAnimator: {fileID: 1057428158363734211}
+  m_LocalEulerAnglesHint: {x: 2.093, y: 0, z: 0}
 --- !u!1 &8724370133860522315
 GameObject:
   m_ObjectHideFlags: 0

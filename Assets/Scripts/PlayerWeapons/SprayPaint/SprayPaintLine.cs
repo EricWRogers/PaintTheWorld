@@ -194,7 +194,6 @@ public class SprayPaintLine : MonoBehaviour
         isSpraying = true;
         if (sprayParticles != null) sprayParticles.Play();
         
-        ShootProjectileBurst();
     }
 
     public void StopSprayEvent()
@@ -203,6 +202,7 @@ public class SprayPaintLine : MonoBehaviour
         canCombo = false;
         if (sprayParticles != null) sprayParticles.Stop();
         projectileTimer = 0f;
+        ShootProjectileBurst();
     }
 
 
