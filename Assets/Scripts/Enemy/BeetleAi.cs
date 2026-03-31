@@ -56,9 +56,11 @@ public class BeetleAi : Enemy
         if (Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceFromPlayerToTarget)
         {
             target = PlayerManager.instance.player.transform;
+            targetingPlayer = true;
         }
-        else if(target == null)
+        else
         {
+            targetingPlayer = false;
             float maxDistance = 1000;
             int index = 0;
             for(int i = 0; i < GameManager.instance.activeObjectives.Count - 1; i++)
@@ -121,7 +123,7 @@ public class BeetleAi : Enemy
             {
                 if (targetingPlayer)
                 {
-                    if (m_hitInfo1.transform.CompareTag("Player") && m_hitInfo2.transform.CompareTag("Player"))
+                    if (m_hitInfo1.transform.CompareTag("Player"))
                     {
                         StopMoving();
                         if (RotateTowardsTarget())
