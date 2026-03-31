@@ -83,7 +83,8 @@ public class FlyingEnemy : Enemy
             if (m_stunTimer <= 0f)
             {
                 GetComponent<Health>().Revive();
-
+                anim.SetTrigger("Unstun");
+                GetComponent<Rigidbody>().useGravity = false;
                 stunned = false;
                 recoveringFromStun = true;
                 m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
@@ -122,7 +123,10 @@ public class FlyingEnemy : Enemy
         
         stopped = distance <= minStopDistance;
         bool inAttackRange = distance <= attackRange;
-
+        if(!inAttackRange || !stunned)
+        {
+            anim.SetBool("Moving", true);
+        }
         if (m_curveDistance == 0f && path.Count > 1 && targetIndex == 1) SetupCurve(path[0], path[1]);
         
         if (m_curveDistance >= 1f)
@@ -139,6 +143,7 @@ public class FlyingEnemy : Enemy
 
         if(inAttackRange && transform.rotation.z <= 1f && transform.rotation.z >= -1f)
         {
+            anim.SetBool("Moving", false);
             Attack();
             return;
         }
@@ -284,6 +289,9 @@ public class FlyingEnemy : Enemy
 
     public void Stun()
     {
+        anim.SetBool("Moving", false);
+        anim.SetTrigger("Stun");
+        GetComponent<Rigidbody>().useGravity = true;
         stopped = true;
         recoveringFromStun = false;
 
@@ -295,13 +303,14 @@ public class FlyingEnemy : Enemy
 
     public override void Attack()
     {
+        anim.SetBool("Attacking", true);
+    }
+
+    public void Fire()
+    {
         firePoint.LookAt(target.transform);
-        m_curFireTime -= Time.fixedDeltaTime;
-        if (m_curFireTime <= 0)
-        {
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            bullet.GetComponent<Bullet>().damage = baseDamage;
-            m_curFireTime = attackSpeed;
-        }
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        bullet.GetComponent<Bullet>().damage = baseDamage;
+        m_curFireTime = attackSpeed;
     }
 }
