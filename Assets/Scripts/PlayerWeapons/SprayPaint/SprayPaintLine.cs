@@ -144,7 +144,7 @@ public class SprayPaintLine : MonoBehaviour
         }
         else
         {
-            targetPoint = ray.GetPoint(10f);
+            targetPoint = ray.GetPoint(100f);
     //        if(crosshairUI != null) 
     //        {
     //            crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.black;
