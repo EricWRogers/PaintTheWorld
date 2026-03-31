@@ -133,7 +133,14 @@ public class FlyingEnemy : Enemy
                 RequestNewPath();
                 return;
             }
-            SetupCurve(transform.position, path[targetIndex]);
+            //SetupCurve(transform.position, path[targetIndex]);
+        }
+
+
+        if(inAttackRange && transform.rotation.z <= 1f && transform.rotation.z >= -1f)
+        {
+            Attack();
+            return;
         }
 
         float segmentDistance = Vector3.Distance(m_curveStart, m_curveEnd);
@@ -150,20 +157,18 @@ public class FlyingEnemy : Enemy
 
         Vector3 moveTarget = nextPos + separation * 5f;
 
-        float moveSpeed = inAttackRange ? speed * 0.2f : speed;
-
         Quaternion targetRot;
 
         if (inAttackRange)
         {
             Vector3 flatDir = target.position;
             flatDir.y = transform.position.y;
-
             Vector3 dir = (flatDir - transform.position).normalized;
             if (dir.sqrMagnitude < 0.001f)
                 dir = transform.forward;
-
+            dir.z = 0f;
             targetRot = Quaternion.LookRotation(dir);
+            
         }
         else
         {
@@ -194,13 +199,8 @@ public class FlyingEnemy : Enemy
         transform.position = Vector3.Lerp(
             transform.position,
             moveTarget,
-            Time.fixedDeltaTime * moveSpeed
+            Time.fixedDeltaTime * speed
         );
-
-        if (inAttackRange)
-        {
-            Attack();
-        }
     }
 
     void RequestNewPath()
@@ -259,7 +259,7 @@ public class FlyingEnemy : Enemy
         Vector3 dir = (_end - _start).normalized;
         Vector3 perp = Vector3.Cross(dir, Vector3.up);
 
-        m_curveControl = (_start + _end) / 2 + perp * 0f;//Random.Range(-1f, 1f);
+        m_curveControl = (_start + _end) / 2 + perp;
 
         m_curveDistance = 0f;
     }
@@ -299,7 +299,7 @@ public class FlyingEnemy : Enemy
         m_curFireTime -= Time.fixedDeltaTime;
         if (m_curFireTime <= 0)
         {
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, transform.rotation);
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
             bullet.GetComponent<Bullet>().damage = baseDamage;
             m_curFireTime = attackSpeed;
         }

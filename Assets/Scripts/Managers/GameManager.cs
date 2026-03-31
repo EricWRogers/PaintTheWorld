@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using KinematicCharacterControler;
 using SuperPupSystems.Helper;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 
@@ -44,7 +42,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public GameObject pauseMenu;
     public float timePerStage;
     private bool gameplayStarted = false;
-
+    public List<string> stageScenes;
     public bool m_isPaused;
     public string  shopScene;
     public int stageCounter = 1;

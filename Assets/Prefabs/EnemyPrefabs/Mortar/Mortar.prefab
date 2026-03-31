@@ -71,6 +71,7 @@ Transform:
   - {fileID: 8018192926841227152}
   - {fileID: 1466479654232663941}
   - {fileID: 5179512397239169985}
+  - {fileID: 7776753488482455536}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3780218610274901045
@@ -117,7 +118,7 @@ MonoBehaviour:
   startingHealth: 20
   attackSpeed: 4
   rotationSpeed: 10
-  attackRange: 40
+  attackRange: 30
   firePoint: {fileID: 8160938142129756026}
   damageText: {fileID: 1392177967193643494, guid: 7ade7531bc2feef43ab3b1654ec19ae6, type: 3}
   damageTextSpawn: {fileID: 5179512397239169985}
@@ -128,6 +129,8 @@ MonoBehaviour:
   stunned: 0
   stunTime: 10
   spreadAngleForObj: 3
+  distanceFromPlayerToTarget: 20
+  rearViewPoint: {fileID: 7776753488482455536}
   losMask:
     serializedVersion: 2
     m_Bits: 648
@@ -264,6 +267,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &7531664579760518481
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7776753488482455536}
+  m_Layer: 6
+  m_Name: RearViewPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7776753488482455536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7531664579760518481}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.207, z: -1.12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1466289999841150659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8895213193469594128
 GameObject:
   m_ObjectHideFlags: 0

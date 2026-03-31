@@ -27,11 +27,14 @@ public class BoostRamp : MonoBehaviour
     [Tooltip("How long to ignore re-triggering after the first boost. Stops double-firing on slopes.")]
     public float reTriggerCooldown = 0.4f;
 
+    [Tooltip("Multiplies the player's current horizontal speed and adds it as a forward push when launched.")]
+    public float forwardBoostMultiplier = 0.2f;
+
     [Header("Feedback")]
     public ParticleSystem boostParticles;
     public AudioClip boostSound;
 
-    // ------------------------------------------------------------------ //
+
 
     private float m_lastBoostTime = -999f;
     private AudioSource m_audio;
@@ -69,12 +72,28 @@ public class BoostRamp : MonoBehaviour
             : Vector3.up;
 
         // Horizontal speed bonus: faster approach = bigger pop
-        float horizontalSpeed = new Vector3(player.Velocity.x, 0f, player.Velocity.z).magnitude;
+        Vector3 horizontalVel = new Vector3(player.Velocity.x, 0f, player.Velocity.z);
+        float horizontalSpeed = horizontalVel.magnitude;
         float totalBoost = boostForce + horizontalSpeed * speedToUpwardBonus;
         totalBoost = Mathf.Clamp(totalBoost, 0f, maxBoostForce);
 
-        // Apply the boost by adding to the velocity
-        Vector3 boostVector = Vector3.up * totalBoost;
+        // Determine horizontal launch direction (use boostDirection's horizontal component if set, otherwise ramp forward)
+        Vector3 horizontalLaunchDir;
+        if (boostDirection.sqrMagnitude > 0.001f)
+        {
+            Vector3 hd = new Vector3(launchDir.x, 0f, launchDir.z);
+            horizontalLaunchDir = (hd.sqrMagnitude > 0.001f) ? hd.normalized : transform.forward;
+        }
+        else
+        {
+            horizontalLaunchDir = transform.forward;
+        }
+
+        // Small forward push based on horizontal speed
+        float forwardBoost = horizontalSpeed * forwardBoostMultiplier;
+
+        // Apply the boost by adding upward (along launchDir) and a bit of forward push
+        Vector3 boostVector = launchDir * totalBoost + horizontalLaunchDir * forwardBoost;
         player.AddForce(boostVector);
 
     }
