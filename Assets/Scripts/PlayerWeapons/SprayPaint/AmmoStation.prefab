@@ -338,6 +338,7 @@ GameObject:
   - component: {fileID: 3854696460490142688}
   - component: {fileID: 4324291025523651261}
   - component: {fileID: 1230023800511888016}
+  - component: {fileID: 7521707052328330532}
   m_Layer: 0
   m_Name: AmmoStation
   m_TagString: Untagged
@@ -401,6 +402,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.48322582, y: 0.55718267, z: 0.64212334}
   m_Center: {x: -1.2140346, y: 1.6153679, z: -0.0140711665}
+--- !u!114 &7521707052328330532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6283331856012659449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 3
+  outlineColor: {r: 0, g: 1, b: 0.013665199, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &7295417569995181229
 GameObject:
   m_ObjectHideFlags: 0
