@@ -172,19 +172,23 @@ public class SprayPaintLine : MonoBehaviour
 
     private void HandleInput()
     {
-        if (PlayerManager.instance.playerInputs.Attack.WasPressedThisFrame() && currentAmmo > 0)
+        var input = PlayerManager.instance.playerInputs.Attack;
+
+       // 1. Initial Start: If in IDLE and we click/hold, start Attack 1
+        if (input.WasPressedThisFrame() && currentAmmo > 0)
         {
             if (weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("metarig|ACTION_IDLE"))
             {
                 weaponAnimator.SetTrigger(attackTriggerName);
             }
-            else if (canCombo)
-            {
-                weaponAnimator.SetTrigger(attackTriggerName);
-                canCombo = false;
-            }
         }
-        
+
+        // 2. Combo Flow: If the animation event opens the window AND the button is still held
+        if (canCombo && input.IsPressed() && currentAmmo > 0)
+        {
+            weaponAnimator.SetTrigger(attackTriggerName);
+            canCombo = false;
+        }
     }
 
     public void StartSprayEvent()
