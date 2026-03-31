@@ -10,14 +10,18 @@ public class BeetleAi : Enemy
     public float spreadAngleForObj;
     private float m_recoveryGraceTimer;
     private bool recoveringFromStun;
+    public float distanceFromPlayerToTarget = 20f;
+    public Transform rearViewPoint;
 
     [Header("Movement")]
     public LayerMask losMask;
-    private RaycastHit m_hitInfo;
+    private RaycastHit m_hitInfo1;
+    private RaycastHit m_hitInfo2;
     private NavMeshAgent m_agent;
     private Vector3 m_direction;
     public float repathDistanceThreshold = 1.0f;
     private Vector3 m_lastTargetPosition;
+    public float attackAngleThreshold = 5f;
     
 
     [Header("Audio")]
@@ -47,6 +51,26 @@ public class BeetleAi : Enemy
         if(target == null)
         {
             return;
+        }
+
+        if (Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceFromPlayerToTarget)
+        {
+            target = PlayerManager.instance.player.transform;
+        }
+        else if(target == null)
+        {
+            float maxDistance = 1000;
+            int index = 0;
+            for(int i = 0; i < GameManager.instance.activeObjectives.Count - 1; i++)
+            {
+                float distance = Vector3.Distance(transform.position, GameManager.instance.activeObjectives[i].transform.position);
+                if(distance <= maxDistance)
+                {
+                    index = i;
+                    maxDistance = distance;
+                }
+            }
+            target = GameManager.instance.activeObjectives[index].transform;
         }
         
         if (stunned)
@@ -89,40 +113,40 @@ public class BeetleAi : Enemy
             m_lastTargetPosition = target.position;
             Move();
         }
-
-        if (CheckForTarget())
+        
+        if(Vector3.Distance(transform.position, target.transform.position) <= attackRange)
         {
-            m_direction = Vector3.Normalize(m_direction);
-            float angle = Mathf.Atan2(m_direction.x, m_direction.z) * Mathf.Rad2Deg;
-            transform.localEulerAngles = new Vector3(0, angle, 0);
-            Attack();
+            m_direction = (target.position - transform.position).normalized;
+            if(Physics.Raycast(transform.position, m_direction, out m_hitInfo1, attackRange, losMask) && Physics.Raycast(rearViewPoint.position, m_direction, out m_hitInfo2, attackRange, losMask))
+            {
+                if (targetingPlayer)
+                {
+                    if (m_hitInfo1.transform.CompareTag("Player") && m_hitInfo2.transform.CompareTag("Player"))
+                    {
+                        StopMoving();
+                        if (RotateTowardsTarget())
+                        {
+                            Attack();
+                        }
+                    }
+                }
+                else
+                {
+                    if (m_hitInfo1.transform.gameObject.GetComponent<PaintingObj>() && m_hitInfo2.transform.gameObject.GetComponent<PaintingObj>())
+                    {
+
+                        StopMoving();
+                        if (RotateTowardsTarget())
+                        {
+                            Attack();
+                        }
+                    }
+                }
+                
+            }
         }
         
-    }
-
-    public bool CheckForTarget()
-    {
-        m_direction = target.transform.position - transform.position;
         
-        if(targetingPlayer)
-        {
-            if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, attackRange, losMask))
-            {
-                return m_hitInfo.transform.CompareTag("Player");
-            }
-            else
-                return false;
-        }
-        else
-        {
-            if(Physics.Raycast(transform.position, m_direction, out m_hitInfo, attackRange, losMask))
-            {
-                return m_hitInfo.transform.gameObject.GetComponent<PaintingObj>();
-            }
-            else
-                return false;
-        }
-
     }
 
     public override void Attack()
@@ -174,5 +198,25 @@ public class BeetleAi : Enemy
         }
 
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+    }
+
+    bool RotateTowardsTarget()
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        direction.y = 0f;
+
+        if (direction == Vector3.zero) return true;
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            rotationSpeed * Time.deltaTime
+        );
+
+        float angle = Quaternion.Angle(transform.rotation, targetRotation);
+
+        return angle <= attackAngleThreshold;
     }
 }
