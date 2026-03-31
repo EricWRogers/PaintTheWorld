@@ -617,6 +617,7 @@ public class PlayerMovement : PlayerMovmentEngine
             if (m_dashTime >= dashDuration)
                 isDashing = false;
 
+            m_timeSinceLastDash += Time.deltaTime;
             return isDashing;
         }
 
