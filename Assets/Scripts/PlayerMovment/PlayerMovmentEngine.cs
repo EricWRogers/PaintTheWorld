@@ -95,11 +95,11 @@ namespace KinematicCharacterControler
                     m_velocity.y = tempY;
                 }
 
-                //ceiling check - cancle momentum
-                if (hit.normal.y < -0.01f && m_velocity.y > 0f)
-                {
-                    m_velocity.y = 0f;
-                }
+                ////ceiling check - cancle momentum
+                //if (hit.normal.y < -0.01f && m_velocity.y > 0f)
+                //{
+                //    m_velocity.y = 0f;
+                //}
                 
                 // Handle overlaps / penetration
                 if (hit.distance <= skinWidth * 0.5f)
