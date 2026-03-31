@@ -156,7 +156,7 @@ public class SprayPaintLine : MonoBehaviour
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
+            nozzleSpawnPoint.rotation = Quaternion.Slerp(nozzleSpawnPoint.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
             sprayParticles.transform.rotation = transform.rotation;
         }
 
