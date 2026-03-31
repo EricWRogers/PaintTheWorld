@@ -497,6 +497,8 @@ public class PlayerMovement : PlayerMovmentEngine
         {
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
+            if(m_velocity.magnitude > targetVel.magnitude)
+                targetVel = inputDir * m_velocity.magnitude;
             horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
         }
         else
