@@ -291,7 +291,6 @@ public class FlyingEnemy : Enemy
     {
         anim.SetBool("Moving", false);
         anim.SetTrigger("Stun");
-        GetComponent<Rigidbody>().useGravity = true;
         stopped = true;
         recoveringFromStun = false;
 
@@ -312,5 +311,9 @@ public class FlyingEnemy : Enemy
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         bullet.GetComponent<Bullet>().damage = baseDamage;
         m_curFireTime = attackSpeed;
+    }
+    public void Fall()
+    {
+        GetComponent<Rigidbody>().useGravity = true;
     }
 }
