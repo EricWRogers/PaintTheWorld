@@ -38,6 +38,10 @@ public class SprayPaintLine : MonoBehaviour
     private bool isSpraying = false;
     private float projectileTimer = 0f;
 
+    [Header("Cooldown Settings")]
+    public float attackCooldown = 0.5f;
+    private float lastAttackTime = -999f;
+
     [Header("Paint Settings")]
     public int canColorKey = 0;
     private ParticlePainter painter;
@@ -144,7 +148,7 @@ public class SprayPaintLine : MonoBehaviour
         }
         else
         {
-            targetPoint = ray.GetPoint(10f);
+            targetPoint = ray.GetPoint(100f);
     //        if(crosshairUI != null) 
     //        {
     //            crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.black;
@@ -156,7 +160,7 @@ public class SprayPaintLine : MonoBehaviour
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
+            nozzleSpawnPoint.rotation = Quaternion.Slerp(nozzleSpawnPoint.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
             sprayParticles.transform.rotation = transform.rotation;
         }
 
@@ -172,19 +176,34 @@ public class SprayPaintLine : MonoBehaviour
 
     private void HandleInput()
     {
-        if (PlayerManager.instance.playerInputs.Attack.WasPressedThisFrame() && currentAmmo > 0)
+        var input = PlayerManager.instance.playerInputs.Attack;
+
+        if (PlayerManager.instance.health == null || PlayerManager.instance.health.currentHealth <= 0)
         {
-            if (weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("metarig|ACTION_IDLE"))
-            {
-                weaponAnimator.SetTrigger(attackTriggerName);
-            }
-            else if (canCombo)
-            {
-                weaponAnimator.SetTrigger(attackTriggerName);
-                canCombo = false;
-            }
+            if (isSpraying) StopSprayEvent();
+            weaponAnimator.SetLayerWeight(1, 0f);
+            return;
         }
-        
+
+        weaponAnimator.SetLayerWeight(1, Mathf.MoveTowards(weaponAnimator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
+
+
+        bool isIdle = weaponAnimator.GetCurrentAnimatorStateInfo(1).IsName("metarig|ACTION_IDLE");
+    
+   
+        bool cooldownOver = Time.time >= lastAttackTime + attackCooldown;
+
+        if (input.WasPressedThisFrame() && currentAmmo > 0 && isIdle && cooldownOver)
+        {
+            weaponAnimator.SetTrigger(attackTriggerName);
+            lastAttackTime = Time.time; 
+        }
+
+        if (canCombo && input.IsPressed() && currentAmmo > 0)
+        {
+            weaponAnimator.SetTrigger(attackTriggerName);
+            canCombo = false; 
+        }
     }
 
     public void StartSprayEvent()
