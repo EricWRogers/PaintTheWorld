@@ -1,5 +1,6 @@
 using UnityEngine;
 using KinematicCharacterControler;
+using UnityEditor.EditorTools;
 
 /// <summary>
 /// Place this on a ramp trigger volume.
@@ -11,11 +12,16 @@ public class BoostRamp : MonoBehaviour
 {
     [Header("Boost Settings")]
     [Tooltip("Base upward velocity added when the player hits the ramp.")]
-    public float boostForce = 18f;
+    public float addedForce = 18f;
+    
+    [Tooltip("Boost to this minimum speed if not going fast enough ")]
+    public float minSpeed = 12f;
 
-    [Tooltip("Multiplies the player's current horizontal speed and adds it as extra upward force. " +
-             "Rewards going fast — set to 0 to disable.")]
+    [Tooltip("Amount of current Speed added to the Up boost")]
     public float speedToUpwardBonus = 0.25f;
+
+    [Tooltip("Amount of current Speed added to the Forward boost")]
+    public float speedToForwardBonus = 0.25f;
 
     [Tooltip("Hard cap on the total upward velocity applied (prevents one-shotting very high speeds).")]
     public float maxBoostForce = 30f;
@@ -74,26 +80,21 @@ public class BoostRamp : MonoBehaviour
         // Horizontal speed bonus: faster approach = bigger pop
         Vector3 horizontalVel = new Vector3(player.Velocity.x, 0f, player.Velocity.z);
         float horizontalSpeed = horizontalVel.magnitude;
-        float totalBoost = boostForce + horizontalSpeed * speedToUpwardBonus;
+        if (horizontalSpeed < minSpeed)
+        {
+            horizontalSpeed = minSpeed;
+        }
+        float totalBoost = addedForce + horizontalSpeed * speedToUpwardBonus;
+
         totalBoost = Mathf.Clamp(totalBoost, 0f, maxBoostForce);
 
-        // Determine horizontal launch direction (use boostDirection's horizontal component if set, otherwise ramp forward)
-        Vector3 horizontalLaunchDir;
-        if (boostDirection.sqrMagnitude > 0.001f)
-        {
-            Vector3 hd = new Vector3(launchDir.x, 0f, launchDir.z);
-            horizontalLaunchDir = (hd.sqrMagnitude > 0.001f) ? hd.normalized : transform.forward;
-        }
-        else
-        {
-            horizontalLaunchDir = transform.forward;
-        }
+        
 
         // Small forward push based on horizontal speed
         float forwardBoost = horizontalSpeed * forwardBoostMultiplier;
 
         // Apply the boost by adding upward (along launchDir) and a bit of forward push
-        Vector3 boostVector = launchDir * totalBoost + horizontalLaunchDir * forwardBoost;
+        Vector3 boostVector = launchDir * totalBoost + horizontalVel.normalized * forwardBoost;
         player.AddForce(boostVector);
 
     }
