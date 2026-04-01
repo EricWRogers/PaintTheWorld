@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using SuperPupSystems.Helper;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using HutongGames.PlayMaker.Actions;
+
 
 
 
@@ -50,6 +52,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public List<PaintingObj> activeObjectives;
     public int numberOfObjectives = 2;
     private int m_currNumberOfObjectives = 0;
+    private bool playerSpawned;
 
     private SaveData saveData;
     private const string SAVE_KEY = "GameSaveData";
@@ -63,6 +66,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         }
         m_currNumberOfObjectives = 0;
         objectives.Clear();
+        activeObjectives.Clear();
         objectives.AddRange(FindObjectsByType<PaintingObj>(FindObjectsSortMode.None));
         foreach(PaintingObj paint in objectives)
         {
@@ -88,9 +92,19 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if(m_currNumberOfObjectives < numberOfObjectives)
         {
             int randInt = Random.Range(0, objectives.Count);
+            if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
+                return;
             objectives[randInt].transform.parent.gameObject.SetActive(true);
             activeObjectives.Add(objectives[randInt]);
             m_currNumberOfObjectives++;
+        }
+        else if(!playerSpawned)
+        {
+            int randSpawn = Random.Range(0, activeObjectives.Count);
+            PlayerManager.instance.player.transform.position = activeObjectives[randSpawn].playerSpawnPoint.position;
+            PlayerManager.instance.player.transform.rotation = activeObjectives[randSpawn].playerSpawnPoint.rotation;
+            playerSpawned = true;
+
         }
     }
 
@@ -136,6 +150,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public void ResetTimer()
     {
         GetComponent<Timer>().StartTimer(timePerStage);
+        playerSpawned = false;
     }
 
     public void SaveGame()

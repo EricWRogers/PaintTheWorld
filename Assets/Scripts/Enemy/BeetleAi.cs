@@ -55,24 +55,29 @@ public class BeetleAi : Enemy
 
         if (Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceFromPlayerToTarget)
         {
+            if(target.GetComponent<PaintingObj>() && target.GetComponent<PaintingObj>().currentEnemiesTarget > 0)
+                target.GetComponent<PaintingObj>().currentEnemiesTarget--;
+
             target = PlayerManager.instance.player.transform;
             targetingPlayer = true;
         }
         else
         {
             targetingPlayer = false;
-            float maxDistance = 1000;
-            int index = 0;
-            for(int i = 0; i < GameManager.instance.activeObjectives.Count - 1; i++)
-            {
-                float distance = Vector3.Distance(transform.position, GameManager.instance.activeObjectives[i].transform.position);
-                if(distance <= maxDistance)
-                {
-                    index = i;
-                    maxDistance = distance;
-                }
-            }
-            target = GameManager.instance.activeObjectives[index].transform;
+
+            // float maxDistance = 1000;
+            // int index = 0;
+            // for(int i = 0; i < GameManager.instance.activeObjectives.Count - 1; i++)
+            // {
+            //     float distance = Vector3.Distance(transform.position, GameManager.instance.activeObjectives[i].transform.position);
+            //     if(distance <= maxDistance)
+            //     {
+            //         index = i;
+            //         maxDistance = distance;
+            //     }
+            // }
+            if(!target.GetComponent<PaintingObj>())
+                target = EnemyManager.instance.GetObjectiveTarget().transform;
         }
         
         if (stunned)

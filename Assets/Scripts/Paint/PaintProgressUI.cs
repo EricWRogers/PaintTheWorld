@@ -7,10 +7,14 @@ public class PaintProgressUI : MonoBehaviour
     [Header("References")]
     public PaintingObj targetPaintable; 
     public Slider progressSlider;
-    public TextMeshProUGUI percentText;
 
     [Header("Settings")]
     public bool hideWhenComplete = false;
+
+    void Start()
+    {
+        progressSlider.maxValue = targetPaintable.targetCoverPercent;
+    }
 
     void Update()
     {
@@ -18,18 +22,17 @@ public class PaintProgressUI : MonoBehaviour
 
         // Get the current percentage (0-100)
         float coverage = targetPaintable.percentageCovered;
-        float normalizedCoverage = coverage / 100f;
 
         // Update Slider
         if (progressSlider != null)
         {
-            progressSlider.value = normalizedCoverage;
+            progressSlider.value = coverage;
         }
         // Update Text
-        if (percentText != null)
-        {
-            percentText.text = string.Format("{0:0}%", coverage);
-        }
+        // if (percentText != null)
+        // {
+        //     percentText.text = string.Format("{0:0}%", coverage);
+        // }
 
         // Hide UI if target is fully covered
         if (hideWhenComplete && targetPaintable.covered)

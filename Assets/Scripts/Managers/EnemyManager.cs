@@ -138,4 +138,29 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         IsReady = true;
         }
     }
+
+    public PaintingObj GetObjectiveTarget()
+    {
+        List<PaintingObj> objList = GameManager.instance.activeObjectives;
+        PaintingObj currentLowest = objList[0];
+        if(currentLowest.currentEnemiesTarget == 0)
+        {
+            currentLowest.currentEnemiesTarget++;
+            return currentLowest;
+        }
+        for(int i = 1; i < objList.Count; i++)
+        {
+            if(objList[i].currentEnemiesTarget < currentLowest.currentEnemiesTarget)
+            {
+                currentLowest = objList[i];
+            }
+            if(currentLowest.currentEnemiesTarget == 0)
+            {
+                currentLowest.currentEnemiesTarget++;
+                return currentLowest;
+            }
+        }
+        currentLowest.currentEnemiesTarget++;
+        return currentLowest;
+    }
 }
