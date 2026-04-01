@@ -38,6 +38,10 @@ public class SprayPaintLine : MonoBehaviour
     private bool isSpraying = false;
     private float projectileTimer = 0f;
 
+    [Header("Cooldown Settings")]
+    public float attackCooldown = 0.5f;
+    private float lastAttackTime = -999f;
+
     [Header("Paint Settings")]
     public int canColorKey = 0;
     private ParticlePainter painter;
@@ -174,20 +178,33 @@ public class SprayPaintLine : MonoBehaviour
     {
         var input = PlayerManager.instance.playerInputs.Attack;
 
-        bool isAlreadyAttacking = weaponAnimator.GetCurrentAnimatorStateInfo(1).IsTag("Attack");
-
-        if (input.WasPressedThisFrame() && currentAmmo > 0)
+        if (PlayerManager.instance.health == null || PlayerManager.instance.health.currentHealth <= 0)
         {
-                weaponAnimator.SetTrigger(attackTriggerName);
+            if (isSpraying) StopSprayEvent();
+            weaponAnimator.SetLayerWeight(1, 0f);
+            return;
+        }
+
+        weaponAnimator.SetLayerWeight(1, Mathf.MoveTowards(weaponAnimator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
+
+
+        bool isIdle = weaponAnimator.GetCurrentAnimatorStateInfo(1).IsName("metarig|ACTION_IDLE");
+    
+   
+        bool cooldownOver = Time.time >= lastAttackTime + attackCooldown;
+
+        if (input.WasPressedThisFrame() && currentAmmo > 0 && isIdle && cooldownOver)
+        {
+            weaponAnimator.SetTrigger(attackTriggerName);
+            lastAttackTime = Time.time; 
         }
 
         if (canCombo && input.IsPressed() && currentAmmo > 0)
         {
             weaponAnimator.SetTrigger(attackTriggerName);
-
             canCombo = false; 
         }
-}
+    }
 
     public void StartSprayEvent()
     {
