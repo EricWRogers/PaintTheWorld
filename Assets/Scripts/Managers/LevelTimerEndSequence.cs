@@ -65,6 +65,8 @@ public class LevelTimerEndSequence : MonoBehaviour
         {
             endCamera.Priority = 0;
         }
+
+        ended = false;
     }
 
     void OnDestroy()
@@ -90,15 +92,7 @@ public class LevelTimerEndSequence : MonoBehaviour
 
     IEnumerator EndSequenceRoutine()
     {
-        
-
-        if (PlayerManager.instance != null)
-        {
-            PlayerManager.instance.playerInputs.Disable();
-            PlayerManager.instance.uIInputs.Disable();
-        }
-
-        
+       
         if (GameManager.instance != null && GameManager.instance.pauseMenu != null)
         {
             GameManager.instance.pauseMenu.SetActive(false);
@@ -110,10 +104,9 @@ public class LevelTimerEndSequence : MonoBehaviour
             finalMoneyText.text = moneyPrefix + moneyLogic.amount.ToString();
         }
 
-        
+       
         SetupEndCamera();
 
-        
         float elapsed = 0f;
         while (elapsed < cameraPanDuration)
         {
@@ -122,9 +115,16 @@ public class LevelTimerEndSequence : MonoBehaviour
         }
 
         
-        Time.timeScale = 0f;
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.PauseGame();
+        }
+        else
+        {
+            Time.timeScale = 0f;
+        }
 
-       
+        // Show panel
         if (panelRoot != null)
             panelRoot.SetActive(true);
 
@@ -161,7 +161,6 @@ public class LevelTimerEndSequence : MonoBehaviour
             flatForward = Vector3.forward;
         flatForward.Normalize();
 
-       
         Vector3 camPos = playerCenter + flatForward * distanceInFront;
         camPos.y += (heightOffset - lookAtHeight);
 
@@ -172,17 +171,24 @@ public class LevelTimerEndSequence : MonoBehaviour
     }
 
     public void GoToNextScene()
+{
+    
+    if (panelCanvasGroup != null)
     {
-       
-        Time.timeScale = 1f;
-       
-
-        if (PlayerManager.instance != null)
-        {
-            PlayerManager.instance.playerInputs.Enable();
-            PlayerManager.instance.uIInputs.Disable();
-        }
-
-        SceneManager.LoadScene(nextSceneName);
+        panelCanvasGroup.alpha = 0f;
+        panelCanvasGroup.interactable = false;
+        panelCanvasGroup.blocksRaycasts = false;
     }
+
+    if (panelRoot != null)
+        panelRoot.SetActive(false);
+
+    
+    if (endCamera != null)
+        endCamera.Priority = 0;
+
+    ended = false;
+    Time.timeScale = 1f;
+    SceneManager.LoadScene(nextSceneName);
+}
 }
