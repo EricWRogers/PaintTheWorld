@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PaintGlobs : CollisonPainter
 {
-    public float launchForce = 15f;
+    public float launchForce = 50f;
     private Rigidbody rb;
     private Color blobColor = Color.white;
 

@@ -38,6 +38,10 @@ public class SprayPaintLine : MonoBehaviour
     private bool isSpraying = false;
     private float projectileTimer = 0f;
 
+    [Header("Cooldown Settings")]
+    public float attackCooldown = 0.5f;
+    private float lastAttackTime = -999f;
+
     [Header("Paint Settings")]
     public int canColorKey = 0;
     private ParticlePainter painter;
@@ -48,6 +52,8 @@ public class SprayPaintLine : MonoBehaviour
     public Animator weaponAnimator;
     private string attackTriggerName = "AttackTrigger";
     private bool canCombo = false;
+
+    private bool isAttacking = false;
 
     public float CurrentProjectileInterval
     {
@@ -81,6 +87,15 @@ public class SprayPaintLine : MonoBehaviour
     private void Update()
     {
         ApplyRuntimeStats();
+        var stateInfo = weaponAnimator.GetCurrentAnimatorStateInfo(1);
+        bool isAttacking = stateInfo.IsTag("Attack") || stateInfo.IsName("metarig|ATTACK_V2") || stateInfo.IsName("metarig|ATTACK_V2 0");
+
+        float targetWeight = isAttacking ? 1f : 0f;
+        float currentWeight = weaponAnimator.GetLayerWeight(1);
+        float lerpedWeight = Mathf.Lerp(currentWeight, targetWeight, Time.deltaTime * 15f);
+
+        weaponAnimator.SetLayerWeight(1, lerpedWeight);
+        
         HandleInput();
 
         if (isSpraying && currentAmmo > 0)
@@ -144,7 +159,7 @@ public class SprayPaintLine : MonoBehaviour
         }
         else
         {
-            targetPoint = ray.GetPoint(10f);
+            targetPoint = ray.GetPoint(100f);
     //        if(crosshairUI != null) 
     //        {
     //            crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.black;
@@ -172,19 +187,32 @@ public class SprayPaintLine : MonoBehaviour
 
     private void HandleInput()
     {
-        if (PlayerManager.instance.playerInputs.Attack.WasPressedThisFrame() && currentAmmo > 0)
+        var input = PlayerManager.instance.playerInputs.Attack;
+
+        if (PlayerManager.instance.health == null || PlayerManager.instance.health.currentHealth <= 0)
         {
-            if (weaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("metarig|ACTION_IDLE"))
-            {
-                weaponAnimator.SetTrigger(attackTriggerName);
-            }
-            else if (canCombo)
-            {
-                weaponAnimator.SetTrigger(attackTriggerName);
-                canCombo = false;
-            }
+            if (isSpraying) StopSprayEvent();
+            weaponAnimator.SetLayerWeight(1, 0f);
+            return;
         }
-        
+
+        weaponAnimator.SetLayerWeight(1, Mathf.MoveTowards(weaponAnimator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
+
+    
+   
+        bool cooldownOver = Time.time >= lastAttackTime + attackCooldown;
+
+        if (input.WasPressedThisFrame() && currentAmmo > 0  && cooldownOver)
+        {
+            weaponAnimator.SetTrigger(attackTriggerName);
+            lastAttackTime = Time.time; 
+        }
+
+        if (canCombo && input.IsPressed() && currentAmmo > 0)
+        {
+            weaponAnimator.SetTrigger(attackTriggerName);
+            canCombo = false; 
+        }
     }
 
     public void StartSprayEvent()

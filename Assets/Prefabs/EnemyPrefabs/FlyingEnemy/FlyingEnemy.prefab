@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 1392325822779809764}
   - component: {fileID: 5772691904600099017}
   - component: {fileID: 1178019528805676350}
+  - component: {fileID: 7916862337893917595}
   m_Layer: 6
   m_Name: FlyingEnemy
   m_TagString: Enemy
@@ -149,7 +150,7 @@ MonoBehaviour:
   startingHealth: 10
   attackSpeed: 4
   rotationSpeed: 10
-  attackRange: 10
+  attackRange: 20
   firePoint: {fileID: 3519808824711932938}
   damageText: {fileID: 0}
   damageTextSpawn: {fileID: 0}
@@ -158,11 +159,11 @@ MonoBehaviour:
   anim: {fileID: 5772691904600099017}
   timerToSwitchTargets: 0
   cloudNav: {fileID: 0}
-  minStopDistance: 8
+  minStopDistance: 10
   minHeightFromPLayerToShoot: 7
   minPitch: -20
   maxPitch: 20
-  seperationDistance: 5
+  seperationDistance: 8
   enemyMask:
     serializedVersion: 2
     m_Bits: 64
@@ -225,9 +226,9 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8171555187650398879}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 345b77837d2fec6498572e50f846cbb5, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b63e9fe8367472343b31427e3074636b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -249,10 +250,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -262,6 +263,33 @@ CapsuleCollider:
   m_Height: 2.44
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0.15}
+--- !u!54 &7916862337893917595
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8171555187650398879}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
 --- !u!1001 &5863077279082843856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -314,8 +342,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wasp
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3769975085747457945, guid: b3175a7aa424b8d429451766a9b47752, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
