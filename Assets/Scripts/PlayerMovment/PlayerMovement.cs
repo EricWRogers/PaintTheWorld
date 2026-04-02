@@ -108,6 +108,7 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("minGrindSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("grindExitForce"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_railDetectionPoint"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("grindParticles"));
         }
 
         showPaint = EditorGUILayout.Foldout(showPaint, "Paint");
@@ -252,6 +253,8 @@ public class PlayerMovement : PlayerMovmentEngine
     public float railProgress;
     public float grindSpeed;
 
+    public ParticleSystem grindParticles;
+
     [ReadOnly] public bool isGrinding;
     public Rail currentRail;
 
@@ -311,6 +314,7 @@ public class PlayerMovement : PlayerMovmentEngine
         m_inputActions = new PlayerInputActions().Player;
         m_inputActions.Enable();
         m_lasPos = transform.position;
+        grindParticles.Stop();
     }
 
     void Update()
@@ -827,6 +831,7 @@ public class PlayerMovement : PlayerMovmentEngine
         if (splineContainer != null)
         {
             StartGrinding();
+            grindParticles.Play();
             return true;
         }
 
@@ -923,7 +928,7 @@ public class PlayerMovement : PlayerMovmentEngine
             m_velocity += Vector3.up * grindExitForce * 0.5f;
 
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
-
+        grindParticles.Stop();
         GameEvents.PlayerEndedGrinding?.Invoke();
 
         m_timer = 0f;
