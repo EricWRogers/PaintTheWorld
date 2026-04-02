@@ -253,9 +253,9 @@ MonoBehaviour:
   cam: {fileID: 2558197743922652643}
   lockCursor: 1
   groundAccelMult: 3
-  airAccelMult: 1.5
-  airDrag: 0.5
-  groundDrag: 1.52
+  airAccelMult: 0.9
+  airDrag: 1.25
+  groundDrag: 1.5
   bonusMoveSpeed: 0
   bonusMaxSpeed: 0
   dashSpeedCurve:
@@ -282,9 +282,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  dashSpeed: 30
-  dashDuration: 0.2
-  dashCooldown: 0
+  dashSpeed: 20
+  dashDuration: 0.5
+  dashCooldown: 0.5
   isDashing: 0
   m_dashInputPressed_field: 0
   jumpForce: 8

@@ -53,8 +53,11 @@ public class Paintable : MonoBehaviour {
     }
 
     void OnDisable(){
-        m_maskRenderTexture.Release();
-        m_supportTexture.Release();
+        if(m_maskRenderTexture != null)
+            m_maskRenderTexture.Release();
+        
+        if(m_supportTexture != null)
+            m_supportTexture.Release();
     }
 
     
