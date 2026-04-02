@@ -149,6 +149,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5266058763652509102}
   - {fileID: 3004539066346412218}
   - {fileID: 5133128443161619739}
   - {fileID: 6362620465247799993}
@@ -313,6 +314,7 @@ MonoBehaviour:
   grindExitForce: 15.2
   railProgress: 0
   grindSpeed: 5
+  grindParticles: {fileID: 2454985223850556922}
   isGrinding: 0
   currentRail: {fileID: 0}
   m_railDir: 1
@@ -671,7 +673,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787235, y: -0.038275953, z: 0.0053321393, w: 0.9896958}
+  m_LocalRotation: {x: 0.13787296, y: -0.038162638, z: 0.005316353, w: 0.9897002}
   m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1041,7 +1043,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787235, y: -0.03827595, z: 0.005332139, w: 0.9896958}
+  m_LocalRotation: {x: 0.13787298, y: -0.038162645, z: 0.005316355, w: 0.9897002}
   m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1094,7 +1096,7 @@ Camera:
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
+  m_AllowDynamicResolution: 1
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -1292,6 +1294,77 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1e6db4b1eb6a5541807e15673b9c7f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &1219080821511120484
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1044665414035860105}
+    m_Modifications:
+    - target: {fileID: 3673485397320047518, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: prewarm
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0799942
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.90999997
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.121
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8339616652384934040, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: m_Name
+      value: GrindSparks
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+--- !u!198 &2454985223850556922 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3673485397320047518, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+  m_PrefabInstance: {fileID: 1219080821511120484}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5266058763652509102 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+  m_PrefabInstance: {fileID: 1219080821511120484}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4662967662184712944
 PrefabInstance:
   m_ObjectHideFlags: 0
