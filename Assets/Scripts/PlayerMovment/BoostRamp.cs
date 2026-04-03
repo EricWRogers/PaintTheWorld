@@ -1,6 +1,6 @@
 using UnityEngine;
-using KinematicCharacterControler;
-using UnityEditor.EditorTools;
+
+
 
 /// <summary>
 /// Place this on a ramp trigger volume.
