@@ -31,11 +31,29 @@ public class BeetleAi : Enemy
     public float fireSoundVolume = 0.9f;
     [Range(0.95f, 1.05f)]
     public float randomPitchRange = 1.02f;
+
+    [Header("Particle Effects")]
+    public ParticleSystem particles, particles2;
+
     new void Start()
     {
         base.Start();
         anim = GetComponent<Animator>();
         anim.SetBool("Moving", true);
+        
+        if (particles != null)
+        {
+            var main = particles.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            particles.Stop();
+        }
+
+        if (particles2 != null)
+        {
+            var main = particles2.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            particles2.Stop();
+        }
     }
 
     // Update is called once per frame
@@ -160,6 +178,7 @@ public class BeetleAi : Enemy
     {
         StopMoving();
         anim.SetBool("Attacking", true);
+
         // m_attackTimer -= Time.deltaTime;
 
         // if (m_attackTimer > 0) return;
@@ -181,6 +200,7 @@ public class BeetleAi : Enemy
     {
         anim.SetBool("Moving", true);
         m_agent.SetDestination(target.position);
+        StopSprayEffect();
     }
 
     public void StopMoving()
@@ -205,6 +225,8 @@ public class BeetleAi : Enemy
         }
 
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+        StopSprayEffect();
     }
 
     bool RotateTowardsTarget()
@@ -225,5 +247,17 @@ public class BeetleAi : Enemy
         float angle = Quaternion.Angle(transform.rotation, targetRotation);
 
         return angle <= attackAngleThreshold;
+    }
+
+    private void StartSprayEffect()
+    {
+        if (particles != null) particles.Play();
+        if (particles2 != null) particles2.Play();
+    }
+
+    private void StopSprayEffect()
+    {
+        if (particles != null) particles.Stop();
+        if (particles2 != null) particles2.Stop();
     }
 }
