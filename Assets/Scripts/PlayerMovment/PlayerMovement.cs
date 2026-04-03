@@ -712,9 +712,9 @@ public class PlayerMovement : PlayerMovmentEngine
 
     bool WallRun()
     {
-        if (m_isWallRiding && (!m_jumpInputPressed || Physics.Raycast(transform.position, m_velocity.normalized, wallCheckDist, collisionLayers)))
+        if (m_isWallRiding && (m_jumpInputPressed || Physics.Raycast(transform.position, m_velocity.normalized, wallCheckDist, collisionLayers)))
         {
-            m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce;
+            m_velocity = m_wallNormal * jumpForce + Vector3.up * jumpForce + m_velocity * 0.9f;
             m_isWallRiding = false;
             paintPoint.Rotate(0, 0, -paintRotation);
             paintRotation = 0f;
@@ -756,9 +756,9 @@ public class PlayerMovement : PlayerMovmentEngine
                     m_wallRunDir *= -1;
 
                 if (m_wallPaint)
-                    m_velocity = m_wallRunDir * currSpeed + Vector3.up * climbMult;
+                    m_velocity = m_wallRunDir * m_velocity.magnitude + Vector3.up * climbMult;
                 else
-                    m_velocity = m_wallRunDir * currSpeed + -Vector3.up * wallGravity;
+                    m_velocity = m_wallRunDir * m_velocity.magnitude + -Vector3.up * wallGravity;
 
                 return true;
             }
