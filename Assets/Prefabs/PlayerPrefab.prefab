@@ -283,8 +283,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   dashSpeed: 20
-  dashDuration: 0.5
-  dashCooldown: 0.5
+  dashDuration: 0
+  dashCooldown: 0
   isDashing: 0
   m_dashInputPressed_field: 0
   jumpForce: 8
@@ -673,7 +673,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787296, y: -0.038162638, z: 0.005316353, w: 0.9897002}
+  m_LocalRotation: {x: 0.13787234, y: -0.03827596, z: 0.00533214, w: 0.98969585}
   m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1043,7 +1043,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787298, y: -0.038162645, z: 0.005316355, w: 0.9897002}
+  m_LocalRotation: {x: 0.13787232, y: -0.03827597, z: 0.00533214, w: 0.98969585}
   m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1305,6 +1305,10 @@ PrefabInstance:
     - target: {fileID: 3673485397320047518, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
       propertyPath: prewarm
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3673485397320047518, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 6485120821910981578, guid: 9cd47e0fc19b63b4ba633cd58144dc04, type: 3}
       propertyPath: m_LocalPosition.x
