@@ -12,6 +12,7 @@ public class InvEntry
 
 public class PlayerManager : SceneAwareSingleton<PlayerManager>
 {
+    public GameObject playerPrefab;
     public GameObject player;
     public Health health;
     public Currency wallet;

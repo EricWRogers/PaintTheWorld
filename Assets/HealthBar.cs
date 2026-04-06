@@ -23,11 +23,17 @@ public class HealthBar : MonoBehaviour
 
     private int displayedHealth;
     private int lastBonusHealth;
+    private Vector3 originalSegmentScale = Vector3.one;
 
     private bool isAnimating = false;
 
     void Start()
     {
+        if (baseHealthSegments.Count > 0 && baseHealthSegments[0] != null)
+        {
+            originalSegmentScale = baseHealthSegments[0].transform.localScale;
+        }
+        
         Rebind();
         ForceRefresh();
     }
@@ -125,7 +131,7 @@ public class HealthBar : MonoBehaviour
         {
             bool filled = i < currentHealth;
             visible[i].gameObject.SetActive(filled);
-            visible[i].transform.localScale = filled ? Vector3.one : Vector3.zero;
+            visible[i].transform.localScale = filled ? originalSegmentScale : Vector3.zero;
             visible[i].color = Color.white;
         }
 
@@ -175,7 +181,7 @@ public class HealthBar : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < pulseDuration)
         {
-            segment.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * pulseScale, elapsed / pulseDuration);
+            segment.transform.localScale = Vector3.Lerp(originalSegmentScale, originalSegmentScale * pulseScale, elapsed / pulseDuration);
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -183,7 +189,7 @@ public class HealthBar : MonoBehaviour
         elapsed = 0f;
         while (elapsed < pulseDuration)
         {
-            segment.transform.localScale = Vector3.Lerp(Vector3.one * pulseScale, Vector3.zero, elapsed / pulseDuration);
+            segment.transform.localScale = Vector3.Lerp(originalSegmentScale * pulseScale, originalSegmentScale, elapsed / pulseDuration);
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -202,7 +208,7 @@ public class HealthBar : MonoBehaviour
         while (elapsed < pulseDuration)
         {
             float t = elapsed / pulseDuration;
-            segment.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one * pulseScale, t);
+            segment.transform.localScale = Vector3.Lerp(Vector3.zero, originalSegmentScale * pulseScale, t);
             segment.color = Color.Lerp(originalColor, healColor, t);
             elapsed += Time.deltaTime;
             yield return null;
@@ -212,13 +218,13 @@ public class HealthBar : MonoBehaviour
         while (elapsed < pulseDuration)
         {
             float t = elapsed / pulseDuration;
-            segment.transform.localScale = Vector3.Lerp(Vector3.one * pulseScale, Vector3.one, t);
+            segment.transform.localScale = Vector3.Lerp(originalSegmentScale * pulseScale, originalSegmentScale, t);
             segment.color = Color.Lerp(healColor, originalColor, t);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        segment.transform.localScale = Vector3.one;
+        segment.transform.localScale = originalSegmentScale;
         segment.color = originalColor;
     }
 }

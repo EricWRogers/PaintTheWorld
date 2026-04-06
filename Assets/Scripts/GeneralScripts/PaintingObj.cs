@@ -37,6 +37,7 @@ public class PaintingObj : MonoBehaviour
     private float checkTimer = 0f;
     public float checkInterval = 0.5f;
     public int currentEnemiesTarget;
+    public Transform playerSpawnPoint;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

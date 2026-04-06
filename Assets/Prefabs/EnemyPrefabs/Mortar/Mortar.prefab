@@ -140,6 +140,8 @@ MonoBehaviour:
   fireSound: {fileID: 0}
   fireSoundVolume: 0.9
   randomPitchRange: 1.02
+  particles: {fileID: 8054315094823146849}
+  particles2: {fileID: 4955047419037358454}
 --- !u!114 &5472731473974361928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,9 +398,19 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e88432630f7d584e9a5a087d7198711, type: 3}
+--- !u!198 &4955047419037358454 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 6469842130590444502, guid: 9e88432630f7d584e9a5a087d7198711, type: 3}
+  m_PrefabInstance: {fileID: 2092663632243667616}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8018192926841227152 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8236227750447871280, guid: 9e88432630f7d584e9a5a087d7198711, type: 3}
+  m_PrefabInstance: {fileID: 2092663632243667616}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &8054315094823146849 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8272002677848876993, guid: 9e88432630f7d584e9a5a087d7198711, type: 3}
   m_PrefabInstance: {fileID: 2092663632243667616}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5469276316418057959

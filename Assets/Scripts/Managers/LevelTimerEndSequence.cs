@@ -172,7 +172,7 @@ public class LevelTimerEndSequence : MonoBehaviour
 
     public void GoToNextScene()
 {
-    
+    GameManager.instance.ResumeGame();
     if (panelCanvasGroup != null)
     {
         panelCanvasGroup.alpha = 0f;

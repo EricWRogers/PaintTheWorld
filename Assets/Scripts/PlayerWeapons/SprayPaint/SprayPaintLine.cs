@@ -53,6 +53,8 @@ public class SprayPaintLine : MonoBehaviour
     private string attackTriggerName = "AttackTrigger";
     private bool canCombo = false;
 
+    private bool isAttacking = false;
+
     public float CurrentProjectileInterval
     {
         get
@@ -85,6 +87,15 @@ public class SprayPaintLine : MonoBehaviour
     private void Update()
     {
         ApplyRuntimeStats();
+        var stateInfo = weaponAnimator.GetCurrentAnimatorStateInfo(1);
+        bool isAttacking = stateInfo.IsTag("Attack") || stateInfo.IsName("metarig|ATTACK_V2") || stateInfo.IsName("metarig|ATTACK_V2 0");
+
+        float targetWeight = isAttacking ? 1f : 0f;
+        float currentWeight = weaponAnimator.GetLayerWeight(1);
+        float lerpedWeight = Mathf.Lerp(currentWeight, targetWeight, Time.deltaTime * 15f);
+
+        weaponAnimator.SetLayerWeight(1, lerpedWeight);
+        
         HandleInput();
 
         if (isSpraying && currentAmmo > 0)
@@ -187,13 +198,11 @@ public class SprayPaintLine : MonoBehaviour
 
         weaponAnimator.SetLayerWeight(1, Mathf.MoveTowards(weaponAnimator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
 
-
-        bool isIdle = weaponAnimator.GetCurrentAnimatorStateInfo(1).IsName("metarig|ACTION_IDLE");
     
    
         bool cooldownOver = Time.time >= lastAttackTime + attackCooldown;
 
-        if (input.WasPressedThisFrame() && currentAmmo > 0 && isIdle && cooldownOver)
+        if (input.WasPressedThisFrame() && currentAmmo > 0  && cooldownOver)
         {
             weaponAnimator.SetTrigger(attackTriggerName);
             lastAttackTime = Time.time; 
