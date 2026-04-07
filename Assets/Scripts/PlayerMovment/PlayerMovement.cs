@@ -15,6 +15,7 @@ public class PlayerMovmentEditor : Editor
 {
     private bool showMovement = true;
     private bool showMomentum = false;
+    private bool showBraking = false;
     private bool showDashing = false;
     private bool showJump = false;
     private bool showWall = false;
@@ -23,23 +24,20 @@ public class PlayerMovmentEditor : Editor
     private bool showEngine = false;
     private bool showAnimations = false;
 
-    // hi there sorry for touching your script without asking, was trying to tie our animations to the info in here. 
-    // feel free to delete everything to do with the animations in here
-
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        
+
         showEngine = EditorGUILayout.Foldout(showEngine, "Engine Stuff/ Gravity/ Collsion");
-        if(showEngine)
+        if (showEngine)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("capsule"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("collisionLayers"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("skinWidth"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("maxBounces"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSlopeAngle")); 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("downSlopeMult")); 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("upSlopeMult")); 
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSlopeAngle"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("downSlopeMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("upSlopeMult"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultGroundCheck"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultGroundedDistance"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("snapDownDistance"));
@@ -67,6 +65,14 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("airAccelMult"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("airDrag"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("groundDrag"));
+        }
+
+        showBraking = EditorGUILayout.Foldout(showBraking, "Braking");
+        if (showBraking)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("brakeDragMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("brakeTurnMult"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("brakeMinSpeed"));
         }
 
         showDashing = EditorGUILayout.Foldout(showDashing, "Dashing");
@@ -145,6 +151,7 @@ public class PlayerMovement : PlayerMovmentEngine
     private Vector2 moveInput;
     private bool m_jumpInputPressed = false;
     private bool m_dashInputPressed = false;
+    private bool m_brakeInputHeld = false;
 
     // Movement
     [Header("Movement")]
@@ -184,12 +191,27 @@ public class PlayerMovement : PlayerMovmentEngine
     [Tooltip("Friction while on the Ground")]
     public float groundDrag = 0.4f;
 
+    // Braking
+    [Header("Braking")]
+    [Tooltip("Drag multiplier applied while braking (higher = stops faster)")]
+    public float brakeDragMult = 6f;
+
+    [Tooltip("How much faster the player can turn while braking (multiplier on rotationSpeed)")]
+    public float brakeTurnMult = 3f;
+
+
+    private bool wasBreaking = false;
+
     // Runtime Bonuses
     [Header("Runtime Bonuses")]
     public float bonusMoveSpeed = 0f;
     public float bonusMaxSpeed = 0f;
 
-    // Dashing
+    // FOV Settings
+    [Header("FOV Settings")]
+    public float minFOV = 60f;
+    public float maxFOV = 180f;
+    public float fovMaxSpeed = 80f;
     [Header("Dashing")]
     [Tooltip("Shows the rate of acceleration over the time of the dash")]
     public AnimationCurve dashSpeedCurve;
@@ -305,14 +327,14 @@ public class PlayerMovement : PlayerMovmentEngine
 
 
 
-    #region Start/Update ( Life Cycle)
+    #region Start/Update (Life Cycle)
 
     void Start()
     {
         m_orientation = cam;
         colors = PaintManager.instance.GetComponent<PaintColors>();
-        m_inputActions = new PlayerInputActions().Player;
-        m_inputActions.Enable();
+        m_inputActions = PlayerManager.instance.playerInputs;
+    
         m_lasPos = transform.position;
         grindParticles.Stop();
     }
@@ -331,10 +353,9 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         if (PlayerInputLock.Locked) return;
 
-            //Rests y velocity if hitting head
-        if(Physics.Raycast(transform.position, Vector3.up, 1.2f, collisionLayers))
+        // Resets y velocity if hitting head
+        if (Physics.Raycast(transform.position, Vector3.up, 1.2f, collisionLayers))
             m_velocity.y = Mathf.Min(m_velocity.y, 0f);
-        
 
         bool onGround = CheckIfGrounded(out RaycastHit _);
         HandleRotation();
@@ -394,7 +415,6 @@ public class PlayerMovement : PlayerMovmentEngine
 
     #region State Machine
 
-
     private void EvaluateTransitions(bool onGround)
     {
         if (isStunned)
@@ -441,6 +461,7 @@ public class PlayerMovement : PlayerMovmentEngine
             moveInput = Vector2.zero;
             m_jumpInputPressed = false;
             m_dashInputPressed = false;
+            m_brakeInputHeld = false;
             return;
         }
 
@@ -454,6 +475,9 @@ public class PlayerMovement : PlayerMovmentEngine
             jumpInputElapsed += Time.deltaTime;
 
         m_dashInputPressed = m_inputActions.Dash.WasPressedThisFrame();
+
+
+        m_brakeInputHeld = m_inputActions.Brake.IsPressed();
     }
 
     #endregion
@@ -477,10 +501,10 @@ public class PlayerMovement : PlayerMovmentEngine
         if (canWalk)
         {
             Vector3 slopeForward = Vector3.ProjectOnPlane(m_orientation.forward, groundNormal);
-            Vector3 slopeRight   = Vector3.ProjectOnPlane(m_orientation.right, groundNormal);
+            Vector3 slopeRight = Vector3.ProjectOnPlane(m_orientation.right, groundNormal);
 
             if (slopeForward.sqrMagnitude > 0.0001f) slopeForward.Normalize();
-            if (slopeRight.sqrMagnitude   > 0.0001f) slopeRight.Normalize();
+            if (slopeRight.sqrMagnitude > 0.0001f) slopeRight.Normalize();
 
             Vector3 slopeInputDir = slopeForward * moveInput.y + slopeRight * moveInput.x;
             if (slopeInputDir.sqrMagnitude > 0.0001f) slopeInputDir.Normalize();
@@ -501,17 +525,68 @@ public class PlayerMovement : PlayerMovmentEngine
             horizontalVel *= bankMult;
         }
 
-        if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f)
+        // Only accelerate normally when not braking
+        if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f )
         {
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
-            if(m_velocity.magnitude > targetVel.magnitude)
+            
+            // During braking, only allow sideways movement, block forward/backward
+            if (m_brakeInputHeld && Mathf.Abs(moveInput.x) > 0.01f)
+            {
+                Vector3 sidewaysDir = m_orientation.right * moveInput.x;
+                if (canWalk)
+                {
+                    Vector3 slopeRight = Vector3.ProjectOnPlane(m_orientation.right, groundNormal);
+                    if (slopeRight.sqrMagnitude > 0.0001f) slopeRight.Normalize();
+                    sidewaysDir = slopeRight * moveInput.x;
+                }
+                if (sidewaysDir.sqrMagnitude > 0.0001f) sidewaysDir.Normalize();
+                targetVel = sidewaysDir * currSpeed;
+            }
+            
+            if (m_velocity.magnitude > targetVel.magnitude)
                 targetVel = inputDir * m_velocity.magnitude;
-            horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
+
+            if (m_brakeInputHeld)
+            {
+                float baseDrag = canWalk ? groundDrag : airDrag;
+                baseDrag *= brakeDragMult;
+                float dragFactor = Mathf.Exp(-baseDrag * Time.deltaTime);
+                targetVel*=dragFactor;
+
+                if(!wasBreaking)
+                {
+                    grindParticles.Play();
+                }
+                wasBreaking = true;
+                
+                horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime * brakeTurnMult);
+
+            }
+            else
+            {
+                horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
+                if(wasBreaking)
+                {
+                    grindParticles.Stop();
+                }
+            }
+                
+            
         }
         else
         {
             float baseDrag = canWalk ? groundDrag : airDrag;
+
+            // Multiply drag when brake is held and still moving
+            bool isBraking = m_brakeInputHeld;
+            if (isBraking)
+                baseDrag *= brakeDragMult;
+            else if (wasBreaking)
+            {
+                grindParticles.Stop();
+            }
 
             if (horizontalVel.magnitude > currSpeed)
                 baseDrag *= 0.3f;
@@ -671,7 +746,11 @@ public class PlayerMovement : PlayerMovmentEngine
             Vector3 forwardNoY = m_velocity;
             forwardNoY.y = 0;
             if (forwardNoY.sqrMagnitude > 0.01f)
-                transform.forward = Vector3.Slerp(transform.forward, forwardNoY.normalized, Time.deltaTime * rotationSpeed);
+            {
+                // Boost rotation speed while braking so the player can carve sharp turns
+                float effectiveRotSpeed = rotationSpeed * (m_brakeInputHeld ? brakeTurnMult : 1f);
+                transform.forward = Vector3.Slerp(transform.forward, forwardNoY.normalized, Time.deltaTime * effectiveRotSpeed);
+            }
         }
 
         if (m_inputActions.Attack.IsPressed())
@@ -1022,13 +1101,13 @@ public class PlayerMovement : PlayerMovmentEngine
     public void SetMoveSpeedBonus(float moveBonus, float maxBonus)
     {
         bonusMoveSpeed = Mathf.Max(0f, moveBonus);
-        bonusMaxSpeed  = Mathf.Max(0f, maxBonus);
+        bonusMaxSpeed = Mathf.Max(0f, maxBonus);
     }
 
     public void ClearMoveSpeedBonus()
     {
         bonusMoveSpeed = 0f;
-        bonusMaxSpeed  = 0f;
+        bonusMaxSpeed = 0f;
     }
 
     #endregion
@@ -1040,6 +1119,7 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         animator.SetBool("Grinding", isGrinding);
         animator.SetBool("Dashing", isDashing);
+        //animator.SetBool("Braking", m_brakeInputHeld);
 
         Vector2 horzVelocity = new Vector2(m_velocity.x, m_velocity.z);
         animator.SetBool("Moving", horzVelocity.magnitude > 2f);
@@ -1050,7 +1130,8 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         Camera cam = Camera.main;
         if (cam == null) return;
-        float targetFOV = isDashing ? 80f : 60f;
+        float speedRatio = Mathf.Clamp01(m_velocity.magnitude / fovMaxSpeed);
+        float targetFOV = Mathf.Lerp(minFOV, maxFOV, speedRatio);
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, Time.deltaTime * 8f);
     }
 
