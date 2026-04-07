@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 using SuperPupSystems.Helper;
 public class BeetleAi : Enemy
 {
@@ -34,8 +35,7 @@ public class BeetleAi : Enemy
 
     [Header("Particle Effects")]
     public ParticleSystem particles, particles2;
-    public ParticleSystem stunParticles;
-
+    public List<ParticleSystem> particleSystems = new List<ParticleSystem>();
     new void Start()
     {
         base.Start();
@@ -56,11 +56,11 @@ public class BeetleAi : Enemy
             particles2.Stop();
         }
 
-        if (stunParticles != null)
+        foreach (var ps in particleSystems)
         {
-            var main = stunParticles.main;
+            var main = ps.main;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
-            stunParticles.Stop();
+            ps.Stop();
         }
     }
 
@@ -78,6 +78,8 @@ public class BeetleAi : Enemy
         {
             return;
         }
+
+
 
         if (Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceFromPlayerToTarget)
         {
@@ -267,12 +269,18 @@ public class BeetleAi : Enemy
 
     private void PlayStunEffect()
     {
-        if (stunParticles != null) stunParticles.Play();
+        foreach (var ps in particleSystems)
+        {
+            ps.Play();
+        }
     }
 
     private void StopStunEffect()
     {
-        if (stunParticles != null) stunParticles.Stop();
+        foreach (var ps in particleSystems)
+        {
+            ps.Stop();
+        }
     }
 
     private void StopSprayEffect()
