@@ -256,8 +256,13 @@ MonoBehaviour:
   airAccelMult: 0.9
   airDrag: 1.25
   groundDrag: 1.5
+  brakeDragMult: 1
+  brakeTurnMult: 10
   bonusMoveSpeed: 0
   bonusMaxSpeed: 0
+  minFOV: 60
+  maxFOV: 180
+  fovMaxSpeed: 80
   dashSpeedCurve:
     serializedVersion: 2
     m_Curve:
