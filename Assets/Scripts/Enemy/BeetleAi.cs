@@ -34,6 +34,7 @@ public class BeetleAi : Enemy
 
     [Header("Particle Effects")]
     public ParticleSystem particles, particles2;
+    public ParticleSystem stunParticles;
 
     new void Start()
     {
@@ -53,6 +54,13 @@ public class BeetleAi : Enemy
             var main = particles2.main;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             particles2.Stop();
+        }
+
+        if (stunParticles != null)
+        {
+            var main = stunParticles.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            stunParticles.Stop();
         }
     }
 
@@ -128,6 +136,7 @@ public class BeetleAi : Enemy
             {
                 recoveringFromStun = false;
                 Move();
+                StopStunEffect();
                 Debug.Log("[BeetleAi] Grace period ended, resuming movement.");
             }
             return;
@@ -193,6 +202,7 @@ public class BeetleAi : Enemy
         m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
         stunned = true;
         recoveringFromStun = false;
+        PlayStunEffect();
         Debug.Log($"[BeetleAi] STUN APPLIED | base={stunTime:F2}, bonus={EnemyStunModifier.extraStunTime:F2}, total={m_stunTimer:F2}");
     }
 
@@ -253,6 +263,16 @@ public class BeetleAi : Enemy
     {
         if (particles != null) particles.Play();
         if (particles2 != null) particles2.Play();
+    }
+
+    private void PlayStunEffect()
+    {
+        if (stunParticles != null) stunParticles.Play();
+    }
+
+    private void StopStunEffect()
+    {
+        if (stunParticles != null) stunParticles.Stop();
     }
 
     private void StopSprayEffect()
