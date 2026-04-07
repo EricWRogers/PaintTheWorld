@@ -526,15 +526,13 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (m_brakeInputHeld)
         {
-            // --- BRAKING ---
-            // Forward input is completely ignored. Forward velocity bleeds to zero via drag.
-            // Only sideways input is respected so the player can carve/steer while stopping.
+
             if (!wasBreaking) grindParticles.Play();
             wasBreaking = true;
 
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
 
-            // Decompose horizontal velocity into the player's own forward / right axes
+            
             Vector3 fwd   = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
             Vector3 right = new Vector3(transform.right.x,   0f, transform.right.z  ).normalized;
 
@@ -554,7 +552,7 @@ public class PlayerMovement : PlayerMovmentEngine
         }
         else if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f)
         {
-            // --- NORMAL MOVEMENT ---
+            
             if (wasBreaking)
             {
                 grindParticles.Stop();
@@ -571,7 +569,7 @@ public class PlayerMovement : PlayerMovmentEngine
         }
         else
         {
-            // --- IDLE DRAG ---
+           
             if (wasBreaking)
             {
                 grindParticles.Stop();
