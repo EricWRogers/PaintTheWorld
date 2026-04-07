@@ -1,31 +1,46 @@
-using System;
 using SuperPupSystems.Helper;
 using UnityEngine;
 
 public class PaintGlobs : CollisonPainter
 {
-    public float launchForce = 50f;
+    [Header("Projectile Settings")]
+    public float damage = 10f;
+    public float customGravityMultiplier = 0.08f;
+
     private Rigidbody rb;
     private Color blobColor = Color.white;
 
-    private float damage = 10f;
-
-    public new void Start()
+    public void InitializeProjectile(Rigidbody projectileRb)
     {
-        rb = GetComponent<Rigidbody>();
-        if (rb != null) 
-            rb.AddForce(transform.forward * launchForce, ForceMode.Impulse);
+        rb = projectileRb;
     }
 
-
-    void Update()
+    private void FixedUpdate()
     {
-        if (blobColor != PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint){
-            blobColor = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
+        if (rb != null)
+        {
+            rb.AddForce(Physics.gravity * customGravityMultiplier, ForceMode.Acceleration);
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void Update()
+    {
+        var selected =
+            PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
+
+        if (blobColor != selected)
+        {
+            blobColor = selected;
+
+            Renderer renderer = GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = blobColor;
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
