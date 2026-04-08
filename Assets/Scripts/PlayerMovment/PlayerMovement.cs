@@ -55,6 +55,7 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("rotationSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("movementColorMult"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("lockCursor"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSpeedY"));
         }
 
         showMomentum = EditorGUILayout.Foldout(showMomentum, "Momentum");
@@ -87,6 +88,7 @@ public class PlayerMovmentEditor : Editor
         if (showJump)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpForce"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxUpwardSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("maxJumpAngle"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpCooldown"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpHoldMult"));
@@ -168,6 +170,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
     public Transform cam;
     public bool lockCursor = true;
+    [Tooltip("Maximum speed that you can move upwards")]
+    public float maxSpeedY = 20;
 
     private float currSpeed;
     private Transform m_orientation;
@@ -231,6 +235,8 @@ public class PlayerMovement : PlayerMovmentEngine
     [Header("Jump Settings")]
     [Tooltip("Default Upward force applied when jumping")]
     public float jumpForce = 5.0f;
+    [Tooltip("Maximum upward velocity while moving up")]
+    public float maxUpwardSpeed = 8f;
     public float maxJumpAngle = 80f;
     public float jumpCooldown = 0.25f;
     public float jumpHoldMult = 1.5f;
@@ -658,6 +664,9 @@ public class PlayerMovement : PlayerMovmentEngine
                 m_jumpHoldTimer += Time.deltaTime;
             }
         }
+
+        if (m_velocity.y >= maxSpeedY)
+            m_velocity.y = maxSpeedY;
 
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
