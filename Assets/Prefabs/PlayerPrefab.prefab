@@ -252,6 +252,7 @@ MonoBehaviour:
   movementColorMult: 2
   cam: {fileID: 2558197743922652643}
   lockCursor: 1
+  maxSpeedY: 20
   groundAccelMult: 3
   airAccelMult: 0.9
   airDrag: 1.25
@@ -293,6 +294,7 @@ MonoBehaviour:
   isDashing: 0
   m_dashInputPressed_field: 0
   jumpForce: 8
+  maxUpwardSpeed: 8
   maxJumpAngle: 80
   jumpCooldown: 0.25
   jumpHoldMult: 2
@@ -3139,6 +3141,10 @@ MonoBehaviour:
   attackCooldown: 0.5
   canColorKey: 0
   weaponAnimator: {fileID: 1057428158363734211}
+  attackTriggerName: AttackTrigger
+  crosshairImage: {fileID: 0}
+  normalCrosshairColor: {r: 1, g: 1, b: 1, a: 1}
+  enemyCrosshairColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &4116013613858624491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3174,6 +3180,10 @@ MonoBehaviour:
   attackCooldown: 0.5
   canColorKey: 0
   weaponAnimator: {fileID: 1057428158363734211}
+  attackTriggerName: AttackTrigger
+  crosshairImage: {fileID: 0}
+  normalCrosshairColor: {r: 1, g: 1, b: 1, a: 1}
+  enemyCrosshairColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &6362620465247799993 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4ff3719c9dc53e74dba661ee401a3d84, type: 3}
