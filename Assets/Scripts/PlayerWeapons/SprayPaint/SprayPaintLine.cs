@@ -296,17 +296,17 @@ public class SprayPaintLine : MonoBehaviour
             rb = proj.AddComponent<Rigidbody>();
 
         rb.useGravity = false;
-        rb.drag = 0f;
-        rb.angularDrag = 0f;
+        rb.linearDamping = 0f;
+        rb.angularDamping = 0f;
         rb.mass = 1f;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.constraints = RigidbodyConstraints.None;
 
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        rb.velocity = launchDirection.normalized * launchForce;
+        rb.linearVelocity = launchDirection.normalized * launchForce;
 
         PaintGlobs glob = proj.GetComponent<PaintGlobs>();
         if (glob != null)
