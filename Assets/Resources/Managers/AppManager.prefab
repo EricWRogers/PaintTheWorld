@@ -2330,23 +2330,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 150948810358029021, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 693171231988162533, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 693171231988162533, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 693171231988162533, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 164.06
       objectReference: {fileID: 0}
     - target: {fileID: 693171231988162533, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -292.8985
       objectReference: {fileID: 0}
     - target: {fileID: 826721125564459470, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_Name
@@ -2354,19 +2354,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1066243204591134302, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1066243204591134302, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1066243204591134302, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 164.06
       objectReference: {fileID: 0}
     - target: {fileID: 1066243204591134302, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -61.16945
       objectReference: {fileID: 0}
     - target: {fileID: 1088184007806477766, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2614,19 +2614,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7558629209762039516, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7558629209762039516, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7558629209762039516, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 164.06
       objectReference: {fileID: 0}
     - target: {fileID: 7558629209762039516, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -179.1921
       objectReference: {fileID: 0}
     - target: {fileID: 8434873159505057138, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: settingsPanel
@@ -2666,6 +2666,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3286747918612409748 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 271970589017531925, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+  m_PrefabInstance: {fileID: 3340232891695876993}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &3798604244645635967 stripped
@@ -2761,6 +2772,10 @@ PrefabInstance:
       propertyPath: startingHealth
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 7906907807127236356, guid: 0d63c41291b7abd4ca11029da80c9da9, type: 3}
+      propertyPath: uiInvertYToggle
+      value: 
+      objectReference: {fileID: 3286747918612409748}
     - target: {fileID: 7906907807127236356, guid: 0d63c41291b7abd4ca11029da80c9da9, type: 3}
       propertyPath: uiSensitivitySlider
       value: 

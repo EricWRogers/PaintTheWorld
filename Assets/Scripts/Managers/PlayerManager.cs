@@ -42,9 +42,11 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     [Header("Settings")]
     public Slider uiSensitivitySlider;
+    public Toggle uiInvertYToggle;
     private CinemachineInputAxisController inputAxisController;
     private float mouseSensitivity = 1f;
-
+    
+    private bool invertMouse = false;
 
     public PlayerContext GetContext() => new PlayerContext
     {
@@ -73,10 +75,26 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
                     mouseSensitivity = value;
                     if (inputAxisController != null)
                     {
-                        inputAxisController.Controllers[0].Input.Gain = mouseSensitivity;
-                        inputAxisController.Controllers[1].Input.Gain = -mouseSensitivity;
+                        inputAxisController.Controllers[0].Input.Gain = invertMouse ? -mouseSensitivity : mouseSensitivity;
+                        inputAxisController.Controllers[1].Input.Gain = invertMouse ? mouseSensitivity : -mouseSensitivity;
                     }
                     PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
+                });
+            }
+            invertMouse = PlayerPrefs.GetInt("InvertY", 0) == 1;
+            if (uiInvertYToggle != null)
+            {
+                uiInvertYToggle.isOn = invertMouse;
+                uiInvertYToggle.onValueChanged.AddListener((value) =>
+                {
+                    invertMouse = value;
+                    if (inputAxisController != null)
+                    {
+                        inputAxisController.Controllers[0].Input.Gain = invertMouse ? -mouseSensitivity : mouseSensitivity;
+                        inputAxisController.Controllers[1].Input.Gain = invertMouse ? mouseSensitivity : -mouseSensitivity;
+                        
+                    }
+                    PlayerPrefs.SetInt("InvertY", invertMouse ? 1 : 0);
                 });
             }
     }
