@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 using SuperPupSystems.Helper;
 public class BeetleAi : Enemy
 {
@@ -34,7 +35,7 @@ public class BeetleAi : Enemy
 
     [Header("Particle Effects")]
     public ParticleSystem particles, particles2;
-
+    public List<ParticleSystem> particleSystems = new List<ParticleSystem>();
     new void Start()
     {
         base.Start();
@@ -54,6 +55,13 @@ public class BeetleAi : Enemy
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             particles2.Stop();
         }
+
+        foreach (var ps in particleSystems)
+        {
+            var main = ps.main;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            ps.Stop();
+        }
     }
 
     // Update is called once per frame
@@ -70,6 +78,8 @@ public class BeetleAi : Enemy
         {
             return;
         }
+
+
 
         if (Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceFromPlayerToTarget)
         {
@@ -128,6 +138,7 @@ public class BeetleAi : Enemy
             {
                 recoveringFromStun = false;
                 Move();
+                StopStunEffect();
                 Debug.Log("[BeetleAi] Grace period ended, resuming movement.");
             }
             return;
@@ -193,6 +204,7 @@ public class BeetleAi : Enemy
         m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
         stunned = true;
         recoveringFromStun = false;
+        PlayStunEffect();
         Debug.Log($"[BeetleAi] STUN APPLIED | base={stunTime:F2}, bonus={EnemyStunModifier.extraStunTime:F2}, total={m_stunTimer:F2}");
     }
 
@@ -253,6 +265,22 @@ public class BeetleAi : Enemy
     {
         if (particles != null) particles.Play();
         if (particles2 != null) particles2.Play();
+    }
+
+    private void PlayStunEffect()
+    {
+        foreach (var ps in particleSystems)
+        {
+            ps.Play();
+        }
+    }
+
+    private void StopStunEffect()
+    {
+        foreach (var ps in particleSystems)
+        {
+            ps.Stop();
+        }
     }
 
     private void StopSprayEffect()

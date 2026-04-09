@@ -1,7 +1,6 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
-using Unity.VisualScripting;
 
 
 
@@ -56,6 +55,7 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("rotationSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("movementColorMult"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("lockCursor"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxSpeedY"));
         }
 
         showMomentum = EditorGUILayout.Foldout(showMomentum, "Momentum");
@@ -72,7 +72,7 @@ public class PlayerMovmentEditor : Editor
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("brakeDragMult"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("brakeTurnMult"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("brakeMinSpeed"));
+        
         }
 
         showDashing = EditorGUILayout.Foldout(showDashing, "Dashing");
@@ -88,6 +88,7 @@ public class PlayerMovmentEditor : Editor
         if (showJump)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpForce"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxUpwardSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("maxJumpAngle"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpCooldown"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("jumpHoldMult"));
@@ -169,6 +170,8 @@ public class PlayerMovement : PlayerMovmentEngine
 
     public Transform cam;
     public bool lockCursor = true;
+    [Tooltip("Maximum speed that you can move upwards")]
+    public float maxSpeedY = 20;
 
     private float currSpeed;
     private Transform m_orientation;
@@ -232,6 +235,8 @@ public class PlayerMovement : PlayerMovmentEngine
     [Header("Jump Settings")]
     [Tooltip("Default Upward force applied when jumping")]
     public float jumpForce = 5.0f;
+    [Tooltip("Maximum upward velocity while moving up")]
+    public float maxUpwardSpeed = 8f;
     public float maxJumpAngle = 80f;
     public float jumpCooldown = 0.25f;
     public float jumpHoldMult = 1.5f;
@@ -525,69 +530,59 @@ public class PlayerMovement : PlayerMovmentEngine
             horizontalVel *= bankMult;
         }
 
-        // Only accelerate normally when not braking
-        if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f )
+        if (m_brakeInputHeld)
         {
+
+            if (!wasBreaking) grindParticles.Play();
+            wasBreaking = true;
+
+            float accelMult = canWalk ? groundAccelMult : airAccelMult;
+
+            
+            Vector3 fwd   = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
+            Vector3 right = new Vector3(transform.right.x,   0f, transform.right.z  ).normalized;
+
+            float fwdSpeed   = Vector3.Dot(horizontalVel, fwd);
+            float rightSpeed = Vector3.Dot(horizontalVel, right);
+
+            // Exponential drag kills only the forward component — forward input is ignored
+            float brakeDrag = (canWalk ? groundDrag : airDrag) * brakeDragMult;
+            fwdSpeed *= Mathf.Exp(-brakeDrag * Time.deltaTime);
+
+            // Sideways input still works so the player can steer while stopping
+            if (Mathf.Abs(moveInput.x) > 0.01f)
+                rightSpeed = Mathf.MoveTowards(rightSpeed, moveInput.x * currSpeed,
+                    currSpeed * accelMult * brakeTurnMult * Time.deltaTime);
+
+            horizontalVel = fwd * fwdSpeed + right * rightSpeed;
+        }
+        else if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f)
+        {
+            
+            if (wasBreaking)
+            {
+                grindParticles.Stop();
+                wasBreaking = false;
+            }
+
             float accelMult = canWalk ? groundAccelMult : airAccelMult;
             Vector3 targetVel = inputDir * currSpeed;
-            
-            // During braking, only allow sideways movement, block forward/backward
-            if (m_brakeInputHeld && Mathf.Abs(moveInput.x) > 0.01f)
-            {
-                Vector3 sidewaysDir = m_orientation.right * moveInput.x;
-                if (canWalk)
-                {
-                    Vector3 slopeRight = Vector3.ProjectOnPlane(m_orientation.right, groundNormal);
-                    if (slopeRight.sqrMagnitude > 0.0001f) slopeRight.Normalize();
-                    sidewaysDir = slopeRight * moveInput.x;
-                }
-                if (sidewaysDir.sqrMagnitude > 0.0001f) sidewaysDir.Normalize();
-                targetVel = sidewaysDir * currSpeed;
-            }
-            
+
             if (m_velocity.magnitude > targetVel.magnitude)
-                targetVel = inputDir * m_velocity.magnitude;
+                targetVel = targetVel.normalized * m_velocity.magnitude;
 
-            if (m_brakeInputHeld)
-            {
-                float baseDrag = canWalk ? groundDrag : airDrag;
-                baseDrag *= brakeDragMult;
-                float dragFactor = Mathf.Exp(-baseDrag * Time.deltaTime);
-                targetVel*=dragFactor;
-
-                if(!wasBreaking)
-                {
-                    grindParticles.Play();
-                }
-                wasBreaking = true;
-                
-                horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime * brakeTurnMult);
-
-            }
-            else
-            {
-                horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
-                if(wasBreaking)
-                {
-                    grindParticles.Stop();
-                }
-            }
-                
-            
+            horizontalVel = Vector3.MoveTowards(horizontalVel, targetVel, currSpeed * accelMult * Time.deltaTime);
         }
         else
         {
-            float baseDrag = canWalk ? groundDrag : airDrag;
-
-            // Multiply drag when brake is held and still moving
-            bool isBraking = m_brakeInputHeld;
-            if (isBraking)
-                baseDrag *= brakeDragMult;
-            else if (wasBreaking)
+           
+            if (wasBreaking)
             {
                 grindParticles.Stop();
+                wasBreaking = false;
             }
 
+            float baseDrag = canWalk ? groundDrag : airDrag;
             if (horizontalVel.magnitude > currSpeed)
                 baseDrag *= 0.3f;
 
@@ -670,6 +665,9 @@ public class PlayerMovement : PlayerMovmentEngine
             }
         }
 
+        if (m_velocity.y >= maxSpeedY)
+            m_velocity.y = maxSpeedY;
+
         transform.position = MovePlayer(m_velocity * Time.deltaTime);
 
         if (onGround && !attemptingJump && groundedState.angle > 7 && transform.position.y - m_lasPos.y < 0.001f)
@@ -747,9 +745,12 @@ public class PlayerMovement : PlayerMovmentEngine
             forwardNoY.y = 0;
             if (forwardNoY.sqrMagnitude > 0.01f)
             {
-                // Boost rotation speed while braking so the player can carve sharp turns
-                float effectiveRotSpeed = rotationSpeed * (m_brakeInputHeld ? brakeTurnMult : 1f);
-                transform.forward = Vector3.Slerp(transform.forward, forwardNoY.normalized, Time.deltaTime * effectiveRotSpeed);
+                // While braking, snap rotation immediately to velocity direction
+                // so carving turns feel instant and responsive
+                if (m_brakeInputHeld)
+                    transform.forward = forwardNoY.normalized;
+                else
+                    transform.forward = Vector3.Slerp(transform.forward, forwardNoY.normalized, Time.deltaTime * rotationSpeed);
             }
         }
 

@@ -166,13 +166,18 @@ public class SprayPaintLine : MonoBehaviour
     //        }
         }
 
-        Vector3 direction = (targetPoint - transform.position).normalized;
-
+        Vector3 direction = (targetPoint - nozzleSpawnPoint.position).normalized;
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            nozzleSpawnPoint.rotation = Quaternion.Slerp(nozzleSpawnPoint.rotation, targetRotation, Time.deltaTime * rotationSmoothing);
-            sprayParticles.transform.rotation = transform.rotation;
+            nozzleSpawnPoint.rotation = Quaternion.Slerp(
+                nozzleSpawnPoint.rotation,
+                targetRotation,
+                Time.deltaTime * rotationSmoothing
+            );
+
+            sprayParticles.transform.position = nozzleSpawnPoint.position;
+            sprayParticles.transform.rotation = nozzleSpawnPoint.rotation;
         }
 
     //    if (crosshairUI != null)
@@ -287,9 +292,27 @@ public class SprayPaintLine : MonoBehaviour
         GameObject proj = Instantiate(projectilePrefab, spawnPosition, spawnRotation);
 
         Rigidbody rb = proj.GetComponent<Rigidbody>();
-        if (rb == null) rb = proj.AddComponent<Rigidbody>();
+        if (rb == null)
+            rb = proj.AddComponent<Rigidbody>();
 
-        rb.AddForce(launchDirection * launchForce);
+        rb.useGravity = false;
+        rb.drag = 0f;
+        rb.angularDrag = 0f;
+        rb.mass = 1f;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.constraints = RigidbodyConstraints.None;
+
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        rb.velocity = launchDirection.normalized * launchForce;
+
+        PaintGlobs glob = proj.GetComponent<PaintGlobs>();
+        if (glob != null)
+        {
+            glob.InitializeProjectile(rb);
+        }
 
         Destroy(proj, projectileLifetime);
     }
