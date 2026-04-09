@@ -30,37 +30,8 @@ public class ScenePortal : MonoBehaviour
 
         if (Input.GetKeyDown(interactKey))
         {
-            string chosenScene = GetRandomStageScene();
-
-            if (string.IsNullOrEmpty(chosenScene))
-            {
-                Debug.LogWarning("ScenePortal: No valid stage scene found.");
-                return;
-            }
-
-            GameManager.instance.GetComponent<Timer>().StartTimer();
-            SceneManager.LoadScene(chosenScene);
+            SceneManager.LoadScene("LoadScene");
         }
-    }
-
-    string GetRandomStageScene()
-    {
-        List<string> scenesToUse = null;
-
-        if (useGameManagerStages && GameManager.instance != null && GameManager.instance.stageScenes != null && GameManager.instance.stageScenes.Count > 0)
-        {
-            scenesToUse = GameManager.instance.stageScenes;
-        }
-        else if (stageScenes != null && stageScenes.Count > 0)
-        {
-            scenesToUse = stageScenes;
-        }
-
-        if (scenesToUse == null || scenesToUse.Count == 0)
-            return null;
-
-        int randomIndex = Random.Range(0, scenesToUse.Count);
-        return scenesToUse[randomIndex];
     }
 
     void OnTriggerEnter(Collider other)

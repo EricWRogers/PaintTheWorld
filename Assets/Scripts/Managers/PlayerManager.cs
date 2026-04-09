@@ -65,6 +65,10 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (!GameManager.instance.sceneHasPlayer)
+        {
+            return;
+        }
         player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
@@ -86,6 +90,10 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     void Update()
     {
+        if (!GameManager.instance.sceneHasPlayer)
+        {
+            return;
+        }
         if(player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player");

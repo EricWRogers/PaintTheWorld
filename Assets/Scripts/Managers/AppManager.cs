@@ -36,9 +36,24 @@ public class AppManager : Singleton<AppManager>
             }
             if(_next.name != shopScene)
             {
-                GameManager.instance.ResetTimer();
+                GameManager.instance.ResetManager();
             }
         }
         
+    }
+
+    public void ChangeScene(string _sceneName, float _minTime)
+    {
+        Debug.Log("Start Loading Scene");
+        AsyncOperation async = SceneManager.LoadSceneAsync(_sceneName);
+        while(_minTime >= 0)
+        {
+            Debug.Log("Time Left: " + _minTime);
+            _minTime -= Time.deltaTime;
+            async.allowSceneActivation = false;
+        }
+        Debug.Log("Timer Done Activate Scene");
+        async.allowSceneActivation = true;
+
     }
 }
