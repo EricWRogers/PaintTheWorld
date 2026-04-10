@@ -252,6 +252,7 @@ MonoBehaviour:
   movementColorMult: 2
   cam: {fileID: 2558197743922652643}
   lockCursor: 1
+  maxSpeedY: 20
   groundAccelMult: 3
   airAccelMult: 0.9
   airDrag: 1.25
@@ -293,6 +294,7 @@ MonoBehaviour:
   isDashing: 0
   m_dashInputPressed_field: 0
   jumpForce: 8
+  maxUpwardSpeed: 8
   maxJumpAngle: 80
   jumpCooldown: 0.25
   jumpHoldMult: 2
@@ -678,7 +680,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787234, y: -0.03827596, z: 0.00533214, w: 0.98969585}
+  m_LocalRotation: {x: 0.13787225, y: -0.038275857, z: 0.0053321216, w: 0.98969585}
   m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1048,8 +1050,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13787232, y: -0.03827597, z: 0.00533214, w: 0.98969585}
-  m_LocalPosition: {x: 1.0999985, y: 1.11, z: -6}
+  m_LocalRotation: {x: 0.13787228, y: -0.038275868, z: 0.0053321235, w: 0.98969585}
+  m_LocalPosition: {x: 1.1, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3139,6 +3141,10 @@ MonoBehaviour:
   attackCooldown: 0.5
   canColorKey: 0
   weaponAnimator: {fileID: 1057428158363734211}
+  attackTriggerName: AttackTrigger
+  crosshairImage: {fileID: 0}
+  normalCrosshairColor: {r: 1, g: 1, b: 1, a: 1}
+  enemyCrosshairColor: {r: 1, g: 0.2297461, b: 0, a: 1}
 --- !u!114 &4116013613858624491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3174,6 +3180,10 @@ MonoBehaviour:
   attackCooldown: 0.5
   canColorKey: 0
   weaponAnimator: {fileID: 1057428158363734211}
+  attackTriggerName: AttackTrigger
+  crosshairImage: {fileID: 0}
+  normalCrosshairColor: {r: 1, g: 1, b: 1, a: 1}
+  enemyCrosshairColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &6362620465247799993 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4ff3719c9dc53e74dba661ee401a3d84, type: 3}

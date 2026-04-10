@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR;
 
 public class SprayPaintLine : MonoBehaviour
@@ -34,26 +35,30 @@ public class SprayPaintLine : MonoBehaviour
     [Header("Extra Projectile Timing")]
     public float extraProjectileDelay = 0.4f;
 
-    private float ammoRemainder = 0f;
-    private bool isSpraying = false;
-    private float projectileTimer = 0f;
-
     [Header("Cooldown Settings")]
     public float attackCooldown = 0.5f;
-    private float lastAttackTime = -999f;
 
     [Header("Paint Settings")]
     public int canColorKey = 0;
-    private ParticlePainter painter;
-
-    public int ProjectileCount => Mathf.Max(1, 1 + bonusProjectileCount);
 
     [Header("Animation Settings")]
     public Animator weaponAnimator;
-    private string attackTriggerName = "AttackTrigger";
+    public string attackTriggerName = "AttackTrigger";
+
+    [Header("Crosshair UI")]
+    public Image crosshairImage;
+    public Color normalCrosshairColor = Color.white;
+    public Color enemyCrosshairColor = Color.red;
+
+    private float ammoRemainder = 0f;
+    private bool isSpraying = false;
+    private float projectileTimer = 0f;
+    private float lastAttackTime = -999f;
     private bool canCombo = false;
 
-    private bool isAttacking = false;
+    private ParticlePainter painter;
+
+    public int ProjectileCount => Mathf.Max(1, 1 + bonusProjectileCount);
 
     public float CurrentProjectileInterval
     {
@@ -64,38 +69,48 @@ public class SprayPaintLine : MonoBehaviour
         }
     }
 
-   // [Header("Crosshair UI")]
-   // public RectTransform crosshairUI;
-
     private void Start()
     {
         ApplyRuntimeStats();
 
-        if (playerCamera == null) playerCamera = Camera.main.transform;
+        if (playerCamera == null && Camera.main != null)
+            playerCamera = Camera.main.transform;
+
+        TryAutoAssignCrosshair();
 
         if (sprayParticles != null)
         {
             var main = sprayParticles.main;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
-            if (sprayParticles.isPlaying) sprayParticles.Stop();
+
+            if (sprayParticles.isPlaying)
+                sprayParticles.Stop();
 
             painter = GetComponentInChildren<ParticlePainter>();
             UpdatePainterColor();
         }
+
+        SetCrosshairColor(normalCrosshairColor);
     }
 
     private void Update()
     {
         ApplyRuntimeStats();
-        var stateInfo = weaponAnimator.GetCurrentAnimatorStateInfo(1);
-        bool isAttacking = stateInfo.IsTag("Attack") || stateInfo.IsName("metarig|ATTACK_V2") || stateInfo.IsName("metarig|ATTACK_V2 0");
 
-        float targetWeight = isAttacking ? 1f : 0f;
-        float currentWeight = weaponAnimator.GetLayerWeight(1);
-        float lerpedWeight = Mathf.Lerp(currentWeight, targetWeight, Time.deltaTime * 15f);
+        if (weaponAnimator != null)
+        {
+            var stateInfo = weaponAnimator.GetCurrentAnimatorStateInfo(1);
+            bool isAttacking =
+                stateInfo.IsTag("Attack") ||
+                stateInfo.IsName("metarig|ATTACK_V2") ||
+                stateInfo.IsName("metarig|ATTACK_V2 0");
 
-        weaponAnimator.SetLayerWeight(1, lerpedWeight);
-        
+            float targetWeight = isAttacking ? 1f : 0f;
+            float currentWeight = weaponAnimator.GetLayerWeight(1);
+            float lerpedWeight = Mathf.Lerp(currentWeight, targetWeight, Time.deltaTime * 15f);
+            weaponAnimator.SetLayerWeight(1, lerpedWeight);
+        }
+
         HandleInput();
 
         if (isSpraying && currentAmmo > 0)
@@ -107,7 +122,7 @@ public class SprayPaintLine : MonoBehaviour
 
     private void LateUpdate()
     {
-        UpdateAimingAndPosition();
+        UpdateAimingAndCrosshair();
     }
 
     public void ApplyRuntimeStats()
@@ -128,6 +143,22 @@ public class SprayPaintLine : MonoBehaviour
         }
     }
 
+    private void TryAutoAssignCrosshair()
+    {
+        if (crosshairImage != null)
+            return;
+
+        CrosshairReference crosshairRef = FindObjectOfType<CrosshairReference>(true);
+        if (crosshairRef != null && crosshairRef.image != null)
+        {
+            crosshairImage = crosshairRef.image;
+            Debug.Log("Auto-assigned crosshair image: " + crosshairImage.name);
+            return;
+        }
+
+        Debug.LogWarning("Crosshair image could not be auto-assigned");
+    }
+
     public void SetBonusProjectileCount(int amount)
     {
         bonusProjectileCount = Mathf.Max(0, amount);
@@ -138,56 +169,58 @@ public class SprayPaintLine : MonoBehaviour
         bonusAttackSpeedMultiplier = Mathf.Max(1f, multiplier);
     }
 
-    private void UpdateAimingAndPosition()
+    private void UpdateAimingAndCrosshair()
     {
-        if (playerCamera == null || nozzleSpawnPoint == null || sprayParticles == null) return;
+        if (playerCamera == null || nozzleSpawnPoint == null)
+            return;
 
-        sprayParticles.transform.position = nozzleSpawnPoint.position;
+        if (sprayParticles != null)
+            sprayParticles.transform.position = nozzleSpawnPoint.position;
 
         Vector3 rayOrigin = playerCamera.position + (playerCamera.forward * 0.5f);
         Ray ray = new Ray(rayOrigin, playerCamera.forward);
+
         Vector3 targetPoint;
+        bool aimingAtEnemy = false;
 
         if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, ~playerMask, QueryTriggerInteraction.Ignore))
         {
             targetPoint = hit.point;
 
-      //      if(crosshairUI != null && hit.collider.CompareTag("Enemy")) 
-    //        {
-    //            crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.red;
-    //        }
+            if (hit.collider.CompareTag("Enemy"))
+                aimingAtEnemy = true;
         }
         else
         {
-            targetPoint = ray.GetPoint(100f);
-    //        if(crosshairUI != null) 
-    //        {
-    //            crosshairUI.GetComponent<UnityEngine.UI.Image>().color = Color.black;
-    //        }
+            targetPoint = ray.GetPoint(maxAimDistance);
         }
 
         Vector3 direction = (targetPoint - nozzleSpawnPoint.position).normalized;
+
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
+
             nozzleSpawnPoint.rotation = Quaternion.Slerp(
                 nozzleSpawnPoint.rotation,
                 targetRotation,
                 Time.deltaTime * rotationSmoothing
             );
 
-            sprayParticles.transform.position = nozzleSpawnPoint.position;
-            sprayParticles.transform.rotation = nozzleSpawnPoint.rotation;
+            if (sprayParticles != null)
+            {
+                sprayParticles.transform.position = nozzleSpawnPoint.position;
+                sprayParticles.transform.rotation = nozzleSpawnPoint.rotation;
+            }
         }
 
-    //    if (crosshairUI != null)
-  //      {
-  //          Vector3 screenPoint = Camera.main.WorldToScreenPoint(targetPoint);
-  //          if (screenPoint.z < 0) {
-  //          screenPoint = new Vector3(-1000, -1000, 0);
-  //      }
-  //          crosshairUI.position = screenPoint;
-  //      }
+        SetCrosshairColor(aimingAtEnemy ? enemyCrosshairColor : normalCrosshairColor);
+    }
+
+    private void SetCrosshairColor(Color color)
+    {
+        if (crosshairImage != null)
+            crosshairImage.color = color;
     }
 
     private void HandleInput()
@@ -196,48 +229,64 @@ public class SprayPaintLine : MonoBehaviour
 
         if (PlayerManager.instance.health == null || PlayerManager.instance.health.currentHealth <= 0)
         {
-            if (isSpraying) StopSprayEvent();
-            weaponAnimator.SetLayerWeight(1, 0f);
+            if (isSpraying)
+                StopSprayEvent();
+
+            if (weaponAnimator != null)
+                weaponAnimator.SetLayerWeight(1, 0f);
+
             return;
         }
 
-        weaponAnimator.SetLayerWeight(1, Mathf.MoveTowards(weaponAnimator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
+        if (weaponAnimator != null)
+        {
+            weaponAnimator.SetLayerWeight(
+                1,
+                Mathf.MoveTowards(weaponAnimator.GetLayerWeight(1), 1f, Time.deltaTime * 10f)
+            );
+        }
 
-    
-   
         bool cooldownOver = Time.time >= lastAttackTime + attackCooldown;
 
-        if (input.WasPressedThisFrame() && currentAmmo > 0  && cooldownOver)
+        if (input.WasPressedThisFrame() && currentAmmo > 0 && cooldownOver)
         {
-            weaponAnimator.SetTrigger(attackTriggerName);
-            lastAttackTime = Time.time; 
+            if (weaponAnimator != null)
+                weaponAnimator.SetTrigger(attackTriggerName);
+
+            lastAttackTime = Time.time;
         }
 
         if (canCombo && input.IsPressed() && currentAmmo > 0)
         {
-            weaponAnimator.SetTrigger(attackTriggerName);
-            canCombo = false; 
+            if (weaponAnimator != null)
+                weaponAnimator.SetTrigger(attackTriggerName);
+
+            canCombo = false;
         }
     }
 
     public void StartSprayEvent()
     {
-        if (currentAmmo <= 0) return;
-        
+        if (currentAmmo <= 0)
+            return;
+
         isSpraying = true;
-        if (sprayParticles != null) sprayParticles.Play();
-        
+
+        if (sprayParticles != null)
+            sprayParticles.Play();
     }
 
     public void StopSprayEvent()
     {
         isSpraying = false;
         canCombo = false;
-        if (sprayParticles != null) sprayParticles.Stop();
+
+        if (sprayParticles != null)
+            sprayParticles.Stop();
+
         projectileTimer = 0f;
         ShootProjectileBurst();
     }
-
 
     public void OpenComboWindow()
     {
@@ -248,7 +297,6 @@ public class SprayPaintLine : MonoBehaviour
     {
         canCombo = false;
     }
-
 
     private void HandleProjectileSpawning()
     {
@@ -263,7 +311,8 @@ public class SprayPaintLine : MonoBehaviour
 
     private void ShootProjectileBurst()
     {
-        if (projectilePrefab == null || nozzleSpawnPoint == null) return;
+        if (projectilePrefab == null || nozzleSpawnPoint == null)
+            return;
 
         Vector3 spawnPosition = nozzleSpawnPoint.position;
         Quaternion spawnRotation = nozzleSpawnPoint.rotation;
@@ -296,16 +345,15 @@ public class SprayPaintLine : MonoBehaviour
             rb = proj.AddComponent<Rigidbody>();
 
         rb.useGravity = false;
-        rb.drag = 0f;
-        rb.angularDrag = 0f;
+        rb.linearDamping = 0f;
+        rb.angularDamping = 0f;
         rb.mass = 1f;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.constraints = RigidbodyConstraints.None;
 
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-
         rb.velocity = launchDirection.normalized * launchForce;
 
         PaintGlobs glob = proj.GetComponent<PaintGlobs>();
@@ -320,14 +368,16 @@ public class SprayPaintLine : MonoBehaviour
     private void ConsumeAmmo()
     {
         ammoRemainder += consumptionRate * Time.deltaTime;
+
         if (ammoRemainder >= 1f)
         {
             int ammoToSubtract = Mathf.FloorToInt(ammoRemainder);
             currentAmmo = Mathf.Max(0, currentAmmo - ammoToSubtract);
             ammoRemainder -= ammoToSubtract;
         }
-        
-        if (currentAmmo <= 0) StopSprayEvent();
+
+        if (currentAmmo <= 0)
+            StopSprayEvent();
     }
 
     public void UpdatePainterColor()
@@ -339,7 +389,18 @@ public class SprayPaintLine : MonoBehaviour
         }
     }
 
-    public void AddAmmo(int amount) => currentAmmo = Mathf.Clamp(currentAmmo + amount, 0, maxAmmo);
-    public float GetAmmoPercentage() => maxAmmo <= 0 ? 0f : ((float)currentAmmo / maxAmmo) * 100f;
-    public float GetNormalizedAmmo() => maxAmmo <= 0 ? 0f : (float)currentAmmo / (float)maxAmmo;
+    public void AddAmmo(int amount)
+    {
+        currentAmmo = Mathf.Clamp(currentAmmo + amount, 0, maxAmmo);
+    }
+
+    public float GetAmmoPercentage()
+    {
+        return maxAmmo <= 0 ? 0f : ((float)currentAmmo / maxAmmo) * 100f;
+    }
+
+    public float GetNormalizedAmmo()
+    {
+        return maxAmmo <= 0 ? 0f : (float)currentAmmo / maxAmmo;
+    }
 }
