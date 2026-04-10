@@ -79,7 +79,10 @@ public class BeetleAi : Enemy
             return;
         }
 
-
+        if (!target.parent.gameObject.activeInHierarchy)
+        {
+            target = EnemyManager.instance.GetObjectiveTarget().transform;
+        }
 
         if (Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceFromPlayerToTarget)
         {
