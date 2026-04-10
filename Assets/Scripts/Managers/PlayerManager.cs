@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using SuperPupSystems.Helper;
+using Unity.Cinemachine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class InvEntry
@@ -37,6 +39,15 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     public int timeToHeal = 5;
     private float healTimer = 0f;
 
+
+    [Header("Settings")]
+    public Slider uiSensitivitySlider;
+    public Toggle uiInvertYToggle;
+    private CinemachineInputAxisController inputAxisController;
+    private float mouseSensitivity = 1f;
+    
+    private bool invertMouse = false;
+
     public PlayerContext GetContext() => new PlayerContext
     {
         player = player ? player.transform : null,
@@ -55,6 +66,37 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         uIInputs = new PlayerInputActions().UI;
         uIInputs.Disable();
         playerInputs.Enable();
+        mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 1f);
+            if (uiSensitivitySlider != null)
+            {
+                uiSensitivitySlider.value = mouseSensitivity;
+                uiSensitivitySlider.onValueChanged.AddListener((value) =>
+                {
+                    mouseSensitivity = value;
+                    if (inputAxisController != null)
+                    {
+                        inputAxisController.Controllers[0].Input.Gain = invertMouse ? -mouseSensitivity : mouseSensitivity;
+                        inputAxisController.Controllers[1].Input.Gain = invertMouse ? mouseSensitivity : -mouseSensitivity;
+                    }
+                    PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
+                });
+            }
+            invertMouse = PlayerPrefs.GetInt("InvertY", 0) == 1;
+            if (uiInvertYToggle != null)
+            {
+                uiInvertYToggle.isOn = invertMouse;
+                uiInvertYToggle.onValueChanged.AddListener((value) =>
+                {
+                    invertMouse = value;
+                    if (inputAxisController != null)
+                    {
+                        inputAxisController.Controllers[0].Input.Gain = invertMouse ? -mouseSensitivity : mouseSensitivity;
+                        inputAxisController.Controllers[1].Input.Gain = invertMouse ? mouseSensitivity : -mouseSensitivity;
+                        
+                    }
+                    PlayerPrefs.SetInt("InvertY", invertMouse ? 1 : 0);
+                });
+            }
     }
 
     void Start()
@@ -65,6 +107,10 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (!GameManager.instance.sceneHasPlayer)
+        {
+            return;
+        }
         player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
@@ -81,11 +127,25 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
 
             
             RecalculateMaxHealth(true);
+            inputAxisController = player.transform.parent.gameObject.GetComponentInChildren<CinemachineInputAxisController>();
+            if(inputAxisController == null)
+            {
+                Debug.Log("No CinemachineInputAxisController found on player");
+            }
+            inputAxisController.Controllers[0].Input.Gain = mouseSensitivity;
+            inputAxisController.Controllers[1].Input.Gain = -mouseSensitivity;
+
+
+        Debug.Log("Player found and registered in PlayerManager on scene load");
         }
     }
 
     void Update()
     {
+        if (!GameManager.instance.sceneHasPlayer)
+        {
+            return;
+        }
         if(player == null)
         {
             player = GameObject.FindGameObjectWithTag("Player");
@@ -158,6 +218,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
         health = GetComponent<Health>() ?? gameObject.AddComponent<Health>();
         inventory = GetComponent<Inventory>() ?? gameObject.AddComponent<Inventory>();
         stats = GetComponent<PlayerStats>() ?? gameObject.AddComponent<PlayerStats>();
+
     }
 
     public void RecalculateMaxHealth(bool refillToFull)
@@ -205,5 +266,6 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
     {
         base.OnDestroy();
         playerInputs.Disable();
+        PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
     }
 }

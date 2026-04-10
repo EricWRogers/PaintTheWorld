@@ -43,28 +43,47 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public GameObject pauseMenu;
     public float timePerStage;
-    private bool gameplayStarted = false;
     public List<string> stageScenes;
     public bool m_isPaused;
     public string  shopScene;
+    public string tutorialScene;
     public int stageCounter = 1;
     public List<PaintingObj> objectives;
     public List<PaintingObj> activeObjectives;
     public int numberOfObjectives = 2;
-    private int m_currNumberOfObjectives = 0;
     private bool playerSpawned;
 
     private SaveData saveData;
     private const string SAVE_KEY = "GameSaveData";
     private SaveData startSaveData;
+    public bool inStage;
+    public bool sceneHasPlayer;
+    public GameObject ui;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        inStage = false;
+        for(int i = 0; i < stageScenes.Count; i++)
+        {
+            if(SceneManager.GetActiveScene().name == stageScenes[i])
+            {
+                inStage = true;
+            }
+        }
+        if(SceneManager.GetActiveScene().buildIndex == 0 || SceneManager.GetActiveScene().buildIndex == 1 || SceneManager.GetActiveScene().buildIndex == 3)
+        {
+            ui.SetActive(false);
+            sceneHasPlayer = false;
+        }
+        else
+        {
+            ui.SetActive(true);
+            sceneHasPlayer = true;
+        }
         if(pm = null)
         {
             pm = PlayerManager.instance;
         }
-        m_currNumberOfObjectives = 0;
         objectives.Clear();
         activeObjectives.Clear();
         objectives.AddRange(FindObjectsByType<PaintingObj>(FindObjectsSortMode.None));
@@ -72,15 +91,21 @@ public class GameManager : SceneAwareSingleton<GameManager>
         {
             paint.transform.parent.gameObject.SetActive(false);
         }
+        if (inStage)
+        {
+            ResetManager();
+        }
+        PlayerManager.instance.playerInputs.Enable();
+        PlayerManager.instance.uIInputs.Disable();
         if (startSaveData == null)
             //startSaveData = new SaveData(0, pm.startingHealth, pm.startingHealth, new(), new(), 1);
-        gameplayStarted = false;
         IsReady = true;
         
     }
 
     void Update()
     {
+
         if (Input.GetKeyDown(KeyCode.U)){
             SceneManager.LoadSceneAsync(shopScene);
         }
@@ -89,14 +114,18 @@ public class GameManager : SceneAwareSingleton<GameManager>
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-        if(m_currNumberOfObjectives < numberOfObjectives)
+        if (!inStage)
+        {
+            GetComponent<Timer>().StopTimer();
+            return;
+        }
+        if(activeObjectives.Count < numberOfObjectives)
         {
             int randInt = Random.Range(0, objectives.Count);
             if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
                 return;
             objectives[randInt].transform.parent.gameObject.SetActive(true);
             activeObjectives.Add(objectives[randInt]);
-            m_currNumberOfObjectives++;
         }
         else if(!playerSpawned)
         {
@@ -106,12 +135,6 @@ public class GameManager : SceneAwareSingleton<GameManager>
             playerSpawned = true;
 
         }
-    }
-
-    public void BeginGameplay()
-    {
-        if (gameplayStarted) return;
-        gameplayStarted = true;
     }
     public void PauseGame()
     {
@@ -144,13 +167,15 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     public void ShopStage()
     {
-        SceneManager.LoadSceneAsync(shopScene);
+        SceneManager.LoadSceneAsync("LoadScene");
 
     }
-    public void ResetTimer()
+    public void ResetManager()
     {
         GetComponent<Timer>().StartTimer(timePerStage);
         playerSpawned = false;
+        // objectives.Clear();
+        // activeObjectives.Clear();
     }
 
     public void SaveGame()
