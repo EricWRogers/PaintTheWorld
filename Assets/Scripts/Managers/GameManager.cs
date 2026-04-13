@@ -45,13 +45,24 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public float timePerStage;
     public List<string> stageScenes;
     public bool m_isPaused;
-    public string  shopScene;
+    public string shopScene;
+    public string mainMenu;
+    public string nextScene;
     public string tutorialScene;
     public int stageCounter = 1;
     public List<PaintingObj> objectives;
     public List<PaintingObj> activeObjectives;
-    public int numberOfObjectives = 2;
+    public int numberOfActiveHoldObjectives = 2;
+    public float percentTimeHeldToClear;
+    private float m_heldGoal;
+    public float timeHeld;
+    public int numberOfActiveCaptureObjectives = 1;
+    public int captureAmountToClear = 5;
+    public int amountCaptured;
     private bool playerSpawned;
+    public enum gameModes {HoldPoints, CapturePoints}
+
+    public gameModes currentGamemode;
 
     private SaveData saveData;
     private const string SAVE_KEY = "GameSaveData";
@@ -94,6 +105,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if (inStage)
         {
             ResetManager();
+            m_heldGoal = timePerStage / percentTimeHeldToClear / 100;
         }
         PlayerManager.instance.playerInputs.Enable();
         PlayerManager.instance.uIInputs.Disable();
@@ -106,9 +118,9 @@ public class GameManager : SceneAwareSingleton<GameManager>
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.U)){
-            SceneManager.LoadSceneAsync(shopScene);
-        }
+        // if (Input.GetKeyDown(KeyCode.U)){
+        //     SceneManager.LoadSceneAsync(shopScene);
+        // }
         if (!m_isPaused && Cursor.lockState == CursorLockMode.None)
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -119,22 +131,57 @@ public class GameManager : SceneAwareSingleton<GameManager>
             GetComponent<Timer>().StopTimer();
             return;
         }
-        if(activeObjectives.Count < numberOfObjectives)
-        {
-            int randInt = Random.Range(0, objectives.Count);
-            if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
-                return;
-            objectives[randInt].transform.parent.gameObject.SetActive(true);
-            activeObjectives.Add(objectives[randInt]);
-        }
-        else if(!playerSpawned)
-        {
-            int randSpawn = Random.Range(0, activeObjectives.Count);
-            PlayerManager.instance.player.transform.position = activeObjectives[randSpawn].playerSpawnPoint.position;
-            PlayerManager.instance.player.transform.rotation = activeObjectives[randSpawn].playerSpawnPoint.rotation;
-            playerSpawned = true;
+        SpawnObjectives();
+    }
 
+    public void RemoveObjective(PaintingObj _objectiveToRemove)
+    {
+        activeObjectives.Remove(_objectiveToRemove);
+        _objectiveToRemove.transform.parent.gameObject.SetActive(false);
+    }
+
+    public void SpawnObjectives()
+    {
+        if(currentGamemode == gameModes.HoldPoints)
+        {
+            if(activeObjectives.Count < numberOfActiveHoldObjectives)
+            {
+                int randInt = Random.Range(0, objectives.Count);
+                if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
+                    return;
+                objectives[randInt].transform.parent.gameObject.SetActive(true);
+                activeObjectives.Add(objectives[randInt]);
+            }
+            else if(!playerSpawned)
+            {
+                int randSpawn = Random.Range(0, activeObjectives.Count);
+                PlayerManager.instance.player.transform.position = activeObjectives[randSpawn].playerSpawnPoint.position;
+                PlayerManager.instance.player.transform.rotation = activeObjectives[randSpawn].playerSpawnPoint.rotation;
+                playerSpawned = true;
+
+            }
         }
+        else if(currentGamemode == gameModes.CapturePoints)
+        {
+            if(activeObjectives.Count < numberOfActiveCaptureObjectives)
+            {
+                int randInt = Random.Range(0, objectives.Count);
+                if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
+                    return;
+                objectives[randInt].transform.parent.gameObject.SetActive(true);
+                activeObjectives.Add(objectives[randInt]);
+            }
+            else if(!playerSpawned)
+            {
+                int randSpawn = Random.Range(0, activeObjectives.Count);
+                PlayerManager.instance.player.transform.position = activeObjectives[randSpawn].playerSpawnPoint.position;
+                PlayerManager.instance.player.transform.rotation = activeObjectives[randSpawn].playerSpawnPoint.rotation;
+                playerSpawned = true;
+
+            }
+        }
+
+        
     }
     public void PauseGame()
     {
@@ -164,6 +211,31 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         IsReady = true;
     }
+    public void StageOver()
+    {
+        if(currentGamemode == gameModes.HoldPoints)
+        {
+            if(m_heldGoal >= timeHeld)
+            {
+                nextScene = shopScene;
+            }
+            else
+            {
+                nextScene = mainMenu;
+            }
+        }
+        else if(currentGamemode == gameModes.CapturePoints)
+        {
+            if(amountCaptured >= captureAmountToClear)
+            {
+                nextScene = shopScene;
+            }
+            else
+            {
+                nextScene = mainMenu;
+            }
+        }
+    }
 
     public void ShopStage()
     {
@@ -174,8 +246,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         GetComponent<Timer>().StartTimer(timePerStage);
         playerSpawned = false;
-        // objectives.Clear();
-        // activeObjectives.Clear();
+        timeHeld = 0;
+        amountCaptured = 0;
     }
 
     public void SaveGame()

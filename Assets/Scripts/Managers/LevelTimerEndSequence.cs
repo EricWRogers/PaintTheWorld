@@ -189,6 +189,6 @@ public class LevelTimerEndSequence : MonoBehaviour
 
     ended = false;
     Time.timeScale = 1f;
-    SceneManager.LoadScene(nextSceneName);
+    SceneManager.LoadScene(GameManager.instance.nextScene);
 }
 }

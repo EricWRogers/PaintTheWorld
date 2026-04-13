@@ -27,8 +27,10 @@ public class PaintableEditor : Editor
 public class PaintingObj : MonoBehaviour
 {
     private Paintable m_paintable;
-    public int coinsGained;
+    public int coinsGainedWhileHolding;
+    public int coinsGainedOnCapture;
     public float coinGainDelay = 3;
+    public float scoreGainedOnHold;
     private float m_timer;
     public bool covered;
     public float targetCoverPercent;
@@ -70,11 +72,23 @@ public class PaintingObj : MonoBehaviour
 
         if(covered)
         {
-            m_timer -= Time.deltaTime;
-            if(m_timer <= 0)
+            if(GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
             {
-                PlayerManager.instance.wallet.Add(coinsGained);
-                m_timer = coinGainDelay;
+                m_timer -= Time.deltaTime;
+                if(m_timer <= 0)
+                {
+                    PlayerManager.instance.wallet.Add(coinsGainedWhileHolding);
+                    GameManager.instance.timeHeld += scoreGainedOnHold;
+                    m_timer = coinGainDelay;
+                }
+            }
+            else if(GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
+            {
+                PlayerManager.instance.wallet.Add(coinsGainedOnCapture);
+                GameManager.instance.amountCaptured++;
+                percentageCovered = meshPercent;
+                m_paintable.ResetPaint();
+                GameManager.instance.RemoveObjective(this);
             }
         }
     }
