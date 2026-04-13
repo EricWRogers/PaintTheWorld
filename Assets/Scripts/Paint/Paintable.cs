@@ -52,12 +52,36 @@ public class Paintable : MonoBehaviour {
         
     }
 
+    public void ResetPaint()
+    {
+        RenderTexture activeRend = RenderTexture.active;
+        RenderTexture.active = m_maskRenderTexture;
+
+        GL.Clear(true, true, Color.clear);
+
+        RenderTexture.active = activeRend;
+
+        if (m_supportTexture != null)
+        {
+            RenderTexture.active = m_supportTexture;
+            GL.Clear(true, true, Color.clear);
+            RenderTexture.active = activeRend;
+        }
+    }
+
+    void OnEnable()
+    {
+        ResetPaint();
+    }
+
     void OnDisable(){
         if(m_maskRenderTexture != null)
             m_maskRenderTexture.Release();
         
         if(m_supportTexture != null)
             m_supportTexture.Release();
+            
+        ResetPaint();
     }
 
     

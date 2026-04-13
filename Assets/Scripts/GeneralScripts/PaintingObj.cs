@@ -86,6 +86,8 @@ public class PaintingObj : MonoBehaviour
             {
                 PlayerManager.instance.wallet.Add(coinsGainedOnCapture);
                 GameManager.instance.amountCaptured++;
+                percentageCovered = meshPercent;
+                m_paintable.ResetPaint();
                 GameManager.instance.RemoveObjective(this);
             }
         }

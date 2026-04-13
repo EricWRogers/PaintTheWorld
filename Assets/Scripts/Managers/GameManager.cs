@@ -45,16 +45,18 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public float timePerStage;
     public List<string> stageScenes;
     public bool m_isPaused;
-    public string  shopScene;
+    public string shopScene;
+    public string mainMenu;
+    public string nextScene;
     public string tutorialScene;
     public int stageCounter = 1;
     public List<PaintingObj> objectives;
     public List<PaintingObj> activeObjectives;
-    public int numberOfObjectivesToHold = 2;
+    public int numberOfActiveHoldObjectives = 2;
     public float percentTimeHeldToClear;
     private float m_heldGoal;
     public float timeHeld;
-    public int numberOfObjectivesToCapture = 2;
+    public int numberOfActiveCaptureObjectives = 1;
     public int captureAmountToClear = 5;
     public int amountCaptured;
     private bool playerSpawned;
@@ -103,7 +105,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if (inStage)
         {
             ResetManager();
-            m_heldGoal = timePerStage / (percentTimeHeldToClear / 100);
+            m_heldGoal = timePerStage / percentTimeHeldToClear / 100;
         }
         PlayerManager.instance.playerInputs.Enable();
         PlayerManager.instance.uIInputs.Disable();
@@ -142,7 +144,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         if(currentGamemode == gameModes.HoldPoints)
         {
-            if(activeObjectives.Count < numberOfObjectivesToHold)
+            if(activeObjectives.Count < numberOfActiveHoldObjectives)
             {
                 int randInt = Random.Range(0, objectives.Count);
                 if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
@@ -161,7 +163,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         }
         else if(currentGamemode == gameModes.CapturePoints)
         {
-            if(activeObjectives.Count < numberOfObjectivesToCapture)
+            if(activeObjectives.Count < numberOfActiveCaptureObjectives)
             {
                 int randInt = Random.Range(0, objectives.Count);
                 if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
@@ -209,6 +211,31 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         IsReady = true;
     }
+    public void StageOver()
+    {
+        if(currentGamemode == gameModes.HoldPoints)
+        {
+            if(m_heldGoal >= timeHeld)
+            {
+                nextScene = shopScene;
+            }
+            else
+            {
+                nextScene = mainMenu;
+            }
+        }
+        else if(currentGamemode == gameModes.CapturePoints)
+        {
+            if(amountCaptured >= captureAmountToClear)
+            {
+                nextScene = shopScene;
+            }
+            else
+            {
+                nextScene = mainMenu;
+            }
+        }
+    }
 
     public void ShopStage()
     {
@@ -219,8 +246,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         GetComponent<Timer>().StartTimer(timePerStage);
         playerSpawned = false;
-        // objectives.Clear();
-        // activeObjectives.Clear();
+        timeHeld = 0;
+        amountCaptured = 0;
     }
 
     public void SaveGame()

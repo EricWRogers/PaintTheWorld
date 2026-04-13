@@ -354,7 +354,7 @@ public class SprayPaintLine : MonoBehaviour
 
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        rb.velocity = launchDirection.normalized * launchForce;
+        rb.linearVelocity = launchDirection.normalized * launchForce;
 
         PaintGlobs glob = proj.GetComponent<PaintGlobs>();
         if (glob != null)
