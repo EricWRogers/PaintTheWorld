@@ -13,6 +13,7 @@ public class BeetleAi : Enemy
     private bool recoveringFromStun;
     public float distanceFromPlayerToTarget = 20f;
     public Transform rearViewPoint;
+    public float distanceToPushPlayerBack;
 
     [Header("Movement")]
     public LayerMask losMask;
@@ -77,6 +78,11 @@ public class BeetleAi : Enemy
         if(target == null)
         {
             return;
+        }
+        if(Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceToPushPlayerBack)
+        {
+            Vector3 dir = (PlayerManager.instance.player.transform.position - transform.position).normalized;
+            PlayerManager.instance.player.GetComponent<PlayerMovement>().AddForce(dir);
         }
 
         if (!target.parent.gameObject.activeInHierarchy)
