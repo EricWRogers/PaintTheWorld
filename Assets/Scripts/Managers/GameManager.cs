@@ -51,6 +51,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public int stageCounter = 1;
     public List<PaintingObj> objectives;
     public List<PaintingObj> activeObjectives;
+    private PaintingObj previousObj;
     public int numberOfActiveHoldObjectives = 2;
     public float percentTimeHeldToClear;
     public float heldGoal;
@@ -167,8 +168,26 @@ public class GameManager : SceneAwareSingleton<GameManager>
                 int randInt = Random.Range(0, objectives.Count);
                 if(objectives[randInt].transform.parent.gameObject.activeInHierarchy)
                     return;
-                objectives[randInt].transform.parent.gameObject.SetActive(true);
-                activeObjectives.Add(objectives[randInt]);
+                if(previousObj == null)
+                {
+                    previousObj = objectives[randInt];
+                    objectives[randInt].transform.parent.gameObject.SetActive(true);
+                    activeObjectives.Add(objectives[randInt]);
+                }
+                else
+                {
+                    if(previousObj == objectives[randInt])
+                    {
+                        SpawnObjectives();
+                    }
+                    else
+                    {
+                        previousObj = objectives[randInt];
+                        objectives[randInt].transform.parent.gameObject.SetActive(true);
+                        activeObjectives.Add(objectives[randInt]);
+                    }
+                }
+                
             }
             else if(!playerSpawned)
             {
