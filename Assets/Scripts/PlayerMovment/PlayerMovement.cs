@@ -1,7 +1,7 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
-using System.Diagnostics.CodeAnalysis;
+
 
 
 
