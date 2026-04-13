@@ -40,7 +40,6 @@ public class GameManagerEditor : Editor
 public class GameManager : SceneAwareSingleton<GameManager>
 {
     private PlayerManager pm;
-
     public GameObject pauseMenu;
     public float timePerStage;
     public List<string> stageScenes;
@@ -244,6 +243,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void ResetManager()
     {
+        currentGamemode = (gameModes)Random.Range(0, System.Enum.GetValues(typeof(gameModes)).Length);
         GetComponent<Timer>().StartTimer(timePerStage);
         playerSpawned = false;
         timeHeld = 0;
