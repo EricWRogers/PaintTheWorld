@@ -53,7 +53,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public List<PaintingObj> activeObjectives;
     public int numberOfActiveHoldObjectives = 2;
     public float percentTimeHeldToClear;
-    private float m_heldGoal;
+    public float heldGoal;
     public float timeHeld;
     public int numberOfActiveCaptureObjectives = 1;
     public int captureAmountToClear = 5;
@@ -104,7 +104,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if (inStage)
         {
             ResetManager();
-            m_heldGoal = timePerStage / percentTimeHeldToClear / 100;
+            heldGoal = timePerStage * (percentTimeHeldToClear / 100);
         }
         PlayerManager.instance.playerInputs.Enable();
         PlayerManager.instance.uIInputs.Disable();
@@ -214,7 +214,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         if(currentGamemode == gameModes.HoldPoints)
         {
-            if(m_heldGoal >= timeHeld)
+            if(heldGoal >= timeHeld)
             {
                 nextScene = shopScene;
             }
