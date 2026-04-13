@@ -409,6 +409,8 @@ public class PlayerMovement : PlayerMovmentEngine
                 break;
         }
 
+        ResolveEnemyOverlaps();
+
         m_timer += Time.deltaTime;
         CheckLandingEvent();
     }
@@ -1150,6 +1152,30 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         _wasGroundedLastFrame = groundedNow;
+    }
+
+    #endregion
+
+
+    #region Overlap Resolution
+
+    private void ResolveEnemyOverlaps()
+    {
+        if (PlayerManager.instance == null) return;
+        LayerMask enemyLayer = PlayerManager.instance.enemyLayer;
+        Vector3 center = capsule.center + transform.position;
+        float radius = capsule.radius;
+        float height = capsule.height;
+        Vector3 bottom = center + transform.rotation * Vector3.down * (height / 2 - radius);
+        Vector3 top = center + transform.rotation * Vector3.up * (height / 2 - radius);
+        Collider[] overlaps = Physics.OverlapCapsule(top, bottom, radius, enemyLayer);
+        foreach (Collider col in overlaps)
+        {
+            if (Physics.ComputePenetration(capsule, transform.position, transform.rotation, col, col.transform.position, col.transform.rotation, out Vector3 direction, out float distance))
+            {
+                transform.position += direction * distance;
+            }
+        }
     }
 
     #endregion
