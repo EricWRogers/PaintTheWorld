@@ -1,6 +1,8 @@
 using UnityEngine;
 using KinematicCharacterControler;
 using UnityEngine.Splines;
+using System.Diagnostics.CodeAnalysis;
+
 
 
 
@@ -411,10 +413,6 @@ public class PlayerMovement : PlayerMovmentEngine
         CheckLandingEvent();
     }
 
-    void OnDestroy()
-    {
-        m_inputActions.Disable();
-    }
 
     #endregion
 
@@ -555,7 +553,7 @@ public class PlayerMovement : PlayerMovmentEngine
                     currSpeed * accelMult * brakeTurnMult * Time.deltaTime);
 
             horizontalVel = fwd * fwdSpeed + right * rightSpeed;
-        }
+        } 
         else if (inputDir.sqrMagnitude > 0.01f && !isDashing && moveInput.sqrMagnitude > 0.01f)
         {
             
