@@ -70,6 +70,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public bool inStage;
     public bool sceneHasPlayer;
     public GameObject ui;
+    public bool goalComplete;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -129,9 +130,11 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if (!inStage)
         {
             GetComponent<Timer>().StopTimer();
+            ui.GetComponent<TimerUI>().timerText.gameObject.SetActive(false);
             return;
         }
         SpawnObjectives();
+        CheckObjectiveStatus();
     }
 
     public void RemoveObjective(PaintingObj _objectiveToRemove)
@@ -231,26 +234,37 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void StageOver()
     {
+        if(goalComplete)
+        {
+            nextScene = shopScene;
+        }
+        else
+        {
+            nextScene = mainMenu;
+        }
+    }
+    public void CheckObjectiveStatus()
+    {
         if(currentGamemode == gameModes.HoldPoints)
         {
-            if(heldGoal >= timeHeld)
+            if(heldGoal <= timeHeld)
             {
-                nextScene = shopScene;
+                goalComplete = true;
             }
             else
             {
-                nextScene = mainMenu;
+                goalComplete = false;
             }
         }
         else if(currentGamemode == gameModes.CapturePoints)
         {
             if(amountCaptured >= captureAmountToClear)
             {
-                nextScene = shopScene;
+                goalComplete = true;
             }
             else
             {
-                nextScene = mainMenu;
+                goalComplete = false;
             }
         }
     }
@@ -262,6 +276,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void ResetManager()
     {
+        goalComplete = false;
+        ui.GetComponent<TimerUI>().timerText.gameObject.SetActive(true);
         currentGamemode = (gameModes)Random.Range(0, System.Enum.GetValues(typeof(gameModes)).Length);
         GetComponent<Timer>().StartTimer(timePerStage);
         playerSpawned = false;

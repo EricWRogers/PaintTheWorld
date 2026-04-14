@@ -133,6 +133,7 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("animator"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("playerModel"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("modelRotationSpeed"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("stunParticles"));
         }
 
         serializedObject.ApplyModifiedProperties();
@@ -283,6 +284,7 @@ public class PlayerMovement : PlayerMovmentEngine
     public float grindSpeed;
 
     public ParticleSystem grindParticles;
+    public ParticleSystem stunParticles;
 
     [ReadOnly] public bool isGrinding;
     public Rail currentRail;
@@ -344,6 +346,7 @@ public class PlayerMovement : PlayerMovmentEngine
     
         m_lasPos = transform.position;
         grindParticles.Stop();
+        stunParticles.Stop();
     }
 
     void Update()
@@ -376,6 +379,7 @@ public class PlayerMovement : PlayerMovmentEngine
             {
                 m_stunTimer = 0f;
                 isStunned = false;
+                if (stunParticles != null) stunParticles.Stop();
                 SetState(MoveState.Grounded);
             }
             return;
@@ -1076,6 +1080,11 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         isStunned = true;
         m_stunTimer = 0f;
+
+        if (stunParticles != null && !stunParticles.isPlaying)
+        {
+            stunParticles.Play();
+        }
     }
 
     #endregion

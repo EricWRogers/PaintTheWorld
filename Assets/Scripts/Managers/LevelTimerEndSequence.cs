@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,9 +16,14 @@ public class LevelTimerEndSequence : MonoBehaviour
     [Header("UI")]
     public GameObject panelRoot;
     public CanvasGroup panelCanvasGroup;
+    public TMP_Text GoalText;
+    public string holdPrefix = "Time of posters held:\n";
+    public string capturePrefix = "Number of posters painted\n";
     public TMP_Text finalMoneyText;
     public Button nextButton;
     public string moneyPrefix = "Final Money: ";
+    public string buttonWinText = "Go to Shop";
+    public string buttonLoseText = "Back to main menu";
 
     [Header("Scene Load")]
     public string nextSceneName = "ShopScene";
@@ -97,7 +103,23 @@ public class LevelTimerEndSequence : MonoBehaviour
         {
             GameManager.instance.pauseMenu.SetActive(false);
         }
+        if(GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
+        {
+            GoalText.text = holdPrefix + GameManager.instance.timeHeld + "/" + GameManager.instance.heldGoal;
+        }
+        else if(GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
+        {
+            GoalText.text = capturePrefix + GameManager.instance.amountCaptured.ToString() + "/" +GameManager.instance.captureAmountToClear;
+        }
 
+        if (GameManager.instance.goalComplete)
+        {
+            nextButton.GetComponentInChildren<TMP_Text>().text = buttonWinText;
+        }
+        else
+        {
+            nextButton.GetComponentInChildren<TMP_Text>().text = buttonLoseText;
+        }
         
         if (finalMoneyText != null && moneyLogic != null)
         {
