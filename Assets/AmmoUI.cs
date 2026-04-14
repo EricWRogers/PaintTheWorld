@@ -16,6 +16,7 @@ public class AmmoUI : MonoBehaviour
     private void Start()
     {
         TryAutoAssignSprayScript();
+        RefreshUI();
     }
 
     private void Update()
@@ -26,6 +27,11 @@ public class AmmoUI : MonoBehaviour
             if (sprayScript == null) return;
         }
 
+        RefreshUI();
+    }
+
+    private void RefreshUI()
+    {
         float normalizedAmmo = sprayScript.GetNormalizedAmmo();
 
         if (ammoSlider != null)
@@ -44,15 +50,18 @@ public class AmmoUI : MonoBehaviour
         if (sprayScript != null)
             return;
 
-        sprayScript = FindObjectOfType<SprayPaintLine>(true);
-
-        if (sprayScript != null)
+        if (PlayerManager.instance != null && PlayerManager.instance.player != null)
         {
-            Debug.Log("AmmoUI auto-assigned SprayPaintLine: " + sprayScript.name);
+            sprayScript = PlayerManager.instance.player.GetComponentInChildren<SprayPaintLine>(true);
+        }
+
+        if (sprayScript == null)
+        {
+            Debug.LogWarning("AmmoUI could not find the live SprayPaintLine on the player.");
         }
         else
         {
-            Debug.LogWarning("AmmoUI could not find SprayPaintLine in the scene.");
+            Debug.Log("AmmoUI assigned SprayPaintLine from player: " + sprayScript.name);
         }
     }
 }
