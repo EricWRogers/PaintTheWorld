@@ -105,8 +105,7 @@ public class LevelTimerEndSequence : MonoBehaviour
         }
         if(GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
         {
-            GoalText.text = holdPrefix + string.Format("{0:D2}:{1:D2}", TimeSpan.FromSeconds(GameManager.instance.timeHeld).TotalMinutes, TimeSpan.FromSeconds(GameManager.instance.timeHeld).TotalSeconds) + 
-            "/" + string.Format("{0:D2}:{1:D2}", TimeSpan.FromSeconds(GameManager.instance.heldGoal).TotalMinutes, TimeSpan.FromSeconds(GameManager.instance.heldGoal).TotalSeconds);
+            GoalText.text = holdPrefix + GameManager.instance.timeHeld + "/" + GameManager.instance.heldGoal;
         }
         else if(GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
         {
