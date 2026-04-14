@@ -134,6 +134,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
             return;
         }
         SpawnObjectives();
+        CheckObjectiveStatus();
     }
 
     public void RemoveObjective(PaintingObj _objectiveToRemove)
