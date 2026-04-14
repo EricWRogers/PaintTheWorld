@@ -921,54 +921,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5867562540070140664, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.21
-      objectReference: {fileID: 0}
-    - target: {fileID: 5867562540070140664, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.62
-      objectReference: {fileID: 0}
-    - target: {fileID: 5867562540070140664, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 6283331856012659449, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
       propertyPath: m_Name
       value: AmmoStation
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 7521707052328330532, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 422780125220496532, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5874208847643881705}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
---- !u!1 &5874208847643881704 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 422780125220496532, guid: dab320c2b99082a489c0a101708dd74a, type: 3}
-  m_PrefabInstance: {fileID: 5874208847643881703}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5874208847643881705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5874208847643881704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 3
-  outlineColor: {r: 0, g: 1, b: 0.013665199, a: 1}
-  outlineWidth: 5
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
