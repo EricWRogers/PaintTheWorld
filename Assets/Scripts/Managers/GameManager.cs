@@ -129,6 +129,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if (!inStage)
         {
             GetComponent<Timer>().StopTimer();
+            ui.GetComponent<TimerUI>().timerText.gameObject.SetActive(false);
             return;
         }
         SpawnObjectives();
@@ -233,7 +234,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     {
         if(currentGamemode == gameModes.HoldPoints)
         {
-            if(heldGoal >= timeHeld)
+            if(heldGoal <= timeHeld)
             {
                 nextScene = shopScene;
             }
@@ -262,6 +263,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void ResetManager()
     {
+        ui.GetComponent<TimerUI>().timerText.gameObject.SetActive(true);
         currentGamemode = (gameModes)Random.Range(0, System.Enum.GetValues(typeof(gameModes)).Length);
         GetComponent<Timer>().StartTimer(timePerStage);
         playerSpawned = false;
