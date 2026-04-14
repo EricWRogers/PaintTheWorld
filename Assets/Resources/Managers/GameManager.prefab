@@ -431,7 +431,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b9d0cfdaa3bf2a0408a3519120ed1545, type: 3}
+  m_Sprite: {fileID: 802697396, guid: 041b021bc0146024db750e9343345095, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -651,10 +651,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00:00
+  m_text: 00-00
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6f7f7b737a0a055448f05025dad34c13, type: 2}
-  m_sharedMaterial: {fileID: 4377351051361614920, guid: 6f7f7b737a0a055448f05025dad34c13, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 23c305ec3aa315d4a87e5a7031b718b0, type: 2}
+  m_sharedMaterial: {fileID: -3983875084180547634, guid: 23c305ec3aa315d4a87e5a7031b718b0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -716,7 +716,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -15.641403, y: 0, z: -21.45758, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5091,11 +5091,20 @@ MonoBehaviour:
   stageScenes: []
   m_isPaused: 0
   shopScene: PhysicalShop
+  mainMenu: 
+  nextScene: 
   tutorialScene: 
   stageCounter: 1
   objectives: []
   activeObjectives: []
-  numberOfObjectives: 2
+  numberOfActiveHoldObjectives: 2
+  percentTimeHeldToClear: 0
+  heldGoal: 0
+  timeHeld: 0
+  numberOfActiveCaptureObjectives: 1
+  captureAmountToClear: 5
+  amountCaptured: 0
+  currentGamemode: 0
   inStage: 0
   sceneHasPlayer: 0
   ui: {fileID: 0}
@@ -5412,7 +5421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -9.9, y: 74.7}
+  m_AnchoredPosition: {x: -20.8, y: 71.1}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7346350698324097680
@@ -5445,8 +5454,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Inventory
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6f7f7b737a0a055448f05025dad34c13, type: 2}
+  m_sharedMaterial: {fileID: 4377351051361614920, guid: 6f7f7b737a0a055448f05025dad34c13, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5476,7 +5485,7 @@ MonoBehaviour:
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 24
-  m_fontStyle: 0
+  m_fontStyle: 3
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -5581,7 +5590,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b9d0cfdaa3bf2a0408a3519120ed1545, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2b94b5cadc605a34bb3dfcd8fcedd1c8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
