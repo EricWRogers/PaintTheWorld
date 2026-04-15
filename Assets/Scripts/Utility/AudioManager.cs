@@ -5,13 +5,19 @@ using UnityEngine.Audio;
 using SuperPupSystems.Helper;
 
 public class AudioManager : MonoBehaviour
-{
+{   
+    //Volume
     public AudioMixerGroup masterMixer;
     public AudioMixerGroup musicMixer;
     public AudioMixerGroup soundEffectMixer;
+    private float masterVolume;
+    private float musicVolume;
+    private float soundEffectVolume;
+
     public Sound[] sounds;
 
     public static AudioManager instance;
+    
 
     public string StartMusic;
 
@@ -26,6 +32,13 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(this);
+
+        masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        soundEffectVolume = PlayerPrefs.GetFloat("SoundEffectVolume", 1f);
+        masterMixer.audioMixer.SetFloat("MasterVolume", masterVolume);
+        musicMixer.audioMixer.SetFloat("MusicVolume", musicVolume);
+        soundEffectMixer.audioMixer.SetFloat("SFXVolume", soundEffectVolume);
     }
 
     void Start()
@@ -35,6 +48,25 @@ public class AudioManager : MonoBehaviour
             PlayMusic(StartMusic);
         }
 
+    }
+
+    public void ChangeVolume(float volume, string mixer)
+    {
+        switch (mixer)
+        {
+            case "MasterVolume":
+                masterMixer.audioMixer.SetFloat("MasterVolume", volume);
+                PlayerPrefs.SetFloat("MasterVolume", masterVolume);
+                break;
+            case "MusicVolume":
+                musicMixer.audioMixer.SetFloat("MusicVolume", volume);
+                PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+                break;
+            case "SoundEffectVolume":
+                soundEffectMixer.audioMixer.SetFloat("SFXVolume", volume);
+                PlayerPrefs.SetFloat("SoundEffectVolume", soundEffectVolume);
+                break;
+        }
     }
 
     public void Play(string name)
@@ -156,7 +188,8 @@ public class AudioManager : MonoBehaviour
         AudioSource audioSource;
         if (sound != null)
         {
-            GameObject pooledObject = SimpleObjectPool.instance.SpawnFromPool("AudioSource", transform.position, Quaternion.identity);
+            GameObject pooledObject = SimpleObjectPool.instance
+            .SpawnFromPool("AudioSource", transform.position, Quaternion.identity);
             if (pooledObject != null)
             {
                 audioSource = pooledObject.GetComponent<AudioSource>();
@@ -254,4 +287,11 @@ public class AudioManager : MonoBehaviour
     //        }
     //    }
     //}
+
+    public void OnDestroy()
+    {
+        PlayerPrefs.SetFloat("MasterVolume", masterVolume);
+        PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+        PlayerPrefs.SetFloat("SoundEffectVolume", soundEffectVolume);        
+    }
 }

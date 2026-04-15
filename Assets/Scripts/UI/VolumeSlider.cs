@@ -4,28 +4,33 @@ using UnityEngine.UI;
 
 public class VolumeSlider : MonoBehaviour
 {
-    [Header("Components")]
-    public AudioMixer mainMixer;
-    public Slider volumeSlider;
 
-    [Header("Mixer Parameter")]
-    public string exposedParameterName;
+    public string AudioMixerName;
+    public Slider audioSlider;
 
     void Start()
     {
-        float savedVolume = PlayerPrefs.GetFloat(exposedParameterName, 1f);
-
-        volumeSlider.value = savedVolume;
+        if (AudioMixerName == "MasterVolume")
+        {
+            audioSlider.value = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        }
+        else if (AudioMixerName == "MusicVolume")
+        {
+            audioSlider.value = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        }
+        else if (AudioMixerName == "SoundEffectVolume")
+        {
+            audioSlider.value = PlayerPrefs.GetFloat("SoundEffectVolume", 1f);
+        }
         
-        SetVolume(savedVolume);
+        audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
     }
 
-    public void SetVolume(float sliderValue)
+    public void OnSliderValueChanged()
     {
-        float volumeInDecibels = Mathf.Log10(sliderValue) * 20;
-
-        mainMixer.SetFloat(exposedParameterName, volumeInDecibels);
-        
-        PlayerPrefs.SetFloat(exposedParameterName, sliderValue);
+        float volume = Mathf.Log10(Mathf.Clamp(audioSlider.value, 0.0001f, 1f)) * 20f;
+        AudioManager.instance.ChangeVolume(volume, AudioMixerName);
     }
+
+    
 }
