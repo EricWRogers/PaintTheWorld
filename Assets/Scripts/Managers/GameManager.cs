@@ -71,10 +71,12 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public bool sceneHasPlayer;
     public GameObject ui;
     public bool goalComplete;
+    public bool canPause;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         inStage = false;
+        canPause = true; 
         for(int i = 0; i < stageScenes.Count; i++)
         {
             if(SceneManager.GetActiveScene().name == stageScenes[i])
@@ -86,6 +88,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
         {
             ui.SetActive(false);
             sceneHasPlayer = false;
+            canPause = false;
         }
         else
         {
@@ -206,22 +209,29 @@ public class GameManager : SceneAwareSingleton<GameManager>
     }
     public void PauseGame()
     {
-        m_isPaused = true;
-        Time.timeScale = 0;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        PlayerManager.instance.playerInputs.Disable();
-        PlayerManager.instance.uIInputs.Enable();
+        if(canPause)
+        {    
+            m_isPaused = true;
+            Time.timeScale = 0;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            PlayerManager.instance.playerInputs.Disable();
+            PlayerManager.instance.uIInputs.Enable();
+        }   
     }
     
     public void ResumeGame()
     {
-        m_isPaused = false;
-        Time.timeScale = 1;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        PlayerManager.instance.playerInputs.Enable();
-        PlayerManager.instance.uIInputs.Disable();
+        if (canPause)
+        {
+            m_isPaused = false;
+            Time.timeScale = 1;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            PlayerManager.instance.playerInputs.Enable();
+            PlayerManager.instance.uIInputs.Disable();
+        }
+
     }
 
     public void ResetGame()
