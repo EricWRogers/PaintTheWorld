@@ -6,31 +6,21 @@ using UnityEngine;
 
 public class CameraShakeController : MonoBehaviour
 {
-    private CinemachineVirtualCamera virtualCamera;
-    private CinemachineBasicMultiChannelPerlin noise;
+    public CinemachineCamera virtualCamera;
+    public CinemachineImpulseSource impulseSource;
 
     void Awake()
     {
-        virtualCamera = GetComponent<CinemachineVirtualCamera>();
-        noise = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
 
     }
 
-    public void ShakeCamera(float intensity, float duration)
+    void Start()
     {
-        noise.AmplitudeGain = intensity;
-        StartCoroutine(WaitTime(duration));
-        Invoke(nameof(ResetIntensity), duration);
+        impulseSource = virtualCamera.GetComponent<CinemachineImpulseSource>();
+        impulseSource.GenerateImpulse();
     }
+    
 
-    IEnumerator WaitTime(float shakeTime)
-    {
-        yield return new WaitForSeconds(shakeTime);
-    }
-
-    void ResetIntensity()
-    {
-        noise.AmplitudeGain = 0f;
-    }
 
 }
