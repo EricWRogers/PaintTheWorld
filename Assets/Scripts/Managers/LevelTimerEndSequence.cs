@@ -86,9 +86,9 @@ public class LevelTimerEndSequence : MonoBehaviour
 
     public void OnTimerEnded()
     {
-        GameManager.instance.PauseGame();
+        
         GameManager.instance.canPause = false;
-        Time.timeScale = 0;
+        GameManager.instance.TurnOnCursor();
         if (ended) return;
         ended = true;
 
