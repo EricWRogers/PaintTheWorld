@@ -121,7 +121,10 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
-
+        if (!Application.isFocused)
+        {
+            PauseGame();
+        }
         // if (Input.GetKeyDown(KeyCode.U)){
         //     SceneManager.LoadSceneAsync(shopScene);
         // }
@@ -207,17 +210,34 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
         
     }
+
     public void PauseGame()
     {
         if(canPause)
         {    
             m_isPaused = true;
-            Time.timeScale = 0;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            PlayerManager.instance.playerInputs.Disable();
-            PlayerManager.instance.uIInputs.Enable();
+            TurnOnCursor();
+            pauseMenu.SetActive(true);
         }   
+    }
+
+    public void TurnOnCursor()
+    {
+        m_isPaused = true;
+        Time.timeScale = 0;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        PlayerManager.instance.playerInputs.Disable();
+        PlayerManager.instance.uIInputs.Enable();
+    }
+    public void TurnOffCursor()
+    {
+        m_isPaused = false;
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        PlayerManager.instance.playerInputs.Enable();
+        PlayerManager.instance.uIInputs.Disable();
     }
     
     public void ResumeGame()
@@ -225,11 +245,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
         if (canPause)
         {
             m_isPaused = false;
-            Time.timeScale = 1;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-            PlayerManager.instance.playerInputs.Enable();
-            PlayerManager.instance.uIInputs.Disable();
+            TurnOffCursor();
+            pauseMenu.SetActive(false);
         }
 
     }
