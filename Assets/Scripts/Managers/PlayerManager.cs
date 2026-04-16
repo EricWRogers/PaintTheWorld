@@ -14,6 +14,7 @@ public class InvEntry
 
 public class PlayerManager : SceneAwareSingleton<PlayerManager>
 {
+    public bool ConnectedToController = false;
     public GameObject playerPrefab;
     public GameObject player;
     public Health health;
@@ -97,6 +98,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
                     PlayerPrefs.SetInt("InvertY", invertMouse ? 1 : 0);
                 });
             }
+        ConnectedToController = UnityEngine.InputSystem.Gamepad.all.Count > 0;
     }
 
     void Start()
