@@ -223,17 +223,30 @@ public class SprayPaintLine : MonoBehaviour
             crosshairImage.color = color;
     }
 
+    
     private void HandleInput()
     {
         var input = PlayerManager.instance.playerInputs.Attack;
 
         if (PlayerManager.instance.health == null || PlayerManager.instance.health.currentHealth <= 0)
         {
-            if (isSpraying)
-                StopSprayEvent();
+            if (isSpraying) StopSprayEvent();
 
             if (weaponAnimator != null)
                 weaponAnimator.SetLayerWeight(1, 0f);
+
+            return;
+        }
+
+        if (IsPlayerStunned())
+        {
+            canCombo = false;
+
+            if (weaponAnimator != null)
+            {
+                weaponAnimator.ResetTrigger(attackTriggerName);
+                weaponAnimator.SetLayerWeight(1, 0f);
+            }
 
             return;
         }
@@ -267,7 +280,7 @@ public class SprayPaintLine : MonoBehaviour
 
     public void StartSprayEvent()
     {
-        if (currentAmmo <= 0)
+        if (currentAmmo <= 0 || IsPlayerStunned())
             return;
 
         isSpraying = true;
@@ -286,6 +299,18 @@ public class SprayPaintLine : MonoBehaviour
 
         projectileTimer = 0f;
         ShootProjectileBurst();
+    }
+
+    private bool IsPlayerStunned()
+    {
+        if (PlayerManager.instance == null || PlayerManager.instance.player == null)
+            return false;
+
+        PlayerMovement movement = PlayerManager.instance.player.GetComponent<PlayerMovement>();
+        if (movement == null)
+            return false;
+
+        return movement.isStunned;
     }
 
     public void OpenComboWindow()
