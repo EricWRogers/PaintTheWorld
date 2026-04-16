@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using SuperPupSystems.Helper;
 using Unity.Cinemachine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 [System.Serializable]
 public class InvEntry
@@ -14,6 +15,7 @@ public class InvEntry
 
 public class PlayerManager : SceneAwareSingleton<PlayerManager>
 {
+    public bool ConnectedToController = false;
     public GameObject playerPrefab;
     public GameObject player;
     public Health health;
@@ -97,6 +99,24 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
                     PlayerPrefs.SetInt("InvertY", invertMouse ? 1 : 0);
                 });
             }
+        ConnectedToController = UnityEngine.InputSystem.Gamepad.all.Count > 0;
+        InputSystem.onDeviceChange += (device, change) => {
+        if (change == InputDeviceChange.Added) {
+            if (device is Gamepad)
+            {
+                ConnectedToController = true;
+            }
+        }
+        else if (change == InputDeviceChange.Removed)
+        {
+            if (device is Gamepad)
+            {
+                ConnectedToController = UnityEngine.InputSystem.Gamepad.all.Count > 0;
+            }
+        }
+};
+
+  
     }
 
     void Start()
@@ -168,7 +188,7 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             }
         }
 
-        if (playerInputs.Pause.IsPressed())
+        if (playerInputs.Pause.WasPressedThisFrame())
         {
             GameManager.instance.PauseGame();
         }
