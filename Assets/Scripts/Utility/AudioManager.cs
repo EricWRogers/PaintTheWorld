@@ -33,9 +33,9 @@ public class AudioManager : MonoBehaviour
         }
         DontDestroyOnLoad(this);
 
-        masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
-        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
-        soundEffectVolume = PlayerPrefs.GetFloat("SoundEffectVolume", 1f);
+        masterVolume = PlayerPrefs.GetFloat("MasterVolume", -2.5f);
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", -2.5f);
+        soundEffectVolume = PlayerPrefs.GetFloat("SoundEffectVolume", -2.5f);
         masterMixer.audioMixer.SetFloat("MasterVolume", masterVolume);
         musicMixer.audioMixer.SetFloat("MusicVolume", musicVolume);
         soundEffectMixer.audioMixer.SetFloat("SFXVolume", soundEffectVolume);
@@ -56,15 +56,15 @@ public class AudioManager : MonoBehaviour
         {
             case "MasterVolume":
                 masterMixer.audioMixer.SetFloat("MasterVolume", volume);
-                PlayerPrefs.SetFloat("MasterVolume", masterVolume);
+            
                 break;
             case "MusicVolume":
                 musicMixer.audioMixer.SetFloat("MusicVolume", volume);
-                PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+                
                 break;
             case "SoundEffectVolume":
                 soundEffectMixer.audioMixer.SetFloat("SFXVolume", volume);
-                PlayerPrefs.SetFloat("SoundEffectVolume", soundEffectVolume);
+                
                 break;
         }
     }

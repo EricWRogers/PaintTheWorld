@@ -10,25 +10,27 @@ public class VolumeSlider : MonoBehaviour
 
     void Start()
     {
+        float db = 0f;
         if (AudioMixerName == "MasterVolume")
         {
-            audioSlider.value = PlayerPrefs.GetFloat("MasterVolume", 1f);
+            db = PlayerPrefs.GetFloat("MasterVolume", -2.5f);
         }
         else if (AudioMixerName == "MusicVolume")
         {
-            audioSlider.value = PlayerPrefs.GetFloat("MusicVolume", 1f);
+            db = PlayerPrefs.GetFloat("MusicVolume", -2.5f);
         }
         else if (AudioMixerName == "SoundEffectVolume")
         {
-            audioSlider.value = PlayerPrefs.GetFloat("SoundEffectVolume", 1f);
+            db = PlayerPrefs.GetFloat("SoundEffectVolume", -2.5f);
         }
-        
+
+        audioSlider.value = Mathf.Pow(10f, db / 20f);
         audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
     }
 
     public void OnSliderValueChanged()
     {
-        float volume = Mathf.Log10(Mathf.Clamp(audioSlider.value, 0.0001f, 1f)) * 20f;
+        float volume = Mathf.Log10(Mathf.Clamp(audioSlider.value, 0.001f, 1f)) * 20f;
         AudioManager.instance.ChangeVolume(volume, AudioMixerName);
     }
 
