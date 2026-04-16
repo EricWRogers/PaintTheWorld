@@ -168,16 +168,14 @@ public class PlayerManager : SceneAwareSingleton<PlayerManager>
             }
         }
 
-        if (playerInputs.Pause.IsPressed())
+        if (playerInputs.Pause.WasPressedThisFrame())
         {
             GameManager.instance.PauseGame();
-            GameManager.instance.pauseMenu.SetActive(true);
         }
 
         if (uIInputs.Resume.IsPressed())
         {
             GameManager.instance.ResumeGame();
-            GameManager.instance.pauseMenu.SetActive(false);
         }
 
         if (health != null)

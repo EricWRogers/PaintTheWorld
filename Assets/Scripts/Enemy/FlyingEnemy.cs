@@ -51,6 +51,8 @@ public class FlyingEnemy : Enemy
     private bool recoveringFromStun;
     private float m_recoveryGraceTimer;
 
+    public ParticleSystem stunParticles, stunParticles2;
+
     Vector3 ZeroY(Vector3 _vector)
     {
         return new Vector3(_vector.x, 0.0f, _vector.z);
@@ -66,6 +68,8 @@ public class FlyingEnemy : Enemy
         target = PlayerManager.instance.player.transform;
         cloudNav = EnemyManager.instance.cloudNav;
         RequestNewPath();
+        stunParticles.Stop();
+        stunParticles2.Stop();
     }
 
     void FixedUpdate()
@@ -88,7 +92,8 @@ public class FlyingEnemy : Enemy
                 stunned = false;
                 recoveringFromStun = true;
                 m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
-
+                stunParticles.Stop();
+                stunParticles2.Stop();
                 // Trigger the stun-recovery splash item
                 GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
             }
@@ -293,7 +298,8 @@ public class FlyingEnemy : Enemy
         anim.SetTrigger("Stun");
         stopped = true;
         recoveringFromStun = false;
-
+        stunParticles.Play();
+        stunParticles2.Play();
         //grace period item
         m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
         stunned = true;

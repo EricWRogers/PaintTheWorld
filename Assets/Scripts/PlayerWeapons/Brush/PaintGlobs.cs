@@ -10,6 +10,16 @@ public class PaintGlobs : CollisonPainter
     private Rigidbody rb;
     private Color blobColor = Color.white;
 
+    public ParticleSystem paintImpact;
+
+    void Start()
+    {
+        if (paintImpact != null)
+        {
+            paintImpact.Stop();
+        }
+    }
+
     public void InitializeProjectile(Rigidbody projectileRb)
     {
         rb = projectileRb;
@@ -42,6 +52,12 @@ public class PaintGlobs : CollisonPainter
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (paintImpact != null)
+        {
+            paintImpact.transform.position = collision.contacts[0].point;
+            paintImpact.transform.rotation = Quaternion.LookRotation(collision.contacts[0].normal);
+            paintImpact.Play();
+        }
         if (collision.gameObject.CompareTag("Enemy"))
         {
             Enemy enemy = collision.gameObject.GetComponent<Enemy>();
