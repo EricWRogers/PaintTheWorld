@@ -80,8 +80,6 @@ public class Paintable : MonoBehaviour {
         
         if(m_supportTexture != null)
             m_supportTexture.Release();
-            
-        ResetPaint();
     }
 
     
