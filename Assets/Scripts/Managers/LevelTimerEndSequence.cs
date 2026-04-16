@@ -86,6 +86,9 @@ public class LevelTimerEndSequence : MonoBehaviour
 
     public void OnTimerEnded()
     {
+        GameManager.instance.PauseGame();
+        GameManager.instance.canPause = false;
+        Time.timeScale = 0;
         if (ended) return;
         ended = true;
 
@@ -101,6 +104,7 @@ public class LevelTimerEndSequence : MonoBehaviour
        
         if (GameManager.instance != null && GameManager.instance.pauseMenu != null)
         {
+            GameManager.instance.PauseGame();
             GameManager.instance.pauseMenu.SetActive(false);
         }
         if(GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
@@ -134,16 +138,6 @@ public class LevelTimerEndSequence : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             yield return null;
-        }
-
-        
-        if (GameManager.instance != null)
-        {
-            GameManager.instance.PauseGame();
-        }
-        else
-        {
-            Time.timeScale = 0f;
         }
 
         // Show panel
