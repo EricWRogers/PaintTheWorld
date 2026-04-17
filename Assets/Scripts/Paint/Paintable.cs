@@ -32,7 +32,7 @@ public class Paintable : MonoBehaviour {
         m_maskRenderTexture.filterMode = FilterMode.Bilinear;
         
         m_maskRenderTexture.useMipMap = true;
-        m_maskRenderTexture.autoGenerateMips = false;
+        m_maskRenderTexture.autoGenerateMips = true;
         m_maskRenderTexture.enableRandomWrite = false;
         m_maskRenderTexture.Create();
 
@@ -60,6 +60,8 @@ public class Paintable : MonoBehaviour {
         GL.Clear(true, true, Color.clear);
 
         RenderTexture.active = activeRend;
+
+        m_maskRenderTexture.GenerateMips();
 
         if (m_supportTexture != null)
         {

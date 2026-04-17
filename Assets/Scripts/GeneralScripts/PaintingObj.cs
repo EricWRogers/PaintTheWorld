@@ -35,11 +35,12 @@ public class PaintingObj : MonoBehaviour
     public bool covered;
     public float targetCoverPercent;
     public float percentageCovered;
-    public float meshPercent;
+    // public float meshPercent;
     private float checkTimer = 0f;
     public float checkInterval = 0.5f;
     public int currentEnemiesTarget;
     public Transform playerSpawnPoint;
+    private bool hasCaptured = false;
 
 
     void Awake()
@@ -49,7 +50,7 @@ public class PaintingObj : MonoBehaviour
     }
     void Start()
     {
-        percentageCovered = meshPercent;
+        percentageCovered = 0;
     }
 
     // Update is called once per frame
@@ -73,7 +74,7 @@ public class PaintingObj : MonoBehaviour
             covered = false;
         }
 
-        if(covered)
+        if(covered && !hasCaptured)
         {
             if(GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
             {
@@ -87,6 +88,7 @@ public class PaintingObj : MonoBehaviour
             }
             else if(GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
             {
+                hasCaptured = true;
                 PlayerManager.instance.wallet.Add(coinsGainedOnCapture);
                 GameManager.instance.amountCaptured++;
                 percentageCovered = 0;
@@ -108,14 +110,15 @@ public class PaintingObj : MonoBehaviour
         RenderTexture prev = RenderTexture.active;
         RenderTexture.active = temp;
 
-        Texture2D tex = new Texture2D(1, 1, TextureFormat.R8, false);
+        Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
         tex.ReadPixels(new Rect(0, 0, 1, 1), 0, 0);
         tex.Apply();
 
         RenderTexture.active = prev;
         RenderTexture.ReleaseTemporary(temp);
-
-        return tex.GetPixel(0, 0).r * 100 + meshPercent; // 0–1 coverage
+        Color pixel = tex.GetPixel(0, 0);
+        float coverage = Mathf.Max(pixel.r, pixel.g, pixel.b);
+        return coverage * 100f;
     }
 
     public void CalculateTextureCoverage()
@@ -142,7 +145,7 @@ public class PaintingObj : MonoBehaviour
             RasterizeTriangle(uv1, uv2, uv3, coveredPixels, texWidth, texHeight);
         }
 
-        meshPercent = 100 - ((float)coveredPixels.Count / totalPixels * 100f);
+        //meshPercent = 100 - ((float)coveredPixels.Count / totalPixels * 100f);
     }
 
     private void RasterizeTriangle(Vector2 p0, Vector2 p1, Vector2 p2, HashSet<Vector2Int> coveredPixels, int texWidth, int texHeight)
@@ -188,8 +191,9 @@ public class PaintingObj : MonoBehaviour
             paintable = GetComponent<Paintable>();
 
         paintable.ResetPaint();
-        percentageCovered = meshPercent;
+        percentageCovered = 0;
         covered = false;
         currentEnemiesTarget = 0;
+        hasCaptured = false;
     }
 }

@@ -95,7 +95,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
             ui.SetActive(true);
             sceneHasPlayer = true;
         }
-        if(pm = null)
+        if(pm == null)
         {
             pm = PlayerManager.instance;
         }
