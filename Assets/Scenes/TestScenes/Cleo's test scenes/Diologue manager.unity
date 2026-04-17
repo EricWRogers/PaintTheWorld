@@ -259,10 +259,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -553,8 +553,8 @@ MonoBehaviour:
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 371.02344
-        y: 112.078125
+        x: 271.90625
+        y: 107.88281
         width: 100
         height: 48
       isBreakpoint: 0
@@ -565,7 +565,7 @@ MonoBehaviour:
           name: Keyboard
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause
+        toState: Movement Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -574,7 +574,7 @@ MonoBehaviour:
           name: Controller
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 8
+        toState: Movement Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -586,16 +586,18 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SendEvent
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
         - 
         - 
-        actionEnabled: 0101010101
-        actionIsOpen: 0101010101
-        actionStartIndex: 000000000200000005000000070000000a000000
-        actionHashCodes: 5ac8520448c011015ac8520448c011015e69bb04
+        - 
+        actionEnabled: 010101010101
+        actionIsOpen: 010101010101
+        actionStartIndex: 000000000200000005000000070000000a0000000e000000
+        actionHashCodes: 5ac8520448c011015ac8520448c011015e69bb04a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -926,7 +928,13 @@ MonoBehaviour:
           networkSync: 0
           value: 0
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -936,12 +944,14 @@ MonoBehaviour:
         - 
         - 
         - Keyboard
-        byteData: 0000000000
+        - Controller
+        - Keyboard
+        byteData: 000000000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f000000170000000100000024000000010000000f00000017000000010000001f000000170000000f00000001000000
+        paramDataType: 24000000010000000f000000170000000100000024000000010000000f00000017000000010000001f000000170000000f0000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -957,17 +967,21 @@ MonoBehaviour:
         - sendEvent
         - delay
         - everyFrame
-        paramDataPos: 0000000000000000000000000000000001000000010000000200000001000000010000000300000000000000020000000200000004000000
-        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000100000000000000000000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 000000000000000000000000000000000100000001000000020000000100000001000000030000000000000002000000020000000400000000000000030000000400000005000000
+        paramByteDataSize: 000000000100000000000000000000000100000000000000010000000000000000000000010000000000000000000000000000000100000000000000000000000000000001000000
     - name: Movement Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 227.75
-        y: 206.6875
-        width: 162.56
-        height: 32
+        x: 73.453125
+        y: 180.77344
+        width: 168.86
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -976,7 +990,16 @@ MonoBehaviour:
           name: Moved Around
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 2
+        toState: Camera Explanation
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Movement Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -986,14 +1009,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -1178,7 +1203,7 @@ MonoBehaviour:
             tooltip: 
             showInInspector: 0
             networkSync: 0
-            value: Whatcha waitning for! Get moving! (Use WASD to move)
+            value: Whatcha waiting for! Get moving! (Use WASD to move)
           Vector2Parameter:
             useVariable: 0
             name: 
@@ -1280,7 +1305,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -1288,12 +1319,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -1302,17 +1335,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Camera Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 254.33594
-        y: 282.9297
-        width: 146.29001
-        height: 32
+        x: 72.21875
+        y: 247.03125
+        width: 153.84
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -1321,7 +1358,16 @@ MonoBehaviour:
           name: Moved Camera
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 3
+        toState: Jump Explanation
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Camera Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -1331,14 +1377,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -1625,7 +1673,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -1633,12 +1687,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -1647,17 +1703,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Jump Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 264.28906
-        y: 359.23438
-        width: 133.36
-        height: 32
+        x: 70.578125
+        y: 309.5078
+        width: 138.83
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -1666,7 +1726,16 @@ MonoBehaviour:
           name: Jumped
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 4
+        toState: Combat Explanation
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Jump Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -1676,14 +1745,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -1971,7 +2042,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -1979,12 +2056,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -1993,17 +2072,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Wall Run Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 265.90625
-        y: 707.58594
-        width: 151.01999
-        height: 32
+        x: 58.71875
+        y: 536.7578
+        width: 161.08
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -2012,7 +2095,16 @@ MonoBehaviour:
           name: Wall ran
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 6
+        toState: Dash Explanation
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Wall Run Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -2022,14 +2114,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -2316,7 +2410,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -2324,12 +2424,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -2338,17 +2440,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Dash Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 280.76562
-        y: 793.8125
+        x: 57.585938
+        y: 591.83594
         width: 130.59
-        height: 32
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -2357,7 +2463,16 @@ MonoBehaviour:
           name: Dashed
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 7
+        toState: Exit Level Instruction
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Dash Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -2367,14 +2482,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -2661,7 +2778,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -2669,12 +2792,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -2683,15 +2808,19 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Exit Level Instruction
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 369.42188
-        y: 869.89844
+        x: 254.64844
+        y: 678.21875
         width: 151.51001
         height: 16
       isBreakpoint: 0
@@ -3021,1037 +3150,15 @@ MonoBehaviour:
         - everyFrame
         paramDataPos: 00000000000000000000000000000000010000000100000002000000
         paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
-    - name: pause
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 58.632812
-        y: 158.39062
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Movement Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 2
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 62.390625
-        y: 240.5625
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Camera Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 3
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 52.257812
-        y: 310.46094
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Jump Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 4
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 57.53125
-        y: 397.3047
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Combat Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 5
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 70.390625
-        y: 664.14844
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Wall Run Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 6
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 72.24219
-        y: 746.46094
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Dash Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 7
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 67.875
-        y: 817.6172
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Exit Level Instruction
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 8
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 676.71094
-        y: 165.0625
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Movement Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 9
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 680.72656
-        y: 241.44531
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Camera Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 10
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 683.6719
-        y: 327.1797
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Jump Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 11
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 683.2422
-        y: 403.875
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Combat Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 12
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 704.78906
-        y: 663.0469
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Wall Run Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 13
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 696.28906
-        y: 748.78906
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Dash Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 14
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 686.21875
-        y: 821.2422
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Exit Level Instruction
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
     - name: Combat Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 259.10938
-        y: 452.42188
-        width: 147.07
-        height: 32
+        x: 68.53906
+        y: 365.78906
+        width: 153.18
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -4060,7 +3167,16 @@ MonoBehaviour:
           name: Fired Paint
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 16
+        toState: Paint Color Explanation
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Combat Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -4070,14 +3186,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -4364,7 +3482,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -4372,12 +3496,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -4386,17 +3512,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Paint Color Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 248.89062
-        y: 531.0703
+        x: 66.80469
+        y: 422.78906
         width: 164.94
-        height: 32
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -4405,7 +3535,16 @@ MonoBehaviour:
           name: FINISHED
           isSystemEvent: 1
           isGlobal: 0
-        toState: pause 15
+        toState: Paint Swap Explanation
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Paint Color Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -4415,14 +3554,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -4710,7 +3851,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -4718,12 +3865,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -4732,17 +3881,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Paint Swap Explanation
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 253.85156
-        y: 595.7656
-        width: 165.77
-        height: 32
+        x: 62.789062
+        y: 480.6875
+        width: 175.23
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -4751,7 +3904,16 @@ MonoBehaviour:
           name: Swapped Color
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 5
+        toState: Wall Run Explanation
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Controller
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Paint Swap Explanation 2
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -4761,14 +3923,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -5055,7 +4219,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -5063,12 +4233,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - Controller
+        - 
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -5077,309 +4249,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
-    - name: pause 15
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 69.97656
-        y: 594.1406
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Paint Swap Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 16
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 66.21875
-        y: 487.25
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Paint Color Explanation
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 17
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 697.96094
-        y: 486.04688
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Paint Color Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
-    - name: pause 18
-      description: 
-      colorIndex: 0
-      position:
-        serializedVersion: 2
-        x: 697.5
-        y: 579.14844
-        width: 100
-        height: 32
-      isBreakpoint: 0
-      isSequence: 0
-      hideUnused: 0
-      transitions:
-      - fsmEvent:
-          name: FINISHED
-          isSystemEvent: 1
-          isGlobal: 0
-        toState: Paint Swap Explanation 2
-        linkStyle: 0
-        linkConstraint: 0
-        linkTarget: 0
-        colorIndex: 0
-      actionData:
-        actionNames:
-        - HutongGames.PlayMaker.Actions.Wait
-        customNames:
-        - 
-        actionEnabled: 01
-        actionIsOpen: 01
-        actionStartIndex: 00000000
-        actionHashCodes: 48c01101
-        unityObjectParams: []
-        fsmGameObjectParams: []
-        fsmOwnerDefaultParams: []
-        animationCurveParams: []
-        functionCallParams: []
-        fsmTemplateControlParams: []
-        fsmEventTargetParams: []
-        fsmPropertyParams: []
-        layoutOptionParams: []
-        fsmStringParams: []
-        fsmObjectParams: []
-        fsmVarParams: []
-        fsmArrayParams: []
-        fsmEnumParams: []
-        fsmFloatParams:
-        - useVariable: 0
-          name: 
-          tooltip: 
-          showInInspector: 0
-          networkSync: 0
-          value: 5
-        fsmIntParams: []
-        fsmBoolParams: []
-        fsmVector2Params: []
-        fsmVector3Params: []
-        fsmColorParams: []
-        fsmRectParams: []
-        fsmQuaternionParams: []
-        stringParams:
-        - FINISHED
-        byteData: 00
-        arrayParamSizes: 
-        arrayParamTypes: []
-        customTypeSizes: 
-        customTypeNames: []
-        paramDataType: 0f0000001700000001000000
-        paramName:
-        - time
-        - finishEvent
-        - realTime
-        paramDataPos: 000000000000000000000000
-        paramByteDataSize: 000000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Movement Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 435.70312
-        y: 201.96094
-        width: 173
-        height: 32
+        x: 401.90625
+        y: 201.65625
+        width: 180.55
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -5388,7 +4272,16 @@ MonoBehaviour:
           name: Moved Around
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 9
+        toState: Camera Explanation 2
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Movement Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -5398,14 +4291,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -5590,7 +4485,7 @@ MonoBehaviour:
             tooltip: 
             showInInspector: 0
             networkSync: 0
-            value: Whatcha waitning for! Get moving! (Use left stick to move)
+            value: Whatcha waiting for! Get moving! (Use left stick to move)
           Vector2Parameter:
             useVariable: 0
             name: 
@@ -5692,7 +4587,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -5700,12 +4601,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -5714,17 +4617,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Camera Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 462.28906
-        y: 278.20312
-        width: 156.73001
-        height: 32
+        x: 411.5703
+        y: 258.65625
+        width: 165.53
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -5733,7 +4640,16 @@ MonoBehaviour:
           name: Moved Camera
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 10
+        toState: Jump Explanation 2
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Camera Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -5743,14 +4659,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -6037,7 +4955,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -6045,12 +4969,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -6059,17 +4985,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Jump Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 472.2422
-        y: 354.5078
-        width: 143.79001
-        height: 32
+        x: 422.33594
+        y: 311.625
+        width: 150.51001
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -6078,7 +5008,16 @@ MonoBehaviour:
           name: Jumped
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 11
+        toState: Combat Explanation 2
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Jump Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -6088,14 +5027,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -6383,7 +5324,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -6391,12 +5338,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -6405,17 +5354,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Wall Run Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 473.85938
-        y: 702.8594
-        width: 161.45
-        height: 32
+        x: 437.3672
+        y: 536.4219
+        width: 172.77
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -6424,7 +5377,16 @@ MonoBehaviour:
           name: Wall ran
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 13
+        toState: Dash Explanation 2
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Wall Run Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -6434,14 +5396,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -6729,7 +5693,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -6737,12 +5707,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -6751,17 +5723,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Dash Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 488.71875
-        y: 789.08594
-        width: 141.03
-        height: 32
+        x: 449.20312
+        y: 596.0156
+        width: 149.19
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -6770,7 +5746,16 @@ MonoBehaviour:
           name: Dashed
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 14
+        toState: Exit Level Instruction
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Dash Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -6780,14 +5765,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -7074,7 +6061,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -7082,12 +6075,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -7096,17 +6091,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Combat Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 467.0625
-        y: 447.6953
+        x: 428.92188
+        y: 370.2422
         width: 157.51001
-        height: 32
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -7115,7 +6114,16 @@ MonoBehaviour:
           name: Fired Paint
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 17
+        toState: Paint Color Explanation 2
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Combat Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -7125,14 +6133,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -7419,7 +6429,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -7427,12 +6443,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -7441,17 +6459,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Paint Color Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 456.84375
-        y: 526.34375
-        width: 175.38
-        height: 32
+        x: 433.46875
+        y: 422.52344
+        width: 186.41
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -7460,7 +6482,16 @@ MonoBehaviour:
           name: FINISHED
           isSystemEvent: 1
           isGlobal: 0
-        toState: pause 18
+        toState: Paint Swap Explanation 2
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Paint Color Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -7470,14 +6501,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -7765,7 +6798,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -7773,12 +6812,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -7787,17 +6828,21 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     - name: Paint Swap Explanation 2
       description: 
       colorIndex: 0
       position:
         serializedVersion: 2
-        x: 461.8047
-        y: 591.03906
-        width: 176.21
-        height: 32
+        x: 435.6875
+        y: 478.46875
+        width: 186.91
+        height: 48
       isBreakpoint: 0
       isSequence: 0
       hideUnused: 0
@@ -7806,7 +6851,16 @@ MonoBehaviour:
           name: Swapped Color
           isSystemEvent: 0
           isGlobal: 0
-        toState: pause 12
+        toState: Wall Run Explanation 2
+        linkStyle: 0
+        linkConstraint: 0
+        linkTarget: 0
+        colorIndex: 0
+      - fsmEvent:
+          name: Keyboard
+          isSystemEvent: 0
+          isGlobal: 0
+        toState: Paint Swap Explanation
         linkStyle: 0
         linkConstraint: 0
         linkTarget: 0
@@ -7816,14 +6870,16 @@ MonoBehaviour:
         - HutongGames.PlayMaker.Actions.SetProperty
         - HutongGames.PlayMaker.Actions.Wait
         - HutongGames.PlayMaker.Actions.SetProperty
+        - HutongGames.PlayMaker.Actions.BoolTest
         customNames:
         - 
         - 
         - 
-        actionEnabled: 010101
-        actionIsOpen: 010101
-        actionStartIndex: 000000000200000005000000
-        actionHashCodes: 5ac8520448c011015ac85204
+        - 
+        actionEnabled: 01010101
+        actionIsOpen: 01010101
+        actionStartIndex: 00000000020000000500000007000000
+        actionHashCodes: 5ac8520448c011015ac85204a4c8bf00
         unityObjectParams: []
         fsmGameObjectParams: []
         fsmOwnerDefaultParams: []
@@ -8110,7 +7166,13 @@ MonoBehaviour:
           networkSync: 0
           value: 5
         fsmIntParams: []
-        fsmBoolParams: []
+        fsmBoolParams:
+        - useVariable: 1
+          name: Controller
+          tooltip: 
+          showInInspector: 0
+          networkSync: 0
+          value: 0
         fsmVector2Params: []
         fsmVector3Params: []
         fsmColorParams: []
@@ -8118,12 +7180,14 @@ MonoBehaviour:
         fsmQuaternionParams: []
         stringParams:
         - 
-        byteData: 000000
+        - 
+        - Keyboard
+        byteData: 00000001
         arrayParamSizes: 
         arrayParamTypes: []
         customTypeSizes: 
         customTypeNames: []
-        paramDataType: 24000000010000000f00000017000000010000002400000001000000
+        paramDataType: 24000000010000000f0000001700000001000000240000000100000011000000170000001700000001000000
         paramName:
         - targetProperty
         - everyFrame
@@ -8132,8 +7196,12 @@ MonoBehaviour:
         - realTime
         - targetProperty
         - everyFrame
-        paramDataPos: 00000000000000000000000000000000010000000100000002000000
-        paramByteDataSize: 00000000010000000000000000000000010000000000000001000000
+        - boolVariable
+        - isTrue
+        - isFalse
+        - everyFrame
+        paramDataPos: 0000000000000000000000000000000001000000010000000200000000000000010000000200000003000000
+        paramByteDataSize: 0000000001000000000000000000000001000000000000000100000000000000000000000000000001000000
     events:
     - name: FINISHED
       isSystemEvent: 1
@@ -8169,7 +7237,13 @@ MonoBehaviour:
     variables:
       floatVariables: []
       intVariables: []
-      boolVariables: []
+      boolVariables:
+      - useVariable: 1
+        name: Controller
+        tooltip: 
+        showInInspector: 0
+        networkSync: 0
+        value: 0
       stringVariables:
       - useVariable: 1
         name: Camera Ex Mouse
@@ -8207,7 +7281,7 @@ MonoBehaviour:
         tooltip: 
         showInInspector: 0
         networkSync: 0
-        value: Whatcha waitning for! Get moving! (Use WASD to move)
+        value: Whatcha waiting for! Get moving! (Use WASD to move)
       - useVariable: 1
         name: Paint Color Ex Mouse
         tooltip: 
@@ -8257,7 +7331,7 @@ MonoBehaviour:
         tooltip: 
         showInInspector: 0
         networkSync: 0
-        value: Whatcha waitning for! Get moving! (Use left stick to move)
+        value: Whatcha waiting for! Get moving! (Use left stick to move)
       - useVariable: 1
         name: Paint Color Ex Gamepad
         tooltip: 
@@ -8303,7 +7377,7 @@ MonoBehaviour:
       enumVariables: []
       categories:
       - 
-      variableCategoryIDs: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+      variableCategoryIDs: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
     description: 
     docUrl: 
     showStateLabel: 0
@@ -8393,16 +7467,16 @@ RectTransform:
   m_GameObject: {fileID: 748411626}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3.6164, y: 3.6164, z: 3.6164}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 361395634}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1820, y: -1055}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &748411628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8425,8 +7499,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 23c305ec3aa315d4a87e5a7031b718b0, type: 2}
-  m_sharedMaterial: {fileID: -3983875084180547634, guid: 23c305ec3aa315d4a87e5a7031b718b0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: ed9d6fe249d9428418cec333fc62dc43, type: 2}
+  m_sharedMaterial: {fileID: 3871685104613205021, guid: ed9d6fe249d9428418cec333fc62dc43, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8450,8 +7524,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 96
-  m_fontSizeBase: 96
+  m_fontSize: 13
+  m_fontSizeBase: 13
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -8488,7 +7562,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: -1512.1893, z: -638.12854, w: 0}
+  m_margin: {x: 0, y: -0.28544617, z: 43.116135, w: 27.739782}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
