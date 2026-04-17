@@ -26,7 +26,7 @@ public class PaintableEditor : Editor
 
 public class PaintingObj : MonoBehaviour
 {
-    private Paintable m_paintable;
+    public Paintable paintable;
     public int coinsGainedWhileHolding;
     public int coinsGainedOnCapture;
     public float coinGainDelay = 3;
@@ -42,10 +42,13 @@ public class PaintingObj : MonoBehaviour
     public Transform playerSpawnPoint;
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Awake()
+    {
+        if(paintable != null)
+            paintable = GetComponent<Paintable>();
+    }
     void Start()
     {
-        m_paintable = GetComponent<Paintable>();
         percentageCovered = meshPercent;
     }
 
@@ -57,7 +60,7 @@ public class PaintingObj : MonoBehaviour
         if (checkTimer >= checkInterval)
         {
             // Update the actual percentage from the RenderTexture
-            percentageCovered = GetPaintCoverage(m_paintable.getMask());
+            percentageCovered = GetPaintCoverage(paintable.getMask());
             checkTimer = 0f;
         }
         
@@ -122,8 +125,8 @@ public class PaintingObj : MonoBehaviour
 
         Vector2[] uvs = mesh.uv;
 
-        int texWidth = (int)m_paintable.TEXTURE_SIZE;
-        int texHeight = (int)m_paintable.TEXTURE_SIZE;
+        int texWidth = (int)paintable.TEXTURE_SIZE;
+        int texHeight = (int)paintable.TEXTURE_SIZE;
         int totalPixels = texWidth * texHeight;
 
         HashSet<Vector2Int> coveredPixels = new HashSet<Vector2Int>();
@@ -132,9 +135,9 @@ public class PaintingObj : MonoBehaviour
 
         for (int i = 0; i < triangles.Length; i += 3)
         {
-            Vector2 uv1 = uvs[triangles[i]] * (int)m_paintable.TEXTURE_SIZE;
-            Vector2 uv2 = uvs[triangles[i + 1]] * (int)m_paintable.TEXTURE_SIZE;
-            Vector2 uv3 = uvs[triangles[i + 2]] * (int)m_paintable.TEXTURE_SIZE;
+            Vector2 uv1 = uvs[triangles[i]] * (int)paintable.TEXTURE_SIZE;
+            Vector2 uv2 = uvs[triangles[i + 1]] * (int)paintable.TEXTURE_SIZE;
+            Vector2 uv3 = uvs[triangles[i + 2]] * (int)paintable.TEXTURE_SIZE;
 
             RasterizeTriangle(uv1, uv2, uv3, coveredPixels, texWidth, texHeight);
         }
@@ -181,7 +184,10 @@ public class PaintingObj : MonoBehaviour
     }
     void OnEnable()
     {
-        m_paintable.ResetPaint();
+        if(paintable != null)
+            paintable = GetComponent<Paintable>();
+
+        paintable.ResetPaint();
         percentageCovered = meshPercent;
         covered = false;
         currentEnemiesTarget = 0;
