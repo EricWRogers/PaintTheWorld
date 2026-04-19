@@ -12,20 +12,14 @@ public class VolumeSlider : MonoBehaviour
     {
         float db = 0f;
         if (AudioMixerName == "MasterVolume")
-        {
             db = PlayerPrefs.GetFloat("MasterVolume", -2.5f);
-        }
         else if (AudioMixerName == "MusicVolume")
-        {
             db = PlayerPrefs.GetFloat("MusicVolume", -2.5f);
-        }
         else if (AudioMixerName == "SoundEffectVolume")
-        {
             db = PlayerPrefs.GetFloat("SoundEffectVolume", -2.5f);
-        }
 
+        audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); }); 
         audioSlider.value = Mathf.Pow(10f, db / 20f);
-        audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
     }
 
     public void OnSliderValueChanged()

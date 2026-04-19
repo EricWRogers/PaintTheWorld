@@ -31,6 +31,7 @@ public class AppManager : Singleton<AppManager>
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }
+            AudioManager.instance.PlayMusic(AudioManager.instance.StartMusic);
         }
         else
         {
@@ -42,6 +43,7 @@ public class AppManager : Singleton<AppManager>
             {
                 GameManager.instance.ResetManager();
             }
+            //AudioManager.instance.FadeToMusic(AudioManager.instance.levelMusic);
         }
         
     }

@@ -17,9 +17,15 @@ public class AudioManager : MonoBehaviour
     public Sound[] sounds;
 
     public static AudioManager instance;
+    private AudioSource currMusic;
+    private AudioSource prevMusic;
+
+    public float fadeDuration = 1f;
+    private Coroutine fadeCoroutine;
     
 
     public string StartMusic;
+    public string levelMusic;
 
     private void Awake()
     {
@@ -32,6 +38,10 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(this);
+        currMusic = gameObject.AddComponent<AudioSource>();
+        prevMusic = gameObject.AddComponent<AudioSource>();
+        currMusic.outputAudioMixerGroup = musicMixer;
+        prevMusic.outputAudioMixerGroup = musicMixer;
 
         masterVolume = PlayerPrefs.GetFloat("MasterVolume", -2.5f);
         musicVolume = PlayerPrefs.GetFloat("MusicVolume", -2.5f);
@@ -55,16 +65,16 @@ public class AudioManager : MonoBehaviour
         switch (mixer)
         {
             case "MasterVolume":
+                masterVolume = volume; // ← add this
                 masterMixer.audioMixer.SetFloat("MasterVolume", volume);
-            
                 break;
             case "MusicVolume":
+                musicVolume = volume; // ← add this
                 musicMixer.audioMixer.SetFloat("MusicVolume", volume);
-                
                 break;
             case "SoundEffectVolume":
+                soundEffectVolume = volume; // ← add this
                 soundEffectMixer.audioMixer.SetFloat("SFXVolume", volume);
-                
                 break;
         }
     }
@@ -110,36 +120,72 @@ public class AudioManager : MonoBehaviour
 
     public void PlayMusic(string name)
     {
-        Sound sound = Array.Find(sounds, sound => sound.name == name);
-        if (sound != null)
-        {
-            
-            AudioSource audioSource = SimpleObjectPool.instance.SpawnFromPool("AudioSource", transform.position, Quaternion.identity).GetComponent<AudioSource>();
-            if(sound.audioSource == null)
-            {
-               Debug.Log("DIDNT GET AUDIO SORUCE FROM POOL");
-            }
-            audioSource.gameObject.SetActive(true);
-            sound.audioSource = audioSource;
-            sound.audioSource.clip = sound.clip;
-            sound.audioSource.volume = sound.volume;
-            sound.audioSource.pitch = sound.pitch;
-            sound.audioSource.loop = true;
-            if (sound.type == Sound.TypeOfSound.Music)
-            {
-                audioSource.outputAudioMixerGroup = musicMixer;
-            }
-            else
-            {
-                audioSource.outputAudioMixerGroup = soundEffectMixer;
-            }
-            sound.audioSource.Play();
-        }
-        else
+        Sound sound = Array.Find(sounds, s => s.name == name);
+        if (sound == null)
         {
             Debug.LogWarning("Sound " + name + " was not found");
+            return;
         }
+    
+        // Swap curr and prev
+        AudioSource temp = prevMusic;
+        prevMusic = currMusic;
+        currMusic = temp;
+    
+        currMusic.clip = sound.clip;
+        currMusic.volume = 0f;
+        currMusic.pitch = sound.pitch;
+        currMusic.loop = true;
+        currMusic.Play();
+    
+        if (fadeCoroutine != null)
+            StopCoroutine(fadeCoroutine);
+    
+        fadeCoroutine = StartCoroutine(CrossFade(sound.volume));
     }
+    private IEnumerator CrossFade(float targetVolume)
+    {
+        float startVolume = prevMusic.volume;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / fadeDuration);
+            currMusic.volume = Mathf.Lerp(0f, targetVolume, t);
+            prevMusic.volume = Mathf.Lerp(startVolume, 0f, t);
+            yield return null;
+        }
+
+        currMusic.volume = targetVolume;
+        prevMusic.Stop();
+        prevMusic.volume = 0f;
+    }
+    public IEnumerator FadeOut()
+    {
+        float startVolume = currMusic.volume;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            currMusic.volume = Mathf.Lerp(startVolume, 0f, Mathf.Clamp01(elapsed / fadeDuration));
+            yield return null;
+        }
+
+        currMusic.Stop();
+        currMusic.volume = 0f;
+    }
+
+    public void StopMusic()
+    {
+        if (fadeCoroutine != null)
+        {
+            StopCoroutine(fadeCoroutine);
+        }
+        fadeCoroutine = StartCoroutine(FadeOut());
+    }
+
 
     public void PlayAtPosition(string name, Vector3 position)
     {

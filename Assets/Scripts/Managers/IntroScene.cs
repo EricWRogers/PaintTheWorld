@@ -14,6 +14,11 @@ public class IntroScene : MonoBehaviour
     }
     public void AnimDone()
     {
+        // Fade to level music before activating the scene
+        if (AudioManager.instance != null)
+        {
+           AudioManager.instance.PlayMusic(AudioManager.instance.levelMusic);
+        }
         async.allowSceneActivation = true;
     }
 }
