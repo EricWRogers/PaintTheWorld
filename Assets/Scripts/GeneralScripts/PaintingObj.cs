@@ -187,10 +187,12 @@ public class PaintingObj : MonoBehaviour
     }
     void OnEnable()
     {
-        if(paintable != null)
+        if(paintable == null)
             paintable = GetComponent<Paintable>();
 
-        paintable.ResetPaint();
+        if(paintable != null)
+            paintable.ResetPaint();
+
         percentageCovered = 0;
         covered = false;
         currentEnemiesTarget = 0;

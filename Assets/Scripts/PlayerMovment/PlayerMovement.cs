@@ -229,10 +229,12 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool m_dashInputPressed_field = false;
 
     private float m_dashTime = 0f;
-    private float m_timeSinceLastDash = 0f;
+    private float m_dashStartTime = 0f;
     private bool m_dashBack = false;
     private float m_dashStartSpeed;
     private Vector3 dashDir;
+    private float m_dashInputElapsed = Mathf.Infinity;
+    private float m_dashBufferTime = 0.1f;
 
     // Jump
     [Header("Jump Settings")]
@@ -483,7 +485,12 @@ public class PlayerMovement : PlayerMovmentEngine
         else
             jumpInputElapsed += Time.deltaTime;
 
-        m_dashInputPressed = m_inputActions.Dash.WasPressedThisFrame();
+        if (m_inputActions.Dash.WasPressedThisFrame())
+            m_dashInputElapsed = 0.0f;
+        else
+            m_dashInputElapsed += Time.deltaTime;
+
+        m_dashInputPressed = m_dashInputElapsed <= m_dashBufferTime;
 
 
         m_brakeInputHeld = m_inputActions.Brake.IsPressed();
@@ -700,23 +707,24 @@ public class PlayerMovement : PlayerMovmentEngine
     {
         if (isDashing)
         {
-            m_dashTime += Time.deltaTime;
+            m_dashTime = Time.time - m_dashStartTime;
             if (m_dashTime >= dashDuration)
                 isDashing = false;
 
-            m_timeSinceLastDash += Time.deltaTime;
             return isDashing;
         }
 
-        bool canDash = m_timeSinceLastDash >= dashCooldown;
+        float timeSinceLastDash = Time.time - m_dashStartTime;
+        bool canDash = timeSinceLastDash >= (dashDuration + dashCooldown);
 
         if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f)
         {
             dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
             isDashing = true;
+            m_dashStartTime = Time.time;
             m_dashTime = 0f;
-            m_timeSinceLastDash = 0f;
+            m_dashInputElapsed = Mathf.Infinity;
 
             float startSpeed = m_velocity.magnitude;
             m_velocity = dashDir * (dashSpeed + startSpeed);
@@ -726,7 +734,6 @@ public class PlayerMovement : PlayerMovmentEngine
             return true;
         }
 
-        m_timeSinceLastDash += Time.deltaTime;
         return false;
     }
 

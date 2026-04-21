@@ -27,25 +27,23 @@ public class Paintable : MonoBehaviour {
     public Renderer getRenderer() => m_rend;
     
 
-    void Start() {
+    void Awake() {
         m_maskRenderTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
         m_maskRenderTexture.filterMode = FilterMode.Bilinear;
-        
         m_maskRenderTexture.useMipMap = true;
-        m_maskRenderTexture.autoGenerateMips = true;
+        m_maskRenderTexture.autoGenerateMips = false;
         m_maskRenderTexture.enableRandomWrite = false;
         m_maskRenderTexture.Create();
 
-
         m_supportTexture = new RenderTexture((int)TEXTURE_SIZE, (int)TEXTURE_SIZE, 0);
-        m_supportTexture.filterMode =  FilterMode.Bilinear;
+        m_supportTexture.filterMode = FilterMode.Bilinear;
 
         m_rend = GetComponent<Renderer>();
         m_rend.material.SetTexture(maskTextureID, m_maskRenderTexture);
-
+    }
+    void Start()
+    {
         PaintManager.instance.initTextures(this);
-        
-        
     }
     void Update()
     {
@@ -61,7 +59,10 @@ public class Paintable : MonoBehaviour {
 
         RenderTexture.active = activeRend;
 
-        m_maskRenderTexture.GenerateMips();
+        if (m_maskRenderTexture != null && m_maskRenderTexture.IsCreated())
+        {
+            m_maskRenderTexture.GenerateMips();
+        }
 
         if (m_supportTexture != null)
         {
@@ -73,9 +74,9 @@ public class Paintable : MonoBehaviour {
 
     void OnEnable()
     {
-        ResetPaint();
+        if (m_maskRenderTexture == null) return;
+            ResetPaint();
     }
-
     void OnDisable(){
         if(m_maskRenderTexture != null)
             m_maskRenderTexture.Release();
