@@ -66,8 +66,7 @@ public abstract class  Enemy : MonoBehaviour
         }
         else
         {
-            PaintingObj obj = GameManager.instance.activeObjectives[Random.Range(0, GameManager.instance.activeObjectives.Count)];
-            target = obj.transform;
+            target = EnemyManager.instance.GetObjectiveTarget().transform;
         }
     }
 

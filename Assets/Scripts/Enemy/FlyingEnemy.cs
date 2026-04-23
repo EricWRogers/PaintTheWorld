@@ -76,6 +76,11 @@ public class FlyingEnemy : Enemy
     {
         if (cloudNav == null) cloudNav = EnemyManager.instance.cloudNav;
         if (target == null) return;
+
+        if (!target.parent.gameObject.activeInHierarchy)
+        {
+            target = EnemyManager.instance.GetObjectiveTarget().transform;
+        }
         
         //stunning
         if (stunned)
@@ -290,6 +295,20 @@ public class FlyingEnemy : Enemy
         Quaternion pitchRot = Quaternion.Euler(-clampedPitch, 0f, 0f);
 
         return yawRot * pitchRot;
+    }
+
+    public void ChooseTarget()
+    {
+        if(EnemyManager.instance.maxFlyingTargetingPlayer > EnemyManager.instance.flyingTargetingPlayer)
+        {
+            target = PlayerManager.instance.player.transform;
+            EnemyManager.instance.flyingTargetingPlayer++;
+        }
+        else
+        {
+            targetingPlayer = false;
+            target = EnemyManager.instance.GetObjectiveTarget().transform;
+        }
     }
 
     public void Stun()

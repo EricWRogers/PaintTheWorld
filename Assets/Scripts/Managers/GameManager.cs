@@ -39,6 +39,7 @@ public class GameManagerEditor : Editor
 [RequireComponent(typeof(Timer))]
 public class GameManager : SceneAwareSingleton<GameManager>
 {
+    
     private PlayerManager pm;
     public GameObject pauseMenu;
     public float timePerStage;
@@ -121,10 +122,12 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
-        if (!Application.isFocused)
-        {
-            PauseGame();
-        }
+        #if !UNITY_EDITOR
+            if (!Application.isFocused)
+            {
+                PauseGame();
+            }
+        #endif
         // if (Input.GetKeyDown(KeyCode.U)){
         //     SceneManager.LoadSceneAsync(shopScene);
         // }
