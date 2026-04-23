@@ -48,6 +48,8 @@ public class PaintingObj : MonoBehaviour
     {
         if(paintable != null)
             paintable = GetComponent<Paintable>();
+        
+        GetComponent<Renderer>().material.SetTexture("_MainTex", posters[Random.Range(0, posters.Count-1)]);
     }
     void Start()
     {
