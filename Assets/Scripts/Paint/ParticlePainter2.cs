@@ -23,7 +23,6 @@ public class ParticlePainter2 : MonoBehaviour
     {
         part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
         collisionEvents = new List<ParticleCollisionEvent>();
-        UpdateColorFromManager();    
     }
 
     void OnParticleCollision(GameObject other)
@@ -33,56 +32,13 @@ public class ParticlePainter2 : MonoBehaviour
         Paintable p = other.GetComponent<Paintable>();
         for (int i = 0; i < numCollisionEvents; i++)
         {
-            Debug.Log("particle hit: " + other.name + " " + other.tag);
-            if (other.CompareTag("Enemy"))
+            if(p != null)
             {
-                Debug.Log("damaged enemy");
-                other.GetComponent<Health>().Damage(particleDamage);
+                Vector3 pos = collisionEvents[i].intersection;
+                float radius = Random.Range(minRadius, maxRadius);
+                PaintManager.instance.paint(p, pos, radius, hardness, strength, selectedPaint);
             }
             
         }
     }
-
-void Update()
-{
-    float scroll = Input.GetAxis("Mouse ScrollWheel");
-    
-    if (scroll != 0f)
-    {
-        if (scroll > 0f)
-        {
-            colorKey++;
-            if (colorKey > 2) colorKey = 0;
-        }
-        else
-        {
-            colorKey--;
-            if (colorKey < 0) colorKey = 2;
-        }
-
-        UpdateColorFromManager();
-    }
-}
-
-public void UpdateColorFromManager()
-{
-    if (PaintManager.instance == null) return;
-
-     selectedPaint = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
-
-    if (part == null)
-        part = GetComponent<ParticleSystem>() ?? GetComponentInChildren<ParticleSystem>();
-
-    if (part != null)
-    {
-        var main = part.main;
-        main.startColor = selectedPaint;
-    }
-
-    ParticleSystemRenderer renderer = part.GetComponent<ParticleSystemRenderer>();
-    if (renderer != null)
-        {
-        renderer.material.SetColor("_Paint_Color", selectedPaint);
-        }
-}
 }
