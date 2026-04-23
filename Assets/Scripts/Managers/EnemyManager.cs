@@ -16,8 +16,8 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     private int m_groundSpawnCounter;
     private int m_flyingSpawnCounter;
     private float m_timer;
-    public int enemiesTargetingPlayer;
-    public int enemiesProtectingObj;
+    public int flyingTargetingPlayer;
+    public int maxFlyingTargetingPlayer;
     public CloudNav cloudNav;
 
     void Start()

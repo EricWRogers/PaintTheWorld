@@ -999,7 +999,7 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         Vector3 splinePos = (Vector3)splineRef2.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 0.5f;
         Vector3 delta = worldSplinePos - transform.position;
         Vector3 lateral = delta - Vector3.Project(delta, tangentHere);
         float correctionStrength = Mathf.Clamp01(5f * Time.deltaTime);
