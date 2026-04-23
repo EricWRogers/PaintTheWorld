@@ -333,7 +333,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8b4b28f89bd9ab43b8374735629ffb4c, type: 2}
+  - {fileID: 2100000, guid: cf55cd89c0c0ccca485711e5224e7548, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -410,10 +410,13 @@ MonoBehaviour:
   covered: 0
   targetCoverPercent: 60
   percentageCovered: 0
-  meshPercent: 0
   checkInterval: 0.5
   currentEnemiesTarget: 0
   playerSpawnPoint: {fileID: 5599686643933047283}
+  posters:
+  - {fileID: 2800000, guid: f9375b77a3b5d7147a9efc09e555ffe2, type: 3}
+  - {fileID: 2800000, guid: fc760a463c41e5847a38538177e30e8c, type: 3}
+  - {fileID: 2800000, guid: b5efc987df4280c4aa11cbab6138a380, type: 3}
 --- !u!114 &2818684621356099637
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -41,6 +41,7 @@ public class PaintingObj : MonoBehaviour
     public int currentEnemiesTarget;
     public Transform playerSpawnPoint;
     private bool hasCaptured = false;
+    public List<Texture> posters;
 
 
     void Awake()
