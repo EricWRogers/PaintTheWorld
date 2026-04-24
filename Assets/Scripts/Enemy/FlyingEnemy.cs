@@ -64,8 +64,7 @@ public class FlyingEnemy : Enemy
         m_minPitch = minPitch;
         m_maxPitch = maxPitch;
         lastMoveDir = transform.forward;
-        targetingPlayer = true; 
-        target = PlayerManager.instance.player.transform;
+        ChooseTarget();
         cloudNav = EnemyManager.instance.cloudNav;
         RequestNewPath();
         stunParticles.Stop();
@@ -301,6 +300,7 @@ public class FlyingEnemy : Enemy
     {
         if(EnemyManager.instance.maxFlyingTargetingPlayer > EnemyManager.instance.flyingTargetingPlayer)
         {
+            targetingPlayer = true;
             target = PlayerManager.instance.player.transform;
             EnemyManager.instance.flyingTargetingPlayer++;
         }
