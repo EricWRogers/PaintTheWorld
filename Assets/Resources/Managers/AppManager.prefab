@@ -4155,7 +4155,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3448837478953258076, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       insertIndex: 2
       addedObject: {fileID: 802402049570119960}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5697236317222156941, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5732035981257048848}
   m_SourcePrefab: {fileID: 100100000, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
 --- !u!1 &99174476496528629 stripped
 GameObject:
@@ -4221,6 +4224,47 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8129611012225509038, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
   m_PrefabInstance: {fileID: 3340232891695876993}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7010488479085818124 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5697236317222156941, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+  m_PrefabInstance: {fileID: 3340232891695876993}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5732035981257048848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7010488479085818124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60ab26313c75fdd4db687cc7fb511f65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerLogic: {fileID: 7428798193453499917}
+  moneyLogic: {fileID: 7394742155353167963}
+  panelRoot: {fileID: 7719780246745961383}
+  panelCanvasGroup: {fileID: 3423902342896339780}
+  GoalText: {fileID: 8949544660446245668}
+  holdPrefix: 'Time of posters held:
+
+'
+  capturePrefix: 'Number of posters painted
+
+'
+  finalMoneyText: {fileID: 6135554423566341150}
+  nextButton: {fileID: 8291286021808361592}
+  moneyPrefix: 'Final Money: '
+  buttonWinText: Go to Shop
+  buttonLoseText: Back to main menu
+  nextSceneName: ShopScene
+  endCamera: {fileID: 0}
+  endCameraPriority: 50
+  distanceInFront: 3
+  heightOffset: 1.4
+  lookAtHeight: 1.2
+  cameraPanDuration: 0.75
+  panelFadeDuration: 0.35
 --- !u!114 &7141083034705801780 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5566692344028133813, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
@@ -4237,7 +4281,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
   m_PrefabInstance: {fileID: 3340232891695876993}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 7010488479085818124}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad54517dc19258185960ef6d2f3a1b93, type: 3}
@@ -4414,7 +4458,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2661077708692788967, guid: 51e15d41cd6a7dd458d0bcc3d03af359, type: 3}
       propertyPath: flyingTargetingPlayer
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2661077708692788967, guid: 51e15d41cd6a7dd458d0bcc3d03af359, type: 3}
+      propertyPath: maxFlyingTargetingPlayer
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
