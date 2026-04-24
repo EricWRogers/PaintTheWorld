@@ -946,7 +946,7 @@ public class PlayerMovement : PlayerMovmentEngine
         m_railDir = dot >= 0f ? 1f : -1f;
 
         Vector3 splinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up;
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos;
 
         Vector3 snapDelta = worldSplinePos - transform.position;
         transform.position = MovePlayer(snapDelta);
@@ -999,11 +999,16 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         Vector3 splinePos = (Vector3)splineRef2.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 0.5f;
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos;
         Vector3 delta = worldSplinePos - transform.position;
-        Vector3 lateral = delta - Vector3.Project(delta, tangentHere);
+        
+        // Only correct lateral (horizontal) offset perpendicular to the rail
+        // This prevents drifting to the side while preserving vertical position
+        Vector3 horizontalDelta = new Vector3(delta.x, 0, delta.z);
+        Vector3 horizontalTangent = new Vector3(tangentHere.x, 0, tangentHere.z).normalized;
+        Vector3 lateralCorrection = horizontalDelta - Vector3.Project(horizontalDelta, horizontalTangent);
         float correctionStrength = Mathf.Clamp01(5f * Time.deltaTime);
-        transform.position = MovePlayer(lateral * correctionStrength);
+        transform.position = MovePlayer(lateralCorrection * correctionStrength);
 
         SnapPlayerDown();
     }
