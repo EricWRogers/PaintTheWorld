@@ -18,8 +18,9 @@ public class VolumeSlider : MonoBehaviour
         else if (AudioMixerName == "SoundEffectVolume")
             db = PlayerPrefs.GetFloat("SoundEffectVolume", -2.5f);
 
-        audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); }); 
+        // Set value first before adding listener to prevent unwanted change events
         audioSlider.value = Mathf.Pow(10f, db / 20f);
+        audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
     }
 
     public void OnSliderValueChanged()
