@@ -113,6 +113,14 @@ public class SprayPaintLine : MonoBehaviour
 
         HandleInput();
 
+        if (IsPlayerStunned())
+        {
+            if (isSpraying)
+                ForceStopSprayForStun();
+
+            return;
+        }
+
         if (isSpraying && currentAmmo > 0)
         {
             ConsumeAmmo();
@@ -403,6 +411,22 @@ public class SprayPaintLine : MonoBehaviour
 
         if (currentAmmo <= 0)
             StopSprayEvent();
+    }
+
+    private void ForceStopSprayForStun()
+    {
+        isSpraying = false;
+        canCombo = false;
+        projectileTimer = 0f;
+
+        if (sprayParticles != null)
+            sprayParticles.Stop();
+
+        if (weaponAnimator != null)
+        {
+            weaponAnimator.ResetTrigger(attackTriggerName);
+            weaponAnimator.SetLayerWeight(1, 0f);
+        }
     }
 
     public void UpdatePainterColor()
