@@ -12,6 +12,10 @@ public class CleanBot : MonoBehaviour
     public float wanderRadius = 6f;
     public float wanderInterval = 2f;
 
+    [Header("Dirty Spot Targeting")]
+    public float dirtySpotCheckInterval = 0.75f;
+    public float dirtySpotReachDistance = 1.5f;
+
     [Header("Cleaning")]
     public float cleanRadius = 1.2f;
     public float cleanInterval = 0.2f;
@@ -21,6 +25,10 @@ public class CleanBot : MonoBehaviour
     private NavMeshAgent m_agent;
     private float m_wanderTimer;
     private float m_cleanTimer;
+    private float m_dirtySpotTimer;
+
+    private bool m_hasDirtyTarget;
+    private Vector3 m_dirtyTarget;
 
     void Start()
     {
@@ -56,16 +64,46 @@ public class CleanBot : MonoBehaviour
         {
             FleeFromPlayer();
             m_wanderTimer = 0f;
+            m_hasDirtyTarget = false;
+            return;
         }
-        else
-        {
-            m_wanderTimer -= Time.deltaTime;
 
-            if (m_wanderTimer <= 0f || !m_agent.hasPath || m_agent.remainingDistance <= m_agent.stoppingDistance + 0.2f)
+        m_dirtySpotTimer -= Time.deltaTime;
+
+        if (m_dirtySpotTimer <= 0f)
+        {
+            m_dirtySpotTimer = dirtySpotCheckInterval;
+
+            if (PaintSpotManager.instance != null &&
+                PaintSpotManager.instance.TryGetNearestDirtySpot(transform.position, out m_dirtyTarget))
             {
-                PickWanderPoint();
-                m_wanderTimer = wanderInterval;
+                m_hasDirtyTarget = true;
+                m_agent.SetDestination(m_dirtyTarget);
             }
+            else
+            {
+                m_hasDirtyTarget = false;
+            }
+        }
+
+        if (m_hasDirtyTarget)
+        {
+            float distToDirty = Vector3.Distance(transform.position, m_dirtyTarget);
+
+            if (distToDirty <= dirtySpotReachDistance)
+            {
+                m_hasDirtyTarget = false;
+            }
+
+            return;
+        }
+
+        m_wanderTimer -= Time.deltaTime;
+
+        if (m_wanderTimer <= 0f || !m_agent.hasPath || m_agent.remainingDistance <= m_agent.stoppingDistance + 0.2f)
+        {
+            PickWanderPoint();
+            m_wanderTimer = wanderInterval;
         }
     }
 
@@ -83,7 +121,6 @@ public class CleanBot : MonoBehaviour
         if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, raycastDistance))
         {
             Paintable paintable = hit.collider.GetComponent<Paintable>();
-
             if (paintable == null)
             {
                 paintable = hit.collider.GetComponentInParent<Paintable>();
@@ -99,12 +136,20 @@ public class CleanBot : MonoBehaviour
                     1f,
                     Color.clear
                 );
+
+                if (PaintSpotManager.instance != null)
+                {
+                    PaintSpotManager.instance.ClearDirtySpotsNear(hit.point, cleanRadius);
+                }
             }
         }
     }
 
     void FleeFromPlayer()
     {
+        if (player == null || m_agent == null)
+            return;
+
         Vector3 awayDirection = (transform.position - player.position).normalized;
         Vector3 desiredPoint = transform.position + awayDirection * fleeDistance;
 
@@ -116,6 +161,9 @@ public class CleanBot : MonoBehaviour
 
     void PickWanderPoint()
     {
+        if (m_agent == null)
+            return;
+
         Vector3 randomOffset = new Vector3(
             Random.Range(-wanderRadius, wanderRadius),
             0f,
@@ -137,6 +185,9 @@ public class CleanBot : MonoBehaviour
 
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, cleanRadius);
+
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(transform.position, dirtySpotReachDistance);
 
         Vector3 rayStart = transform.position + Vector3.up * raycastHeight;
         Gizmos.color = Color.green;
