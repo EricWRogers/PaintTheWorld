@@ -35,10 +35,11 @@ public class PauseInventoryDisplay : MonoBehaviour
         {
             if (item == null) continue;
 
-            bool owned = inv != null && inv.GetCount(item.id) > 0;
+            int count = inv != null ? inv.GetCount(item.id) : 0;
+            bool owned = count > 0;
 
             PauseItemSlotUI slot = Instantiate(slotPrefab, gridContainer);
-            slot.Setup(item, owned, tooltip);
+            slot.Setup(item, owned, count, tooltip);
             liveSlots.Add(slot);
         }
     }
