@@ -17,6 +17,8 @@ public class AppManager : Singleton<AppManager>
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
     }
 
+
+
     private void OnActiveSceneChanged(Scene _current, Scene _next)
     {
         if(_next.buildIndex == 0)
