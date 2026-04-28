@@ -5,8 +5,9 @@ using SuperPupSystems.Helper;
 
 public class EnemyManager : SceneAwareSingleton<EnemyManager>
 {
-    public List<EnemySpawning> m_groundSpawners = new();
-    public List<EnemySpawning> m_flyingSpawners = new();
+    public List<EnemySpawning> groundSpawners = new();
+    public List<EnemySpawning> flyingSpawners = new();
+    public List<Patroling> groundPatrols = new();
     public float spawnDelay = 2f;
     public int selectedArea;
     // public AnimationCurve enemyHealthScaling;
@@ -26,17 +27,29 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     }
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        m_groundSpawners.Clear();
-        m_flyingSpawners.Clear();
+        groundSpawners.Clear();
+        flyingSpawners.Clear();
+        groundPatrols.Clear();
         foreach(EnemySpawning spawner in FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None))
         {
             if (spawner.flyingSpawner)
             {
-                m_flyingSpawners.Add(spawner);
+                flyingSpawners.Add(spawner);
             }
             else
             {
-                m_groundSpawners.Add(spawner);
+                groundSpawners.Add(spawner);
+            }
+        }
+        foreach(Patroling patroling in FindObjectsByType<Patroling>(FindObjectsSortMode.None))
+        {
+            if (patroling.flyingPatrol)
+            {
+                return;
+            }
+            else
+            {
+                groundPatrols.Add(patroling); 
             }
         }
         m_groundSpawnCounter = 0;
@@ -48,24 +61,24 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
 
     void Update()
     {
-        if(m_flyingSpawners.Count == 0 )
+        if(flyingSpawners.Count == 0 )
         {
             foreach(EnemySpawning spawner in FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None))
             {
                 if (spawner.flyingSpawner)
                 {
-                    m_flyingSpawners.Add(spawner);
+                    flyingSpawners.Add(spawner);
                 }
             }
             return;
         }
-        if(m_groundSpawners.Count == 0 )
+        if(groundSpawners.Count == 0 )
         {
             foreach(EnemySpawning spawner in FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None))
             {
                 if (!spawner.flyingSpawner)
                 {
-                    m_groundSpawners.Add(spawner);
+                    groundSpawners.Add(spawner);
                     
                 }
             }
@@ -79,18 +92,20 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         m_timer -= Time.deltaTime;
         if(m_timer <= 0)
         {
-            if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + groundStartingAmount) > m_groundSpawnCounter && m_groundSpawners.Count != 0 )
+            if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + groundStartingAmount) > m_groundSpawnCounter && groundSpawners.Count != 0 )
             {
                 ChooseSpawnArea(false);
                 
-                Enemy ground = m_groundSpawners[selectedArea].SpawnEnemy();
+                Enemy ground = groundSpawners[selectedArea].SpawnEnemy();
+                
+                ground.patroling = groundPatrols[m_groundSpawnCounter % groundPatrols.Count];
                 m_groundSpawnCounter++;
             }
-            if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + flyingStartingAmount) > m_flyingSpawnCounter && m_flyingSpawners.Count != 0 )
+            if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + flyingStartingAmount) > m_flyingSpawnCounter && flyingSpawners.Count != 0 )
             {
                 ChooseSpawnArea(true);
                 
-                Enemy flying = m_flyingSpawners[selectedArea].SpawnEnemy();
+                Enemy flying = flyingSpawners[selectedArea].SpawnEnemy();
                 flying.targetingPlayer = true;
                 m_flyingSpawnCounter++;
                 
@@ -103,36 +118,36 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     {
         if (_flying)
         {
-            if(m_flyingSpawners.Count == 0)
+            if(flyingSpawners.Count == 0)
             {
                 return;
             }
-            selectedArea = Random.Range(0, m_flyingSpawners.Count);
+            selectedArea = Random.Range(0, flyingSpawners.Count);
         }
         else
         {
-            if(m_groundSpawners.Count == 0)
+            if(groundSpawners.Count == 0)
             {
                 return;
             }
-            selectedArea = Random.Range(0, m_groundSpawners.Count);
+            selectedArea = Random.Range(0, groundSpawners.Count);
         }
 
         
     }
     public void EditorInit()
     {
-        m_groundSpawners.Clear();
-        m_flyingSpawners.Clear();
+        groundSpawners.Clear();
+        flyingSpawners.Clear();
         foreach(EnemySpawning spawner in FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None))
         {
             if (spawner.flyingSpawner)
             {
-                m_flyingSpawners.Add(spawner);
+                flyingSpawners.Add(spawner);
             }
             else
             {
-                m_groundSpawners.Add(spawner);
+                groundSpawners.Add(spawner);
             }
 
         IsReady = true;
