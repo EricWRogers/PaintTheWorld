@@ -17,21 +17,7 @@ public class AppManager : Singleton<AppManager>
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
     }
 
-    void Start()
-    {
-        
-        for(int i = 0; i < transform.childCount; i++)
-            {
-                if(transform.GetChild(i).gameObject.name == "AudioManagerObject" || transform.GetChild(i).gameObject.name == "ObjectPools")
-                {
-                    continue;
-                }
-                transform.GetChild(i).gameObject.SetActive(false);
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            AudioManager.instance.PlayMusic(AudioManager.instance.StartMusic);
-    }
+
 
     private void OnActiveSceneChanged(Scene _current, Scene _next)
     {

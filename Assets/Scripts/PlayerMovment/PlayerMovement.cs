@@ -84,6 +84,7 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashDuration"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashCooldown"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxAirDashes"));
         }
 
         showJump = EditorGUILayout.Foldout(showJump, "Jump");
@@ -224,9 +225,17 @@ public class PlayerMovement : PlayerMovmentEngine
     public float dashSpeed = 20f;
     public float dashDuration = 0.5f;
     public float dashCooldown = 1f;
+    public int maxAirDashes = 1;
 
     public bool isDashing = false;
     public bool m_dashInputPressed_field = false;
+
+    [Header("Air Dash")]
+    public int baseAirDashCount = 0;
+
+    public int bonusAirDashCount = 0;
+    public int currAirDashCount = 0;
+    public int maxAirDashCount => baseAirDashCount + bonusAirDashCount;
 
     private float m_dashTime = 0f;
     private float m_dashStartTime = 0f;
@@ -235,6 +244,7 @@ public class PlayerMovement : PlayerMovmentEngine
     private Vector3 dashDir;
     private float m_dashInputElapsed = Mathf.Infinity;
     private float m_dashBufferTime = 0.1f;
+    private int airDashCount = 0;
 
     // Jump
     [Header("Jump Settings")]
@@ -349,6 +359,8 @@ public class PlayerMovement : PlayerMovmentEngine
         m_lasPos = transform.position;
         grindParticles.Stop();
         stunParticles.Stop();
+
+        currAirDashCount = maxAirDashCount;
     }
 
     void Update()
@@ -446,9 +458,12 @@ public class PlayerMovement : PlayerMovmentEngine
             return;
         }
 
-        if (HandleDashing())
+        if (HandleDashing(!onGround))
         {
         }
+
+        if (isDashing)
+            SetState(MoveState.Dash);
 
         SetState(onGround ? MoveState.Grounded : MoveState.Air);
     }
@@ -458,6 +473,9 @@ public class PlayerMovement : PlayerMovmentEngine
         if (state == next) return;
         prevState = state;
         state = next;
+
+        if (next == MoveState.Grounded || next == MoveState.WallRide || next == MoveState.Grind)
+            airDashCount = 0;
     }
 
     #endregion
@@ -510,6 +528,7 @@ public class PlayerMovement : PlayerMovmentEngine
         bool canWalk = onGround && maxSlopeAngle >= Vector3.Angle(Vector3.up, groundHit.normal);
 
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
+        currAirDashCount = onGround ? maxAirDashCount : currAirDashCount;
 
         // Slope math
         Vector3 groundNormal = canWalk ? groundHit.normal : Vector3.up;
@@ -703,7 +722,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     #region Dashing
 
-    bool HandleDashing()
+    bool HandleDashing(bool isAirborne)
     {
         if (isDashing)
         {
@@ -717,8 +736,14 @@ public class PlayerMovement : PlayerMovmentEngine
         float timeSinceLastDash = Time.time - m_dashStartTime;
         bool canDash = timeSinceLastDash >= (dashDuration + dashCooldown);
 
-        if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f)
+        bool onGround = groundedState.isGrounded;
+        bool hasAvailableDash = onGround || currAirDashCount > 0;
+
+        if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f && hasAvailableDash)
         {
+            if (isAirborne && airDashCount >= maxAirDashes)
+                return false;
+
             dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
             isDashing = true;
@@ -729,12 +754,29 @@ public class PlayerMovement : PlayerMovmentEngine
             float startSpeed = m_velocity.magnitude;
             m_velocity = dashDir * (dashSpeed + startSpeed);
 
-            GameEvents.PlayerDodged?.Invoke();
+            if (isAirborne)
+                airDashCount++;
 
+            GameEvents.PlayerDodged?.Invoke();
             return true;
         }
 
         return false;
+    }
+
+
+    public void SetBonusAirDashes(int amount)
+    {
+        bonusAirDashCount = Mathf.Max(0, amount);
+
+        if (groundedState.isGrounded)
+        {
+            currAirDashCount = maxAirDashCount;
+        }
+        else
+        {
+            currAirDashCount = Mathf.Min(currAirDashCount, maxAirDashCount);
+        }
     }
 
     #endregion
