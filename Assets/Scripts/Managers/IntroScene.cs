@@ -9,7 +9,7 @@ public class IntroScene : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        async = SceneManager.LoadSceneAsync("SubwayScene");
+        async = SceneManager.LoadSceneAsync("SkateParkScene");
         async.allowSceneActivation = false;
     }
     public void AnimDone()
