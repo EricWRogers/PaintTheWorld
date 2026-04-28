@@ -32,9 +32,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.26, y: 14.51, z: -73.74}
-  m_LocalScale: {x: 0.44, y: 0.44, z: 0.44}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 1325212402136571155}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4211127972502262288
@@ -52,7 +53,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2303941019181362390}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -177,7 +178,79 @@ MonoBehaviour:
   fleeDistance: 10
   wanderRadius: 6
   wanderInterval: 2
+  dirtySpotCheckInterval: 0.75
+  dirtySpotReachDistance: 1.5
   cleanRadius: 1.2
   cleanInterval: 0.2
   raycastHeight: 1
   raycastDistance: 5
+--- !u!1001 &2465039691353052221
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4411604706765235513}
+    m_Modifications:
+    - target: {fileID: 2272006595455818097, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4258819261892187028, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_Name
+      value: FloorBot_Enemy_ver2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7399873740351296340, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 3debb64b48793b04db980143b47aeb9c, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+--- !u!4 &1325212402136571155 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3481719161571019054, guid: 2284fed6279d83e46933ff2add96dbf8, type: 3}
+  m_PrefabInstance: {fileID: 2465039691353052221}
+  m_PrefabAsset: {fileID: 0}
