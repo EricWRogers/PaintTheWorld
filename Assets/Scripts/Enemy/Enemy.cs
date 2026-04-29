@@ -39,18 +39,16 @@ public abstract class  Enemy : MonoBehaviour
     public GameObject damageText;
     public Transform damageTextSpawn;
     public Patroling patroling;
+    public float patrolingDistanceCheck = 1;
 
     private int m_tempHealth;
     private Health m_health;
 
     public bool targetingPlayer;
+    public float targetDistance;
 
     public Transform target;
     public Animator anim;
-
-    public float timerToSwitchTargets;
-    private float m_switchTimer;
-
 
     void OnEnable()
     {

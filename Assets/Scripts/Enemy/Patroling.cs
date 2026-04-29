@@ -6,6 +6,7 @@ public class Patroling : MonoBehaviour
     public List<Transform> patrolPoints;
     public int numEnemyPatrolling;
     public bool flyingPatrol;
+    public PaintingObj paintingObj;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

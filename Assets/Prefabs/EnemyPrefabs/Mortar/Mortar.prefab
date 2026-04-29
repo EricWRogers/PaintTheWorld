@@ -118,25 +118,25 @@ MonoBehaviour:
   startingHealth: 20
   attackSpeed: 4
   rotationSpeed: 10
-  attackRange: 40
+  attackRange: 30
   firePoint: {fileID: 8160938142129756026}
   damageText: {fileID: 1392177967193643494, guid: 7ade7531bc2feef43ab3b1654ec19ae6, type: 3}
   damageTextSpawn: {fileID: 5179512397239169985}
+  patroling: {fileID: 0}
   targetingPlayer: 0
+  targetDistance: 50
   target: {fileID: 0}
   anim: {fileID: 8878324037283588891}
-  timerToSwitchTargets: 0
   stunned: 0
   stunTime: 10
-  spreadAngleForObj: 3
-  distanceFromPlayerToTarget: 40
-  rearViewPoint: {fileID: 7776753488482455536}
-  distanceToPushPlayerBack: 3
   losMask:
     serializedVersion: 2
     m_Bits: 648
   repathDistanceThreshold: 1
   attackAngleThreshold: 5
+  spreadAngleForObj: 5
+  rearViewPoint: {fileID: 7776753488482455536}
+  distanceToPushPlayerBack: 3
   audioSource: {fileID: 0}
   fireSound: {fileID: 0}
   fireSoundVolume: 0.9
@@ -241,7 +241,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 4.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120

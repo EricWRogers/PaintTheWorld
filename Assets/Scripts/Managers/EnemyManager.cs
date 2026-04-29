@@ -8,6 +8,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public List<EnemySpawning> groundSpawners = new();
     public List<EnemySpawning> flyingSpawners = new();
     public List<Patroling> groundPatrols = new();
+    public List<Patroling> airPatrols = new();
     public float spawnDelay = 2f;
     public int selectedArea;
     // public AnimationCurve enemyHealthScaling;
@@ -30,6 +31,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         groundSpawners.Clear();
         flyingSpawners.Clear();
         groundPatrols.Clear();
+        airPatrols.Clear();
         foreach(EnemySpawning spawner in FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None))
         {
             if (spawner.flyingSpawner)
@@ -45,7 +47,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         {
             if (patroling.flyingPatrol)
             {
-                return;
+                airPatrols.Add(patroling);
             }
             else
             {
@@ -106,7 +108,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
                 ChooseSpawnArea(true);
                 
                 Enemy flying = flyingSpawners[selectedArea].SpawnEnemy();
-                flying.targetingPlayer = true;
+                flying.patroling = airPatrols[m_flyingSpawnCounter % airPatrols.Count];
                 m_flyingSpawnCounter++;
                 
             }
