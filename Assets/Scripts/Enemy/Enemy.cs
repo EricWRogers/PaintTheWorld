@@ -38,6 +38,7 @@ public abstract class  Enemy : MonoBehaviour
     [Header("Hurt FX")]
     public GameObject damageText;
     public Transform damageTextSpawn;
+    public Patroling patroling;
 
     private int m_tempHealth;
     private Health m_health;
