@@ -69,11 +69,14 @@ public class BeetleAi : Enemy
 
         bool shouldTargetPlayer = Physics.Raycast(transform.position, m_direction, out m_hitInfo1, targetDistance, losMask);
 
-        bool shouldTargetObjective = false;
-        if (patroling != null && patroling.paintingObj != null)
+        PaintingObj targetObj = null;
+
+        if (patroling != null && patroling.paintingObj.Count > 0)
         {
-            shouldTargetObjective = patroling.paintingObj.percentageCovered > 0;
+            targetObj = patroling.GetMostCoveredPaintingObj(); // or GetValidPaintingObj()
         }
+
+        bool shouldTargetObjective = targetObj != null;
 
         if (shouldTargetPlayer)
         {
@@ -89,9 +92,9 @@ public class BeetleAi : Enemy
         }
         else if (shouldTargetObjective)
         {
-            if (patroling != null && patroling.paintingObj != null)
+            if (target != targetObj.transform)
             {
-                target = patroling.paintingObj.transform;
+                target = targetObj.transform;
             }
 
             targetingPlayer = false;

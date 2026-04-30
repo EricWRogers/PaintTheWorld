@@ -6,7 +6,7 @@ public class Patroling : MonoBehaviour
     public List<Transform> patrolPoints;
     public int numEnemyPatrolling;
     public bool flyingPatrol;
-    public PaintingObj paintingObj;
+    public List<PaintingObj> paintingObj;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,5 +24,24 @@ public class Patroling : MonoBehaviour
             }
         }
 
+    }
+
+    public PaintingObj GetMostCoveredPaintingObj()
+    {
+        PaintingObj best = null;
+        float highest = 0f;
+
+        foreach (var obj in paintingObj)
+        {
+            if (obj == null) continue;
+
+            if (obj.percentageCovered > highest)
+            {
+                highest = obj.percentageCovered;
+                best = obj;
+            }
+        }
+
+        return best;
     }
 }

@@ -75,17 +75,20 @@ public class FlyingEnemy : Enemy
 
     void FixedUpdate()
     {
+        if (cloudNav == null) cloudNav = EnemyManager.instance.cloudNav;
+        if (target == null) return;
+
         float playerDist = Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position);
 
-        Vector3 direction = (target.position - transform.position).normalized;
+        bool shouldTargetPlayer = playerDist <= targetDistance;
 
-        bool shouldTargetPlayer = Physics.Raycast(transform.position, direction, targetDistance, losMask);
-
-        bool shouldTargetObjective = false;
-        if (patroling != null && patroling.paintingObj != null)
+        PaintingObj targetObj = null;
+        if (patroling != null && patroling.paintingObj.Count > 0)
         {
-            shouldTargetObjective = patroling.paintingObj.percentageCovered > 0f;
+            targetObj = patroling.GetMostCoveredPaintingObj();
         }
+
+        bool shouldTargetObjective = targetObj != null;
 
         if (shouldTargetPlayer)
         {
@@ -99,10 +102,9 @@ public class FlyingEnemy : Enemy
         }
         else if (shouldTargetObjective)
         {
-            if (patroling != null && patroling.paintingObj != null &&
-                target != patroling.paintingObj.transform)
+            if (target != targetObj.transform)
             {
-                target = patroling.paintingObj.transform;
+                target = targetObj.transform;
                 RequestNewPath();
             }
 
@@ -122,12 +124,136 @@ public class FlyingEnemy : Enemy
                     RequestNewPath();
                 }
 
-                if (Vector3.Distance(transform.position, patrolTarget.position) < patrolingDistanceCheck)
+                if (Vector3.Distance(transform.position, patrolTarget.position) < minStopDistance)
                 {
                     m_patrolIndex = (m_patrolIndex + 1) % patroling.patrolPoints.Count;
                 }
             }
         }
+
+        if (stunned)
+        {
+            m_minPitch = -90;
+            m_maxPitch = 90;
+
+            m_stunTimer -= Time.deltaTime;
+
+            if (m_stunTimer <= 0f)
+            {
+                GetComponent<Health>().Revive();
+                anim.SetTrigger("Unstun");
+                GetComponent<Rigidbody>().useGravity = false;
+
+                stunned = false;
+                recoveringFromStun = true;
+                m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
+
+                stunParticles.Stop();
+                stunParticles2.Stop();
+
+                GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
+            }
+
+            return;
+        }
+
+        if (recoveringFromStun)
+        {
+            m_recoveryGraceTimer -= Time.deltaTime;
+
+            if (m_recoveryGraceTimer <= 0f)
+            {
+                recoveringFromStun = false;
+                stopped = false;
+            }
+
+            return;
+        }
+
+        if (path == null || path.Count == 0)
+        {
+            RequestNewPath();
+            return;
+        }
+
+        float distance = Vector3.Distance(transform.position, target.position);
+
+        stopped = distance <= minStopDistance;
+        bool inAttackRange = distance <= attackRange;
+
+        if (!inAttackRange)
+        {
+            anim.SetBool("Moving", true);
+        }
+
+        if (m_curveDistance == 0f && path.Count > 1 && targetIndex == 1)
+            SetupCurve(path[0], path[1]);
+
+        if (m_curveDistance >= 1f)
+        {
+            targetIndex++;
+
+            if (targetIndex >= path.Count && !inAttackRange)
+            {
+                RequestNewPath();
+                return;
+            }
+        }
+
+        bool canAttack = targetingPlayer || shouldTargetObjective;
+
+        if (inAttackRange && canAttack)
+        {
+            anim.SetBool("Moving", false);
+            Attack();
+            return;
+        }
+
+        float segmentDistance = Vector3.Distance(m_curveStart, m_curveEnd);
+
+        if (segmentDistance < 0.1f)
+            m_curveDistance = 1f;
+        else
+            m_curveDistance += (curveSpeed / segmentDistance) * Time.fixedDeltaTime;
+
+        Vector3 nextPos = GetBezierPoint(m_curveStart, m_curveControl, m_curveEnd, m_curveDistance);
+
+        Vector3 separation = Vector3.zero;
+        int count = Physics.OverlapSphereNonAlloc(transform.position, neighborDetectionRange, m_neighbors, enemyMask);
+
+        if (count > 0)
+            separation = Separation(transform.position, m_neighbors);
+
+        Vector3 moveTarget = nextPos + separation * 5f;
+
+        Quaternion targetRot = GetClampedLookRotation(target.position, m_minPitch, m_maxPitch);
+
+        Vector3 moveDir = (nextPos - transform.position).normalized + separation * 3f;
+
+        lastMoveDir = Vector3.Lerp(lastMoveDir, moveDir, Time.fixedDeltaTime * 5f);
+
+        Quaternion bankRot = Quaternion.AngleAxis(
+            Mathf.Clamp(
+                -Vector3.SignedAngle(transform.forward, lastMoveDir, Vector3.up),
+                -bankAmount,
+                bankAmount
+            ),
+            Vector3.forward
+        );
+
+        Quaternion finalRot = targetRot * bankRot;
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            finalRot,
+            Time.fixedDeltaTime * bankSpeed
+        );
+
+        transform.position = Vector3.Lerp(
+            transform.position,
+            moveTarget,
+            Time.fixedDeltaTime * speed
+        );
     }
 
     void RequestNewPath()

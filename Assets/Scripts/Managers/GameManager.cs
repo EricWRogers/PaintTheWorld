@@ -73,6 +73,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public GameObject ui;
     public bool goalComplete;
     public bool canPause;
+    private MapInfo m_mapInfo;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -109,6 +110,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
         }
         if (inStage)
         {
+            m_mapInfo = FindAnyObjectByType<MapInfo>();
+            GetMapInfo();
             ResetManager();
             heldGoal = timePerStage * (percentTimeHeldToClear / 100);
         }
@@ -297,6 +300,14 @@ public class GameManager : SceneAwareSingleton<GameManager>
                 goalComplete = false;
             }
         }
+    }
+    public void GetMapInfo()
+    {
+        if(m_mapInfo != null) return;
+
+        captureAmountToClear = m_mapInfo.captureAmountToClear;
+        timePerStage = m_mapInfo.timePerStage;
+        percentTimeHeldToClear = m_mapInfo.percentTimeHeldToClear;
     }
 
     public void ShopStage()

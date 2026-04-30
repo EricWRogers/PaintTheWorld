@@ -21,6 +21,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public int flyingTargetingPlayer;
     public int maxFlyingTargetingPlayer;
     public CloudNav cloudNav;
+    private MapInfo m_mapInfo;
 
     void Start()
     {
@@ -32,6 +33,8 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         flyingSpawners.Clear();
         groundPatrols.Clear();
         airPatrols.Clear();
+        m_mapInfo = FindAnyObjectByType<MapInfo>();
+        GetMapInfo();
         foreach(EnemySpawning spawner in FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None))
         {
             if (spawner.flyingSpawner)
@@ -114,6 +117,14 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
             }
             m_timer = spawnDelay;
         }
+    }
+
+    public void GetMapInfo()
+    {
+        if(m_mapInfo != null) return;
+
+        flyingStartingAmount = m_mapInfo.flyingEnemyStartCount;
+        groundStartingAmount = m_mapInfo.groundEnemyStartCount;
     }
 
     public void ChooseSpawnArea(bool _flying)
