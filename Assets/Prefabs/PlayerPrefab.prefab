@@ -294,6 +294,9 @@ MonoBehaviour:
   dashCooldown: 0.2
   isDashing: 0
   m_dashInputPressed_field: 0
+  baseAirDashCount: 1
+  bonusAirDashCount: 0
+  currAirDashCount: 0
   jumpForce: 8
   maxUpwardSpeed: 8
   maxJumpAngle: 80
@@ -685,7 +688,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4681461756869485060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13837405, y: 0.00021392266, z: -0.00002988888, w: 0.99038005}
+  m_LocalRotation: {x: 0.13837416, y: 0.00042619984, z: -0.000059549136, w: 0.9903799}
   m_LocalPosition: {x: 0, y: 1.11, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1123,8 +1126,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6666069499506963668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.13837405, y: 0.00021392267, z: -0.000029888874, w: 0.99038005}
-  m_LocalPosition: {x: 0, y: 1.11, z: -6}
+  m_LocalRotation: {x: 0.1383742, y: 0.00042619972, z: -0.000059547892, w: 0.9903799}
+  m_LocalPosition: {x: 0, y: 0.7776989, z: -4.833023}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3466,6 +3469,8 @@ MonoBehaviour:
   canColorKey: 0
   weaponAnimator: {fileID: 1057428158363734211}
   attackTriggerName: AttackTrigger
+  minimumAimDistanceFromNozzle: 2
+  fallbackAimDistance: 10
   crosshairImage: {fileID: 0}
   normalCrosshairColor: {r: 1, g: 1, b: 1, a: 1}
   enemyCrosshairColor: {r: 1, g: 0.2297461, b: 0, a: 1}
@@ -3505,6 +3510,8 @@ MonoBehaviour:
   canColorKey: 0
   weaponAnimator: {fileID: 1057428158363734211}
   attackTriggerName: AttackTrigger
+  minimumAimDistanceFromNozzle: 2
+  fallbackAimDistance: 10
   crosshairImage: {fileID: 0}
   normalCrosshairColor: {r: 1, g: 1, b: 1, a: 1}
   enemyCrosshairColor: {r: 1, g: 0, b: 0, a: 1}
