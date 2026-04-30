@@ -49,11 +49,6 @@ public class PaintGlobs : CollisonPainter
             }
         }
 
-        if (paintImpact != null)
-        {
-            var main = paintImpact.main;
-            main.startColor = blobColor;
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -64,6 +59,7 @@ public class PaintGlobs : CollisonPainter
             paintImpact.transform.rotation = Quaternion.LookRotation(collision.contacts[0].normal);
         
             paintImpact.transform.SetParent(null); 
+            ApplyColorToParticles(paintImpact.gameObject, blobColor);
         
             paintImpact.Play();
             Destroy(paintImpact.gameObject, paintImpact.main.duration);
@@ -80,5 +76,15 @@ public class PaintGlobs : CollisonPainter
         }
 
         Destroy(gameObject);
+    }
+
+    private void ApplyColorToParticles(GameObject effectObj, Color color)
+    {
+        ParticleSystem ps = effectObj.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            var main = ps.main;
+            main.startColor= color;
+        }
     }
 }
