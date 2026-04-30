@@ -1092,7 +1092,9 @@ public class PlayerMovement : PlayerMovmentEngine
             float t = (float)i / samples;
             Vector3 localP = (Vector3)spline.EvaluatePosition(t);
             Vector3 p = container.transform.TransformPoint(localP);
-            float d = (worldPos - p).sqrMagnitude;
+            Vector3 delta = worldPos - p;
+            delta.y = 0; // Ignore vertical distance for grinding detection
+            float d = delta.sqrMagnitude;
             if (d < bestDistSqr)
             {
                 bestDistSqr = d;

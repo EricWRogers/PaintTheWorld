@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebdc7638527a758e9acc6cb76cbced27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shopScene: 
+  shopScene: PhysicalShop
   currentSceneIndex: 0
 --- !u!1 &6574093375631048203
 GameObject:
@@ -531,22 +531,6 @@ PrefabInstance:
     - target: {fileID: 5748369114940086715, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: AudioMixerName
       value: MusicVolume
-      objectReference: {fileID: 0}
-    - target: {fileID: 5869367077577018228, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5869367077577018228, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseSettings
-      objectReference: {fileID: 0}
-    - target: {fileID: 5869367077577018228, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5869367077577018228, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 7475088638653915003, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: audioSlider
