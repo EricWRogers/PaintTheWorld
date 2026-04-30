@@ -4988,7 +4988,6 @@ MonoBehaviour:
   damage: 10
   customGravityMultiplier: 0.07
   paintImpact: {fileID: 8773402342945434643}
-  paintSplatterPrefab: {fileID: 2651784816271247819}
 --- !u!1001 &5161617817235343793
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5036,6 +5035,18 @@ PrefabInstance:
     - target: {fileID: 1284190869330275488, guid: db73e0cb12abf6140858040b631b9072, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
+      propertyPath: lengthInSec
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
+      propertyPath: ColorModule.enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
       propertyPath: ForceModule.enabled
@@ -5142,11 +5153,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db73e0cb12abf6140858040b631b9072, type: 3}
---- !u!1 &2651784816271247819 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7164321229484884090, guid: db73e0cb12abf6140858040b631b9072, type: 3}
-  m_PrefabInstance: {fileID: 5161617817235343793}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6229495075221071121 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1284190869330275488, guid: db73e0cb12abf6140858040b631b9072, type: 3}
