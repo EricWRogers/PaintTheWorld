@@ -48,6 +48,12 @@ public class PaintGlobs : CollisonPainter
                 renderer.material.color = blobColor;
             }
         }
+
+        if (paintImpact != null)
+        {
+            var main = paintImpact.main;
+            main.startColor = blobColor;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -56,8 +62,13 @@ public class PaintGlobs : CollisonPainter
         {
             paintImpact.transform.position = collision.contacts[0].point;
             paintImpact.transform.rotation = Quaternion.LookRotation(collision.contacts[0].normal);
+        
+            paintImpact.transform.SetParent(null); 
+        
             paintImpact.Play();
+            Destroy(paintImpact.gameObject, paintImpact.main.duration);
         }
+
         if (collision.gameObject.CompareTag("Enemy"))
         {
             Enemy enemy = collision.gameObject.GetComponent<Enemy>();
@@ -67,5 +78,7 @@ public class PaintGlobs : CollisonPainter
                 Debug.Log($"Enemy hit! Dealt {damage} damage.");
             }
         }
+
+        Destroy(gameObject);
     }
 }

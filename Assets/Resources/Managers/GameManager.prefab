@@ -194,8 +194,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: 
-  mainButtonsPanel: {fileID: 0}
-  settingsPanel: {fileID: 0}
+  mainButtonsPanel: {fileID: 3403228967795666804}
+  settingsPanel: {fileID: 8129611012225509038}
 --- !u!114 &9216215193205822216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1856,8 +1856,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f6eca45ffe00341a772cd9fcb4e419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioMixerName: 
-  audioSlider: {fileID: 0}
+  AudioMixerName: MusicVolume
+  audioSlider: {fileID: 1149470397565532253}
 --- !u!1 &2033185676544179941
 GameObject:
   m_ObjectHideFlags: 0
@@ -1979,7 +1979,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7437889219108549159}
   - component: {fileID: 2462215105434582966}
-  - component: {fileID: 8258435550777242142}
   m_Layer: 5
   m_Name: MouseSens
   m_TagString: Untagged
@@ -2061,7 +2060,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8258435550777242142}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: VolumeSlider, Assembly-CSharp
         m_MethodName: SetVolume
         m_Mode: 0
@@ -2073,20 +2072,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
---- !u!114 &8258435550777242142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053116547247402714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6f6eca45ffe00341a772cd9fcb4e419, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AudioMixerName: 
-  audioSlider: {fileID: 0}
 --- !u!1 &2108827334951402291
 GameObject:
   m_ObjectHideFlags: 0
@@ -3540,8 +3525,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f6eca45ffe00341a772cd9fcb4e419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioMixerName: 
-  audioSlider: {fileID: 0}
+  AudioMixerName: MasterVolume
+  audioSlider: {fileID: 5566692344028133813}
 --- !u!1 &3741434958603653286
 GameObject:
   m_ObjectHideFlags: 0
@@ -4005,8 +3990,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f6eca45ffe00341a772cd9fcb4e419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AudioMixerName: 
-  audioSlider: {fileID: 0}
+  AudioMixerName: SoundEffectsVolume
+  audioSlider: {fileID: 528020118339088872}
 --- !u!1 &4229754469445501508
 GameObject:
   m_ObjectHideFlags: 0
@@ -4130,11 +4115,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8434873159505057138}
         m_TargetAssemblyTypeName: Menus, Assembly-CSharp
-        m_MethodName: MainMenu
-        m_Mode: 2
+        m_MethodName: CloseSettings
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 150948810358029021}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -5084,7 +5069,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 150948810358029021}
   timePerStage: 120
-  stageScenes: []
+  stageScenes:
+  - SubwayScene
+  - MallScene
   m_isPaused: 0
   shopScene: PhysicalShop
   mainMenu: 
@@ -5777,11 +5764,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8434873159505057138}
         m_TargetAssemblyTypeName: Menus, Assembly-CSharp
-        m_MethodName: MainMenu
-        m_Mode: 2
+        m_MethodName: OpenSettings
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 150948810358029021}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -7154,7 +7141,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3448837478953258076
 RectTransform:
   m_ObjectHideFlags: 0
