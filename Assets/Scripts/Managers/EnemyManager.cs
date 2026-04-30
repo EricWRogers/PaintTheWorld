@@ -11,8 +11,8 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public List<Patroling> airPatrols = new();
     public float spawnDelay = 2f;
     public int selectedArea;
-    // public AnimationCurve enemyHealthScaling;
-    public AnimationCurve enemyAmountScaling;
+    public AnimationCurve flyingAmountScaling;
+    public AnimationCurve groundAmountScaling;
     public int flyingStartingAmount;
     public int groundStartingAmount;
     private int m_groundSpawnCounter;
@@ -21,7 +21,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
     public int flyingTargetingPlayer;
     public int maxFlyingTargetingPlayer;
     public CloudNav cloudNav;
-    private MapInfo m_mapInfo;
+    public MapInfo m_mapInfo;
 
     void Start()
     {
@@ -33,8 +33,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         flyingSpawners.Clear();
         groundPatrols.Clear();
         airPatrols.Clear();
-        m_mapInfo = FindAnyObjectByType<MapInfo>();
-        GetMapInfo();
+        m_mapInfo = null;
         foreach(EnemySpawning spawner in FindObjectsByType<EnemySpawning>(FindObjectsSortMode.None))
         {
             if (spawner.flyingSpawner)
@@ -60,6 +59,10 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         m_groundSpawnCounter = 0;
         m_flyingSpawnCounter = 0;
         cloudNav = FindAnyObjectByType<CloudNav>(FindObjectsInactive.Exclude);
+
+        m_mapInfo = FindAnyObjectByType<MapInfo>();
+        GetMapInfo();
+        
 
         IsReady = true;
     }
@@ -97,7 +100,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
         m_timer -= Time.deltaTime;
         if(m_timer <= 0)
         {
-            if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + groundStartingAmount) > m_groundSpawnCounter && groundSpawners.Count != 0 )
+            if ((int)(groundAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + groundStartingAmount) > m_groundSpawnCounter && groundSpawners.Count != 0 )
             {
                 ChooseSpawnArea(false);
                 
@@ -106,7 +109,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
                 ground.patroling = groundPatrols[m_groundSpawnCounter % groundPatrols.Count];
                 m_groundSpawnCounter++;
             }
-            if ((int)(enemyAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + flyingStartingAmount) > m_flyingSpawnCounter && flyingSpawners.Count != 0 )
+            if ((int)(flyingAmountScaling.Evaluate(GameManager.instance.stageCounter - 1) + flyingStartingAmount) > m_flyingSpawnCounter && flyingSpawners.Count != 0 )
             {
                 ChooseSpawnArea(true);
                 
@@ -121,7 +124,7 @@ public class EnemyManager : SceneAwareSingleton<EnemyManager>
 
     public void GetMapInfo()
     {
-        if(m_mapInfo != null) return;
+        if(m_mapInfo == null) return;
 
         flyingStartingAmount = m_mapInfo.flyingEnemyStartCount;
         groundStartingAmount = m_mapInfo.groundEnemyStartCount;

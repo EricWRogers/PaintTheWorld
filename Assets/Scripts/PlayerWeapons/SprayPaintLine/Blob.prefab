@@ -4984,6 +4984,7 @@ MonoBehaviour:
   radius: 2
   strength: 1
   hardness: 1
+  minimumGroundDot: 0.6
   damage: 10
   customGravityMultiplier: 0.07
   paintImpact: {fileID: 8773402342945434643}
@@ -5034,6 +5035,18 @@ PrefabInstance:
     - target: {fileID: 1284190869330275488, guid: db73e0cb12abf6140858040b631b9072, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
+      propertyPath: lengthInSec
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
+      propertyPath: ColorModule.enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4494771631942821282, guid: db73e0cb12abf6140858040b631b9072, type: 3}
       propertyPath: ForceModule.enabled
