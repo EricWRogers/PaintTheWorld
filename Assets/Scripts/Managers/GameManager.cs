@@ -62,7 +62,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public int amountCaptured;
     private bool playerSpawned;
     public enum gameModes {HoldPoints, CapturePoints}
-
+    public AnimationCurve captureAmountScaling;
+    public AnimationCurve holdTimeAmountScaling;
     public gameModes currentGamemode;
 
     private SaveData saveData;
