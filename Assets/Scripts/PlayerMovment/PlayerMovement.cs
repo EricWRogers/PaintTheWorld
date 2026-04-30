@@ -84,7 +84,7 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashDuration"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashCooldown"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("maxAirDashes"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("baseAirDashCount"));
         }
 
         showJump = EditorGUILayout.Foldout(showJump, "Jump");
@@ -225,13 +225,12 @@ public class PlayerMovement : PlayerMovmentEngine
     public float dashSpeed = 20f;
     public float dashDuration = 0.5f;
     public float dashCooldown = 1f;
-    public int maxAirDashes = 1;
 
     public bool isDashing = false;
     public bool m_dashInputPressed_field = false;
 
     [Header("Air Dash")]
-    public int baseAirDashCount = 0;
+    public int baseAirDashCount = 1;
 
     public int bonusAirDashCount = 0;
     public int currAirDashCount = 0;
@@ -244,7 +243,6 @@ public class PlayerMovement : PlayerMovmentEngine
     private Vector3 dashDir;
     private float m_dashInputElapsed = Mathf.Infinity;
     private float m_dashBufferTime = 0.1f;
-    private int airDashCount = 0;
 
     // Jump
     [Header("Jump Settings")]
@@ -475,7 +473,7 @@ public class PlayerMovement : PlayerMovmentEngine
         state = next;
 
         if (next == MoveState.Grounded || next == MoveState.WallRide || next == MoveState.Grind)
-            airDashCount = 0;
+            currAirDashCount = maxAirDashCount;
     }
 
     #endregion
@@ -741,7 +739,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
         if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f && hasAvailableDash)
         {
-            if (isAirborne && airDashCount >= maxAirDashes)
+            if (isAirborne && currAirDashCount <= 0)
                 return false;
 
             dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
@@ -755,7 +753,7 @@ public class PlayerMovement : PlayerMovmentEngine
             m_velocity = dashDir * (dashSpeed + startSpeed);
 
             if (isAirborne)
-                airDashCount++;
+                currAirDashCount--;
 
             GameEvents.PlayerDodged?.Invoke();
             return true;
@@ -868,6 +866,7 @@ public class PlayerMovement : PlayerMovmentEngine
             if (WallCheck(out RaycastHit hit))
             {
                 m_isWallRiding = true;
+                currAirDashCount = maxAirDashCount;
                 m_wallNormal = hit.normal;
                 if (leftWall)
                     paintRotation -= 90;
@@ -974,6 +973,7 @@ public class PlayerMovement : PlayerMovmentEngine
     void StartGrinding()
     {
         isGrinding = true;
+        currAirDashCount = maxAirDashCount;
         var splineRef = splineContainer.Splines[0];
 
         Vector3 closest = FindClosestPointOnSpline(out float progress);
