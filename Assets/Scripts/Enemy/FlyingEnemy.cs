@@ -55,6 +55,8 @@ public class FlyingEnemy : Enemy
     public ParticleSystem stunParticles, stunParticles2;
 
     private int m_patrolIndex;
+    bool shouldTargetPlayer;
+    private RaycastHit m_hitInfo;
 
     new void Start()
     {
@@ -79,8 +81,11 @@ public class FlyingEnemy : Enemy
         if (target == null) return;
 
         float playerDist = Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position);
-
-        bool shouldTargetPlayer = playerDist <= targetDistance;
+        Vector3 playerdir = (PlayerManager.instance.player.transform.position - transform.position).normalized;
+        
+        if(Physics.Raycast(transform.position, playerdir, out m_hitInfo, targetDistance, losMask)){
+            shouldTargetPlayer = m_hitInfo.transform.CompareTag("Player");
+        }
 
         PaintingObj targetObj = null;
         if (patroling != null && patroling.paintingObj.Count > 0)

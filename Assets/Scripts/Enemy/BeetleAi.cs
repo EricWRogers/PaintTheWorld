@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 using SuperPupSystems.Helper;
+using Unity.VisualScripting;
 
 public class BeetleAi : Enemy
 {
@@ -30,6 +31,7 @@ public class BeetleAi : Enemy
     public float spreadAngleForObj;
     public Transform rearViewPoint;
     public float distanceToPushPlayerBack;
+    public bool shouldTargetPlayer;
 
     [Header("Audio")]
     public AudioSource audioSource;
@@ -56,6 +58,9 @@ public class BeetleAi : Enemy
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             ps.Stop();
         }
+
+        particles.Stop();
+        particles2.Stop();
     }
 
     new void Update()
@@ -66,8 +71,11 @@ public class BeetleAi : Enemy
             return;
 
         float playerDist = Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position);
+        Vector3 playerdir = (PlayerManager.instance.player.transform.position - transform.position).normalized;
 
-        bool shouldTargetPlayer = Physics.Raycast(transform.position, m_direction, out m_hitInfo1, targetDistance, losMask);
+        if(Physics.Raycast(transform.position, playerdir, out m_hitInfo1, targetDistance, losMask)){
+            shouldTargetPlayer = m_hitInfo1.transform.CompareTag("Player");
+        }
 
         PaintingObj targetObj = null;
 
@@ -148,10 +156,12 @@ public class BeetleAi : Enemy
             m_lastTargetPosition = target.position;
             Move();
         }
+        
+        m_direction = (target.position - transform.position).normalized;
 
         if (Vector3.Distance(transform.position, target.position) <= attackRange)
         {
-            m_direction = (target.position - transform.position).normalized;
+            
 
             if (Physics.Raycast(transform.position, m_direction, out m_hitInfo1, attackRange, losMask) &&
                 Physics.Raycast(rearViewPoint.position, m_direction, out m_hitInfo2, attackRange, losMask))
