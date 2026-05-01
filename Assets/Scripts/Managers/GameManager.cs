@@ -87,6 +87,11 @@ public class GameManager : SceneAwareSingleton<GameManager>
                 inStage = true;
             }
         }
+
+        if(!inStage)
+        {
+            SaveGame();
+        }
         if(SceneManager.GetActiveScene().buildIndex == 0 || SceneManager.GetActiveScene().buildIndex == 1 || SceneManager.GetActiveScene().buildIndex == 2)
         {
             ui.SetActive(false);

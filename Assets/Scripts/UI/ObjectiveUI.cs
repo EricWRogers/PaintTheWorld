@@ -97,18 +97,5 @@ public class ObjectiveUI : MonoBehaviour
 
     }
 
-
-
-
-
-    void Start()
-    {
-        //startPos = rectTransform.position;
-        //startPos = new Vector2(-741,368);
-
-            
-    
-    }
-
 }
 
