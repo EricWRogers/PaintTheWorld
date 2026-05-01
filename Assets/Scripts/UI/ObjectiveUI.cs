@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
+using DG.Tweening;
 
 public class ObjectiveUI : MonoBehaviour
 {
@@ -17,12 +17,18 @@ public class ObjectiveUI : MonoBehaviour
     public Vector2 targetPosition; // where it ends (top-left, etc.)
     public Vector3 targetScale = new Vector3(0.5f, 0.5f, 1f);
 
+
     private Vector2 startPos;
-    public Vector3 startScale;
+    public Vector3 startScale = new Vector3(1.75f, 1.75f, 1f);
 
     void Update()
     {
 
+    }
+    void Awake()
+    {
+    
+        startPos = rectTransform.anchoredPosition;
     }
 
 
@@ -40,49 +46,68 @@ public class ObjectiveUI : MonoBehaviour
     {
         if (scene.name == "TutorialLevel")
         {
-            objectiveText.text = "";
+            objectiveText.text = " ";
             return;
         }
         
-           
-        rectTransform.position = startPos;
+            rectTransform.DOKill(); // stop any previous tweens
+
+        // Set correct state immediately
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchoredPosition = startPos;
         rectTransform.localScale = startScale;
-        objectiveText.alignment = TextAlignmentOptions.Top;
-        objectiveText.text = gameObject.name.Contains("Capture") ? captureText : holdText;
-        StartCoroutine(AnimateObjective());
+    
+        objectiveText.alignment = TextAlignmentOptions.Center;
+        objectiveText.text = GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints ? captureText : holdText;
+    
+        // Build sequence
+        Sequence seq = DOTween.Sequence();
+    
+        Debug.Log("Start Position: " + startPos);
+        seq.AppendInterval(0.01f); // wait 1 frame (~)
+
+        // begining slam 
+        seq.Append(
+            rectTransform
+                .DOScale(startScale, 1f)
+                .From(startScale * 3f)
+                .SetEase(Ease.InOutBack)
+        );
+    
+        //move /shrink to side
+        seq.AppendInterval(2f); // wait 1 second
+
+        seq.AppendCallback(() => {
+            objectiveText.alignment = TextAlignmentOptions.TopRight;
+        });
+
+        seq.Append(
+            rectTransform
+                .DOAnchorPos(targetPosition, duration)
+                .SetEase(Ease.OutQuint)
+        );
+        
+
+        seq.Join(
+            rectTransform
+                .DOScale(targetScale, duration)
+        );
+
+
     }
+
 
 
 
 
     void Start()
     {
-        startPos = rectTransform.anchoredPosition + new Vector2(-rectTransform.position.x, rectTransform.position.y + 368);
+        //startPos = rectTransform.position;
+        startPos = new Vector2(-741,368);
 
-        StartCoroutine(AnimateObjective());
+            
+    
     }
 
-    IEnumerator AnimateObjective()
-    {
-        float time = 0;
-
-
-        while (time < duration)
-        {
-            float t = time / duration;
-            objectiveText.alignment = TextAlignmentOptions.TopRight;
-            // smooth easing
-            t = Mathf.SmoothStep(0, 1, t);
-
-            rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPosition, t);
-            rectTransform.localScale = Vector3.Lerp(startScale, targetScale, t);
-
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        rectTransform.anchoredPosition = targetPosition;
-        rectTransform.localScale = targetScale;
-    }
 }
 

@@ -425,7 +425,7 @@ public class PlayerMovement : PlayerMovmentEngine
                 break;
         }
 
-        ResolveEnemyOverlaps();
+        ResolveOverlaps();
 
         m_timer += Time.deltaTime;
         CheckLandingEvent();
@@ -1224,22 +1224,44 @@ public class PlayerMovement : PlayerMovmentEngine
 
     #region Overlap Resolution
 
-    private void ResolveEnemyOverlaps()
+    private void ResolveOverlaps()
     {
-        if (PlayerManager.instance == null) return;
-        LayerMask enemyLayer = PlayerManager.instance.enemyLayer;
         Vector3 center = capsule.center + transform.position;
         float radius = capsule.radius;
         float height = capsule.height;
         Vector3 bottom = center + transform.rotation * Vector3.down * (height / 2 - radius);
         Vector3 top = center + transform.rotation * Vector3.up * (height / 2 - radius);
-        Collider[] overlaps = Physics.OverlapCapsule(top, bottom, radius, enemyLayer);
-        foreach (Collider col in overlaps)
+
+        const int maxIterations = 4;
+        for (int i = 0; i < maxIterations; i++)
         {
-            if (Physics.ComputePenetration(capsule, transform.position, transform.rotation, col, col.transform.position, col.transform.rotation, out Vector3 direction, out float distance))
+            Collider[] overlaps = Physics.OverlapCapsule(top, bottom, radius, collisionLayers, QueryTriggerInteraction.Ignore);
+            if (overlaps.Length == 0)
+                break;
+
+            bool resolvedAny = false;
+            foreach (Collider col in overlaps)
             {
-                transform.position += direction * distance;
+                if (col == capsule) continue;
+
+                if (Physics.ComputePenetration(capsule, transform.position, transform.rotation,
+                    col, col.transform.position, col.transform.rotation,
+                    out Vector3 direction, out float distance))
+                {
+                    if (distance > 0f)
+                    {
+                        transform.position += direction * distance;
+                        resolvedAny = true;
+                    }
+                }
             }
+
+            if (!resolvedAny)
+                break;
+
+            center = capsule.center + transform.position;
+            top = center + transform.rotation * Vector3.up * (height / 2 - radius);
+            bottom = center + transform.rotation * Vector3.down * (height / 2 - radius);
         }
     }
 
