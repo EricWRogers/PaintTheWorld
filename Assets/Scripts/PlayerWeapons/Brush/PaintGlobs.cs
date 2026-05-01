@@ -51,8 +51,9 @@ public class PaintGlobs : CollisonPainter
 
     }
 
-    private void OnCollisionEnter(Collision collision)
+    new void OnCollisionEnter(Collision collision)
     {
+        base.OnCollisionEnter(collision);
         if (paintImpact != null)
         {
             paintImpact.transform.position = collision.contacts[0].point;

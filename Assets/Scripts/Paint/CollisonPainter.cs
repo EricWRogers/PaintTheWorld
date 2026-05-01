@@ -13,7 +13,7 @@ public class CollisonPainter : MonoBehaviour
     [Range(0f, 1f)]
     public float minimumGroundDot = 0.6f;
 
-    public void OnCollisionStay(Collision other)
+    public void OnCollisionEnter(Collision other)
     {
         paintColor = PlayerManager.instance.player.GetComponent<PlayerMovement>().standPaintColor.selectedPaint;
         Paint(other);
