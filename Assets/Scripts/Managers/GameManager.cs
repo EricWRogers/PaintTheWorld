@@ -88,7 +88,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
             }
         }
 
-        if(!inStage)
+        if(SceneManager.GetActiveScene().name == "ShopStage")
         {
             SaveGame();
         }

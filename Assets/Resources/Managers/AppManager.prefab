@@ -1481,6 +1481,38 @@ PrefabInstance:
       propertyPath: holdTimeAmountScaling.m_Curve.Array.data[1].tangentMode
       value: 34
       objectReference: {fileID: 0}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 6813190088560809771}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: StageOver
+      objectReference: {fileID: 0}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: OnTimerEnded
+      objectReference: {fileID: 0}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: LevelTimerEndSequence, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5278923029807091084, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timeout.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 5697236317222156941, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: m_Name
       value: GameManager
