@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public class ObjectiveUI : MonoBehaviour
 {
@@ -21,14 +22,7 @@ public class ObjectiveUI : MonoBehaviour
 
     void Update()
     {
-        if(GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
-        {
-            objectiveText.text = holdText;
-        }
-        if(GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
-        {
-            objectiveText.text = captureText;
-        }
+
     }
 
 
@@ -44,10 +38,17 @@ public class ObjectiveUI : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (scene.name == "TutorialLevel")
+        {
+            objectiveText.text = "";
+            return;
+        }
+        
+           
         rectTransform.position = startPos;
         rectTransform.localScale = startScale;
         objectiveText.alignment = TextAlignmentOptions.Top;
-
+        objectiveText.text = gameObject.name.Contains("Capture") ? captureText : holdText;
         StartCoroutine(AnimateObjective());
     }
 
