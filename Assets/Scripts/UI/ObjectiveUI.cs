@@ -29,6 +29,7 @@ public class ObjectiveUI : MonoBehaviour
     {
     
         startPos = rectTransform.anchoredPosition;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
 
@@ -53,7 +54,7 @@ public class ObjectiveUI : MonoBehaviour
             rectTransform.DOKill(); // stop any previous tweens
 
         // Set correct state immediately
-        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        //rectTransform.pivot = new Vector2(0.5f, 0.5f);
         rectTransform.anchoredPosition = startPos;
         rectTransform.localScale = startScale;
     
@@ -103,7 +104,7 @@ public class ObjectiveUI : MonoBehaviour
     void Start()
     {
         //startPos = rectTransform.position;
-        startPos = new Vector2(-741,368);
+        //startPos = new Vector2(-741,368);
 
             
     
