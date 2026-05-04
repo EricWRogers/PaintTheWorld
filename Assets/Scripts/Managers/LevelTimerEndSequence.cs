@@ -84,13 +84,15 @@ public class LevelTimerEndSequence : MonoBehaviour
             nextButton.onClick.RemoveListener(GoToNextScene);
     }
 
-    public void OnTimerEnded()
+   public void OnTimerEnded()
     {
-        
-        GameManager.instance.canPause = false;
-        GameManager.instance.TurnOnCursor();
+        Debug.Log("[LevelTimerEndSequence] Timer ended event received.");
+
         if (ended) return;
         ended = true;
+
+        GameManager.instance.canPause = false;
+        GameManager.instance.TurnOnCursor();
 
         player = PlayerManager.instance != null && PlayerManager.instance.player != null
             ? PlayerManager.instance.player.transform
@@ -101,36 +103,44 @@ public class LevelTimerEndSequence : MonoBehaviour
 
     IEnumerator EndSequenceRoutine()
     {
-       
-        if (GameManager.instance != null && GameManager.instance.pauseMenu != null)
+        Time.timeScale = 0f;
+
+        if (GameManager.instance != null)
         {
-            GameManager.instance.PauseGame();
-            GameManager.instance.pauseMenu.SetActive(false);
-        }
-        if(GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
-        {
-            GoalText.text = holdPrefix + GameManager.instance.timeHeld + "/" + GameManager.instance.heldGoal;
-        }
-        else if(GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
-        {
-            GoalText.text = capturePrefix + GameManager.instance.amountCaptured.ToString() + "/" +GameManager.instance.captureAmountToClear;
+            GameManager.instance.canPause = false;
+            GameManager.instance.TurnOnCursor();
+
+            if (GameManager.instance.pauseMenu != null)
+                GameManager.instance.pauseMenu.SetActive(false);
         }
 
-        if (GameManager.instance.goalComplete)
+        if (GoalText != null && GameManager.instance != null)
         {
-            nextButton.GetComponentInChildren<TMP_Text>().text = buttonWinText;
+            if (GameManager.instance.currentGamemode == GameManager.gameModes.HoldPoints)
+            {
+                GoalText.text = holdPrefix + GameManager.instance.timeHeld + "/" + GameManager.instance.heldGoal;
+            }
+            else if (GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
+            {
+                GoalText.text = capturePrefix + GameManager.instance.amountCaptured + "/" + GameManager.instance.captureAmountToClear;
+            }
         }
-        else
+
+        if (nextButton != null && GameManager.instance != null)
         {
-            nextButton.GetComponentInChildren<TMP_Text>().text = buttonLoseText;
+            TMP_Text buttonText = nextButton.GetComponentInChildren<TMP_Text>();
+
+            if (buttonText != null)
+            {
+                buttonText.text = GameManager.instance.goalComplete ? buttonWinText : buttonLoseText;
+            }
         }
-        
+
         if (finalMoneyText != null && moneyLogic != null)
         {
-            finalMoneyText.text = moneyPrefix + moneyLogic.amount.ToString();
+            finalMoneyText.text = moneyPrefix + moneyLogic.amount;
         }
 
-       
         SetupEndCamera();
 
         float elapsed = 0f;
@@ -140,11 +150,11 @@ public class LevelTimerEndSequence : MonoBehaviour
             yield return null;
         }
 
-        // Show panel
         if (panelRoot != null)
             panelRoot.SetActive(true);
+        else
+            Debug.LogWarning("[LevelTimerEndSequence] panelRoot is not assigned.");
 
-        
         if (panelCanvasGroup != null)
         {
             panelCanvasGroup.alpha = 0f;
@@ -162,6 +172,10 @@ public class LevelTimerEndSequence : MonoBehaviour
             panelCanvasGroup.alpha = 1f;
             panelCanvasGroup.interactable = true;
             panelCanvasGroup.blocksRaycasts = true;
+        }
+        else
+        {
+            Debug.LogWarning("[LevelTimerEndSequence] panelCanvasGroup is not assigned.");
         }
     }
 
@@ -187,24 +201,22 @@ public class LevelTimerEndSequence : MonoBehaviour
     }
 
     public void GoToNextScene()
-{
-    GameManager.instance.ResumeGame();
-    if (panelCanvasGroup != null)
     {
-        panelCanvasGroup.alpha = 0f;
-        panelCanvasGroup.interactable = false;
-        panelCanvasGroup.blocksRaycasts = false;
+        Time.timeScale = 1f;
+
+        if (GameManager.instance != null)
+        {
+            GameManager.instance.canPause = true;
+            GameManager.instance.ResumeGame();
+
+            if (GameManager.instance.goalComplete)
+                SceneManager.LoadScene(GameManager.instance.nextScene);
+            else
+                SceneManager.LoadScene("Start Menu");
+        }
+        else
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
     }
-
-    if (panelRoot != null)
-        panelRoot.SetActive(false);
-
-    
-    if (endCamera != null)
-        endCamera.Priority = 0;
-
-    ended = false;
-    Time.timeScale = 1f;
-    SceneManager.LoadScene(GameManager.instance.nextScene);
-}
 }
