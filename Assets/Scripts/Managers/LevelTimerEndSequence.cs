@@ -228,8 +228,30 @@ public class LevelTimerEndSequence : MonoBehaviour
         endCamera.Priority = endCameraPriority;
     }
 
+    void CleanupEndScreen()
+    {
+        ended = false;
+
+        if (panelCanvasGroup != null)
+        {
+            panelCanvasGroup.alpha = 0f;
+            panelCanvasGroup.interactable = false;
+            panelCanvasGroup.blocksRaycasts = false;
+        }
+
+        if (panelRoot != null)
+            panelRoot.SetActive(false);
+
+        if (endCamera != null)
+            endCamera.Priority = 0;
+
+        Time.timeScale = 1f;
+    }
+
     public void GoToNextScene()
     {
+        CleanupEndScreen();
+
         Time.timeScale = 1f;
 
         if (GameManager.instance != null)
@@ -238,13 +260,16 @@ public class LevelTimerEndSequence : MonoBehaviour
             GameManager.instance.ResumeGame();
 
             if (GameManager.instance.goalComplete)
-                SceneManager.LoadScene(GameManager.instance.nextScene);
+            {
+                SceneManager.LoadScene("PhysicalShop");
+            }
             else
+            {
                 SceneManager.LoadScene("Start Menu");
-        }
-        else
-        {
-            SceneManager.LoadScene(nextSceneName);
+            }
         }
     }
+
+
+
 }
