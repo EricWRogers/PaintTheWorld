@@ -1450,6 +1450,10 @@ PrefabInstance:
       value: MasterVolume
       objectReference: {fileID: 0}
     - target: {fileID: 3320374524644146964, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
+      propertyPath: timePerStage
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 3320374524644146964, guid: 7acf3f62816fd494e8743a60fbe8653f, type: 3}
       propertyPath: stageScenes.Array.size
       value: 3
       objectReference: {fileID: 0}
@@ -1722,7 +1726,7 @@ MonoBehaviour:
   moneyPrefix: 'Final Money: '
   buttonWinText: Go to Shop
   buttonLoseText: Back to main menu
-  nextSceneName: ShopScene
+  nextSceneName: PhysicalShop
   endCamera: {fileID: 0}
   endCameraPriority: 50
   distanceInFront: 3

@@ -45,7 +45,10 @@ public class LevelTimerEndSequence : MonoBehaviour
     private Transform player;
 
     void Start()
+
     {
+        ended = false;
+
         if (panelRoot != null)
             panelRoot.SetActive(false);
 
@@ -56,6 +59,9 @@ public class LevelTimerEndSequence : MonoBehaviour
             panelCanvasGroup.blocksRaycasts = false;
         }
 
+        if (endCamera != null)
+            endCamera.Priority = 0;
+
         if (nextButton != null)
         {
             nextButton.onClick.RemoveAllListeners();
@@ -63,16 +69,7 @@ public class LevelTimerEndSequence : MonoBehaviour
         }
 
         if (timerLogic != null)
-        {
             timerLogic.timeout.AddListener(OnTimerEnded);
-        }
-
-        if (endCamera != null)
-        {
-            endCamera.Priority = 0;
-        }
-
-        ended = false;
     }
 
     void OnDestroy()
@@ -99,6 +96,37 @@ public class LevelTimerEndSequence : MonoBehaviour
             : null;
 
         StartCoroutine(EndSequenceRoutine());
+    }
+
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ended = false;
+
+        if (panelRoot != null)
+            panelRoot.SetActive(false);
+
+        if (panelCanvasGroup != null)
+        {
+            panelCanvasGroup.alpha = 0f;
+            panelCanvasGroup.interactable = false;
+            panelCanvasGroup.blocksRaycasts = false;
+        }
+
+        if (endCamera != null)
+            endCamera.Priority = 0;
+
+        Time.timeScale = 1f;
     }
 
     IEnumerator EndSequenceRoutine()
@@ -210,13 +238,13 @@ public class LevelTimerEndSequence : MonoBehaviour
             GameManager.instance.ResumeGame();
 
             if (GameManager.instance.goalComplete)
-            {
-                SceneManager.LoadScene("LoadScene");
-            }
+                SceneManager.LoadScene(GameManager.instance.nextScene);
             else
-            {
                 SceneManager.LoadScene("Start Menu");
-            }
+        }
+        else
+        {
+            SceneManager.LoadScene(nextSceneName);
         }
     }
 }
