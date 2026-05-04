@@ -210,13 +210,13 @@ public class LevelTimerEndSequence : MonoBehaviour
             GameManager.instance.ResumeGame();
 
             if (GameManager.instance.goalComplete)
-                SceneManager.LoadScene(GameManager.instance.nextScene);
+            {
+                SceneManager.LoadScene("LoadScene");
+            }
             else
+            {
                 SceneManager.LoadScene("Start Menu");
-        }
-        else
-        {
-            SceneManager.LoadScene(nextSceneName);
+            }
         }
     }
 }
