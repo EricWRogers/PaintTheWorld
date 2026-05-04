@@ -53,11 +53,18 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
+        // Reapply saved volume settings in case they were lost
+        masterVolume = PlayerPrefs.GetFloat("MasterVolume", -2.5f);
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", -2.5f);
+        soundEffectVolume = PlayerPrefs.GetFloat("SoundEffectVolume", -2.5f);
+        masterMixer.audioMixer.SetFloat("MasterVolume", masterVolume);
+        musicMixer.audioMixer.SetFloat("MusicVolume", musicVolume);
+        soundEffectMixer.audioMixer.SetFloat("SFXVolume", soundEffectVolume);
+
         if (StartMusic != "")
         {
             PlayMusic(StartMusic);
         }
-
     }
 
     public void ChangeVolume(float volume, string mixer)
@@ -65,18 +72,22 @@ public class AudioManager : MonoBehaviour
         switch (mixer)
         {
             case "MasterVolume":
-                masterVolume = volume; // ← add this
+                masterVolume = volume;
                 masterMixer.audioMixer.SetFloat("MasterVolume", volume);
+                PlayerPrefs.SetFloat("MasterVolume", masterVolume);
                 break;
             case "MusicVolume":
-                musicVolume = volume; // ← add this
+                musicVolume = volume;
                 musicMixer.audioMixer.SetFloat("MusicVolume", volume);
+                PlayerPrefs.SetFloat("MusicVolume", musicVolume);
                 break;
             case "SoundEffectVolume":
-                soundEffectVolume = volume; // ← add this
+                soundEffectVolume = volume;
                 soundEffectMixer.audioMixer.SetFloat("SFXVolume", volume);
+                PlayerPrefs.SetFloat("SoundEffectVolume", soundEffectVolume);
                 break;
         }
+        PlayerPrefs.Save();
     }
 
     public void Play(string name)

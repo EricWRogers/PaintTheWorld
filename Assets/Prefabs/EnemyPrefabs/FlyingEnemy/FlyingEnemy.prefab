@@ -154,15 +154,19 @@ MonoBehaviour:
   firePoint: {fileID: 3519808824711932938}
   damageText: {fileID: 0}
   damageTextSpawn: {fileID: 0}
+  patroling: {fileID: 0}
+  patrolingDistanceCheck: 5
   targetingPlayer: 1
+  targetDistance: 40
   target: {fileID: 0}
   anim: {fileID: 5772691904600099017}
-  timerToSwitchTargets: 0
   cloudNav: {fileID: 0}
   minStopDistance: 10
-  minHeightFromPLayerToShoot: 7
   minPitch: -20
   maxPitch: 20
+  losMask:
+    serializedVersion: 2
+    m_Bits: 648
   seperationDistance: 8
   enemyMask:
     serializedVersion: 2

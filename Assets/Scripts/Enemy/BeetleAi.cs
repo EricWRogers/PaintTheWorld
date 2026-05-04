@@ -2,18 +2,17 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 using SuperPupSystems.Helper;
+using Unity.VisualScripting;
+
 public class BeetleAi : Enemy
 {
-    private float m_attackTimer;
+
+    [Header("State")]
     public bool stunned;
     public float stunTime;
     private float m_stunTimer;
-    public float spreadAngleForObj;
     private float m_recoveryGraceTimer;
     private bool recoveringFromStun;
-    public float distanceFromPlayerToTarget = 20f;
-    public Transform rearViewPoint;
-    public float distanceToPushPlayerBack;
 
     [Header("Movement")]
     public LayerMask losMask;
@@ -24,38 +23,34 @@ public class BeetleAi : Enemy
     public float repathDistanceThreshold = 1.0f;
     private Vector3 m_lastTargetPosition;
     public float attackAngleThreshold = 5f;
-    
+
+    [Header("Patrol")]
+    private int patrolIndex = 0;
+
+    [Header("Combat")]
+    public float spreadAngleForObj;
+    public Transform rearViewPoint;
+    public float distanceToPushPlayerBack;
+    public bool shouldTargetPlayer;
 
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip fireSound;
-    [Range(0f, 1f)]
-    public float fireSoundVolume = 0.9f;
-    [Range(0.95f, 1.05f)]
-    public float randomPitchRange = 1.02f;
+    [Range(0f, 1f)] public float fireSoundVolume = 0.9f;
+    [Range(0.95f, 1.05f)] public float randomPitchRange = 1.02f;
 
     [Header("Particle Effects")]
     public ParticleSystem particles, particles2;
     public List<ParticleSystem> particleSystems = new List<ParticleSystem>();
+
     new void Start()
     {
         base.Start();
+
         anim = GetComponent<Animator>();
         anim.SetBool("Moving", true);
-        
-        if (particles != null)
-        {
-            var main = particles.main;
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-            particles.Stop();
-        }
 
-        if (particles2 != null)
-        {
-            var main = particles2.main;
-            main.simulationSpace = ParticleSystemSimulationSpace.World;
-            particles2.Stop();
-        }
+        m_agent = GetComponent<NavMeshAgent>();
 
         foreach (var ps in particleSystems)
         {
@@ -63,64 +58,70 @@ public class BeetleAi : Enemy
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             ps.Stop();
         }
+
+        particles.Stop();
+        particles2.Stop();
     }
 
-    // Update is called once per frame
     new void Update()
     {
-
         base.Update();
-        if(m_agent == null)
+
+        if (m_agent == null || PlayerManager.instance.player == null)
+            return;
+
+        float playerDist = Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position);
+        Vector3 playerdir = (PlayerManager.instance.player.transform.position - transform.position).normalized;
+
+        if(Physics.Raycast(transform.position, playerdir, out m_hitInfo1, targetDistance, losMask)){
+            shouldTargetPlayer = m_hitInfo1.transform.CompareTag("Player");
+        }
+
+        PaintingObj targetObj = null;
+
+        if (patroling != null && patroling.paintingObj.Count > 0)
         {
-            m_agent = GetComponent<NavMeshAgent>();
+            targetObj = patroling.GetMostCoveredPaintingObj(); // or GetValidPaintingObj()
+        }
+
+        bool shouldTargetObjective = targetObj != null;
+
+        if (shouldTargetPlayer)
+        {
+            if (target != PlayerManager.instance.player.transform)
+            {
+                if (target != null && target.GetComponent<PaintingObj>())
+                    target.GetComponent<PaintingObj>().currentEnemiesTarget--;
+
+                target = PlayerManager.instance.player.transform;
+            }
+
+            targetingPlayer = true;
+        }
+        else if (shouldTargetObjective)
+        {
+            if (target != targetObj.transform)
+            {
+                target = targetObj.transform;
+            }
+
+            targetingPlayer = false;
+        }
+        else
+        {
+            targetingPlayer = false;
+            Patrol();
             return;
         }
-        if(target == null)
-        {
-            return;
-        }
-        if(Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceToPushPlayerBack)
+        if (playerDist <= distanceToPushPlayerBack)
         {
             Vector3 dir = (PlayerManager.instance.player.transform.position - transform.position).normalized;
             PlayerManager.instance.player.GetComponent<PlayerMovement>().AddForce(dir);
         }
 
-        if (!target.parent.gameObject.activeInHierarchy)
-        {
-            target = EnemyManager.instance.GetObjectiveTarget().transform;
-        }
-
-        if (Vector3.Distance(transform.position, PlayerManager.instance.player.transform.position) <= distanceFromPlayerToTarget)
-        {
-            if(target.GetComponent<PaintingObj>() && target.GetComponent<PaintingObj>().currentEnemiesTarget > 0)
-                target.GetComponent<PaintingObj>().currentEnemiesTarget--;
-
-            target = PlayerManager.instance.player.transform;
-            targetingPlayer = true;
-        }
-        else
-        {
-            targetingPlayer = false;
-
-            // float maxDistance = 1000;
-            // int index = 0;
-            // for(int i = 0; i < GameManager.instance.activeObjectives.Count - 1; i++)
-            // {
-            //     float distance = Vector3.Distance(transform.position, GameManager.instance.activeObjectives[i].transform.position);
-            //     if(distance <= maxDistance)
-            //     {
-            //         index = i;
-            //         maxDistance = distance;
-            //     }
-            // }
-            if(!target.GetComponent<PaintingObj>())
-                target = EnemyManager.instance.GetObjectiveTarget().transform;
-        }
-        
         if (stunned)
         {
             m_stunTimer -= Time.deltaTime;
-            Debug.Log($"[BeetleAi] STUNNED | timer={m_stunTimer:F2}");
 
             if (m_stunTimer <= 0)
             {
@@ -131,8 +132,6 @@ public class BeetleAi : Enemy
 
                 recoveringFromStun = true;
                 m_recoveryGraceTimer = EnemyStunModifier.extraRecoveryGrace;
-
-                Debug.Log($"[BeetleAi] Recovered from stun, entering grace for {m_recoveryGraceTimer:F2}s");
 
                 GameEvents.EnemyRecoveredFromStun?.Invoke(gameObject);
             }
@@ -148,7 +147,6 @@ public class BeetleAi : Enemy
                 recoveringFromStun = false;
                 Move();
                 StopStunEffect();
-                Debug.Log("[BeetleAi] Grace period ended, resuming movement.");
             }
             return;
         }
@@ -159,10 +157,14 @@ public class BeetleAi : Enemy
             Move();
         }
         
-        if(Vector3.Distance(transform.position, target.transform.position) <= attackRange)
+        m_direction = (target.position - transform.position).normalized;
+
+        if (Vector3.Distance(transform.position, target.position) <= attackRange)
         {
-            m_direction = (target.position - transform.position).normalized;
-            if(Physics.Raycast(transform.position, m_direction, out m_hitInfo1, attackRange, losMask) && Physics.Raycast(rearViewPoint.position, m_direction, out m_hitInfo2, attackRange, losMask))
+            
+
+            if (Physics.Raycast(transform.position, m_direction, out m_hitInfo1, attackRange, losMask) &&
+                Physics.Raycast(rearViewPoint.position, m_direction, out m_hitInfo2, attackRange, losMask))
             {
                 if (targetingPlayer)
                 {
@@ -177,9 +179,9 @@ public class BeetleAi : Enemy
                 }
                 else
                 {
-                    if (m_hitInfo1.transform.gameObject.GetComponent<PaintingObj>() && m_hitInfo2.transform.gameObject.GetComponent<PaintingObj>())
+                    if (m_hitInfo1.transform.GetComponent<PaintingObj>() &&
+                        m_hitInfo2.transform.GetComponent<PaintingObj>())
                     {
-
                         StopMoving();
                         if (RotateTowardsTarget())
                         {
@@ -187,67 +189,41 @@ public class BeetleAi : Enemy
                         }
                     }
                 }
-                
             }
         }
-        
-        
+    }
+
+    void Patrol()
+    {
+        if (patroling == null || patroling.patrolPoints.Count == 0)
+            return;
+
+        Transform patrolTarget = patroling.patrolPoints[patrolIndex];
+
+        if (Vector3.Distance(transform.position, patrolTarget.position) < patrolingDistanceCheck)
+        {
+            patrolIndex = (patrolIndex + 1) % patroling.patrolPoints.Count;
+        }
+
+        m_agent.SetDestination(patrolTarget.position);
     }
 
     public override void Attack()
     {
         StopMoving();
         anim.SetBool("Attacking", true);
-
-        // m_attackTimer -= Time.deltaTime;
-
-        // if (m_attackTimer > 0) return;
-        
-        // m_attackTimer = attackSpeed;
-    }
-
-    public void Stun()
-    {
-        StopMoving();
-        anim.SetTrigger("Stun");
-        m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
-        stunned = true;
-        recoveringFromStun = false;
-        PlayStunEffect();
-        Debug.Log($"[BeetleAi] STUN APPLIED | base={stunTime:F2}, bonus={EnemyStunModifier.extraStunTime:F2}, total={m_stunTimer:F2}");
     }
 
     public void Move()
     {
         anim.SetBool("Moving", true);
         m_agent.SetDestination(target.position);
-        StopSprayEffect();
     }
 
     public void StopMoving()
     {
         anim.SetBool("Moving", false);
         m_agent.SetDestination(transform.position);
-    }
-    void Fire()
-    {
-        Debug.Log("fire");
-        if (bulletPrefab == null || firePoint == null) return;
-
-        firePoint.transform.LookAt(target);
-
-        if (!targetingPlayer)
-        {
-            float halfAngle = spreadAngleForObj * 0.5f;
-            float yaw = Random.Range(-halfAngle, halfAngle);
-            float pitch = Random.Range(-halfAngle, halfAngle);
-
-            firePoint.transform.rotation *= Quaternion.Euler(pitch, yaw, 0f);
-        }
-
-        Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        StopSprayEffect();
     }
 
     bool RotateTowardsTarget()
@@ -266,35 +242,52 @@ public class BeetleAi : Enemy
         );
 
         float angle = Quaternion.Angle(transform.rotation, targetRotation);
-
         return angle <= attackAngleThreshold;
     }
 
-    private void StartSprayEffect()
+    public void Stun()
     {
-        if (particles != null) particles.Play();
-        if (particles2 != null) particles2.Play();
+        StopMoving();
+        anim.SetTrigger("Stun");
+        m_stunTimer = stunTime + EnemyStunModifier.extraStunTime;
+        stunned = true;
+        recoveringFromStun = false;
+        PlayStunEffect();
+    }
+
+    void Fire() 
+    { 
+        Debug.Log("fire"); 
+        if (bulletPrefab == null || firePoint == null) return; 
+        firePoint.transform.LookAt(target); 
+        if (!targetingPlayer) 
+        {
+            float halfAngle = spreadAngleForObj * 0.5f; float yaw = Random.Range(-halfAngle, halfAngle); 
+            float pitch = Random.Range(-halfAngle, halfAngle); firePoint.transform.rotation *= Quaternion.Euler(pitch, yaw, 0f); 
+        } 
+        Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        StopSprayEffect(); 
+    } 
+    private void StartSprayEffect() 
+    {
+        if (particles != null) particles.Play(); 
+        if (particles2 != null) particles2.Play(); 
     }
 
     private void PlayStunEffect()
     {
         foreach (var ps in particleSystems)
-        {
             ps.Play();
-        }
     }
 
     private void StopStunEffect()
     {
         foreach (var ps in particleSystems)
-        {
             ps.Stop();
-        }
     }
-
-    private void StopSprayEffect()
-    {
-        if (particles != null) particles.Stop();
-        if (particles2 != null) particles2.Stop();
+    private void StopSprayEffect() 
+    { 
+        if (particles != null) particles.Stop(); 
+        if (particles2 != null) particles2.Stop(); 
     }
 }

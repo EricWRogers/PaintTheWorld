@@ -84,6 +84,7 @@ public class PlayerMovmentEditor : Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashSpeed"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashDuration"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("dashCooldown"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("baseAirDashCount"));
         }
 
         showJump = EditorGUILayout.Foldout(showJump, "Jump");
@@ -228,6 +229,13 @@ public class PlayerMovement : PlayerMovmentEngine
     public bool isDashing = false;
     public bool m_dashInputPressed_field = false;
 
+    [Header("Air Dash")]
+    public int baseAirDashCount = 1;
+
+    public int bonusAirDashCount = 0;
+    public int currAirDashCount = 0;
+    public int maxAirDashCount => baseAirDashCount + bonusAirDashCount;
+
     private float m_dashTime = 0f;
     private float m_dashStartTime = 0f;
     private bool m_dashBack = false;
@@ -349,6 +357,8 @@ public class PlayerMovement : PlayerMovmentEngine
         m_lasPos = transform.position;
         grindParticles.Stop();
         stunParticles.Stop();
+
+        currAirDashCount = maxAirDashCount;
     }
 
     void Update()
@@ -415,7 +425,7 @@ public class PlayerMovement : PlayerMovmentEngine
                 break;
         }
 
-        ResolveEnemyOverlaps();
+        ResolveOverlaps();
 
         m_timer += Time.deltaTime;
         CheckLandingEvent();
@@ -446,9 +456,12 @@ public class PlayerMovement : PlayerMovmentEngine
             return;
         }
 
-        if (HandleDashing())
+        if (HandleDashing(!onGround))
         {
         }
+
+        if (isDashing)
+            SetState(MoveState.Dash);
 
         SetState(onGround ? MoveState.Grounded : MoveState.Air);
     }
@@ -458,6 +471,9 @@ public class PlayerMovement : PlayerMovmentEngine
         if (state == next) return;
         prevState = state;
         state = next;
+
+        if (next == MoveState.Grounded || next == MoveState.WallRide || next == MoveState.Grind)
+            currAirDashCount = maxAirDashCount;
     }
 
     #endregion
@@ -510,6 +526,7 @@ public class PlayerMovement : PlayerMovmentEngine
         bool canWalk = onGround && maxSlopeAngle >= Vector3.Angle(Vector3.up, groundHit.normal);
 
         currJumpCount = onGround ? maxJumpCount : currJumpCount;
+        currAirDashCount = onGround ? maxAirDashCount : currAirDashCount;
 
         // Slope math
         Vector3 groundNormal = canWalk ? groundHit.normal : Vector3.up;
@@ -703,7 +720,7 @@ public class PlayerMovement : PlayerMovmentEngine
 
     #region Dashing
 
-    bool HandleDashing()
+    bool HandleDashing(bool isAirborne)
     {
         if (isDashing)
         {
@@ -717,8 +734,14 @@ public class PlayerMovement : PlayerMovmentEngine
         float timeSinceLastDash = Time.time - m_dashStartTime;
         bool canDash = timeSinceLastDash >= (dashDuration + dashCooldown);
 
-        if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f)
+        bool onGround = groundedState.isGrounded;
+        bool hasAvailableDash = onGround || currAirDashCount > 0;
+
+        if (canDash && m_dashInputPressed && moveInput.sqrMagnitude > 0.01f && hasAvailableDash)
         {
+            if (isAirborne && currAirDashCount <= 0)
+                return false;
+
             dashDir = (m_orientation.forward * moveInput.y + m_orientation.right * moveInput.x).normalized;
 
             isDashing = true;
@@ -729,12 +752,29 @@ public class PlayerMovement : PlayerMovmentEngine
             float startSpeed = m_velocity.magnitude;
             m_velocity = dashDir * (dashSpeed + startSpeed);
 
-            GameEvents.PlayerDodged?.Invoke();
+            if (isAirborne)
+                currAirDashCount--;
 
+            GameEvents.PlayerDodged?.Invoke();
             return true;
         }
 
         return false;
+    }
+
+
+    public void SetBonusAirDashes(int amount)
+    {
+        bonusAirDashCount = Mathf.Max(0, amount);
+
+        if (groundedState.isGrounded)
+        {
+            currAirDashCount = maxAirDashCount;
+        }
+        else
+        {
+            currAirDashCount = Mathf.Min(currAirDashCount, maxAirDashCount);
+        }
     }
 
     #endregion
@@ -826,6 +866,7 @@ public class PlayerMovement : PlayerMovmentEngine
             if (WallCheck(out RaycastHit hit))
             {
                 m_isWallRiding = true;
+                currAirDashCount = maxAirDashCount;
                 m_wallNormal = hit.normal;
                 if (leftWall)
                     paintRotation -= 90;
@@ -932,6 +973,7 @@ public class PlayerMovement : PlayerMovmentEngine
     void StartGrinding()
     {
         isGrinding = true;
+        currAirDashCount = maxAirDashCount;
         var splineRef = splineContainer.Splines[0];
 
         Vector3 closest = FindClosestPointOnSpline(out float progress);
@@ -946,7 +988,7 @@ public class PlayerMovement : PlayerMovmentEngine
         m_railDir = dot >= 0f ? 1f : -1f;
 
         Vector3 splinePos = (Vector3)splineRef.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up;
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos;
 
         Vector3 snapDelta = worldSplinePos - transform.position;
         transform.position = MovePlayer(snapDelta);
@@ -999,11 +1041,16 @@ public class PlayerMovement : PlayerMovmentEngine
         }
 
         Vector3 splinePos = (Vector3)splineRef2.EvaluatePosition(railProgress);
-        Vector3 worldSplinePos = splineContainer.transform.position + splinePos + Vector3.up * 1.4f;
+        Vector3 worldSplinePos = splineContainer.transform.position + splinePos;
         Vector3 delta = worldSplinePos - transform.position;
-        Vector3 lateral = delta - Vector3.Project(delta, tangentHere);
+        
+        // Only correct lateral (horizontal) offset perpendicular to the rail
+        // This prevents drifting to the side while preserving vertical position
+        Vector3 horizontalDelta = new Vector3(delta.x, 0, delta.z);
+        Vector3 horizontalTangent = new Vector3(tangentHere.x, 0, tangentHere.z).normalized;
+        Vector3 lateralCorrection = horizontalDelta - Vector3.Project(horizontalDelta, horizontalTangent);
         float correctionStrength = Mathf.Clamp01(5f * Time.deltaTime);
-        transform.position = MovePlayer(lateral * correctionStrength);
+        transform.position = MovePlayer(lateralCorrection * correctionStrength);
 
         SnapPlayerDown();
     }
@@ -1045,7 +1092,9 @@ public class PlayerMovement : PlayerMovmentEngine
             float t = (float)i / samples;
             Vector3 localP = (Vector3)spline.EvaluatePosition(t);
             Vector3 p = container.transform.TransformPoint(localP);
-            float d = (worldPos - p).sqrMagnitude;
+            Vector3 delta = worldPos - p;
+            delta.y = 0; // Ignore vertical distance for grinding detection
+            float d = delta.sqrMagnitude;
             if (d < bestDistSqr)
             {
                 bestDistSqr = d;
@@ -1175,22 +1224,44 @@ public class PlayerMovement : PlayerMovmentEngine
 
     #region Overlap Resolution
 
-    private void ResolveEnemyOverlaps()
+    private void ResolveOverlaps()
     {
-        if (PlayerManager.instance == null) return;
-        LayerMask enemyLayer = PlayerManager.instance.enemyLayer;
         Vector3 center = capsule.center + transform.position;
         float radius = capsule.radius;
         float height = capsule.height;
         Vector3 bottom = center + transform.rotation * Vector3.down * (height / 2 - radius);
         Vector3 top = center + transform.rotation * Vector3.up * (height / 2 - radius);
-        Collider[] overlaps = Physics.OverlapCapsule(top, bottom, radius, enemyLayer);
-        foreach (Collider col in overlaps)
+
+        const int maxIterations = 4;
+        for (int i = 0; i < maxIterations; i++)
         {
-            if (Physics.ComputePenetration(capsule, transform.position, transform.rotation, col, col.transform.position, col.transform.rotation, out Vector3 direction, out float distance))
+            Collider[] overlaps = Physics.OverlapCapsule(top, bottom, radius, collisionLayers, QueryTriggerInteraction.Ignore);
+            if (overlaps.Length == 0)
+                break;
+
+            bool resolvedAny = false;
+            foreach (Collider col in overlaps)
             {
-                transform.position += direction * distance;
+                if (col == capsule) continue;
+
+                if (Physics.ComputePenetration(capsule, transform.position, transform.rotation,
+                    col, col.transform.position, col.transform.rotation,
+                    out Vector3 direction, out float distance))
+                {
+                    if (distance > 0f)
+                    {
+                        transform.position += direction * distance;
+                        resolvedAny = true;
+                    }
+                }
             }
+
+            if (!resolvedAny)
+                break;
+
+            center = capsule.center + transform.position;
+            top = center + transform.rotation * Vector3.up * (height / 2 - radius);
+            bottom = center + transform.rotation * Vector3.down * (height / 2 - radius);
         }
     }
 

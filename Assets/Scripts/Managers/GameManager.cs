@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using SuperPupSystems.Helper;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using HutongGames.PlayMaker.Actions;
+
 
 
 
@@ -39,6 +39,7 @@ public class GameManagerEditor : Editor
 [RequireComponent(typeof(Timer))]
 public class GameManager : SceneAwareSingleton<GameManager>
 {
+    
     private PlayerManager pm;
     public GameObject pauseMenu;
     public float timePerStage;
@@ -61,7 +62,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public int amountCaptured;
     private bool playerSpawned;
     public enum gameModes {HoldPoints, CapturePoints}
-
+    public AnimationCurve captureAmountScaling;
+    public AnimationCurve holdTimeAmountScaling;
     public gameModes currentGamemode;
 
     private SaveData saveData;
@@ -72,6 +74,7 @@ public class GameManager : SceneAwareSingleton<GameManager>
     public GameObject ui;
     public bool goalComplete;
     public bool canPause;
+    private MapInfo m_mapInfo;
 
     public override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -83,6 +86,11 @@ public class GameManager : SceneAwareSingleton<GameManager>
             {
                 inStage = true;
             }
+        }
+
+        if(SceneManager.GetActiveScene().name == "ShopStage")
+        {
+            SaveGame();
         }
         if(SceneManager.GetActiveScene().buildIndex == 0 || SceneManager.GetActiveScene().buildIndex == 1 || SceneManager.GetActiveScene().buildIndex == 2)
         {
@@ -108,6 +116,8 @@ public class GameManager : SceneAwareSingleton<GameManager>
         }
         if (inStage)
         {
+            m_mapInfo = FindAnyObjectByType<MapInfo>();
+            GetMapInfo();
             ResetManager();
             heldGoal = timePerStage * (percentTimeHeldToClear / 100);
         }
@@ -121,10 +131,12 @@ public class GameManager : SceneAwareSingleton<GameManager>
 
     void Update()
     {
-        if (!Application.isFocused)
-        {
-            PauseGame();
-        }
+        #if !UNITY_EDITOR
+            if (!Application.isFocused)
+            {
+                PauseGame();
+            }
+        #endif
         // if (Input.GetKeyDown(KeyCode.U)){
         //     SceneManager.LoadSceneAsync(shopScene);
         // }
@@ -294,6 +306,14 @@ public class GameManager : SceneAwareSingleton<GameManager>
                 goalComplete = false;
             }
         }
+    }
+    public void GetMapInfo()
+    {
+        if(m_mapInfo != null) return;
+
+        captureAmountToClear = m_mapInfo.captureAmountToClear;
+        timePerStage = m_mapInfo.timePerStage;
+        percentTimeHeldToClear = m_mapInfo.percentTimeHeldToClear;
     }
 
     public void ShopStage()

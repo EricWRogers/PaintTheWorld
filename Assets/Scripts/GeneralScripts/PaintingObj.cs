@@ -41,12 +41,17 @@ public class PaintingObj : MonoBehaviour
     public int currentEnemiesTarget;
     public Transform playerSpawnPoint;
     private bool hasCaptured = false;
+    public List<Texture> posters;
+    public List<ParticleSystem> confetti;
 
 
     void Awake()
     {
         if(paintable != null)
             paintable = GetComponent<Paintable>();
+        
+        GetComponent<Renderer>().material.SetTexture("_MainTex", posters[Random.Range(0, posters.Count-1)]);
+        confetti.ForEach(p => p.Stop());
     }
     void Start()
     {
@@ -85,9 +90,11 @@ public class PaintingObj : MonoBehaviour
                     GameManager.instance.timeHeld += scoreGainedOnHold;
                     m_timer = coinGainDelay;
                 }
+                confetti.ForEach(p => { if (!p.isPlaying) p.Play(); });
             }
             else if(GameManager.instance.currentGamemode == GameManager.gameModes.CapturePoints)
             {
+                confetti.ForEach(p => { if (!p.isPlaying) p.Play(); });
                 hasCaptured = true;
                 PlayerManager.instance.wallet.Add(coinsGainedOnCapture);
                 GameManager.instance.amountCaptured++;
@@ -192,6 +199,7 @@ public class PaintingObj : MonoBehaviour
 
         if(paintable != null)
             paintable.ResetPaint();
+        confetti.ForEach(p => p.Stop());
 
         percentageCovered = 0;
         covered = false;

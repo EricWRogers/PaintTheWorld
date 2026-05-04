@@ -45,6 +45,10 @@ public class SprayPaintLine : MonoBehaviour
     public Animator weaponAnimator;
     public string attackTriggerName = "AttackTrigger";
 
+    [Header("Aim Correction")]
+    public float minimumAimDistanceFromNozzle = 2.0f;
+    public float fallbackAimDistance = 10f;
+
     [Header("Crosshair UI")]
     public Image crosshairImage;
     public Color normalCrosshairColor = Color.white;
@@ -112,6 +116,14 @@ public class SprayPaintLine : MonoBehaviour
         }
 
         HandleInput();
+
+        if (IsPlayerStunned())
+        {
+            if (isSpraying)
+                ForceStopSprayForStun();
+
+            return;
+        }
 
         if (isSpraying && currentAmmo > 0)
         {
@@ -195,7 +207,19 @@ public class SprayPaintLine : MonoBehaviour
             targetPoint = ray.GetPoint(maxAimDistance);
         }
 
-        Vector3 direction = (targetPoint - nozzleSpawnPoint.position).normalized;
+        Vector3 toTarget = targetPoint - nozzleSpawnPoint.position;
+
+        float forwardDot = Vector3.Dot(nozzleSpawnPoint.forward, toTarget.normalized);
+        bool tooClose = toTarget.magnitude < minimumAimDistanceFromNozzle;
+        bool behindNozzle = forwardDot <= 0.05f;
+
+        if (tooClose || behindNozzle)
+        {
+            targetPoint = ray.GetPoint(fallbackAimDistance);
+            toTarget = targetPoint - nozzleSpawnPoint.position;
+        }
+
+        Vector3 direction = toTarget.normalized;
 
         if (direction != Vector3.zero)
         {
@@ -403,6 +427,22 @@ public class SprayPaintLine : MonoBehaviour
 
         if (currentAmmo <= 0)
             StopSprayEvent();
+    }
+
+    private void ForceStopSprayForStun()
+    {
+        isSpraying = false;
+        canCombo = false;
+        projectileTimer = 0f;
+
+        if (sprayParticles != null)
+            sprayParticles.Stop();
+
+        if (weaponAnimator != null)
+        {
+            weaponAnimator.ResetTrigger(attackTriggerName);
+            weaponAnimator.SetLayerWeight(1, 0f);
+        }
     }
 
     public void UpdatePainterColor()

@@ -48,16 +48,24 @@ public class PaintGlobs : CollisonPainter
                 renderer.material.color = blobColor;
             }
         }
+
     }
 
-    private void OnCollisionEnter(Collision collision)
+    new void OnCollisionEnter(Collision collision)
     {
+        base.OnCollisionEnter(collision);
         if (paintImpact != null)
         {
             paintImpact.transform.position = collision.contacts[0].point;
             paintImpact.transform.rotation = Quaternion.LookRotation(collision.contacts[0].normal);
+        
+            paintImpact.transform.SetParent(null); 
+            ApplyColorToParticles(paintImpact.gameObject, blobColor);
+        
             paintImpact.Play();
+            Destroy(paintImpact.gameObject, paintImpact.main.duration);
         }
+
         if (collision.gameObject.CompareTag("Enemy"))
         {
             Enemy enemy = collision.gameObject.GetComponent<Enemy>();
@@ -66,6 +74,18 @@ public class PaintGlobs : CollisonPainter
                 enemy.GetComponent<Health>().Damage((int)damage);
                 Debug.Log($"Enemy hit! Dealt {damage} damage.");
             }
+        }
+
+        Destroy(gameObject);
+    }
+
+    private void ApplyColorToParticles(GameObject effectObj, Color color)
+    {
+        ParticleSystem ps = effectObj.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            var main = ps.main;
+            main.startColor= color;
         }
     }
 }

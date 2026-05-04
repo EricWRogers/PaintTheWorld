@@ -38,18 +38,17 @@ public abstract class  Enemy : MonoBehaviour
     [Header("Hurt FX")]
     public GameObject damageText;
     public Transform damageTextSpawn;
+    public Patroling patroling;
+    public float patrolingDistanceCheck = 1;
 
     private int m_tempHealth;
     private Health m_health;
 
     public bool targetingPlayer;
+    public float targetDistance;
 
     public Transform target;
     public Animator anim;
-
-    public float timerToSwitchTargets;
-    private float m_switchTimer;
-
 
     void OnEnable()
     {
@@ -66,8 +65,7 @@ public abstract class  Enemy : MonoBehaviour
         }
         else
         {
-            PaintingObj obj = GameManager.instance.activeObjectives[Random.Range(0, GameManager.instance.activeObjectives.Count)];
-            target = obj.transform;
+            target = EnemyManager.instance.GetObjectiveTarget().transform;
         }
     }
 
