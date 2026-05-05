@@ -1,11 +1,16 @@
+using System.Threading;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerRespawn : MonoBehaviour
 {
-    public Transform spawnPos;
-
+    public Vector3 spawnPos;
+    public void Awake()
+    {
+        spawnPos = transform.position;
+    }
     public void RespawnPlayer()
     {
-        transform.position = spawnPos.position;
+        transform.position = spawnPos;
     }
 }
